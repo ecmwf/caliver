@@ -1,0 +1,25 @@
+Package: caliver
+Type: Package
+Title: CALIbration and VERification of gridded model outputs
+Version: 0.1
+Authors@R: c(person("Claudia", "Vitolo", email = "cvitolodev@gmail.com", role = c("aut", "cre")),
+             person("Mirko", "D'Andrea", role = c("aut", "ctb")),
+             person("Francesca", "Di Giuseppe", role = c("aut", "ctb")))
+Maintainer: Claudia Vitolo <cvitolodev@gmail.com>
+URL: https://github.com/anywhereProject/caliver
+BugReports: https://github.com/anywhereProject/caliver/issues
+Description: Utility functions for the post-processing, calibration and
+    validation of gridded model outputs. Initial test cases include the outputs of
+    the following forest fire models: GEFF and RISICO.
+Depends:
+    R (>= 3.3)
+Imports:
+    sp,
+    rgdal
+Suggests:
+    testthat,
+    knitr
+VignetteBuilder: knitr
+Encoding: UTF-8
+License: GPL-3
+RoxygenNote: 5.0.1
