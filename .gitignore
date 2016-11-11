@@ -34,3 +34,5 @@ vignettes/*.pdf
 .Rproj.user
 caliver.Rproj
 Read-and-delete-me
+.directory
+README.html

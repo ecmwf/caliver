@@ -15,7 +15,13 @@ Depends:
     R (>= 3.3)
 Imports:
     sp,
-    rgdal
+    rgdal,
+    ncdf4,
+    grDevices,
+    rworldmap,
+    raster,
+    rasterVis,
+    latticeExtra
 Suggests:
     testthat,
     knitr

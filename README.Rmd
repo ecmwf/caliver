@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 
 The package [caliver](https://cran.r-project.org/package=caliver) contains Utility functions for the post-processing, calibration and validation of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO.
 
-## Installation
+## Dependencies and Installation
 
-Install the following packages before attempting to install caliver:
+Install [cdo](https://code.zmaw.de/projects/cdo/wiki) and the following packages before attempting to install caliver:
 
 ```{r}
 packs <- c('devtools', 'rgdal', 'sp', 'leaflet', 'testthat', 'knitr', 'rmarkdown')
@@ -43,6 +43,34 @@ Load the caliver package:
 
 ```{r}
 library('caliver')
+```
+
+## Typical workflow
+Define the data folder
+```{r}
+dirs <- "/var/tmp/moc0/forestfire"
+```
+
+Decompress all the files in a given folder (from *.nc.gz to *.nc)
+```{r}
+decompressGZ(dirs, keep = FALSE)
+```
+
+Merge all the files (with name starting with *startingString*) over the time dimension
+```{r}
+mergedFile <- mergetime(dirs, startingString = "geff_reanalysis_an_fwis_fwi_")
+```
+
+Get maps for given quantiles
+```{r}
+listOfMaps <- getGriddedCDF(ncfile = mergedFile, varname = "fwi", probs = c(50, 75, 90, 99))
+```
+
+Plot maps
+```{r}
+# Define a background map
+newmap <- rworldmap::getMap(resolution = "low")
+plotPercentiles(listOfMaps, background = newmap)
 ```
 
 ## Meta

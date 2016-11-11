@@ -6,6 +6,12 @@
 #' @docType package
 #'
 #' @import rgdal
-#' @import sp
+#' @import ncdf4
+#' @importFrom grDevices heat.colors
+#' @importFrom rworldmap getMap
+#' @importFrom sp sp.lines
+#' @importFrom raster stack  
+#' @importFrom rasterVis levelplot
+#' @importFrom latticeExtra layer
 #'
 NULL
