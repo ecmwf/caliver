@@ -3,18 +3,27 @@
 #' @description This function merges all the netcdf files in a given directory over the time dimension. It saves the merged file in the working directory.
 #'
 #' @param dirs is the directory where all the files to read are stored
-#' @param startingString string defining the bginning of the netcdf filenames (needed to exclude other files)
+#' @param varname name of the variable to extract
+#' @param startingString string defining the beginning of the netcdf filenames (needed to exclude other files)
+#' @param recursive logical (TRUE by default). If set to TRUE it looks in folders and subfolders
+#' @param outFile filename where to store results
 #' 
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#'   dirs <- "/var/tmp/moc0/forestfire"
-#'   mergetime(dirs)
+#' # Mergetime using single variable nc files
+#'   mergetime(dirs = "/var/tmp/moc0/forestfire",
+#'             varname = NULL,
+#'             startingString = "geff_reanalysis_an_fwis_fwi_",
+#'             recursive = TRUE,
+#'             outFile = "outfile.nc")
+#'             
 #' }
 #'
 
-mergetime <- function(dirs, startingString = "geff_reanalysis_an_fwis_fwi_"){  
+mergetime <- function(dirs = NULL, varname = NULL, startingString = "", 
+                      recursive = TRUE, outFile = "outfile.nc"){  
   
   if(Sys.which("cdo")[[1]] == "") {
     
@@ -22,21 +31,36 @@ mergetime <- function(dirs, startingString = "geff_reanalysis_an_fwis_fwi_"){
     
   }
   
-  ncfiles <- list.files(path = dirs, 
-                        pattern = paste0(startingString, ".*.nc$"), 
-                        full.names = TRUE)
+  if(is.null(dirs)) {
+    
+    stop("Please specify data folder!") 
+    
+  }
   
-  system(paste0("cdo mergetime ", 
-                paste(ncfiles, collapse = " "), 
-                " ", 
-                dirs, 
-                "/temp.nc"))
+  if (startingString == "") {
+    ifiles <- paste(list.files(path = dirs,
+                               recursive = recursive, 
+                               full.names = TRUE), 
+                    collapse = " ")
+  }else{
+    ifiles <- paste(list.files(path = dirs, 
+                               pattern = paste0(startingString, ".*.nc$"),
+                               recursive = recursive, 
+                               full.names = TRUE), 
+                    collapse = " ")
+  }
   
-  system(paste0("cdo sellonlatbox,-180,180,-90,90 ", dirs, "/temp.nc ", dirs, "/outfile.nc"))
-  system(paste0("rm ", dirs, "/temp.nc"))
+  if (is.null(varname)){
+    system(paste0("cdo mergetime ", 
+                  ifiles, " ", getwd(), "/", outFile))
+  }else{
+    # system(paste0("cdo mergetime -select,param=", varname, " ", 
+    #               ifiles, " ", getwd(), "/", outFile))
+    system(paste0("cdo select,name=", varname, " ", ifiles, " ", getwd(), "/", outFile))
+  }
   
-  message(paste0("The files have been merged and the result is stored in ", dirs, "/outfile.nc"))
+  message(paste0("The files have been merged and the result is stored in: \n", getwd(), "/", outFile))
   
-  return(paste0(dirs, "/outfile.nc"))
+  return(paste0(getwd(), "/", outFile))
   
 }

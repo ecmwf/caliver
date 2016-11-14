@@ -3,8 +3,8 @@
 #' @description This function plots the maps of percentiles contained in x
 #'
 #' @param listOfMaps is the result of getGriddedCDF()
-#' @param background This is a background map (it can be the result of rworldmap::getMap(resolution = "low"))
-#'
+#' @param backgroundMap logical, if TRUE it uses a background map
+#' 
 #' @export
 #'
 #' @examples
@@ -13,18 +13,23 @@
 #' }
 #'
 
-plotPercentiles <- function(listOfMaps, background = NULL){
+plotPercentiles <- function(listOfMaps, backgroundMap = FALSE){
   
-  p <- rasterVis::levelplot(raster::stack(listOfMaps), 
+  # Generate a raster stack
+  stackMap <- raster::stack(listOfMaps)
+  
+  p <- rasterVis::levelplot(stackMap, 
                             col.regions = rev(grDevices::heat.colors(20)), 
+                            # par.settings=RdBuTheme,
                             colorkey = list(space = "right"))
   
-  if (!is.null(background)) {
-    
-    p <- p + latticeExtra::layer(sp::sp.lines(background, lwd=0.8, col='darkgray'))
-    
+  if (backgroundMap == TRUE) {
+    # Define a background map
+    backgroundMap <- rworldmap::getMap(resolution = "low")
+    p <- p + 
+      latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
   }
-  
-  plot(p)
+    
+  print(p)
   
 }

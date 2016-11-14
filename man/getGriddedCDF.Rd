@@ -4,12 +4,10 @@
 \alias{getGriddedCDF}
 \title{Calculate CDF and percentiles}
 \usage{
-getGriddedCDF(ncfile, varname = "fwi", probs = c(50, 75, 90, 99))
+getGriddedCDF(ncfile, probs = c(50, 75, 90, 99))
 }
 \arguments{
 \item{ncfile}{is the name of the file to read}
-
-\item{varname}{name of the variable to extract}
 
 \item{probs}{numeric vector of probabilities with values in [0,1] listing which percentiles should be calculated}
 }

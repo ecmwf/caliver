@@ -21,76 +21,126 @@ knitr::opts_chunk$set(
 
 The package [caliver](https://cran.r-project.org/package=caliver) contains utility functions for the post-processing, calibration and validation of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO.
 
-## Dependencies and Installation
+## Dependencies and installation
 
 Install [cdo](https://code.zmaw.de/projects/cdo/wiki) and the following packages before attempting to install caliver:
 
 ```{r}
-packs <- c('devtools', 'rgdal', 'sp', 'leaflet', 'testthat', 'knitr', 'rmarkdown')
-new.packages <- packs[!(packs %in% installed.packages()[,'Package'])]
+packs <- c("devtools", "rgdal", "sp", "leaflet", "testthat", "knitr", "rmarkdown")
+new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 ```
 
 Get the development version from github using [devtools](https://github.com/hadley/devtools):
 
 ```{r}
-devtools::install_github('anywhereProject/caliver')
+devtools::install_github("anywhereProject/caliver")
 ```
 
 Load the caliver package:
 
 ```{r}
-library('caliver')
+library("caliver")
+```
+
+## Set working directory
+Define the data folder, where the results will be stored
+```{r}
+setwd("/var/tmp/moc0/geff/results")
 ```
 
 ## Workflow type A: decompress-merge single variable files and calculate CDF and quantiles
-Define the data folder
+Define the data folder and decompress all the files in a given folder (from *.nc.gz to *.nc)
 ```{r}
-dirs <- "/var/tmp/moc0/forestfire"
-```
-
-Decompress all the files in a given folder (from *.nc.gz to *.nc)
-```{r}
-decompressGZ(dirs, keep = FALSE)
+decompressGZ(dirs = "/var/tmp/moc0/forestfire", keep = FALSE)
 ```
 
 Merge all the files (with name starting with *startingString*) over the time dimension
 ```{r}
-mergedFile <- mergetime(dirs, startingString = "geff_reanalysis_an_fwis_fwi_")
+mergedFile <- mergetime(dirs = "/var/tmp/moc0/forestfire", 
+                        startingString = "geff_reanalysis_an_fwis_fwi_")
+```
+
+In order to conveniently plot the results, this map should be shifted 
+```{r}
+# shift the file horizontally
+shiftedFile <- shiftMap(inFile = mergedFile, 
+                        outFile = paste0(tools::file_path_sans_ext(mergedFile),
+                                         "_shifted.nc"))
 ```
 
 Get maps for given quantiles
 ```{r}
-listOfMaps <- getGriddedCDF(ncfile = mergedFile, varname = "fwi", probs = c(50, 75, 90, 99))
+listOfMaps <- getGriddedCDF(ncfile = shiftedFile, 
+                            varname = "fwi", 
+                            probs = c(50, 75, 90, 99))
 ```
 
 Plot maps
 ```{r}
-# Define a background map
-newmap <- rworldmap::getMap(resolution = "low")
-plotPercentiles(listOfMaps, background = newmap)
+plotPercentiles(listOfMaps)
 ```
 
 ## Workflow type B: extract variable from multi-variable files, calculate CDF and quantiles
 Define the data folder
 ```{r}
-dirs <- "/var/tmp/moc0/geff"
+setwd("/var/tmp/moc0/geff/results/")
+dirs <- "/var/tmp/moc0/geff/data/"
+myVar <- "fwi"
+ncfile <- paste0(myVar,".nc")
 ```
 
-Extract variable and merge all to one file
+Merge all the files (with name starting with *startingString*) over the time dimension
 ```{r}
-getVar(dirs, varname = "dc")
+mergedFile <- mergetime(dirs = dirs,
+                        varname = myVar, 
+                        startingString = "",
+                        recursive = TRUE, 
+                        outFile = ncfile)
+```
+
+In order to conveniently plot the results, this map should be shifted
+```{r}
+# shift the file horizontally
+shiftedFile <- shiftMap(inFile = ncfile, 
+                        outFile = paste0(tools::file_path_sans_ext(ncfile),
+                                         "_shifted.nc"))
 ```
 
 Calculate CDF and percentiles
 ```{r}
-ncfile <- "fwi.nc"
-listOfMaps <- getGriddedCDF(ncfile)
+listOfMaps <- getGriddedCDF(shiftedFile)
 ```
 
 Plot maps
 ```{r}
+plotPercentiles(listOfMaps)
+```
+
+## Workflow type C: plot from pre-calculated percentiles in nc files
+Define the working directory
+```{r}
+setwd("/var/tmp/moc0/geff/results/")
+```
+
+List all the files to plot
+```{r}
+ifiles <- c("fwi_shifted_50.nc", "fwi_shifted_75.nc", 
+            "fwi_shifted_90.nc", "fwi_shifted_99.nc")
+```
+
+In order to conveniently plot the results, this map should be shifted
+```{r}
+# Generate a raster stack
+listOfMaps <- raster::stack(ifiles)
+```
+
+Plot maps
+```{r}
+p <- rasterVis::levelplot(raster::stack(ifiles), 
+                          col.regions = rev(grDevices::heat.colors(20)),
+                          colorkey = list(space = "right"))
 # Define a background map
-newmap <- rworldmap::getMap(resolution = "low")
-plotPercentiles(listOfMaps, background = newmap)
+backgroundMap <- rworldmap::getMap(resolution = "low")
+p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
 ```

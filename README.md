@@ -3,7 +3,14 @@
 caliver: CALIbration and VERification of gridded model outputs
 ==============================================================
 
-The package [caliver](https://cran.r-project.org/package=caliver) contains Utility functions for the post-processing, calibration and validation of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO.
+<!--
+
+[![Travis-CI Build Status](https://travis-ci.org/anywhereProject/caliver.svg?branch=master)](https://travis-ci.org/anywhereProject/caliver)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/anywhereProject/caliver?branch=master&svg=true)](https://ci.appveyor.com/project/anywhereProject/caliver)
+[![Coverage Status](https://img.shields.io/codecov/c/github/anywhereProject/caliver/master.svg)](https://codecov.io/github/anywhereProject/caliver?branch=master)
+
+-->
+The package [caliver](https://cran.r-project.org/package=caliver) contains utility functions for the post-processing, calibration and validation of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO.
 
 Dependencies and Installation
 -----------------------------
@@ -16,8 +23,6 @@ new.packages <- packs[!(packs %in% installed.packages()[,'Package'])]
 if(length(new.packages)) install.packages(new.packages)
 ```
 
-### Installation
-
 Get the development version from github using [devtools](https://github.com/hadley/devtools):
 
 ``` r
@@ -28,41 +33,6 @@ Load the caliver package:
 
 ``` r
 library('caliver')
-```
-
-Typical workflow
-----------------
-
-Define the data folder
-
-``` r
-dirs <- "/var/tmp/moc0/forestfire"
-```
-
-Decompress all the files in a given folder (from *.nc.gz to *.nc)
-
-``` r
-decompressGZ(dirs, keep = FALSE)
-```
-
-Merge all the files (with name starting with *startingString*) over the time dimension
-
-``` r
-mergedFile <- mergetime(dirs, startingString = "geff_reanalysis_an_fwis_fwi_")
-```
-
-Get maps for given quantiles
-
-``` r
-listOfMaps <- getGriddedCDF(ncfile = mergedFile, varname = "fwi", probs = c(50, 75, 90, 99))
-```
-
-Plot maps
-
-``` r
-# Define a background map
-newmap <- rworldmap::getMap(resolution = "low")
-plotPercentiles(listOfMaps, background = newmap)
 ```
 
 Meta

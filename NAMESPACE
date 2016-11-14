@@ -2,9 +2,9 @@
 
 export(decompressGZ)
 export(getGriddedCDF)
-export(getVar)
 export(mergetime)
 export(plotPercentiles)
+export(shiftMap)
 import(ncdf4)
 import(rgdal)
 importFrom(grDevices,heat.colors)

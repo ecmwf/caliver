@@ -4,20 +4,32 @@
 \alias{mergetime}
 \title{Merge netcdf files on the time dimension}
 \usage{
-mergetime(dirs, startingString = "geff_reanalysis_an_fwis_fwi_")
+mergetime(dirs = NULL, varname = NULL, startingString = "",
+  recursive = TRUE, outFile = "outfile.nc")
 }
 \arguments{
 \item{dirs}{is the directory where all the files to read are stored}
 
-\item{startingString}{string defining the bginning of the netcdf filenames (needed to exclude other files)}
+\item{varname}{name of the variable to extract}
+
+\item{startingString}{string defining the beginning of the netcdf filenames (needed to exclude other files)}
+
+\item{recursive}{logical (TRUE by default). If set to TRUE it looks in folders and subfolders}
+
+\item{outFile}{filename where to store results}
 }
 \description{
 This function merges all the netcdf files in a given directory over the time dimension. It saves the merged file in the working directory.
 }
 \examples{
 \dontrun{
-  dirs <- "/var/tmp/moc0/forestfire"
-  mergetime(dirs)
+# Mergetime using single variable nc files
+  mergetime(dirs = "/var/tmp/moc0/forestfire",
+            varname = NULL,
+            startingString = "geff_reanalysis_an_fwis_fwi_",
+            recursive = TRUE,
+            outFile = "outfile.nc")
+            
 }
 
 }
