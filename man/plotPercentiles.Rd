@@ -4,10 +4,12 @@
 \alias{plotPercentiles}
 \title{Plot maps of percentiles}
 \usage{
-plotPercentiles(listOfMaps)
+plotPercentiles(listOfMaps, background = NULL)
 }
 \arguments{
 \item{listOfMaps}{is the result of getGriddedCDF()}
+
+\item{background}{This is a background map (it can be the result of rworldmap::getMap(resolution = "low"))}
 }
 \description{
 This function plots the maps of percentiles contained in x

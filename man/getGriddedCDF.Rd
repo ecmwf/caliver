@@ -2,7 +2,7 @@
 % Please edit documentation in R/getGriddedCDF.R
 \name{getGriddedCDF}
 \alias{getGriddedCDF}
-\title{Calculate CDF}
+\title{Calculate CDF and percentiles}
 \usage{
 getGriddedCDF(ncfile, varname = "fwi", probs = c(50, 75, 90, 99))
 }
@@ -21,7 +21,6 @@ This function calculates the CDF at each point of a grid
 }
 \examples{
 \dontrun{
-  # Retrieve mopex daily catalogue
   ncfile <- "/var/tmp/moc0/forestfire/outfile.nc"
   x <- getGriddedCDF(ncfile)
 }

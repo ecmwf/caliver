@@ -9,7 +9,6 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # Retrieve mopex daily catalogue
 #'   dirs <- "/var/tmp/moc0/forestfire"
 #'   mergetime(dirs)
 #' }
@@ -36,7 +35,7 @@ mergetime <- function(dirs, startingString = "geff_reanalysis_an_fwis_fwi_"){
   system(paste0("cdo sellonlatbox,-180,180,-90,90 ", dirs, "/temp.nc ", dirs, "/outfile.nc"))
   system(paste0("rm ", dirs, "/temp.nc"))
   
-  message(paste0("The file have been merged and the result is stored in ", dirs, "/outfile.nc"))
+  message(paste0("The files have been merged and the result is stored in ", dirs, "/outfile.nc"))
   
   return(paste0(dirs, "/outfile.nc"))
   

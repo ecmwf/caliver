@@ -1,0 +1,96 @@
+---
+title: "caliver: CALIbration and VERification of gridded model outputs"
+author: ""
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(
+  comment = '#>',
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  eval = FALSE
+)
+```
+
+The package [caliver](https://cran.r-project.org/package=caliver) contains utility functions for the post-processing, calibration and validation of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO.
+
+## Dependencies and Installation
+
+Install [cdo](https://code.zmaw.de/projects/cdo/wiki) and the following packages before attempting to install caliver:
+
+```{r}
+packs <- c('devtools', 'rgdal', 'sp', 'leaflet', 'testthat', 'knitr', 'rmarkdown')
+new.packages <- packs[!(packs %in% installed.packages()[,'Package'])]
+if(length(new.packages)) install.packages(new.packages)
+```
+
+Get the development version from github using [devtools](https://github.com/hadley/devtools):
+
+```{r}
+devtools::install_github('anywhereProject/caliver')
+```
+
+Load the caliver package:
+
+```{r}
+library('caliver')
+```
+
+## Workflow type A: decompress-merge single variable files and calculate CDF and quantiles
+Define the data folder
+```{r}
+dirs <- "/var/tmp/moc0/forestfire"
+```
+
+Decompress all the files in a given folder (from *.nc.gz to *.nc)
+```{r}
+decompressGZ(dirs, keep = FALSE)
+```
+
+Merge all the files (with name starting with *startingString*) over the time dimension
+```{r}
+mergedFile <- mergetime(dirs, startingString = "geff_reanalysis_an_fwis_fwi_")
+```
+
+Get maps for given quantiles
+```{r}
+listOfMaps <- getGriddedCDF(ncfile = mergedFile, varname = "fwi", probs = c(50, 75, 90, 99))
+```
+
+Plot maps
+```{r}
+# Define a background map
+newmap <- rworldmap::getMap(resolution = "low")
+plotPercentiles(listOfMaps, background = newmap)
+```
+
+## Workflow type B: extract variable from multi-variable files, calculate CDF and quantiles
+Define the data folder
+```{r}
+dirs <- "/var/tmp/moc0/geff"
+```
+
+Extract variable and merge all to one file
+```{r}
+getVar(dirs, varname = "dc")
+```
+
+Calculate CDF and percentiles
+```{r}
+ncfile <- "fwi.nc"
+listOfMaps <- getGriddedCDF(ncfile)
+```
+
+Plot maps
+```{r}
+# Define a background map
+newmap <- rworldmap::getMap(resolution = "low")
+plotPercentiles(listOfMaps, background = newmap)
+```

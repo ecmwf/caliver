@@ -1,4 +1,4 @@
-#' Calculate CDF
+#' Calculate CDF and percentiles
 #'
 #' @description This function calculates the CDF at each point of a grid
 #'
@@ -12,7 +12,6 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # Retrieve mopex daily catalogue
 #'   ncfile <- "/var/tmp/moc0/forestfire/outfile.nc"
 #'   x <- getGriddedCDF(ncfile)
 #' }
@@ -27,6 +26,7 @@ getGriddedCDF <- function(ncfile, varname = "fwi", probs = c(50, 75, 90, 99)){
   nameList <- c()
   
   for (prob in probs){
+    
     system(paste0("cdo timpctl,", prob, " ", ncfile, 
                   " -timmin ", ncfile, 
                   " -timmax ", ncfile, " ", 

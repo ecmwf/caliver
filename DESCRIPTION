@@ -3,8 +3,8 @@ Type: Package
 Title: CALIbration and VERification of gridded model outputs
 Version: 0.1
 Authors@R: c(person("Claudia", "Vitolo", email = "cvitolodev@gmail.com", role = c("aut", "cre")),
-             person("Mirko", "D'Andrea", role = c("aut", "ctb")),
-             person("Francesca", "Di Giuseppe", role = c("aut", "ctb")))
+             person("Mirko", "D'Andrea", role = c("ctb")),
+             person("Francesca", "Di Giuseppe", role = c("ctb")))
 Maintainer: Claudia Vitolo <cvitolodev@gmail.com>
 URL: https://github.com/anywhereProject/caliver
 BugReports: https://github.com/anywhereProject/caliver/issues
@@ -21,10 +21,13 @@ Imports:
     rworldmap,
     raster,
     rasterVis,
-    latticeExtra
+    latticeExtra,
+    graphics
 Suggests:
     testthat,
-    knitr
+    knitr,
+    rmarkdown,
+    covr
 VignetteBuilder: knitr
 Encoding: UTF-8
 License: GPL-3

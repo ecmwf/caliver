@@ -16,7 +16,6 @@ This function merges all the netcdf files in a given directory over the time dim
 }
 \examples{
 \dontrun{
-  # Retrieve mopex daily catalogue
   dirs <- "/var/tmp/moc0/forestfire"
   mergetime(dirs)
 }

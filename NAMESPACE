@@ -2,11 +2,13 @@
 
 export(decompressGZ)
 export(getGriddedCDF)
+export(getVar)
 export(mergetime)
 export(plotPercentiles)
 import(ncdf4)
 import(rgdal)
 importFrom(grDevices,heat.colors)
+importFrom(graphics,plot)
 importFrom(latticeExtra,layer)
 importFrom(raster,stack)
 importFrom(rasterVis,levelplot)

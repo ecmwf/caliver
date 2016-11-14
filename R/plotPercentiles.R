@@ -21,7 +21,7 @@ plotPercentiles <- function(listOfMaps, background = NULL){
   
   if (!is.null(background)) {
     
-    p <- p + latticeExtra::layer(sp::sp.lines(newmap, lwd=0.8, col='darkgray'))
+    p <- p + latticeExtra::layer(sp::sp.lines(background, lwd=0.8, col='darkgray'))
     
   }
   

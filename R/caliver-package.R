@@ -13,5 +13,6 @@
 #' @importFrom raster stack  
 #' @importFrom rasterVis levelplot
 #' @importFrom latticeExtra layer
+#' @importFrom graphics plot
 #'
 NULL

@@ -1,3 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 README.Rmd
+^CONDUCT\.md$
+^revdep$
+^\.travis\.yml$
+^appveyor\.yml$
+^codecov\.yml$
+README.html
