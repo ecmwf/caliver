@@ -137,10 +137,44 @@ listOfMaps <- raster::stack(ifiles)
 
 Plot maps
 ```{r}
-p <- rasterVis::levelplot(raster::stack(ifiles), 
+p <- rasterVis::levelplot(listOfMaps, 
                           col.regions = rev(grDevices::heat.colors(20)),
                           colorkey = list(space = "right"))
 # Define a background map
 backgroundMap <- rworldmap::getMap(resolution = "low")
 p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
 ```
+
+## Workflow type D: mask unrealistic values
+In absence of vegetation the risk of ignition reduces to zero, regardless of the state of the soil.
+To exclude these areas (deserts, glaciers, etc.) we apply a mask to the raster map of percentiles calculated above.
+
+We identify non-vegetated areas using the fuel_model map provided by JRC. 
+```{r}
+shiftMap(inFile = "/var/tmp/moc0/geff/clim_fuelmodel.nc_ggN256")
+values2mask <- raster::raster("/var/tmp/moc0/geff/clim_fuelmodel.nc_ggN256_shifted.nc")
+rasterVis::levelplot(values2mask)
+```
+In this map, water-barren-marsh-Snow and Ice-Urban-Agriculture-NoData are identified by the codes 21-27. Therefore we assume all the values from 0 to 20 are valid, above 21 should be masked.
+```{r}
+values2mask[values2mask > 20] <- NA
+rasterVis::levelplot(values2mask)
+```
+
+This layer can be used to mask any other raster, for instance the maps of fwi-dc-ffmc percentiles. Here is an example to mask fwi\_shifted
+```{r}
+ifiles <- c("fwi_shifted_50.nc", "fwi_shifted_75.nc", 
+            "fwi_shifted_90.nc", "fwi_shifted_99.nc")
+listOfMaps <- raster::stack(ifiles)
+
+p <- rasterVis::levelplot(raster::mask(listOfMaps, values2mask), 
+                          col.regions = rev(grDevices::heat.colors(20)),
+                          colorkey = list(space = "right"), 
+                          names.attr = ifiles)
+# Define a background map
+backgroundMap <- rworldmap::getMap(resolution = "low")
+p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
+```
+
+
+
