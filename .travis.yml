@@ -32,7 +32,7 @@ before_install:
   - sudo make install
   - cd
   - wget https://support.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.17.tar
-  - tar zxvf hdf5-1.8.17.tar
+  - tar -xvf hdf5-1.8.17.tar
   - cd hdf5-1.8.17
   - H5DIR=/usr/local
   - ./configure --with-zlib=${ZDIR} --prefix=${H5DIR}
