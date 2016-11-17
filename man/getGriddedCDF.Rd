@@ -7,7 +7,7 @@
 getGriddedCDF(ncfile, probs = c(50, 75, 90, 99))
 }
 \arguments{
-\item{ncfile}{is the name of the file to read}
+\item{ncfile}{is the name of the file(path) to read}
 
 \item{probs}{numeric vector of probabilities with values in [0,1] listing which percentiles should be calculated}
 }

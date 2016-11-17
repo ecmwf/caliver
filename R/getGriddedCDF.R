@@ -2,9 +2,9 @@
 #'
 #' @description This function calculates the CDF at each point of a grid
 #'
-#' @param ncfile is the name of the file to read
+#' @param ncfile is the name of the file(path) to read
 #' @param probs numeric vector of probabilities with values in [0,1] listing which percentiles should be calculated
-#'
+#' 
 #' @return list containing all the maps of fwi percentiles
 #'
 #' @export
@@ -16,14 +16,16 @@
 #' }
 #'
 
-getGriddedCDF <- function(ncfile, probs = c(50, 75, 90, 99)){
+getGriddedCDF <- function(ncfile, 
+                          probs = c(50, 75, 90, 99)){
   
   outList <- list()
   nameList <- c()
   
   for (prob in probs){
     
-    fileName <- tools::file_path_sans_ext(ncfile)
+    # fileName <- tools::file_path_sans_ext(ncfile)
+    fileName <- tools::file_path_sans_ext(basename(ncfile))
     
     outFile <- paste0(getwd(), "/", fileName, "_", prob, ".nc")
     

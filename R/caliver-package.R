@@ -16,3 +16,16 @@
 #' @importFrom graphics plot
 #'
 NULL
+
+#' Data set: GFED BASIS REGIONS
+#'
+#' @description GFED BASIS REGIONS
+#'
+#' @usage data("GFEDregions")
+#'
+#' @format The format is: Formal class 'RasterLayer' [package "raster"] with 12 slots
+#'
+#' @keywords datasets
+#'
+#' @source \url{www.globalfiredata.org/data.html}
+"GFEDregions"

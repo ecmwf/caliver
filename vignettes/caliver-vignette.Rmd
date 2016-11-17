@@ -152,13 +152,16 @@ To exclude these areas (deserts, glaciers, etc.) we apply a mask to the raster m
 We identify non-vegetated areas using the fuel_model map provided by JRC. 
 ```{r}
 shiftMap(inFile = "/var/tmp/moc0/geff/clim_fuelmodel.nc_ggN256")
-values2mask <- raster::raster("/var/tmp/moc0/geff/clim_fuelmodel.nc_ggN256_shifted.nc")
-rasterVis::levelplot(values2mask)
+fuelmodel <- raster::raster("/var/tmp/moc0/geff/clim_fuelmodel.nc_ggN256_shifted.nc")
+rasterVis::levelplot(fuelmodel)
 ```
 In this map, water-barren-marsh-Snow and Ice-Urban-Agriculture-NoData are identified by the codes 21-27. Therefore we assume all the values from 0 to 20 are valid, above 21 should be masked.
 ```{r}
-values2mask[values2mask > 20] <- NA
-rasterVis::levelplot(values2mask)
+fuelmodel[fuelmodel > 20] <- NA
+rasterVis::levelplot(fuelmodel)
+# Looks good! This file is also saved in the data folder of this package
+# save(fuelmodel, file = "/home/mo/moc0/Repositories/caliver/data/fuelmodel.rda")
+# data("fuelmodel")
 ```
 
 This layer can be used to mask any other raster, for instance the maps of fwi-dc-ffmc percentiles. Here is an example to mask fwi\_shifted
@@ -166,8 +169,9 @@ This layer can be used to mask any other raster, for instance the maps of fwi-dc
 ifiles <- c("fwi_shifted_50.nc", "fwi_shifted_75.nc", 
             "fwi_shifted_90.nc", "fwi_shifted_99.nc")
 listOfMaps <- raster::stack(ifiles)
+maskedMaps <- raster::mask(listOfMaps, fuelmodel)
 
-p <- rasterVis::levelplot(raster::mask(listOfMaps, values2mask), 
+p <- rasterVis::levelplot(maskedMaps, 
                           col.regions = rev(grDevices::heat.colors(20)),
                           colorkey = list(space = "right"), 
                           names.attr = ifiles)
@@ -176,5 +180,109 @@ backgroundMap <- rworldmap::getMap(resolution = "low")
 p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
 ```
 
+## Workflow type E: visualise results for the European bounding box
+All the maps created with this package can be generated for a particular region.
+The example below shows how to plot fwi percentiles for the European bounding box
+```{r}
+# Define the extent
+e <- regionalBBOX(region = "Europe")
+# Crop the global file to Europe's extent
+croppedStack <- raster::crop(maskedMaps, e)
 
+# In Europe the saturation is expected to be below 50, therefore we tweak the map to ignore higher values
+# croppedStack[croppedStack > 50] <- NA
+p <- rasterVis::levelplot(croppedStack, 
+                          col.regions = rev(grDevices::heat.colors(20)),
+                          colorkey = list(space = "right"), 
+                          names.attr = ifiles)
+# Define a background map
+backgroundMap <- rworldmap::getMap(resolution = "low")
+p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
+```
 
+## Workflow type F: visualise results for Europe only (using GFED basis regions)
+The example below shows how to plot fwi percentiles for Europe using an irregular polygon provided by the basis regions (available here: www.globalfiredata.org/data.html)
+```{r}
+# Download one of the GFED4 files
+fname <- tempfile()
+download.file(url = "http://www.falw.vu/~gwerf/GFED/GFED4/GFED4.1s_1997.hdf5",
+              destfile = fname)
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("rhdf5")
+library("rhdf5")
+# list content
+h5ls(fname)
+# estract only the basis regions
+basis_regions <- h5read(file = fname, name = "ancill/basis_regions")
+# convert them to raster, transpose x and y, fix the extent, resample and set 0s to NA
+basis_regions <- raster::raster(basis_regions)
+basis_regions <- raster::t(basis_regions)
+raster::extent(basis_regions) <- raster::extent(maskedMaps)
+basis_regions[basis_regions == 0] <- NA
+basis_regions@crs <- maskedMaps@crs
+#  Reproject using the attributes of the low res raster for output
+GFEDregions <- projectRaster(from = basis_regions , to = maskedMaps, method = "bilinear")
+GFEDregions <- resample(GFEDregions, maskedMaps, method = "ngb")
+# Plot
+rasterVis::levelplot(GFEDregions)
+raster::plot(GFEDregions)
+# Looks good! This file is also saved in the data folder of this package
+# save(GFEDregions, file = "/home/mo/moc0/Repositories/caliver/data/GFEDregions.rda")
+# data("GFEDregions")
+
+# Mask&Crop the global file to Europe's extent
+maskedEurope <- raster::mask(maskedMaps, regionalMask(region = "Europe"))
+croppedEurope <- raster::crop(maskedEurope, regionalBBOX(region = "Europe"))
+
+p <- rasterVis::levelplot(croppedEurope, 
+                          col.regions = rev(grDevices::heat.colors(20)),
+                          colorkey = list(space = "right"))
+# Define a background map
+backgroundMap <- rworldmap::getMap(resolution = "low")
+p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
+```
+
+## Workflow type G: calculate CDF by region
+The first step is to get a map for a reasonable number of percentiles so that the CDF can be constructed smoothly
+```{r}
+# Set working directory
+setwd("/var/tmp/moc0/geff/CDF")
+varname <- "fwi"
+
+probs <- c(seq(5,95, by = 5),99)
+ncfile <- "/var/tmp/moc0/geff/results/fwi_shifted.nc"
+# Calculate percentiles (globally)
+listOfMaps <- getGriddedCDF(ncfile = ncfile, probs = probs)
+
+# Define the list of regions
+regions <- c("GLOB", "BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO", 
+             "MIDE", "NHAF", "SHAF", "BOAS", "CEAS", "SEAS", "EQAS", "AUST")
+# Then create CDF curves by averaging the percentiles over a given area
+CDF <- data.frame(matrix(NA, ncol = length(regions) + 1, nrow = length(probs)))
+names(CDF) <- c("percentile", regions)
+CDF$percentile <- probs
+data(GFEDregions)
+
+for (region in regions){
+  print(region)
+  j <- which(names(CDF) == region) # counter over the columns
+  # Mask the percentile maps using regional masks
+  for (prob in probs){
+    i <- which(CDF$percentile == prob)
+    globalMap <- raster::raster(paste0(varname, "_shifted_", prob, ".nc"))
+    if (region == "GLOB"){
+      maskedMap <- globalMap
+    }else{
+      regionMap <- regionalMask(region)
+      maskedMap <- raster::mask(globalMap, regionMap)
+    }
+    CDF[i, j] <- mean(as.matrix(maskedMap), na.rm=TRUE)
+  }
+}
+
+library(ggplot2)
+library(reshape2)
+CDFmelt <- melt(data = CDF[,c(1,2,4,8)], id.vars = names(CDF)[1])
+ggplot(data = CDFmelt, aes(x=value, y=percentile)) + 
+  geom_line(aes(colour=variable))
+```
