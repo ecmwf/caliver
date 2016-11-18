@@ -285,7 +285,6 @@ saveRDS(CDF, paste0(varname, "_CDF.rds"))
 
 library(ggplot2)
 library(reshape2)
-CDFmelt <- melt(data = CDF[,c(1,2,4,8)], id.vars = names(CDF)[1])
 CDFmelt <- melt(data = CDF, id.vars = names(CDF)[1])
 ggplot(data = CDFmelt, aes(x=value, y=percentile)) + 
   geom_line(aes(colour=variable)) + 

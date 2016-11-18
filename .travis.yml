@@ -31,7 +31,7 @@ before_install:
   - make check
   - sudo make install
   - cd
-  - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar
+  - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar.gz
   - tar -xvf hdf5-1.8.17.tar
   - cd hdf5-1.8.17
   - H5DIR=/usr/local
