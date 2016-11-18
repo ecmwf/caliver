@@ -36,6 +36,7 @@ before_install:
   - cd hdf5-1.8.18
   - H5DIR=/usr/local
   - ./configure --with-zlib=${ZDIR} --prefix=${H5DIR}
+  - make 
   - make check
   - sudo make install
   - cd
