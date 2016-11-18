@@ -26,16 +26,14 @@ before_install:
   - wget http://zlib.net/zlib-1.2.8.tar.gz
   - tar zxvf zlib-1.2.8.tar.gz
   - cd zlib-1.2.8
-  - ZDIR=/usr/local
-  - ./configure --prefix=${ZDIR}
+  - ./configure --prefix=/usr
   - make check
   - sudo make install
   - cd
   - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar.gz
   - tar -xvf hdf5-1.8.18.tar.gz
   - cd hdf5-1.8.18
-  - H5DIR=/usr/local
-  - ./configure --with-zlib=${ZDIR} --prefix=${H5DIR}
+  - ./configure --prefix=/usr
   - make 
   - make check
   - sudo make install
@@ -43,8 +41,7 @@ before_install:
   - wget https://github.com/Unidata/netcdf-c/archive/v4.4.1.tar.gz
   - tar zxvf v4.4.1.tar.gz
   - cd netcdf-c-4.4.1
-  - NCDIR=/usr/local
-  - CPPFLAGS=-I${H5DIR}/include LDFLAGS=-L${H5DIR}/lib ./configure --prefix=${NCDIR}
+  - ./configure --prefix=/usr
   - make 
   - make check
   - sudo make install
@@ -52,24 +49,21 @@ before_install:
   - wget http://www.ece.uvic.ca/~frodo/jasper/software/jasper-1.900.1.zip
   - unzip jasper-1.900.1.zip
   - cd jasper-1.900.1
-  - JASPERDIR=/usr/local
-  - ./configure –prefix=${JASPERDIR} CFLAGS=-fPIC
+  - ./configure --prefix=/usr
   - make check
   - sudo make install
   - cd
   - wget https://software.ecmwf.int/wiki/download/attachments/3473437/grib_api-1.14.4-Source.tar.gz?api=v2
   - tar zxvf grib_api-1.14.4-Source.tar.gz
   - cd grib_api-1.14.4-Source
-  - GRIBDIR=/usr/local
-  - ./configure –prefix=${GRIBDIR} CFLAGS=-fPIC  –with-netcdf=${NCDIR} –with-jasper=${JASPERDIR}
+  - ./configure --prefix=/usr
   - make check
   - sudo make install
   - cd
   - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
   - tar zxvf cdo-1.7.0.tar.gz
   - cd cdo-1.7.0
-  - CDODIR=/usr/local
-  - ./configure –prefix=${CDODIR} CFLAGS=-fPIC  –with-netcdf=${NCDIR} –with-jasper=${JASPERDIR} –with-hdf5=${H5DIR}  –with-grib_api=${GRIBDIR}
+  - ./configure --prefix=/usr
   - make check
   - sudo make install
   - cd /home/travis/build/anywhereProject/caliver
