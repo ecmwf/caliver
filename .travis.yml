@@ -45,6 +45,7 @@ before_install:
   - cd netcdf-c-4.4.1
   - NCDIR=/usr/local
   - CPPFLAGS=-I${H5DIR}/include LDFLAGS=-L${H5DIR}/lib ./configure --prefix=${NCDIR}
+  - make 
   - make check
   - sudo make install
   - cd
