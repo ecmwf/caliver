@@ -30,5 +30,5 @@ Suggests:
     covr
 VignetteBuilder: knitr
 Encoding: UTF-8
-License: GPL-3
+License: GPL-2
 RoxygenNote: 5.0.1

@@ -10,12 +10,16 @@ caliver: CALIbration and VERification of gridded model outputs
 [![Coverage Status](https://img.shields.io/codecov/c/github/anywhereProject/caliver/master.svg)](https://codecov.io/github/anywhereProject/caliver?branch=master)
 
 -->
-The package [caliver](https://cran.r-project.org/package=caliver) contains utility functions for the post-processing, calibration and validation of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO.
+The name '[caliver](https://github.com/anywhereProject/caliver)' stands for CALIbration and VERification of gridded model outputs. It is an extension package developed for the R programming language and available with an APACHE license from a public repository (<https://github.com/anywhereProject/caliver>).
+
+As the name suggests, the caliver package contains utility functions for the post-processing, calibration and validation/verification of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF (add ref.) and RISICO (add ref.). However, the algorithms can be applied to any gridded model output.
+
+Complete documentation, including a vignette, is available within the package.
 
 Dependencies and Installation
 -----------------------------
 
-Install [cdo](https://code.zmaw.de/projects/cdo/wiki) and the following packages before attempting to install caliver:
+The installation of the caliver package depends on the Climate Data Operators ([CDO](https://code.zmaw.de/projects/cdo/wiki), a large tool set for working on climate and NWP model data), the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats) and the following R packages:
 
 ``` r
 packs <- c('devtools', 'rgdal', 'sp', 'leaflet', 'testthat', 'knitr', 'rmarkdown')
