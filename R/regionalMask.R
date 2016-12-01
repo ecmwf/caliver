@@ -2,7 +2,7 @@
 #'
 #' @description This function defines the regional extent of a map given the name of the region. It is based on the GFED basis regions defined here: www.globalfiredata.org/data.html
 #'
-#' @param region string of characters describing the region. It can only assume the 12 values listed below:
+#' @param region string of characters describing the region. It can only assume the 15 values listed below:
 #' \itemize{
 #'   \item{"Global"}{or GLOB}
 ##'  \item{"Boreal North America"}{or BONA}

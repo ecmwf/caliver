@@ -49,7 +49,7 @@ Define the data folder, where the results will be stored
 setwd("/var/tmp/moc0/geff/results")
 ```
 
-## Workflow type A: decompress-merge single variable files and calculate CDF and quantiles
+## Workflow type A: decompress single variable files and merge them over the time dimension
 Define the data folder and decompress all the files in a given folder (from *.nc.gz to *.nc)
 ```{r}
 decompressGZ(dirs = "/var/tmp/moc0/forestfire", keep = FALSE)
@@ -61,234 +61,184 @@ mergedFile <- mergetime(dirs = "/var/tmp/moc0/forestfire",
                         startingString = "geff_reanalysis_an_fwis_fwi_")
 ```
 
-In order to conveniently plot the results, this map should be shifted 
+## Workflow type B: Calculate quantiles
+Given a netcdf file with 3 dimensions (lat, lon and time), we can calculate quantiles cell by cell:
 ```{r}
-# shift the file horizontally
-shiftedFile <- shiftMap(inFile = mergedFile, 
-                        outFile = paste0(tools::file_path_sans_ext(mergedFile),
-                                         "_shifted.nc"))
+mergedFile <- paste0(getwd(), "/outfile.nc")
 ```
 
 Get maps for given quantiles
 ```{r}
-listOfMaps <- getGriddedCDF(ncfile = shiftedFile, 
-                            varname = "fwi", 
-                            probs = c(50, 75, 90, 99))
+probsMaps <- getGriddedCDF(ncfile = mergedFile, 
+                           probs = c(50, 75, 90, 99))
 ```
 
-Plot maps
+The above command generates 4 probability maps that can be further manipulated and/or plotted.
+
+## Workflow type C: Plot multiple maps
+In order to conveniently plot the results of workflow B, the maps should be shifted horizontally. This is because data from global climate models are set to have longitude between 0 and 360, while for the majority of other standard longitudes vary between -180 and +180 degrees. The shift (or rotation) can be achieved in two ways: either using the \code{raster::rotate()} function or \code{sellonlatbox} from the cdo library.
+
 ```{r}
-plotPercentiles(listOfMaps)
+# Option A: use the raster::rotate() function
+shiftedMaps <- lapply(X = probsMaps, FUN = function(x){raster::rotate(x)})
+
+# Option B: use sellonlatbox from the cdo library
+listOfFiles <- as.character(lapply(X = probsMaps, 
+                                   FUN = function(x){x@file@name}))
+shiftedMaps <- raster::stack(shiftMap(inFile = listOfFiles))
 ```
 
-## Workflow type B: extract variable from multi-variable files, calculate CDF and quantiles
+Plot maps with background
+```{r}
+p <- rasterVis::levelplot(raster::stack(shiftedMaps), 
+                          col.regions = rev(grDevices::heat.colors(20)), 
+                          colorkey = list(space = "right"))
+# Define a background map
+backgroundMap <- rworldmap::getMap(resolution = "low")
+p <- p + 
+  latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
+
+print(p)
+```
+
+The same plot can be achieved using the command \code{plotPercentiles()}. This has the advantage of incorporating rotation of longitudes, if necessary.
+```{r}
+plotPercentiles(maps = probsMaps, backgroundMap = TRUE, rotateMap = TRUE)
+plotPercentiles(maps = shiftedMaps, backgroundMap = TRUE, rotateMap = FALSE)
+```
+
+## Workflow type D: extract one variable from multi-variable files, calculate CDF and plot quantiles
+
 Define the data folder
 ```{r}
-setwd("/var/tmp/moc0/geff/results/")
 dirs <- "/var/tmp/moc0/geff/data/"
-myVar <- "fwi"
-ncfile <- paste0(myVar,".nc")
+varname <- "fwi"
+ncfile <- paste0(varname,".nc")
 ```
 
 Merge all the files (with name starting with *startingString*) over the time dimension
 ```{r}
 mergedFile <- mergetime(dirs = dirs,
-                        varname = myVar, 
+                        varname = varname, 
                         startingString = "",
                         recursive = TRUE, 
                         outFile = ncfile)
 ```
 
-In order to conveniently plot the results, this map should be shifted
-```{r}
-# shift the file horizontally
-shiftedFile <- shiftMap(inFile = ncfile, 
-                        outFile = paste0(tools::file_path_sans_ext(ncfile),
-                                         "_shifted.nc"))
-```
-
 Calculate CDF and percentiles
 ```{r}
-listOfMaps <- getGriddedCDF(shiftedFile)
+listOfMaps <- getGriddedCDF(mergedFile)
 ```
 
 Plot maps
 ```{r}
-plotPercentiles(listOfMaps)
+plotPercentiles(maps = listOfMaps, rotateMap = TRUE)
 ```
 
-## Workflow type C: plot from pre-calculated percentiles in nc files
-Define the working directory
+## Workflow type E: mask unrealistic values
+In absence of vegetation the risk of ignition reduces to zero, regardless of the state of the soil. To exclude these areas (deserts, glaciers, urban areas, etc.) we apply a mask to the raster map of percentiles calculated above. We identify non-vegetated areas using the fuel_model map provided by JRC. 
 ```{r}
-setwd("/var/tmp/moc0/geff/results/")
-```
+mergedFile <- "fwi.nc"
 
-List all the files to plot
-```{r}
-ifiles <- c("fwi_shifted_50.nc", "fwi_shifted_75.nc", 
-            "fwi_shifted_90.nc", "fwi_shifted_99.nc")
-```
-
-In order to conveniently plot the results, this map should be shifted
-```{r}
-# Generate a raster stack
-listOfMaps <- raster::stack(ifiles)
-```
-
-Plot maps
-```{r}
-p <- rasterVis::levelplot(listOfMaps, 
-                          col.regions = rev(grDevices::heat.colors(20)),
-                          colorkey = list(space = "right"))
-# Define a background map
-backgroundMap <- rworldmap::getMap(resolution = "low")
-p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
-```
-
-## Workflow type D: mask unrealistic values
-In absence of vegetation the risk of ignition reduces to zero, regardless of the state of the soil.
-To exclude these areas (deserts, glaciers, etc.) we apply a mask to the raster map of percentiles calculated above.
-
-We identify non-vegetated areas using the fuel_model map provided by JRC. 
-```{r}
-shiftMap(inFile = "/var/tmp/moc0/geff/clim_fuelmodel.nc_ggN256")
-fuelmodel <- raster::raster("/var/tmp/moc0/geff/clim_fuelmodel.nc_ggN256_shifted.nc")
-rasterVis::levelplot(fuelmodel)
-```
-In this map, water-barren-marsh-Snow and Ice-Urban-Agriculture-NoData are identified by the codes 21-27. Therefore we assume all the values from 0 to 20 are valid, above 21 should be masked.
-```{r}
-fuelmodel[fuelmodel > 20] <- NA
-rasterVis::levelplot(fuelmodel)
-# Looks good! This file is also saved in the data folder of this package
-# save(fuelmodel, file = "/home/mo/moc0/Repositories/caliver/data/fuelmodel.rda")
-# data("fuelmodel")
-```
-
-This layer can be used to mask any other raster, for instance the maps of fwi-dc-ffmc percentiles. Here is an example to mask fwi\_shifted
-```{r}
-ifiles <- c("fwi_shifted_50.nc", "fwi_shifted_75.nc", 
-            "fwi_shifted_90.nc", "fwi_shifted_99.nc")
-listOfMaps <- raster::stack(ifiles)
-maskedMaps <- raster::mask(listOfMaps, fuelmodel)
-
-p <- rasterVis::levelplot(maskedMaps, 
-                          col.regions = rev(grDevices::heat.colors(20)),
-                          colorkey = list(space = "right"), 
-                          names.attr = ifiles)
-# Define a background map
-backgroundMap <- rworldmap::getMap(resolution = "low")
-p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
-```
-
-## Workflow type E: visualise results for the European bounding box
-All the maps created with this package can be generated for a particular region.
-The example below shows how to plot fwi percentiles for the European bounding box
-```{r}
-# Define the extent
-e <- regionalBBOX(region = "Europe")
-# Crop the global file to Europe's extent
-croppedStack <- raster::crop(maskedMaps, e)
-
-# In Europe the saturation is expected to be below 50, therefore we tweak the map to ignore higher values
-# croppedStack[croppedStack > 50] <- NA
-p <- rasterVis::levelplot(croppedStack, 
-                          col.regions = rev(grDevices::heat.colors(20)),
-                          colorkey = list(space = "right"), 
-                          names.attr = ifiles)
-# Define a background map
-backgroundMap <- rworldmap::getMap(resolution = "low")
-p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
-```
-
-## Workflow type F: visualise results for Europe only (using GFED basis regions)
-The example below shows how to plot fwi percentiles for Europe using an irregular polygon provided by the basis regions (available here: www.globalfiredata.org/data.html)
-```{r}
-# Download one of the GFED4 files
-fname <- tempfile()
-download.file(url = "http://www.falw.vu/~gwerf/GFED/GFED4/GFED4.1s_1997.hdf5",
-              destfile = fname)
-# source("http://bioconductor.org/biocLite.R")
-# biocLite("rhdf5")
-library("rhdf5")
-# list content
-h5ls(fname)
-# estract only the basis regions
-basis_regions <- h5read(file = fname, name = "ancill/basis_regions")
-# convert them to raster, transpose x and y, fix the extent, resample and set 0s to NA
-basis_regions <- raster::raster(basis_regions)
-basis_regions <- raster::t(basis_regions)
-raster::extent(basis_regions) <- raster::extent(maskedMaps)
-basis_regions[basis_regions == 0] <- NA
-basis_regions@crs <- maskedMaps@crs
-#  Reproject using the attributes of the low res raster for output
-GFEDregions <- projectRaster(from = basis_regions , to = maskedMaps, method = "bilinear")
-GFEDregions <- resample(GFEDregions, maskedMaps, method = "ngb")
+maskedMaps <- getGriddedCDF(ncfile = mergedFile, 
+                            probs = c(50, 75, 90, 99), 
+                            mask = "fuel_model")
 # Plot
-rasterVis::levelplot(GFEDregions)
-raster::plot(GFEDregions)
-# Looks good! This file is also saved in the data folder of this package
-# save(GFEDregions, file = "/home/mo/moc0/Repositories/caliver/data/GFEDregions.rda")
-# data("GFEDregions")
-
-# Mask&Crop the global file to Europe's extent
-maskedEurope <- raster::mask(maskedMaps, regionalMask(region = "Europe"))
-croppedEurope <- raster::crop(maskedEurope, regionalBBOX(region = "Europe"))
-
-p <- rasterVis::levelplot(croppedEurope, 
-                          col.regions = rev(grDevices::heat.colors(20)),
-                          colorkey = list(space = "right"))
-# Define a background map
-backgroundMap <- rworldmap::getMap(resolution = "low")
-p + latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
+plotPercentiles(maps = maskedMaps, rotateMap = TRUE)
 ```
+
+The layer "fuel\_model" is sored in the data folder of the caliver package and can be used to mask any other raster, e.g. the maps of fwi-dc-ffmc percentiles.
+
+## Workflow type F: visualise the 99th percentile for Europe only (using GFED basis regions)
+The example below shows how to plot fwi percentiles for Europe using an irregular polygon provided by the GFED basis regions (available here: www.globalfiredata.org/data.html)
+```{r}
+mergedFile <- "fwi.nc"
+
+# Mask & crop
+croppedMaps <- getGriddedCDF(ncfile = mergedFile, 
+                             probs = 99,
+                             mask = "fuel_model",
+                             region = "EURO")
+
+# Plot
+plotPercentiles(maps = croppedMaps, backgroundMap = TRUE, rotateMap = FALSE)
+plotPercentiles(maps = croppedMaps, backgroundMap = FALSE, 
+                rotateMap = TRUE, cropMap = TRUE, region = "EURO")
+```
+
+Note that to centre the map to Europe we need to crop the map twice!
 
 ## Workflow type G: calculate CDF by region
 The first step is to get a map for a reasonable number of percentiles so that the CDF can be constructed smoothly
 ```{r}
-# Set working directory
-setwd("/var/tmp/moc0/geff/CDF")
-varname <- "ffmc"
+library(ggplot2)
 
-probs <- c(seq(5,95, by = 5),99)
-ncfile <- paste0("/var/tmp/moc0/geff/results/", varname, "_shifted.nc")
-# Calculate percentiles (globally)
-listOfMaps <- getGriddedCDF(ncfile = ncfile, probs = probs)
+# Define the input data folder (this contains all GEFF-reanalysis data)
+dirs <- "/var/tmp/moc0/geff/data/"
 
 # Define the list of regions
 regions <- c("GLOB", "BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO", 
              "MIDE", "NHAF", "SHAF", "BOAS", "CEAS", "SEAS", "EQAS", "AUST")
-# Then create CDF curves by averaging the percentiles over a given area
-CDF <- data.frame(matrix(NA, ncol = length(regions) + 1, nrow = length(probs)))
-names(CDF) <- c("percentile", regions)
-CDF$percentile <- probs
+
 data(GFEDregions)
 data(fuelmodel)
-
-for (region in regions){
-  print(region)
-  j <- which(names(CDF) == region) # counter over the columns
-  # Mask the percentile maps using regional masks
-  for (prob in probs){
-    i <- which(CDF$percentile == prob)
-    globalMap <- raster::raster(paste0(varname, "_shifted_", prob, ".nc"))
-    globalMap_fuelonly <- raster::mask(globalMap, fuelmodel)
-    if (region == "GLOB"){
-      maskedMap <- globalMap_fuelonly
-    }else{
-      regionMap <- regionalMask(region)
-      maskedMap <- raster::mask(globalMap_fuelonly, regionMap)
+  
+for (varname in c("fwi", "dc", "ffmc")){
+  
+  ncfile <- paste0(varname,".nc")
+  
+  # Merge all the files (with name starting with *startingString*) 
+  # over the time dimension
+  mergedFile <- mergetime(dirs = dirs,
+                          varname = varname,
+                          startingString = "",
+                          recursive = TRUE,
+                          outFile = ncfile)
+  
+  # Set the list of probabilities to calculate
+  probs <- c(seq(5,95, by = 5),99)
+  ncfile <- paste0(getwd(), "/", varname, ".nc")
+  # Calculate percentiles (globally)
+  listOfMaps <- getGriddedCDF(ncfile = ncfile, probs = probs)
+  
+  # Then create CDF curves by averaging the percentiles over a given area
+  CDF <- data.frame(matrix(NA, 
+                           ncol = length(regions) + 1, 
+                           nrow = length(probs)))
+  names(CDF) <- c("percentile", regions)
+  CDF$percentile <- probs
+  
+  for (region in regions){
+    
+    print(region)
+    j <- which(names(CDF) == region) # counter over the columns
+    
+    # Mask the percentile maps using regional masks
+    for (prob in probs){
+      
+      i <- which(CDF$percentile == prob)
+      globalMap <- raster::raster(paste0(varname, "_", prob, ".nc"))
+      globalMap_fuelonly <- raster::mask(globalMap, fuelmodel)
+      
+      if (region == "GLOB"){  
+        maskedMap <- globalMap_fuelonly
+      }else{
+        regionMap <- regionalMask(region)
+        maskedMap <- raster::mask(globalMap_fuelonly, regionMap)
+      }
+      
+      CDF[i, j] <- round(mean(maskedMap@data@values, na.rm=TRUE), 3)
+      
     }
-    CDF[i, j] <- mean(as.matrix(maskedMap), na.rm=TRUE)
+    
   }
-}
-saveRDS(CDF, paste0(varname, "_CDF.rds"))
+  saveRDS(CDF, paste0(varname, "_CDF.rds"))
 
-library(ggplot2)
-library(reshape2)
-CDFmelt <- melt(data = CDF, id.vars = names(CDF)[1])
-ggplot(data = CDFmelt, aes(x=value, y=percentile)) + 
-  geom_line(aes(colour=variable)) + 
-  ggtitle("CDF by GFED basis regions")
+  CDFmelt <- reshape2::melt(data = CDF, id.vars = names(CDF)[1])
+  ggplot(data = CDFmelt, aes(x=value, y=percentile)) +
+    geom_line(aes(colour=variable)) + 
+    ggtitle("CDF by GFED basis regions")
+}
 ```
 
 ## Workflow type H: calculate thresholds by region
@@ -312,5 +262,61 @@ for (varname in c("fwi", "dc", "ffmc")){
   i <- i + 4
 }
 
-thresholds[,3:17] <- round(thresholds[,3:17],2)
+thresholds[,3:17] <- thresholds[,3:17]
 saveRDS(thresholds, "thresholds.RDS")
+```
+
+## Workflow type I: validate burned areas
+```{r}
+# Set working directory
+setwd("/var/tmp/moc0/geff/observations")
+
+obs <- mergetime(dirs = getwd(),
+                 varname = "BurnedArea", startingString = "",
+                 recursive = FALSE, outFile = "BurnedArea.nc")
+obs <- raster::brick(obs)
+# Aggregate every 4 cells to match resolution of FWI layer
+obs_aggregated <- raster::aggregate(obs, fact = 4, fun=mean)
+# saveRDS(obs_aggregated, "obs_aggregated.rds")
+# obs_aggregated <- readRDS("obs_aggregated.rds")
+
+for (thresholdFWI in c(50, 75, 90, 99)){
+  
+  i <- which(c(50, 75, 90, 99) == thresholdFWI)
+  
+  fwi <- raster::raster(paste0("/var/tmp/moc0/geff/results/fwi_", 
+                               thresholdFWI, ".nc"))
+  
+  if (thresholdFWI == 50) {
+    obs_aggregated_resampled <- raster::resample(obs_aggregated, fwi)
+    # Check rasters have same extent, neede for comparisons
+    # raster::compareRaster(obs_aggregated_resampled, fwi)
+    saveRDS(obs_aggregated_resampled, "obs_aggregated_resampled.rds")
+    # obs_aggregated_resampled <- readRDS("obs_aggregated_resampled.rds")
+    
+    thresholdBurntArea <- 20
+    burnt <- raster::calc(obs_aggregated_resampled,
+                          function(x){ifelse(test = x < thresholdBurntArea/100,
+                                             yes = 0, no = 1)})
+    burnt_sum <- raster::stackApply(x = burnt, indices = 1, fun = sum)
+    
+    burnt <- data.frame(as.vector(matrix(burnt_sum)))
+    idx <- which(burnt > 0)
+    names(burnt) <- "BurnedCount"
+    burnt$BurnedAreas <- FALSE
+    burnt$BurnedAreas[idx] <- TRUE
+  }
+  
+  burnt <- cbind(burnt, as.vector(matrix(fwi)))
+  names(burnt)[2+i] <- paste0("FWI", thresholdFWI)
+}
+
+library(ggplot2)
+library(reshape2)
+burntMelt <- melt(burnt, id.vars = c("BurnedCount", "BurnedAreas"))
+saveRDS(burntMelt, "burntMelt.rds")
+# burntMelt <- readRDS("burntMelt.rds")
+ggplot(burntMelt, aes(x=value, fill=BurnedAreas)) + 
+  geom_density(alpha=.3, color = NA) + 
+  facet_wrap(~ variable, scales = "free_y") + theme_bw() + xlab("")
+```

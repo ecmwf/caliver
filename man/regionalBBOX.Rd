@@ -4,23 +4,26 @@
 \alias{regionalBBOX}
 \title{Define regional bounding box extent}
 \usage{
-regionalBBOX(region = "Globe", lonRange = "-180/+180")
+regionalBBOX(region = "Globe", lonRange = "0/360")
 }
 \arguments{
-\item{region}{string of characters describing the region. It can only assume the 12 values listed below:
+\item{region}{string of characters describing the region. It can only assume the 15 values listed below:
 \itemize{
- \item{"Globe"}{or global} - default extent
- \item{"North America"}{or NAme}
- \item{"Central America"}{or CAme}
- \item{"South America"}{or SAme}
- \item{"Europe"}{or Euro}
- \item{"North Africa"}{or NHAf}
- \item{"South Africa"}{or SHAf}
- \item{"North Asia"}{or NAsi}
- \item{"South Asia"}{or SAsi}
- \item{"Tropical Asia"}{or TAsi}
- \item{"Australia"}{or Aust}
- \item{"East of Moscow"}{or EoMo}
+  \item{"Global"}{or GLOB}
+ \item{"Boreal North America"}{or BONA}
+ \item{"Temperate North America"}{or TENA}
+ \item{"Central America"}{or CEAM}
+ \item{"Northern Hemisphere South America"}{or NHSA}
+ \item{"Southern Hemisphere South America"}{or SHSA}
+ \item{"Europe"}{or EURO}
+ \item{"Middle East"}{or MIDE}
+ \item{"Northern Hemisphere Africa"}{or NHAF}
+ \item{"Southern Hemisphere Africa"}{or SHAF}
+ \item{"Boreal Asia"}{or BOAS}
+ \item{"Central Asia"}{or CEAS}
+ \item{"Southeast Asia"}{or SEAS}
+ \item{"Equatorial Asia"}{or EQAS}
+ \item{"Australia and New Zealand"}{or AUST}
 }}
 
 \item{lonRange}{Longitude can be defined in the range "-180/+180" (default) or "0/360".}

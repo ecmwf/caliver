@@ -2,22 +2,25 @@
 #'
 #' @description This function defines the regional bounding box extent of a map given the name of the region
 #'
-#' @param region string of characters describing the region. It can only assume the 12 values listed below:
+#' @param region string of characters describing the region. It can only assume the 15 values listed below:
 #' \itemize{
-##'  \item{"Globe"}{or global} - default extent
-##'  \item{"North America"}{or NAme}
-##'  \item{"Central America"}{or CAme}
-##'  \item{"South America"}{or SAme}
-##'  \item{"Europe"}{or Euro}
-##'  \item{"North Africa"}{or NHAf}
-##'  \item{"South Africa"}{or SHAf}
-##'  \item{"North Asia"}{or NAsi}
-##'  \item{"South Asia"}{or SAsi}
-##'  \item{"Tropical Asia"}{or TAsi}
-##'  \item{"Australia"}{or Aust}
-##'  \item{"East of Moscow"}{or EoMo}
+#'   \item{"Global"}{or GLOB}
+##'  \item{"Boreal North America"}{or BONA}
+##'  \item{"Temperate North America"}{or TENA}
+##'  \item{"Central America"}{or CEAM}
+##'  \item{"Northern Hemisphere South America"}{or NHSA}
+##'  \item{"Southern Hemisphere South America"}{or SHSA}
+##'  \item{"Europe"}{or EURO}
+##'  \item{"Middle East"}{or MIDE}
+##'  \item{"Northern Hemisphere Africa"}{or NHAF}
+##'  \item{"Southern Hemisphere Africa"}{or SHAF}
+##'  \item{"Boreal Asia"}{or BOAS}
+##'  \item{"Central Asia"}{or CEAS}
+##'  \item{"Southeast Asia"}{or SEAS}
+##'  \item{"Equatorial Asia"}{or EQAS}
+##'  \item{"Australia and New Zealand"}{or AUST}
 ##' }
-##' @param lonRange Longitude can be defined in the range "-180/+180" (default) or "0/360".
+#' @param lonRange Longitude can be defined in the range "-180/+180" (default) or "0/360".
 #'
 #' @export
 #'
@@ -28,151 +31,104 @@
 #'
 
 
-regionalBBOX <- function(region = "Globe", lonRange="-180/+180"){
+regionalBBOX <- function(region = "Globe", lonRange="0/360"){
   
-  if (region == "Globe" | region == "global") {
+  if (region == "Global" | region == "GLOB") {
     minimumLatitude <- -90
     maximumLatitude <- 90
     minimumLongitude <- 0
     maximumLongitude <- 360
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
   }
-  if (region == "North America" | region == "NAme") {
-    minimumLatitude <- 30
-    maximumLatitude <- 75
+  if (region == "Boreal North America" | region == "BONA") {
+    minimumLatitude <- 40
+    maximumLatitude <- 80
     minimumLongitude <- 190
     maximumLongitude <- 330
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
   }
-  if (region == "Central America" | region == "CAme") {
+  if (region == "Temperate North America" | region == "TENA") {
+    minimumLatitude <- 20
+    maximumLatitude <- 55
+    minimumLongitude <- 190
+    maximumLongitude <- 330
+  }
+  if (region == "Central America" | region == "CEAM") {
     minimumLatitude <- 0
-    maximumLatitude <- 30
-    minimumLongitude <- 190
-    maximumLongitude <- 330
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
+    maximumLatitude <- 40
+    minimumLongitude <- 220
+    maximumLongitude <- 300
   }
-  if (region == "South America" | region == "SAme") {
+  if (region == "Northern Hemisphere South America" | region == "NHSA") {
+    minimumLatitude <- -5
+    maximumLatitude <- 15
+    minimumLongitude <- 270
+    maximumLongitude <- 320
+  }
+  if (region == "Southern Hemisphere South America" | region == "SHSA") {
     minimumLatitude <- -60
-    maximumLatitude <- 0
-    minimumLongitude <- 190
+    maximumLatitude <- 5
+    minimumLongitude <- 270
     maximumLongitude <- 330
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
   }
-  if (region == "Europe" | region == "Euro") {
+  if (region == "Europe" | region == "EURO") {
     minimumLatitude <- 30
     maximumLatitude <- 75
-    minimumLongitude <- 330
-    maximumLongitude <- 60
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
+    minimumLongitude <- 335
+    maximumLongitude <- 35
   }
-  if (region == "North Africa" | region == "NHAf") {
-    minimumLatitude <- 0
-    maximumLatitude <- 30 
-    minimumLongitude <- 330
-    maximumLongitude <- 60
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
-  }
-  if (region == "South Africa" | region == "SHAf") {
-    minimumLatitude <- -35
-    maximumLatitude <- 0
-    minimumLongitude <- 330
-    maximumLongitude <- 60
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
-  }
-  if (region == "North Asia" | region == "NAsi") {
-    minimumLatitude <- 30
-    maximumLatitude <- 75
-    minimumLongitude <- 60
-    maximumLongitude <- 190
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
-  }
-  if (region == "South Asia" | region == "SAsi") {
+  if (region == "Middle East" | region == "MIDE") {
     minimumLatitude <- 10
-    maximumLatitude <- 30
+    maximumLatitude <- 45
+    minimumLongitude <- 15
+    maximumLongitude <- 75
+  }
+  if (region == "Northern Hemisphere Africa" | region == "NHAF") {
+    minimumLatitude <- -5
+    maximumLatitude <- 40 
+    minimumLongitude <- 330
+    maximumLongitude <- 60
+  }
+  if (region == "Southern Hemisphere Africa" | region == "SHAF") {
+    minimumLatitude <- -40
+    maximumLatitude <- 5
+    minimumLongitude <- 360
+    maximumLongitude <- 60
+  }
+  if (region == "Boreal Asia" | region == "BOAS") {
+    minimumLatitude <- 40
+    maximumLatitude <- 80
+    minimumLongitude <- 25
+    maximumLongitude <- 195
+  }
+  if (region == "Central Asia" | region == "CEAS") {
+    minimumLatitude <- 15
+    maximumLatitude <- 65
+    minimumLongitude <- 15
+    maximumLongitude <- 160
+  }
+  if (region == "Southeast Asia" | region == "SEAS") {
+    minimumLatitude <- 0
+    maximumLatitude <- 45
+    minimumLongitude <- 45
+    maximumLongitude <- 150
+  }
+  if (region == "Equatorial Asia" | region == "EQAS") {
+    minimumLatitude <- -15
+    maximumLatitude <- 15
     minimumLongitude <- 60
     maximumLongitude <- 190
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
   }
-  if (region == "Tropical Asia" | region == "TAsi") {
-    minimumLatitude <- -10
-    maximumLatitude <- 10
-    minimumLongitude <- 60
-    maximumLongitude <- 190
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
-  }
-  if (region == "Australia" | region == "Aust") {
+  if (region == "Australia and New Zealand" | region == "AUST") {
     minimumLatitude <- -50
-    maximumLatitude <- -10
-    minimumLongitude <- 60
+    maximumLatitude <- -5
+    minimumLongitude <- 100
     maximumLongitude <- 190
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
   }
-  if (region == "East of Moscow" | region == "EoMo") {
-    minimumLatitude <- 50
-    maximumLatitude <- 60
-    minimumLongitude <- 35
-    maximumLongitude <- 55
-    if (lonRange == "-180/+180"){
-      minimumLongitude <- ifelse(minimumLongitude > 180, 
-                                 minimumLongitude - 360, minimumLongitude)
-      maximumLongitude <- ifelse(maximumLongitude > 180, 
-                                 maximumLongitude - 360, maximumLongitude)
-    }
+  
+  if (lonRange == "-180/+180"){
+    minimumLongitude <- ifelse(minimumLongitude > 180, 
+                               minimumLongitude - 360, minimumLongitude)
+    maximumLongitude <- ifelse(maximumLongitude > 180, 
+                               maximumLongitude - 360, maximumLongitude)
   }
   
   return(raster::extent(c(minimumLongitude, maximumLongitude, 

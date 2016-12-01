@@ -4,12 +4,17 @@
 \alias{getGriddedCDF}
 \title{Calculate CDF and percentiles}
 \usage{
-getGriddedCDF(ncfile, probs = c(50, 75, 90, 99))
+getGriddedCDF(ncfile, probs = c(50, 75, 90, 99), mask = NULL,
+  region = "GLOB")
 }
 \arguments{
 \item{ncfile}{is the name of the file(path) to read}
 
 \item{probs}{numeric vector of probabilities with values in [0,1] listing which percentiles should be calculated}
+
+\item{mask}{string identifying the name of the mask. By default it is set to NULL, which means no mask is applied. The only mask implemented at the moment is the "fuel_model" provided by JRC (containing non-vegetated areas).}
+
+\item{region}{string identifying the name of the region of interest. By default it is set to provide global coverage ("GLOB") but it can also be used to focus on the reagion listed in \code{regionalMask}.}
 }
 \value{
 list containing all the maps of fwi percentiles

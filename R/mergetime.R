@@ -38,10 +38,14 @@ mergetime <- function(dirs = NULL, varname = NULL, startingString = "",
   }
   
   if (startingString == "") {
-    ifiles <- paste(list.files(path = dirs,
-                               recursive = recursive, 
-                               full.names = TRUE), 
-                    collapse = " ")
+    if (recursive == TRUE){
+      ifiles <- paste(list.files(path = dirs,
+                                 recursive = recursive, 
+                                 full.names = TRUE), 
+                      collapse = " ")
+    }else{
+      ifiles <- paste0(dirs, "/*.nc")
+    }
   }else{
     ifiles <- paste(list.files(path = dirs, 
                                pattern = paste0(startingString, ".*.nc$"),

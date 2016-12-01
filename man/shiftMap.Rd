@@ -4,12 +4,13 @@
 \alias{shiftMap}
 \title{Shift map}
 \usage{
-shiftMap(inFile, outFile = NULL)
+shiftMap(inFile)
 }
 \arguments{
-\item{inFile}{input file to be shifted}
-
-\item{outFile}{file path where to save the shifted file}
+\item{inFile}{input file(s) to be shifted}
+}
+\value{
+A shifted file for ech input file name
 }
 \description{
 This function shifts a netcdf file to be in the following bounding box: -180,180-90,90

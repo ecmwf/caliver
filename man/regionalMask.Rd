@@ -7,7 +7,7 @@
 regionalMask(region = "GLOB")
 }
 \arguments{
-\item{region}{string of characters describing the region. It can only assume the 12 values listed below:
+\item{region}{string of characters describing the region. It can only assume the 15 values listed below:
 \itemize{
   \item{"Global"}{or GLOB}
  \item{"Boreal North America"}{or BONA}
