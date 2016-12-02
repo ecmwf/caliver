@@ -56,7 +56,7 @@ plotPercentiles <- function(maps,
     # Define a background map
     backgroundMap <- rworldmap::getMap(resolution = "low")
     p <- p + 
-      latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
+      latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col="darkgray"))
     
     print(p)
     

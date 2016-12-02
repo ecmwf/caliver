@@ -14,7 +14,7 @@ This function reads a RISICO output file and returns a raster map
 }
 \examples{
 \dontrun{
-  r_values <- readRisicoBinary('data/RISICO2015_VPPF_201611140300')
+  r_values <- readRisicoBinary("data/RISICO2015_VPPF_201611140300")
 }
 
 }

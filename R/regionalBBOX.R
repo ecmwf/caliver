@@ -30,7 +30,6 @@
 #' }
 #'
 
-
 regionalBBOX <- function(region = "Globe", lonRange="0/360"){
   
   if (region == "Global" | region == "GLOB") {

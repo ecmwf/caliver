@@ -64,4 +64,4 @@ NULL
 #' 
 #' data(fuelmodel)
 #' 
-'fuelmodel'
+"fuelmodel"

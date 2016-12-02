@@ -96,7 +96,7 @@ p <- rasterVis::levelplot(raster::stack(shiftedMaps),
 # Define a background map
 backgroundMap <- rworldmap::getMap(resolution = "low")
 p <- p + 
-  latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col='darkgray'))
+  latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col="darkgray"))
 
 print(p)
 ```
@@ -328,17 +328,17 @@ library(maptools)
 
 setwd("/home/mo/moc0/Mirko/")
 
-source('readRisicoBinary.R')
-source('getPercRiskIndex.R')
+source("readRisicoBinary.R")
+source("getPercRiskIndex.R")
 
-filename1 <- 'data/RISICO2015_VPPF_201611140300'
-filename2 <- 'data/RISICO2015_VPPF_201611140600'
+filename1 <- "data/RISICO2015_VPPF_201611140300"
+filename2 <- "data/RISICO2015_VPPF_201611140600"
 r_values_1 <- readRisicoBinary(filename1)
 r_values_2 <- readRisicoBinary(filename2)
 
 r_stack <- stack(c(r_values_1, r_values_2))
 
-p_italy <- readShapePoly('data/province_ISTAT2001.shp')
+p_italy <- readShapePoly("data/province_ISTAT2001.shp")
 
 map("worldHires","Italy", col="gray90", fill=TRUE)
 plot(r_values_1, add=T)
@@ -348,7 +348,7 @@ plot(r_values_2, add=F)
 plot(p_italy, add=T)
 
 # Extract raster values to list object
-r.index = getPercRiskIndex(r_stack, p_italy, perc.val=50, mod='lt')
+r.index = getPercRiskIndex(r_stack, p_italy, perc.val=50, mod="lt")
 p_italy@data$VALUE <- r.index
 
 vec_val <- unlist(p_italy@data$VALUE)

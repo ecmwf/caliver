@@ -8,19 +8,19 @@
 #'
 #' @examples
 #' \dontrun{
-#'   r_values <- readRisicoBinary('data/RISICO2015_VPPF_201611140300')
+#'   r_values <- readRisicoBinary("data/RISICO2015_VPPF_201611140300")
 #' }
 #'
 
 readRisicoBinary <- function(filename){
   
-	myFile <- gzfile(filename, 'rb')
+	myFile <- gzfile(filename, "rb")
 	grid_type <- readBin(myFile, integer(), 1)
 
 	if (grid_type == 1){
 	  
 		#regular grid
-		grid_size <- readBin(myFile, 'integer', 2, size = 4)
+		grid_size <- readBin(myFile, "integer", 2, size = 4)
 		n_values <- grid_size[1]* grid_size[2]
 		
 		lats <- readBin(myFile, "double", 2, size = 4)

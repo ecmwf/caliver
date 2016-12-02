@@ -6,18 +6,18 @@
 #' @param r_stack is the raster or raster stack
 #' @param p_shape is the shapefile on which to aggregate the values
 #' @param perc.val is the percentile value used as a threshold
-#' @param mod defines if the values considered for the mean are above ('gt') or below ('lt') the threshold
+#' @param mod defines if the values considered for the mean are above ("gt") or below ("lt") the threshold
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#'   r.index = getPercRiskIndex(r_stack, poly, perc.val=50, mod='lt')
+#'   r.index = getPercRiskIndex(r_stack, poly, perc.val=50, mod="lt")
 #'   poly@data$VALUE <- r.index
 #' }
 #'
 
-getPercRiskIndex <- function(r_stack, p_shape, perc.val = 75, mod = 'gt'){
+getPercRiskIndex <- function(r_stack, p_shape, perc.val = 75, mod = "gt"){
   
 	r.vals <- raster::extract(r_stack, p_shape)
 
