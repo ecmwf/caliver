@@ -50,13 +50,17 @@ setwd("/var/tmp/moc0/geff/results")
 ```
 
 ## Workflow type A: decompress single variable files and merge them over the time dimension
-Define the data folder and decompress all the files in a given folder (from *.nc.gz to *.nc)
+GEFF output files may be stored in a bunch of compressed archives, typically in \*.gz format. If each file contains only one variable, this workflow can be used to decompress and merge all the files over the time dimension.
+The first step is to define the data folder containing the compressed archives and decompress them all. The operation is preformed by the __decompressGZ()__ function and will, by default, remove the compressed archive once the information has been extracted (from \*.nc.gz to \*.nc). If you wish to keep the *.gz files set the argument `keep = TRUE`.
+
 ```{r}
 decompressGZ(dirs = "/var/tmp/moc0/forestfire", keep = FALSE)
 ```
 
-Merge all the files (with name starting with *startingString*) over the time dimension
+Then, you can use the __mergetime()__ function to merge all the extracted files over the time dimension. By default the function mergetime will try to merge all the \*.nc files in the `dir` folder. If you want to restrict the operation to few files, you can use the argument `startingString`.
+
 ```{r}
+# Merge all the files (with name starting with *startingString*) over the time dimension
 mergedFile <- mergetime(dirs = "/var/tmp/moc0/forestfire", 
                         startingString = "geff_reanalysis_an_fwis_fwi_")
 ```
@@ -108,8 +112,9 @@ plotPercentiles(maps = shiftedMaps, backgroundMap = TRUE, rotateMap = FALSE)
 ```
 
 ## Workflow type D: extract one variable from multi-variable files, calculate CDF and plot quantiles
+GEFF output files may store multiple variables. This workflow can be used to extract one variable from multiple files and merge the information over the time dimension. Once the merged file is available it is possible to repeat the operations illustrated in workflows B and C to calculate quantiles and plot maps, respectively.
 
-Define the data folder
+The first step is to define the data folder where all the GEFF multi-variable files are stored (not in compressed format) and the name of the output file where to stored the merged data.
 ```{r}
 dirs <- "/var/tmp/moc0/geff/data/"
 varname <- "fwi"
@@ -136,7 +141,7 @@ plotPercentiles(maps = listOfMaps, rotateMap = TRUE)
 ```
 
 ## Workflow type E: mask unrealistic values
-In absence of vegetation the risk of ignition reduces to zero, regardless of the state of the soil. To exclude these areas (deserts, glaciers, urban areas, etc.) we apply a mask to the raster map of percentiles calculated above. We identify non-vegetated areas using the fuel_model map provided by JRC. 
+In absence of vegetation the risk of ignition reduces considerably, regardless of the state of the soil. To exclude these areas (deserts, glaciers, urban areas, etc.) we apply a mask to the raster map of percentiles calculated above. We identify non-vegetated areas using the fuel_model map provided by JRC. 
 ```{r}
 mergedFile <- "fwi.nc"
 
@@ -150,7 +155,7 @@ plotPercentiles(maps = maskedMaps, rotateMap = TRUE)
 The layer "fuel\_model" is sored in the data folder of the caliver package and can be used to mask any other raster, e.g. the maps of fwi-dc-ffmc percentiles.
 
 ## Workflow type F: visualise the 99th percentile for Europe only (using GFED basis regions)
-The example below shows how to plot fwi percentiles for Europe using an irregular polygon provided by the GFED basis regions (available here: www.globalfiredata.org/data.html)
+The example below shows how to plot pre-defined fwi percentiles for Europe using an irregular polygon provided by the GFED basis regions (available here: www.globalfiredata.org/data.html)
 ```{r}
 mergedFile <- "fwi.nc"
 
@@ -169,7 +174,7 @@ plotPercentiles(maps = croppedMaps, backgroundMap = FALSE,
 Note that to centre the map to Europe we need to crop the map twice!
 
 ## Workflow type G: calculate CDF by region
-The first step is to get a map for a reasonable number of percentiles so that the CDF can be constructed smoothly
+This workflow shows a generalisation of workflow F, in which we can calculate the CDF (using various quantiles) by region. The first step is to get a map for a reasonable number of percentiles so that the CDF can be constructed smoothly
 ```{r}
 library(ggplot2)
 
@@ -242,6 +247,7 @@ for (varname in c("fwi", "dc", "ffmc")){
 ```
 
 ## Workflow type H: calculate thresholds by region
+Some pre-defined quantiles can be used to define risk thresholds. In this workflow we show the case in which low-medium-high-extreme risk correspond to the 50th-75th-90th-99th percentile, respectively.
 ```{r}
 # Set working directory
 setwd("/var/tmp/moc0/geff/CDF")
@@ -267,6 +273,14 @@ saveRDS(thresholds, "thresholds.RDS")
 ```
 
 ## Workflow type I: validate burned areas
+If there are observations of actual fire events, these can be used to validate the thresholds defined in workflow H. The methodology we use here is as follows:
+  
+  1. We merge all the fire events (by day - global extension) in one 3 dimensional (lat-lon-time) file (raster brick) in which the only variable measured is called "BurnedArea"
+  2. If the raster brick containing observations has different resolution (e.g. 4 times higher) and extent compared to the FWI threshold, we aggregate (using the mean of the percentage coverage) and resample the observations.
+  3. Create a single layer raster in which each cell can assume only binary values: 0 if thre was no fire event over time, 1 if there has been at least one event (with burned area > 20% of the cell extent) over time.
+  4. Summarise data in a data.frame where the first column is the FWI and the second column is the burned area outcome (0/1)
+  5. Generate density plots groupped by FWI threshold.
+  
 ```{r}
 # Set working directory
 setwd("/var/tmp/moc0/geff/observations")
@@ -321,7 +335,9 @@ ggplot(burntMelt, aes(x=value, fill=BurnedAreas)) +
   facet_wrap(~ variable, scales = "free_y") + theme_bw() + xlab("")
 ```
 
-## Workflow type J: ...(TO DO: Add info on workflow)
+## Workflow type J: get example risk maps for Italy
+This example shows how to read the RISICO Binary files for two timesteps and aggregate the values in space and time using the `getPercRiskIndex()' function over the Italian Provinces (available as shapefile). Finally, it visualises the output and the input on a map.
+
 ```{r}
 library(mapdata)
 library(maptools)
