@@ -23,6 +23,15 @@ before_install:
   - make
   - sudo make install
   - cd
+  - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar.gz
+  - tar -xvf hdf5-1.8.18.tar.gz
+  - cd hdf5-1.8.18
+  - H5DIR=/usr/local
+  - ./configure --with-zlib=${ZDIR} --prefix=${H5DIR}
+  - make 
+  - make check
+  - sudo make install
+  - cd
   - wget https://github.com/Unidata/netcdf-c/archive/v4.4.1.tar.gz
   - tar zxvf v4.4.1.tar.gz
   - cd netcdf-c-4.4.1
