@@ -1,8 +1,35 @@
 context("mergetime")
 
-## TODO: Rename context
-## TODO: Add more tests
-
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("mergetime works", {
+  
+  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
+  
+  # list.files(myTempDir)
+  
+  if (length(grep("test", list.files(myTempDir))) > 0) {
+    file.remove(paste0(myTempDir, "/", 
+                       list.files(myTempDir)[grep("test", 
+                                                  list.files(myTempDir))]))
+  }
+  
+  inFile <- system.file(package = "caliver", "/extdata/testA.nc")
+  
+  if (file.exists(inFile) == TRUE) {
+    file.copy(from = inFile, to = paste0(myTempDir, "/testA.nc"))
+    file.copy(from = inFile, to = paste0(myTempDir, "/testB.nc"))
+  }
+  
+  mergedFile <- mergetime(dirs = myTempDir, 
+                          startingString = "test", 
+                          outFile = "outTest.nc",
+                          outDir = myTempDir)
+  
+  # print(mergedFile)
+  
+  x <- ncdf4::nc_open(mergedFile)
+  
+  expect_equal(x$dim$time$len, 2)
+  
+  file.remove(mergedFile)
+  
 })

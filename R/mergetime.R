@@ -7,6 +7,7 @@
 #' @param startingString string defining the beginning of the netcdf filenames (needed to exclude other files)
 #' @param recursive logical (TRUE by default). If set to TRUE it looks in folders and subfolders
 #' @param outFile filename where to store results
+#' @param outDir is the directory where outFile is saved, by default this is the working directory.
 #' 
 #' @export
 #'
@@ -17,13 +18,15 @@
 #'             varname = NULL,
 #'             startingString = "geff_reanalysis_an_fwis_fwi_",
 #'             recursive = TRUE,
-#'             outFile = "outfile.nc")
+#'             outFile = "outfile.nc",
+#'             outDir = getwd())
 #'             
 #' }
 #'
 
 mergetime <- function(dirs = NULL, varname = NULL, startingString = "", 
-                      recursive = TRUE, outFile = "outfile.nc"){  
+                      recursive = TRUE, 
+                      outFile = "outfile.nc", outDir = getwd()){  
   
   if(Sys.which("cdo")[[1]] == "") {
     
@@ -56,15 +59,15 @@ mergetime <- function(dirs = NULL, varname = NULL, startingString = "",
   
   if (is.null(varname)){
     system(paste0("cdo mergetime ", 
-                  ifiles, " ", getwd(), "/", outFile))
+                  ifiles, " ", outDir, "/", outFile))
   }else{
     # system(paste0("cdo mergetime -select,param=", varname, " ", 
-    #               ifiles, " ", getwd(), "/", outFile))
-    system(paste0("cdo select,name=", varname, " ", ifiles, " ", getwd(), "/", outFile))
+    #               ifiles, " ", outDir, "/", outFile))
+    system(paste0("cdo select,name=", varname, " ", ifiles, " ", outDir, "/", outFile))
   }
   
-  message(paste0("The files have been merged and the result is stored in: \n", getwd(), "/", outFile))
+  message(paste0("The files have been merged and the result is stored in: \n", outDir, "/", outFile))
   
-  return(paste0(getwd(), "/", outFile))
+  return(paste0(outDir, "/", outFile))
   
 }

@@ -1,8 +1,14 @@
 context("test-decompressGZ")
 
-## TODO: Rename context
-## TODO: Add more tests
-
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("decompression works", {
+  
+  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
+  
+  file.copy(from = system.file(package = "caliver", "/extdata/test.nc.gz"),  
+            to = paste0(myTempDir, "/test.nc.gz"))
+  
+  decompressGZ(dirs = myTempDir, keep = TRUE)
+  
+  expect_equal("test.nc" %in% list.files(myTempDir), TRUE)
+  
 })
