@@ -3,6 +3,7 @@
 #' @description This function shifts a netcdf file to be in the following bounding box: -180,180-90,90
 #'
 #' @param inFile input file(s) to be shifted
+#' @param outDir is the directory where the output nc file is saved, by default this is the working directory.
 #' 
 #' @return A shifted file for ech input file name
 #'
@@ -10,17 +11,20 @@
 #'
 #' @examples
 #' \dontrun{
-#'   shift(inFile = "temp.nc", outFile = "output.nc")
+#'   shiftMap(inFile = "temp.nc", outFile = "output.nc")
 #' }
 #'
 
-shiftMap <- function(inFile){
+shiftMap <- function(inFile, outDir = getwd()){
   
   outFilenames <- c()
   
   for (singleFile in inFile){
     
-    outFile <- paste0(tools::file_path_sans_ext(singleFile), "_shifted.nc")
+    # outFile <- paste0(tools::file_path_sans_ext(singleFile), "_shifted.nc")
+    outFile <- paste0(outDir, "/", 
+                      tools::file_path_sans_ext(basename(singleFile)), 
+                      "_shifted.nc")
     
     system(paste0("cdo sellonlatbox,-180,180,-90,90 ", singleFile, " ", outFile))
     

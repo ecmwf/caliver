@@ -1,8 +1,12 @@
 context("regionalBBOX")
 
-## TODO: Rename context
-## TODO: Add more tests
-
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("regionalBBOX works", {
+  
+  e <- regionalBBOX(region = "Europe")
+  
+  expect_equal(e@xmin, 335)
+  expect_equal(e@xmax, 35)
+  expect_equal(e@ymin, 30)
+  expect_equal(e@ymax, 75)
+  
 })

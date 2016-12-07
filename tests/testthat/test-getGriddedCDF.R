@@ -2,6 +2,16 @@ context("getGriddedCDF")
 
 test_that("getGriddedCDF works", {
   
-  # probsMaps <- getGriddedCDF(ncfile = mergedFile, probs = c(50, 75))
-  expect_equal(2 * 2, 4)
+  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
+  
+  inFile <- system.file(package = "caliver", "extdata/outTest.nc")
+  
+  probsMaps <- getGriddedCDF(ncfile = inFile, 
+                             probs = c(50, 75), 
+                             outDir = myTempDir)
+  
+  # list.files(myTempDir)
+  
+  expect_equal(length(grep("outTest", list.files(myTempDir))), 2)
+  
 })

@@ -4,10 +4,12 @@
 \alias{shiftMap}
 \title{Shift map}
 \usage{
-shiftMap(inFile)
+shiftMap(inFile, outDir = getwd())
 }
 \arguments{
 \item{inFile}{input file(s) to be shifted}
+
+\item{outDir}{is the directory where the output nc file is saved, by default this is the working directory.}
 }
 \value{
 A shifted file for ech input file name
@@ -17,7 +19,7 @@ This function shifts a netcdf file to be in the following bounding box: -180,180
 }
 \examples{
 \dontrun{
-  shift(inFile = "temp.nc", outFile = "output.nc")
+  shiftMap(inFile = "temp.nc", outFile = "output.nc")
 }
 
 }

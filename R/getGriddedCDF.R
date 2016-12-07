@@ -6,6 +6,7 @@
 #' @param probs numeric vector of probabilities with values in [0,1] listing which percentiles should be calculated
 #' @param mask string identifying the name of the mask. By default it is set to NULL, which means no mask is applied. The only mask implemented at the moment is the "fuel_model" provided by JRC (containing non-vegetated areas).
 #' @param region string identifying the name of the region of interest. By default it is set to provide global coverage ("GLOB") but it can also be used to focus on the reagion listed in \code{regionalMask}.
+#' @param outDir is the directory where the output nc files are saved, by default this is the working directory.
 #' 
 #' @return list containing all the maps of fwi percentiles
 #'
@@ -21,7 +22,8 @@
 getGriddedCDF <- function(ncfile, 
                           probs = c(50, 75, 90, 99),
                           mask = NULL,
-                          region = "GLOB"){
+                          region = "GLOB",
+                          outDir = getwd()){
   
   outList <- list()
   nameList <- c()
@@ -31,7 +33,7 @@ getGriddedCDF <- function(ncfile,
     
     fileName <- tools::file_path_sans_ext(basename(ncfile))
     
-    outFile <- paste0(getwd(), "/", fileName, "_", prob, ".nc")
+    outFile <- paste0(outDir, "/", fileName, "_", prob, ".nc")
     
     system(paste0("cdo timpctl,", prob, " ", ncfile, 
                   " -timmin ", ncfile, 

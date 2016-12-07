@@ -1,8 +1,19 @@
 context("shiftMap")
 
-## TODO: Rename context
-## TODO: Add more tests
-
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("shiftMap works", {
+  
+  inFile <- system.file(package = "caliver", "extdata/outTest.nc")
+  
+  x <- raster::raster(inFile)
+  
+  expect_equal(round(x@extent@xmin), 0)
+  expect_equal(round(x@extent@xmax), 360)
+  
+  myTempDir <- tempdir()
+  
+  y <- raster::raster(shiftMap(inFile = inFile, outDir = myTempDir))
+  
+  expect_equal(round(y@extent@xmin), -180)
+  expect_equal(round(y@extent@xmax), 180)
+  
 })
