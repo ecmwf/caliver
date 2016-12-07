@@ -4,7 +4,7 @@ test_that("getGriddedCDF works", {
   
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
   
-  inFile <- system.file(package = "caliver", "extdata/outTest.nc")
+  inFile <- system.file("extdata", "outTest.nc", package="caliver")
   
   probsMaps <- getGriddedCDF(ncfile = inFile, 
                              probs = c(50, 75), 

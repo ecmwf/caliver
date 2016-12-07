@@ -12,7 +12,7 @@ test_that("plotPercentiles works", {
                                                   list.files(myTempDir))]))
   }
   
-  inFile <- system.file(package = "caliver", "/extdata/testPercentile.nc")
+  inFile <- system.file("extdata", "testPercentile.nc", package="caliver")
   
   if (file.exists(inFile) == TRUE) {
     file.copy(from = inFile, to = paste0(myTempDir, "/testPercentile.nc"))

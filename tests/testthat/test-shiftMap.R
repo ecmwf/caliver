@@ -2,7 +2,7 @@ context("shiftMap")
 
 test_that("shiftMap works", {
   
-  inFile <- system.file(package = "caliver", "extdata/outTest.nc")
+  inFile <- system.file("extdata", "outTest.nc", package="caliver")
   
   x <- raster::raster(inFile)
   

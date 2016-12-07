@@ -55,7 +55,7 @@ getGriddedCDF <- function(ncfile,
       # In this map, water-barren-marsh-Snow and Ice-Urban-Agriculture-NoData 
       # are identified by the codes 21-27. Therefore we assume all the values 
       # from 0 to 20 are valid, while 21 and above should be masked.
-      load(system.file("data/fuelmodel.rda", package = "caliver"))
+      load(system.file("data", "fuelmodel.rda", package="caliver"))
       fuelmodel[fuelmodel > 20] <- NA
       maskedMaps <- raster::mask(raster::stack(outList), fuelmodel)
       
