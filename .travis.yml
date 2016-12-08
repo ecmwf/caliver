@@ -1,4 +1,5 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+# cdo at https://code.zmaw.de/projects/cdo/files
 
 language: r
 sudo: required
@@ -14,9 +15,9 @@ addons:
       - libhdf5-dev
   
 before_install:
-  - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
-  - tar zxvf cdo-1.7.0.tar.gz
-  - cd cdo-1.7.0
+  - wget https://code.zmaw.de/attachments/download/12760/cdo-1.7.2.tar.gz
+  - tar zxvf cdo-1.7.2.tar.gz
+  - cd cdo-1.7.2
   - ./configure --enable-netcdf4  --enable-zlib --with-netcdf=/usr/ --with-hdf5=/usr/
   - make check
   - sudo make install
