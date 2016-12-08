@@ -7,7 +7,7 @@ test_that("decompression works", {
   file.copy(from = system.file("extdata", "test.nc.gz", package="caliver"),  
             to = paste0(myTempDir, "/test.nc.gz"))
   
-  decompressGZ(dirs = myTempDir, keep = TRUE)
+  decompressGZ(dirs = myTempDir, keep = FALSE)
   
   expect_equal("test.nc" %in% list.files(myTempDir), TRUE)
   

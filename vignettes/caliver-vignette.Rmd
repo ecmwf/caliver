@@ -23,10 +23,12 @@ The package [caliver](https://cran.r-project.org/package=caliver) contains utili
 
 ## Dependencies and installation
 
-Install [cdo](https://code.zmaw.de/projects/cdo/wiki) and the following packages before attempting to install caliver:
+Install [cdo](https://code.zmaw.de/projects/cdo/wiki), [gunzip](http://www.gzip.org/), [gdal](http://www.gdal.org/), [netcdf4](http://www.unidata.ucar.edu/software/netcdf/) and the following packages before attempting to install caliver:
 
 ```{r}
-packs <- c("devtools", "rgdal", "sp", "leaflet", "testthat", "knitr", "rmarkdown")
+packs <- c("devtools", "graphics", "grDevices", "knitr", "latticeExtra", 
+           "raster", "rasterVis", "rgdal", "sp", 
+           "stats", "testthat", "rmarkdown", "rworldmap")
 new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 ```

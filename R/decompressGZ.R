@@ -18,7 +18,8 @@ decompressGZ <- function(dirs, keep = FALSE){
   # Decompress any gz files but keep originals
   for (i in list.files(path = dirs, pattern = "*.gz", full.names = TRUE)){
     
-    if (substr(i, nchar(i) - 2, nchar(i)) == ".gz"){
+    if (substr(i, nchar(i) - 2, nchar(i)) == ".gz" & 
+        Sys.which("gunzip")[[1]] != ""){
       
       if (keep == TRUE){
         

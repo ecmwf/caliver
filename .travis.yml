@@ -26,7 +26,6 @@ before_install:
   - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar.gz
   - tar -xvf hdf5-1.8.18.tar.gz
   - cd hdf5-1.8.18
-  - H5DIR=/usr/local
   - ./configure --prefix=/usr
   - make 
   - make check
@@ -43,7 +42,7 @@ before_install:
   - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
   - tar zxvf cdo-1.7.0.tar.gz
   - cd cdo-1.7.0
-  - ./configure --prefix=/usr
+  - ./configure --with-netcdf=/usr/netcdf-c-4.4.1 --prefix=/usr
   - make check
   - sudo make install
   - cd /home/travis/build/anywhereProject/caliver

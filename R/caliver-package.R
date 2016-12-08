@@ -10,7 +10,7 @@
 #' @importFrom grDevices heat.colors
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines
-#' @importFrom raster stack  
+#' @importFrom raster raster stack mask crop rotate extent extract
 #' @importFrom rasterVis levelplot
 #' @importFrom latticeExtra layer
 #' @importFrom graphics plot
