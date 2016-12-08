@@ -1,9 +1,10 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 # cdo source code available at https://code.zmaw.de/projects/cdo/files
+# http://www.studytrails.com/blog/install-climate-data-operator-cdo-with-netcdf-grib2-and-hdf5-support/
 
 language: r
 sudo: required
-dist: trusty
+cache: packages
 
 addons:
   apt:
@@ -38,6 +39,7 @@ before_install:
 
 r_github_packages:
   - jimhester/covr
+  - anywhereProject/caliver
 
 after_success:
   - Rscript -e 'covr::codecov()'
