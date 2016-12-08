@@ -14,7 +14,7 @@ addons:
       - libnetcdf-dev
       
 before_install:
-  - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.2.tar.gz
+  - wget https://code.zmaw.de/attachments/download/12760/cdo-1.7.2.tar.gz
   - tar zxvf cdo-1.7.2.tar.gz
   - cd cdo-1.7.2
   - ./configure --enable-netcdf4 --with-netcdf=/usr --prefix=/usr
