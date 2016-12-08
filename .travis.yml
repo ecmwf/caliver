@@ -12,7 +12,15 @@ addons:
       - libproj-dev
       - libhdf5-dev
       - libnetcdf-dev
-      - cdo
+      
+before_install:
+  - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.2.tar.gz
+  - tar zxvf cdo-1.7.2.tar.gz
+  - cd cdo-1.7.2
+  - ./configure --enable-netcdf4 --with-netcdf=/usr --prefix=/usr
+  - make check
+  - sudo make install
+  - cd /home/travis/build/anywhereProject/caliver
 
 r_github_packages:
   - jimhester/covr
