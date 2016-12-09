@@ -24,7 +24,7 @@ before_install:
   - make
   - sudo make install
   - cd /home/travis/build/anywhereProject/caliver
-  - R CMD INSTALL --configure-args="--with-nc-config=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build/netcdf4/bin/nc-config" ncdf4
+  - sudo R CMD INSTALL --configure-args="--with-nc-config=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build/netcdf4/bin/nc-config" ncdf4
 
 r_github_packages:
   - jimhester/covr
