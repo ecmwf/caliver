@@ -45,7 +45,7 @@ before_install:
   - tar zxvf cdo-1.7.2.tar.gz
   - cd cdo-1.7.2
   - ./configure --enable-netcdf4 --with-netcdf=/usr --prefix=/usr
-  - make check
+  - make config all install
   - sudo make install
   - cd /home/travis/build/anywhereProject/caliver
 
