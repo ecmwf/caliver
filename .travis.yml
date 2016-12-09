@@ -10,6 +10,8 @@ addons:
   apt:
   packages:
   - libgdal-dev
+  - libnetcdf-dev
+  - libnetcdf6
       
 before_install:
   - wget https://code.zmaw.de/attachments/download/10301/libs4cdo-0.0.11.tar.gz
