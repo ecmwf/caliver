@@ -17,7 +17,7 @@ before_install:
   - wget https://code.zmaw.de/attachments/download/10301/libs4cdo-0.0.11.tar.gz
   - tar zxvf libs4cdo-0.0.11.tar.gz
   - cd libs4cdo-0.0.11
-  - make libs4cdo
+  - make config all install
   - sudo make install
   - cd
   - wget https://code.zmaw.de/attachments/download/12760/cdo-1.7.2.tar.gz
