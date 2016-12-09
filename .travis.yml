@@ -4,6 +4,7 @@
 
 language: r
 sudo: required
+dist: xenial
 
 addons:
   apt:
@@ -15,13 +16,11 @@ before_install:
   - tar zxvf libs4cdo-0.0.11.tar.gz
   - cd libs4cdo-0.0.11
   - make libs4cdo
-  - make check
-  - sudo make install
   - cd
   - wget https://code.zmaw.de/attachments/download/12760/cdo-1.7.2.tar.gz
   - tar zxvf cdo-1.7.2.tar.gz
   - cd cdo-1.7.2
-  - ./configure --with-szlib=$HOME/libs4cdo-0.0.11/build --with-hdf5=$HOME/libs4cdo-0.0.11/build --with-netcdf=$HOME/libs4cdo-0.0.11/build --with-proj=$HOME/libs4cdo-0.0.11/build 
+  - ./configure --with-szlib=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build --with-hdf5=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build --with-netcdf=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build --with-proj=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build 
   - make
   - sudo make install
   - cd /home/travis/build/anywhereProject/caliver
