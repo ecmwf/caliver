@@ -5,29 +5,51 @@
 language: r
 sudo: required
 dist: xenial
-
-addons:
-  apt:
-  packages:
-  - libgdal-dev
-  - libnetcdf-dev
-  - libnetcdf6
-      
+cache: packages
+  
 before_install:
-  - wget https://code.zmaw.de/attachments/download/10301/libs4cdo-0.0.11.tar.gz
-  - tar zxvf libs4cdo-0.0.11.tar.gz
-  - cd libs4cdo-0.0.11
-  - make libs4cdo
+  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
+  - chmod 755 pkg-build.sh
+  - ./pkg-build.sh bootstrap
+  - cd
+  - wget http://download.osgeo.org/gdal/2.0.1/gdal-2.0.1.tar.gz
+  - tar zxf gdal-2.0.1.tar.gz
+  - cd gdal-2.0.1
+  - ./configure --prefix=/usr/local
+  - make
+  - sudo make install
+  - cd
+  - wget http://download.osgeo.org/proj/proj-4.9.2.tar.gz
+  - tar zxvf proj-4.9.2.tar.gz
+  - cd proj-4.9.2
+  - ./configure --prefix=/usr/local
+  - make
+  - sudo make install
+  - cd
+  - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar.gz
+  - tar -xvf hdf5-1.8.18.tar.gz
+  - cd hdf5-1.8.18
+  - H5DIR=/usr/local
+  - ./configure --prefix=/usr/local
+  - make 
+  - make check
+  - sudo make install
+  - cd
+  - wget https://github.com/Unidata/netcdf-c/archive/v4.4.1.tar.gz
+  - tar zxvf v4.4.1.tar.gz
+  - cd netcdf-c-4.4.1
+  - ./configure --prefix=/usr/local
+  - make 
+  - make check
+  - sudo make install
+  - nc-config --prefix
   - cd
   - wget https://code.zmaw.de/attachments/download/12760/cdo-1.7.2.tar.gz
   - tar zxvf cdo-1.7.2.tar.gz
   - cd cdo-1.7.2
-  - ./configure --with-szlib=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build --with-hdf5=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build --with-netcdf=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build --with-proj=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build
-  - make
+  - ./configure --with-hdf5=/usr/local/build --with-netcdf=/usr/local/build --with-proj=/usr/local/build
+  - make check
   - sudo make install
-  - cd
-  - wget https://cran.r-project.org/src/contrib/ncdf4_1.15.tar.gz
-  - sudo R CMD INSTALL --configure-args="--with-nc-config=/home/travis/build/anywhereProject/caliver/libs4cdo-0.0.11/build/netcdf4/bin/nc-config" ncdf4_1.15.tar.gz
   - cd /home/travis/build/anywhereProject/caliver
 
 r_github_packages:
