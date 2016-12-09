@@ -4,7 +4,6 @@
 
 language: r
 sudo: required
-dist: xenial
 cache: packages
   
 before_install:
@@ -15,14 +14,14 @@ before_install:
   - wget http://download.osgeo.org/gdal/2.0.1/gdal-2.0.1.tar.gz
   - tar zxf gdal-2.0.1.tar.gz
   - cd gdal-2.0.1
-  - ./configure --prefix=/usr/local
+  - ./configure --prefix=/usr
   - make
   - sudo make install
   - cd
   - wget http://download.osgeo.org/proj/proj-4.9.2.tar.gz
   - tar zxvf proj-4.9.2.tar.gz
   - cd proj-4.9.2
-  - ./configure --prefix=/usr/local
+  - ./configure --prefix=/usr
   - make
   - sudo make install
   - cd
@@ -30,7 +29,7 @@ before_install:
   - tar -xvf hdf5-1.8.18.tar.gz
   - cd hdf5-1.8.18
   - H5DIR=/usr/local
-  - ./configure --prefix=/usr/local
+  - ./configure --prefix=/usr
   - make 
   - make check
   - sudo make install
@@ -38,16 +37,15 @@ before_install:
   - wget https://github.com/Unidata/netcdf-c/archive/v4.4.1.tar.gz
   - tar zxvf v4.4.1.tar.gz
   - cd netcdf-c-4.4.1
-  - ./configure --prefix=/usr/local
+  - ./configure --prefix=/usr
   - make 
   - make check
   - sudo make install
-  - nc-config --prefix
   - cd
-  - wget https://code.zmaw.de/attachments/download/12760/cdo-1.7.2.tar.gz
-  - tar zxvf cdo-1.7.2.tar.gz
-  - cd cdo-1.7.2
-  - ./configure --with-hdf5=/usr/local/build --with-netcdf=/usr/local/build --with-proj=/usr/local/build
+  - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
+  - tar zxvf cdo-1.7.0.tar.gz
+  - cd cdo-1.7.0
+  - ./configure --with-hdf5=$HOME/build --with-netcdf=$HOME/build --with-proj=$HOME/build 
   - make check
   - sudo make install
   - cd /home/travis/build/anywhereProject/caliver
