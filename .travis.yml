@@ -4,48 +4,42 @@
 
 language: r
 sudo: required
+dist: trusty
 cache: packages
-  
+
+addons:
+  apt:
+    packages:
+    - autopoint
+    - cfortran
+    - dh-autoreconf
+    - dh-buildinfo
+    - libcurl4-gnutls-dev
+    - libemos-data
+    - libemos0d
+    - libgcrypt11-dev
+    - libgnutls-dev
+    - libgnutlsxx27
+    - libgpg-error-dev
+    - libgrib-api-1.10.4
+    - libgrib-api-dev
+    - libmagics++-data
+    - libmagics++-dev
+    - libmagplus3
+    - libp11-kit-dev
+    - libtasn1-6-dev
+    - libterralib
+    - ttf-dejavu-extra
+    - libhdf5-dev
+    - libnetcdf-dev
+    - libproj-dev
+    - libgdal-dev
+
 before_install:
-  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
-  - chmod 755 pkg-build.sh
-  - ./pkg-build.sh bootstrap
-  - cd
-  - wget http://download.osgeo.org/gdal/2.0.1/gdal-2.0.1.tar.gz
-  - tar zxf gdal-2.0.1.tar.gz
-  - cd gdal-2.0.1
-  - ./configure --prefix=/usr
-  - make
-  - sudo make install
-  - cd
-  - wget http://download.osgeo.org/proj/proj-4.9.2.tar.gz
-  - tar zxvf proj-4.9.2.tar.gz
-  - cd proj-4.9.2
-  - ./configure --prefix=/usr
-  - make
-  - sudo make install
-  - cd
-  - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar.gz
-  - tar -xvf hdf5-1.8.18.tar.gz
-  - cd hdf5-1.8.18
-  - H5DIR=/usr/local
-  - ./configure --prefix=/usr
-  - make 
-  - make check
-  - sudo make install
-  - cd
-  - wget https://github.com/Unidata/netcdf-c/archive/v4.4.1.tar.gz
-  - tar zxvf v4.4.1.tar.gz
-  - cd netcdf-c-4.4.1
-  - ./configure --prefix=/usr
-  - make 
-  - make check
-  - sudo make install
-  - cd
   - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
   - tar zxvf cdo-1.7.0.tar.gz
   - cd cdo-1.7.0
-  - ./configure --with-hdf5=$HOME/build --with-netcdf=$HOME/build --with-proj=$HOME/build 
+  - ./configure --with-hdf5=yes --with-netcdf=yes --with-proj=/usr/include
   - make check
   - sudo make install
   - cd /home/travis/build/anywhereProject/caliver
@@ -56,4 +50,3 @@ r_github_packages:
 
 after_success:
   - Rscript -e 'covr::codecov()'
-  
