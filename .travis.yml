@@ -46,11 +46,11 @@ before_install:
   - cd ..
   - rm cdo-1.7.0.tar.gz
   - rm -rf cdo-1.7.0
-  - cd /home/travis/build/anywhereProject/caliver
+  - cd /home/travis/build/ecmwf/caliver
 
 r_github_packages:
   - jimhester/covr
-  - anywhereProject/caliver
+  - ecmwf/caliver
 
 after_success:
   - Rscript -e 'covr::codecov()'

@@ -6,8 +6,8 @@ Authors@R: c(person("Claudia", "Vitolo", email = "claudia.vitolo@ecmwf.int", rol
              person("Mirko", "D'Andrea", role = c("ctb")),
              person("Francesca", "Di Giuseppe", role = c("ctb")))
 Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
-URL: https://github.com/anywhereProject/caliver
-BugReports: https://github.com/anywhereProject/caliver/issues
+URL: https://github.com/ecmwf/caliver
+BugReports: https://github.com/ecmwf/caliver/issues
 Description: Utility functions for the post-processing, calibration and
     validation of gridded model outputs. Initial test cases include the outputs of
     the following forest fire models: GEFF and RISICO.

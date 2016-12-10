@@ -36,7 +36,7 @@ if(length(new.packages)) install.packages(new.packages)
 Get the development version from github using [devtools](https://github.com/hadley/devtools):
 
 ```{r}
-devtools::install_github("anywhereProject/caliver")
+devtools::install_github("ecmwf/caliver")
 ```
 
 Load the caliver package:
