@@ -34,6 +34,7 @@ addons:
     - libnetcdf-dev
     - libproj-dev
     - libgdal-dev
+    - netcdf-bin
 
 before_install:
   - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
