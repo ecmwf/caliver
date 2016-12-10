@@ -43,6 +43,8 @@ before_install:
   - ./configure --with-hdf5=yes --with-netcdf=yes --with-proj=/usr/include
   - make check
   - sudo make install
+  - rm cdo-1.7.0.tar.gz
+  - rm -rf cdo-1.7.0
   - cd /home/travis/build/anywhereProject/caliver
 
 r_github_packages:
