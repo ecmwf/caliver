@@ -18,10 +18,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-[![Travis-CI Build Status](https://travis-ci.org/anywhereProject/caliver.svg?branch=master)](https://travis-ci.org/anywhereProject/caliver)
-
 <!--
 
+[![Travis-CI Build Status](https://travis-ci.org/anywhereProject/caliver.svg?branch=master)](https://travis-ci.org/anywhereProject/caliver)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/anywhereProject/caliver?branch=master&svg=true)](https://ci.appveyor.com/project/anywhereProject/caliver)
 [![Coverage Status](https://img.shields.io/codecov/c/github/anywhereProject/caliver/master.svg)](https://codecov.io/github/anywhereProject/caliver?branch=master)
 
