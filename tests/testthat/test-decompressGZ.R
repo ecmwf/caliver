@@ -2,6 +2,8 @@ context("test-decompressGZ")
 
 test_that("decompression works", {
   
+  skip_on_appveyor()
+  
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
   
   file.copy(from = system.file("extdata", "test.nc.gz", package="caliver"),  
