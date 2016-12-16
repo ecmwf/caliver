@@ -5,6 +5,10 @@ context("getPercRiskIndex")
 
 test_that("getPercRiskIndex works", {
   
-  expect_equal(2 * 2, 4) # Change this to something relevant
+  raster = readRDS(system.file("extdata", "RISICO", 'RISICO_raster.rds', package="caliver"))
+  shape = readShapePoly(system.file("extdata", "RISICO", 'italy_provinces.shp', package="caliver"))
   
+  output_gt_75 <- getPercRiskIndex(raster, shape, perc.val = 75, mod = "gt")
+  
+  expect_equal(length(shape), length(output_gt_75)) # Check if the output table has the same dimension as the shapefile
 })
