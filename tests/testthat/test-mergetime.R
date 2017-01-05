@@ -21,7 +21,7 @@ test_that("mergetime works", {
   
   mergedFile <- mergetime(dirs = myTempDir, 
                           startingString = "test", 
-                          outFile = "outTest.nc",
+                          outFile = "TestAB.nc",
                           outDir = myTempDir)
   
   # print(mergedFile)
