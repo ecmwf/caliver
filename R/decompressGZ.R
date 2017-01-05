@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   decompressGZ("/var/tmp/moc0/forestfire/")
+#'   decompressGZ(dirs = "/var/tmp/moc0/forestfire/")
 #' }
 #'
 

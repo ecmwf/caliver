@@ -4,7 +4,11 @@ test_that("shiftMap works", {
   
   skip_on_appveyor()
   
-  inFile <- system.file("extdata", "outTest.nc", package="caliver")
+  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
+  
+  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = file.path(myTempDir, "outTest.nc"))
+  
+  inFile <- file.path(myTempDir, "outTest.nc")
   
   x <- raster::raster(inFile)
   

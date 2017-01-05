@@ -14,11 +14,9 @@ test_that("plotPercentiles works", {
                                                   list.files(myTempDir))]))
   }
   
-  inFile <- system.file("extdata", "testPercentile.nc", package="caliver")
+  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/testPercentile.nc", destfile = file.path(myTempDir, "testPercentile.nc"))
   
-  if (file.exists(inFile) == TRUE) {
-    file.copy(from = inFile, to = paste0(myTempDir, "/testPercentile.nc"))
-  }
+  inFile <- file.path(myTempDir, "testPercentile.nc")
   
   probsMaps <- getGriddedCDF(ncfile = inFile, 
                              probs = c(50, 75), 

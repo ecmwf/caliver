@@ -16,7 +16,7 @@ This function decompresses all .gz files in a given folder
 }
 \examples{
 \dontrun{
-  decompressGZ("/var/tmp/moc0/forestfire/")
+  decompressGZ(dirs = "/var/tmp/moc0/forestfire/")
 }
 
 }

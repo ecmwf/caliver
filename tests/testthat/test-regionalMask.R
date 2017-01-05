@@ -1,9 +1,6 @@
 context("regionalMask")
 
-## TODO: Rename context
-## TODO: Add more tests
-
-test_that("multiplication works", {
+test_that("regionalMask works", {
   
   e <- regionalMask(region = "Europe")
   

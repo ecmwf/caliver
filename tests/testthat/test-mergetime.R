@@ -14,12 +14,10 @@ test_that("mergetime works", {
                                                   list.files(myTempDir))]))
   }
   
-  inFile <- system.file("extdata", "testA.nc", package="caliver") 
+  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/testA.nc", destfile = file.path(myTempDir, "testA.nc"))
+  inFile <- file.path(myTempDir, "testA.nc")
   
-  if (file.exists(inFile) == TRUE) {
-    file.copy(from = inFile, to = paste0(myTempDir, "/testA.nc"))
-    file.copy(from = inFile, to = paste0(myTempDir, "/testB.nc"))
-  }
+  file.copy(from = inFile, to = paste0(myTempDir, "/testB.nc"))
   
   mergedFile <- mergetime(dirs = myTempDir, 
                           startingString = "test", 

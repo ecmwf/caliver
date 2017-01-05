@@ -89,7 +89,9 @@ getGriddedCDF <- function(ncfile,
     
   }
   
-  if (length(croppedMaps) == 1) croppedMaps <- croppedMaps[[1]]
+  if (length(croppedMaps) == 1) {
+    croppedMaps <- raster::raster(croppedMaps[[1]])
+  }
   
   return(croppedMaps)
   
