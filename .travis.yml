@@ -1,11 +1,8 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-# cdo source code available at https://code.zmaw.de/projects/cdo/wiki/Libs4cdo
-# (to configure) --prefix=/usr/local is the default option
 
 language: r
 sudo: required
-dist: trusty
-cache: packages
+r: bioc-devel
 bioc_required: true 
 bioc_use_devel: true
 
@@ -48,10 +45,9 @@ before_install:
   - cd ..
   - rm cdo-1.7.0.tar.gz
   - rm -rf cdo-1.7.0
-  - cd /home/travis/build/ecmwf/caliver
 
-r_github_packages:
-  - jimhester/covr
+r_packages:
+  - covr
 
 after_success:
   - Rscript -e 'covr::codecov()'
