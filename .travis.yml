@@ -40,7 +40,7 @@ before_install:
   - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
   - tar zxvf cdo-1.7.0.tar.gz
   - cd cdo-1.7.0
-  - ./configure --with-hdf5=yes --with-netcdf=yes --with-proj=/usr/include
+  - ./configure --with-hdf5=yes --with-netcdf=yes --with-proj=yes
   - make check
   - sudo make install
   - cd ..
