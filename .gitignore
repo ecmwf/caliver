@@ -31,9 +31,5 @@ README.html
 inst/doc
 
 # Temporarly ignore inst and vignettes folder
-inst/*.R
-inst/*.txt
-inst/*.rda
-vignettes/*
-vignettes/caliver-vignette.Rmd
-
+inst/PLOSONEpaper/*
+inst/tmp/*

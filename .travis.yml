@@ -2,6 +2,7 @@
 
 language: r
 sudo: required
+dist: trusty
 r: bioc-devel
 bioc_required: true 
 bioc_use_devel: true
@@ -45,9 +46,14 @@ before_install:
   - cd ..
   - rm cdo-1.7.0.tar.gz
   - rm -rf cdo-1.7.0
-
+  
 r_packages:
-  - covr
+  - rgdal
+  - roxygen2
+  - rmarkdown
+
+r_github_packages:
+  - jimhester/covr
 
 after_success:
   - Rscript -e 'covr::codecov()'
