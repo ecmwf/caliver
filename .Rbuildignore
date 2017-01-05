@@ -1,9 +1,10 @@
 ^.*\.Rproj$
+^.*\.RData$
+^.*\.Rhistory$
 ^\.Rproj\.user$
-README.Rmd
+^README\.Rmd$
 ^CONDUCT\.md$
-^revdep$
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^codecov\.yml$
-README.html
+^README\.html$
