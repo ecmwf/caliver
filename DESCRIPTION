@@ -22,12 +22,17 @@ Imports:
     raster,
     rasterVis,
     latticeExtra,
-    graphics
+    graphics,
+    httr,
+    stringr,
+    lubridate,
+    rhdf5
 Suggests:
     testthat,
     knitr,
     rmarkdown,
     covr
+biocViews:
 VignetteBuilder: knitr
 Encoding: UTF-8
 License: GPL-2

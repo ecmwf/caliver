@@ -2,7 +2,7 @@
 % Please edit documentation in R/regionalMask.R
 \name{regionalMask}
 \alias{regionalMask}
-\title{Define regional extent}
+\title{Define a mask for the regional extent}
 \usage{
 regionalMask(region = "GLOB")
 }

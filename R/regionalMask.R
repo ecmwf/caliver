@@ -1,4 +1,4 @@
-#' Define regional extent
+#' Define a mask for the regional extent
 #'
 #' @description This function defines the regional extent of a map given the name of the region. It is based on the GFED basis regions defined here: www.globalfiredata.org/data.html
 #'

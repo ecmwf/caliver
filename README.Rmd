@@ -27,6 +27,7 @@ The name '[caliver](https://github.com/ecmwf/caliver)' stands for CALIbration an
 As the name suggests, the caliver package contains utility functions for the post-processing, calibration and validation/verification of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF (add ref.) and RISICO (add ref.). However, the algorithms can be applied to any gridded model output.
 
 Complete documentation, including a vignette, is available within the package.
+Contributions are welcome!
 
 ## Dependencies and Installation
 
@@ -57,5 +58,5 @@ library("caliver")
 * This package and functions herein are part of an experimental open-source project. They are provided as is, without any guarantee.
 * Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
 * Please [report any issues or bugs](https://github.com/ecmwf/caliver/issues).
-* License: [GPL-3](https://opensource.org/licenses/GPL-3.0)
+* License: [GPL-2](https://opensource.org/licenses/GPL-2.0)
 * Get citation information for `caliver` in R doing `citation(package = 'caliver')`

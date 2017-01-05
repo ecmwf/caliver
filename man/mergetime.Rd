@@ -5,7 +5,7 @@
 \title{Merge netcdf files on the time dimension}
 \usage{
 mergetime(dirs = NULL, varname = NULL, startingString = "",
-  recursive = TRUE, outFile = "outfile.nc", outDir = getwd())
+  recursive = FALSE, outFile = "outfile.nc", outDir = getwd())
 }
 \arguments{
 \item{dirs}{is the directory where all the files to read are stored}
@@ -25,7 +25,7 @@ This function merges all the netcdf files in a given directory over the time dim
 }
 \examples{
 \dontrun{
-# Mergetime using single variable nc files
+  # Mergetime using single variable nc files
   mergetime(dirs = "/var/tmp/moc0/forestfire",
             varname = NULL,
             startingString = "geff_reanalysis_an_fwis_fwi_",

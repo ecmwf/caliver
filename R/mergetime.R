@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Mergetime using single variable nc files
+#'   # Mergetime using single variable nc files
 #'   mergetime(dirs = "/var/tmp/moc0/forestfire",
 #'             varname = NULL,
 #'             startingString = "geff_reanalysis_an_fwis_fwi_",
@@ -25,8 +25,8 @@
 #'
 
 mergetime <- function(dirs = NULL, varname = NULL, startingString = "", 
-                      recursive = TRUE, 
-                      outFile = "outfile.nc", outDir = getwd()){  
+                      recursive = FALSE, outFile = "outfile.nc", 
+                      outDir = getwd()){  
   
   if(Sys.which("cdo")[[1]] == "") {
     
@@ -36,7 +36,7 @@ mergetime <- function(dirs = NULL, varname = NULL, startingString = "",
   
   if(is.null(dirs)) {
     
-    stop("Please specify data folder!") 
+    stop("Please specify data folder 'dirs'!") 
     
   }
   
