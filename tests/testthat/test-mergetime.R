@@ -24,12 +24,6 @@ test_that("mergetime works", {
                           outFile = "TestAB.nc",
                           outDir = myTempDir)
   
-  # print(mergedFile)
-  
-  x <- ncdf4::nc_open(mergedFile)
-  
-  expect_equal(x$dim$time$len, 2)
-  
-  file.remove(mergedFile)
+  expect_equal(dim(raster::stack(mergedFile)), c(256, 512, 2))
   
 })

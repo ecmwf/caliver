@@ -3,6 +3,8 @@
 #' @description This function retrieves the GFED4 basis region from the fourth-generation global fire emissions database website (http://www.globalfiredata.org/data.html).
 #' 
 #' @param outDir is the directory where the converted file(s) are saved, by default this is the working directory.
+#' 
+#' @return A RasterLayer
 #'
 #' @export
 #'
@@ -48,6 +50,9 @@ getGFED4BasisRegions <- function(outDir = getwd()){
     x <- rgdal::make_EPSG()
     regionsRasterTR@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
     # raster::plot(regionsRasterTR)
+    
+    # remove hdf5 file
+    unlink(file.path(outDir, fname))
     
     # This might need to be resampled using the attributes of the lower/higher res raster
     # GFEDregions <- raster::resample(regionsRasterTR, OtherRaster, method = "ngb")

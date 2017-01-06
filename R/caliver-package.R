@@ -7,6 +7,7 @@
 #'
 #' @import rgdal
 #' @import ncdf4
+#' @importFrom tibble as_tibble
 #' @importFrom grDevices heat.colors
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines CRS

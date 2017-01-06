@@ -9,6 +9,9 @@ getGFED4BasisRegions(outDir = getwd())
 \arguments{
 \item{outDir}{is the directory where the converted file(s) are saved, by default this is the working directory.}
 }
+\value{
+A RasterLayer
+}
 \description{
 This function retrieves the GFED4 basis region from the fourth-generation global fire emissions database website (http://www.globalfiredata.org/data.html).
 }

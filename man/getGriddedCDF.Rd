@@ -4,17 +4,33 @@
 \alias{getGriddedCDF}
 \title{Calculate CDF and percentiles}
 \usage{
-getGriddedCDF(ncfile, probs = c(50, 75, 90, 99), mask = NULL,
-  region = "GLOB", outDir = getwd())
+getGriddedCDF(ncfile, probs, mask = "no mask", region = "GLOB",
+  outDir = getwd())
 }
 \arguments{
 \item{ncfile}{is the name of the file(path) to read}
 
-\item{probs}{numeric vector of probabilities with values in [0,1] listing which percentiles should be calculated}
+\item{probs}{numeric vector of probabilities with values in [0,100] listing which percentiles should be calculated}
 
-\item{mask}{string identifying the name of the mask. By default it is set to NULL, which means no mask is applied. The only mask implemented at the moment is the "fuel_model" provided by JRC (containing non-vegetated areas).}
+\item{mask}{string identifying the name of the mask. By default it is set to "no mask", which means no mask is applied. The only mask implemented at the moment is the "fuel_model" provided by JRC (containing non-vegetated areas).}
 
-\item{region}{string identifying the name of the region of interest. By default it is set to provide global coverage ("GLOB") but it can also be used to focus on the reagion listed in \code{regionalMask}.}
+\item{region}{string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask}): 
+\itemize{
+  \item{"Global"}{or GLOB}
+ \item{"Boreal North America"}{or BONA}
+ \item{"Temperate North America"}{or TENA}
+ \item{"Central America"}{or CEAM}
+ \item{"Northern Hemisphere South America"}{or NHSA}
+ \item{"Southern Hemisphere South America"}{or SHSA}
+ \item{"Europe"}{or EURO}
+ \item{"Middle East"}{or MIDE}
+ \item{"Northern Hemisphere Africa"}{or NHAF}
+ \item{"Southern Hemisphere Africa"}{or SHAF}
+ \item{"Boreal Asia"}{or BOAS}
+ \item{"Central Asia"}{or CEAS}
+ \item{"Southeast Asia"}{or SEAS}
+ \item{"Equatorial Asia"}{or EQAS}
+ \item{"Australia and New Zealand"}{or AUST}}}
 
 \item{outDir}{is the directory where the output nc files are saved, by default this is the working directory.}
 }
@@ -26,8 +42,11 @@ This function calculates the CDF at each point of a grid
 }
 \examples{
 \dontrun{
-  ncfile <- "/var/tmp/moc0/forestfire/outfile.nc"
-  x <- getGriddedCDF(ncfile)
+  x <- getGriddedCDF <- function(ncfile = "./outfile.nc",
+                                 probs = c(50, 75, 90, 99),
+                                 mask = "fuel_model",
+                                 region = "EURO",
+                                 outDir = getwd())
 }
 
 }

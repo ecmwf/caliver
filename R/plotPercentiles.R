@@ -3,10 +3,9 @@
 #' @description This function plots the maps of percentiles
 #'
 #' @param maps is the result of getGriddedCDF()
-#' @param backgroundMap logical, if TRUE it uses a background map
 #' @param rotateMap logical, if TRUE it uses a background map
-#' @param cropMap logical, if TRUE it crops the map
 #' @param region string of characters describing the region.
+#' @param ... additional graphical parameters inherited from raster::plot().
 #' 
 #' @export
 #'
@@ -16,56 +15,54 @@
 #' }
 #'
 
-plotPercentiles <- function(maps, 
-                            backgroundMap = FALSE,
-                            rotateMap = FALSE,
-                            cropMap = FALSE, region = "GLOB"){
-  
-  if (class(maps) == "list"){
-    # Generate a raster stack
-    stackMap <- raster::stack(maps)
-  }
-  
-  if (class(maps) == "RasterStack" | 
-      class(maps) == "RasterBrick" | 
-      class(maps) == "raster"){
-    stackMap <- maps
-  }
+plotPercentiles <- function(maps, rotateMap = FALSE, region = "GLOB", ...){
   
   if (rotateMap == TRUE){
+    
     # Rotate a Raster* object that has x coordinates (longitude) from 0 to 360, 
     # to standard coordinates between -180 and 180 degrees. 
     # Longitude between 0 and 360 is frequently used in data 
     # from global climate models.
-    rotatedMap <- raster::rotate(stackMap)
-    
-    if (cropMap == TRUE){
-      mapExtent <- regionalBBOX(region, lonRange = "-180/+180")
-      rotatedMap <- raster::crop(rotatedMap, mapExtent)
-    }
+    rotatedMap <- raster::rotate(maps)
+    lonRange = "-180/+180"
     
   }else{
-    rotatedMap <- stackMap
+    
+    rotatedMap <- maps
+    lonRange = "0/360"
+    
+  }
+  # raster::plot(rotatedMap)
+  
+  if (region != "GLOB"){
+    
+    maskMap <- regionalMask(region)
+    maskMap <- raster::resample(maskMap, rotatedMap, method = "ngb")
+    croppedMap <- raster::trim(raster::mask(rotatedMap, maskMap))
+    # mapExtent <- regionalBBOX(region, lonRange = lonRange)
+    # rotatedMap <- raster::crop(rotatedMap, mapExtent)
+    
+  }else{
+    
+    croppedMap <- rotatedMap
+    
+  }
+  # raster::plot(croppedMap)
+  
+  # Define a background map
+  backgroundMap <- rworldmap::getMap(resolution = "low")
+  # We want to plot the background map on each layers of the stack, so we need 
+  # to create a function and pass it to the addfun argument (see ?raster::plot)
+  fun <- function() {
+    raster::plot(backgroundMap, add = TRUE, border = 'lightgray')
   }
   
-  if (backgroundMap == TRUE){
-    
-    p <- rasterVis::levelplot(rotatedMap, 
-                              col.regions = rev(grDevices::heat.colors(20)), 
-                              colorkey = list(space = "right"))
-    # Define a background map
-    backgroundMap <- rworldmap::getMap(resolution = "low")
-    p <- p + 
-      latticeExtra::layer(sp::sp.lines(backgroundMap, lwd=0.8, col="darkgray"))
-    
-    print(p)
-    
-  }else{
-    
-    rasterVis::levelplot(rotatedMap, 
-                         col.regions = rev(grDevices::heat.colors(20)), 
-                         colorkey = list(space = "right"))
-    
-  }
+  rastMin <- min(raster::cellStats(croppedMap, stat = 'min', na.rm = TRUE))
+  rastMax <- max(raster::cellStats(croppedMap, stat = 'max', na.rm = TRUE))
+  
+  raster::plot(croppedMap, addfun = fun, 
+               col = rev(heat.colors(10, alpha = 1)),
+               breaks = round(seq(from = rastMin, to = rastMax,
+                                  length.out = 10), 0), ...)
   
 }

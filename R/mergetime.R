@@ -24,8 +24,11 @@
 #' }
 #'
 
-mergetime <- function(dirs = NULL, varname = NULL, startingString = "", 
-                      recursive = FALSE, outFile = "outfile.nc", 
+mergetime <- function(dirs = NULL, 
+                      varname = NULL, 
+                      startingString = "", 
+                      recursive = FALSE, 
+                      outFile = "outfile.nc", 
                       outDir = getwd()){  
   
   if(Sys.which("cdo")[[1]] == "") {
@@ -61,12 +64,8 @@ mergetime <- function(dirs = NULL, varname = NULL, startingString = "",
     system(paste0("cdo mergetime ", 
                   ifiles, " ", outDir, "/", outFile))
   }else{
-    # system(paste0("cdo mergetime -select,param=", varname, " ", 
-    #               ifiles, " ", outDir, "/", outFile))
     system(paste0("cdo select,name=", varname, " ", ifiles, " ", outDir, "/", outFile))
   }
-  
-  message(paste0("The files have been merged and the result is stored in: \n", outDir, "/", outFile))
   
   return(paste0(outDir, "/", outFile))
   

@@ -4,19 +4,16 @@
 \alias{plotPercentiles}
 \title{Plot maps of percentiles}
 \usage{
-plotPercentiles(maps, backgroundMap = FALSE, rotateMap = FALSE,
-  cropMap = FALSE, region = "GLOB")
+plotPercentiles(maps, rotateMap = FALSE, region = "GLOB", ...)
 }
 \arguments{
 \item{maps}{is the result of getGriddedCDF()}
 
-\item{backgroundMap}{logical, if TRUE it uses a background map}
-
 \item{rotateMap}{logical, if TRUE it uses a background map}
 
-\item{cropMap}{logical, if TRUE it crops the map}
-
 \item{region}{string of characters describing the region.}
+
+\item{...}{additional graphical parameters inherited from raster::plot().}
 }
 \description{
 This function plots the maps of percentiles
