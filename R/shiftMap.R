@@ -21,10 +21,9 @@ shiftMap <- function(inFile, outDir = getwd()){
   
   for (singleFile in inFile){
     
-    # outFile <- paste0(tools::file_path_sans_ext(singleFile), "_shifted.nc")
-    outFile <- paste0(outDir, "/", 
-                      tools::file_path_sans_ext(basename(singleFile)), 
-                      "_shifted.nc")
+    outFile <- file.path(outDir, 
+                         paste0(tools::file_path_sans_ext(basename(singleFile)),
+                                "_shifted.nc"))
     
     system(paste0("cdo sellonlatbox,-180,180,-90,90 ", singleFile, " ", outFile))
     

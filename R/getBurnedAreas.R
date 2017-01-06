@@ -31,7 +31,7 @@ getBurnedAreas <- function(years, tempRes = "daily", outDir = getwd()){
                      start = 1, stop = 6)
     
     for (d in myDate){
-      inFile <- paste("GFED4.0_DQ_", d, "_BA.hdf", sep="")
+      inFile <- paste0("GFED4.0_DQ_", d, "_BA.hdf")
       
       myURL <- file.path(baseURL, "monthly", inFile)
       

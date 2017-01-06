@@ -71,7 +71,7 @@ getGriddedCDF <- function(ncfile, probs, mask = "no mask",
     
     fileName <- tools::file_path_sans_ext(basename(ncfile))
     
-    outFile <- paste0(outDir, "/", fileName, "_", prob, ".nc")
+    outFile <- file.path(outDir, paste0(fileName, "_", prob, ".nc"))
     
     system(paste0("cdo timpctl,", prob, " ", ncfile, 
                   " -timmin ", ncfile, 

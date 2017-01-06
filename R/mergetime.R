@@ -31,6 +31,8 @@ mergetime <- function(dirs = NULL,
                       outFile = "outfile.nc", 
                       outDir = getwd()){  
   
+  outFilePath <- file.path(outDir, outFile)
+  
   if(Sys.which("cdo")[[1]] == "") {
     
     stop("cdo executable not found. Check PATH or install cdo.") 
@@ -45,28 +47,24 @@ mergetime <- function(dirs = NULL,
   
   if (startingString == "") {
     if (recursive == TRUE){
-      ifiles <- paste(list.files(path = dirs,
-                                 recursive = recursive, 
-                                 full.names = TRUE), 
-                      collapse = " ")
+      ifiles <- paste(list.files(path = dirs, recursive = recursive, 
+                                 full.names = TRUE), collapse = " ")
     }else{
-      ifiles <- paste0(dirs, "/*.nc")
+      ifiles <- file.path(dirs, "*.nc")
     }
   }else{
     ifiles <- paste(list.files(path = dirs, 
                                pattern = paste0(startingString, ".*.nc$"),
-                               recursive = recursive, 
-                               full.names = TRUE), 
+                               recursive = recursive, full.names = TRUE), 
                     collapse = " ")
   }
   
   if (is.null(varname)){
-    system(paste0("cdo mergetime ", 
-                  ifiles, " ", outDir, "/", outFile))
+    system(paste0("cdo mergetime ", ifiles, " ", outFilePath))
   }else{
-    system(paste0("cdo select,name=", varname, " ", ifiles, " ", outDir, "/", outFile))
+    system(paste0("cdo select,name=", varname, " ", ifiles, " ", outFilePath))
   }
   
-  return(paste0(outDir, "/", outFile))
+  return(outFilePath)
   
 }

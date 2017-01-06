@@ -6,7 +6,9 @@ test_that("decompression works", {
   
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
   
-  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/test.nc.gz", destfile = file.path(myTempDir, "test.nc.gz"))
+  download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/", 
+                             "caliver_test_data/test.nc.gz"), 
+                destfile = file.path(myTempDir, "test.nc.gz"))
   
   decompressGZ(dirs = myTempDir, keep = FALSE)
   

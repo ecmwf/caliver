@@ -9,15 +9,17 @@ test_that("mergetime works", {
   # list.files(myTempDir)
   
   if (length(grep("test", list.files(myTempDir))) > 0) {
-    file.remove(paste0(myTempDir, "/", 
-                       list.files(myTempDir)[grep("test", 
+    file.remove(file.path(myTempDir, list.files(myTempDir)[grep("test", 
                                                   list.files(myTempDir))]))
   }
   
-  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/testA.nc", destfile = file.path(myTempDir, "testA.nc"))
+  download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/",
+                             "caliver_test_data/testA.nc"), 
+                destfile = file.path(myTempDir, "testA.nc"))
+  
   inFile <- file.path(myTempDir, "testA.nc")
   
-  file.copy(from = inFile, to = paste0(myTempDir, "/testB.nc"))
+  file.copy(from = inFile, to = file.path(myTempDir, "testB.nc"))
   
   mergedFile <- mergetime(dirs = myTempDir, 
                           startingString = "test", 
