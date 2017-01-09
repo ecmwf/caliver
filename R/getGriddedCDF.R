@@ -43,11 +43,12 @@ getGriddedCDF <- function(ncfile, probs, mask = "no mask",
   
   if (mask == "fuel_model"){
     
-    fuelmodel <- NULL
     # In this map, water-barren-marsh-Snow and Ice-Urban-Agriculture-NoData 
     # are identified by the codes 21-27. Therefore we assume all the values 
     # from 0 to 20 are valid, while 21 and above should be masked.
-    load(system.file("data", "fuelmodel.rda", package="caliver"))
+    fuelmodel <- raster::raster(system.file(file.path("extdata", 
+                                                      "clim_fuelmodel.nc"), 
+                                            package = "caliver"))
     fuelmodel[fuelmodel > 20] <- NA
     
   }
