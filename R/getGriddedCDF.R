@@ -30,11 +30,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   x <- getGriddedCDF <- function(ncfile = "./outfile.nc",
-#'                                  probs = c(50, 75, 90, 99),
-#'                                  mask = "fuel_model",
-#'                                  region = "EURO",
-#'                                  outDir = getwd())
+#'   x <- getGriddedCDF(ncfile = "./outfile.nc",
+#'                      probs = c(50, 75, 90, 99),
+#'                      mask = "fuel_model",
+#'                      region = "EURO",
+#'                      outDir = getwd())
 #' }
 #'
 
@@ -110,7 +110,8 @@ getGriddedCDF <- function(ncfile, probs, mask = "no mask",
       
     }
     
-    names(croppedMaps) <- paste0("Prob", prob)
+    varname <- names(ncdf4::nc_open(ncfile)$var)
+    names(croppedMaps) <- paste0(toupper(varname), prob)
     
     if (length(probs) > 1) {
       

@@ -26,10 +26,11 @@ RiskThresholds <- function(probMaps){
   
   # CDF curves can be created by averaging the percentiles over a given area
   thresholdDF <- data.frame(matrix(NA, 
-                           ncol = length(regions) + 1, 
+                           ncol = length(regions) + 2, 
                            nrow = length(probs)))
-  names(thresholdDF) <- c("Percentile", regions)
+  names(thresholdDF) <- c("Percentile", "Index", regions)
   thresholdDF$Percentile <- probs
+  thresholdDF$Index <- gsub('[0-9]+', '', layerNames)
   
   for (region in regions){
     

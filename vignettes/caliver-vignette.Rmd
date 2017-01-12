@@ -285,23 +285,22 @@ If there are observations of actual fire events, these can be used to validate t
   
 ```{r}
 # Set working directory
-setwd("/var/tmp/moc0/geff/observations")
+setwd("/var/tmp/moc0/geff/")
 
-obs <- mergetime(dirs = getwd(),
+obs <- mergetime(dirs = "./GFED4_BurnedAreas/NetCDFdaily2000-2014",
                  varname = "BurnedArea", startingString = "",
                  recursive = FALSE, outFile = "BurnedArea.nc")
 obs <- raster::brick(obs)
+# obs <- raster::brick("/var/tmp/moc0/geff/BurnedArea.nc")
+
 # Aggregate every 4 cells to match resolution of FWI layer
-obs_aggregated <- raster::aggregate(obs, fact = 4, fun=mean)
-# saveRDS(obs_aggregated, "obs_aggregated.rds")
-# obs_aggregated <- readRDS("obs_aggregated.rds")
+obs_aggregated <- raster::aggregate(obs, fact = 4, fun=mean, progress = 'text')
 
 for (thresholdFWI in c(50, 75, 90, 99)){
   
   i <- which(c(50, 75, 90, 99) == thresholdFWI)
   
-  fwi <- raster::raster(paste0("/var/tmp/moc0/geff/results/fwi_", 
-                               thresholdFWI, ".nc"))
+  fwi <- raster::raster(paste0("/var/tmp/moc0/geff/FWI_", thresholdFWI, ".nc"))
   
   if (thresholdFWI == 50) {
     obs_aggregated_resampled <- raster::resample(obs_aggregated, fwi)

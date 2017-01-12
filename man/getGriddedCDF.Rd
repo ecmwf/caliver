@@ -42,11 +42,11 @@ This function calculates the CDF at each point of a grid
 }
 \examples{
 \dontrun{
-  x <- getGriddedCDF <- function(ncfile = "./outfile.nc",
-                                 probs = c(50, 75, 90, 99),
-                                 mask = "fuel_model",
-                                 region = "EURO",
-                                 outDir = getwd())
+  x <- getGriddedCDF(ncfile = "./outfile.nc",
+                     probs = c(50, 75, 90, 99),
+                     mask = "fuel_model",
+                     region = "EURO",
+                     outDir = getwd())
 }
 
 }
