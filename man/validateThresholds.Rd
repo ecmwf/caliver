@@ -4,26 +4,32 @@
 \alias{validateThresholds}
 \title{Validate thresholds}
 \usage{
-validateThresholds(obsMerged, riskTable, thresholdBurntArea = 20)
+validateThresholds(obsMerged, reaMerged, varname = "FWI",
+  thresholdBurntArea = 20, prob = 99, region = "EURO")
 }
 \arguments{
-\item{obsMerged}{is the nc file name (or path) all the observations are saved, by default this is the file BurnedArea.nc the working directory. Observations can be obtained using the function \code{getBurnedAreas}.}
+\item{obsMerged}{is the nc file name (or path) all the observations are saved, by default this is the file BurnedArea.nc the working directory. Observations can be obtained using the function \code{getBurnedAreas} and then merge them using the function \code{mergetime}.}
 
-\item{riskTable}{is the table with all the thresholds}
+\item{reaMerged}{is the nc file name (or path) all the re-analysis are saved, by default this is the file FWI.nc the working directory. This can be generated using the function \code{mergetime}.}
 
-\item{varnames}{string (or vector of strings) with name of the fire index}
-}
-\value{
-A data.frame
+\item{varname}{string with the name of the fire index}
+
+\item{thresholdBurntArea}{Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [0, 1], by default equal to 0.20 (20%).}
+
+\item{prob}{percentile corresponding to the threshold to validate. This is an integer in the range [1, 100], by default equal to 99.}
+
+\item{region}{string with the name of the region of interest}
 }
 \description{
-This function allows to validate the thresholds calculated by \code{RiskThresholds}.
+This function allows to visually validate a fire danger threshold by plotting the distributions of burned and not-burned areas.
 }
 \examples{
 \dontrun{
   library("caliver")
   setwd("/var/tmp/moc0/geff/")
-  validateThresholds(obsMerged = "BurnedArea.nc", riskTable = RiskTable)
+  validateThresholds(obsMerged = "BurnedArea.nc", reaMerged = "FWI.nc",
+                     varname = "FWI", thresholdBurntArea = 20,
+                     prob = 99, region = "EURO")
 }
 
 }

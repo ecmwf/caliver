@@ -1,12 +1,13 @@
 #' Validate thresholds
 #'
-#' @description This function allows to validate the thresholds calculated by \code{RiskThresholds}.
-#' 
-#' @param obsMerged is the nc file name (or path) all the observations are saved, by default this is the file BurnedArea.nc the working directory. Observations can be obtained using the function \code{getBurnedAreas}.
-#' @param riskTable is the table with all the thresholds
-#' @param varnames string (or vector of strings) with name of the fire index
-#' 
-#' @return A data.frame
+#' @description This function generate a data.frame to compare (and validate) observed burned cells and a fire danger threshold.
+#'
+#' @param obsMerged is the nc file name (or path) all the observations are saved, by default this is the file BurnedArea.nc the working directory. Observations can be obtained using the function \code{getBurnedAreas} and then merge them using the function \code{mergetime}.
+#' @param reaMerged is the nc file name (or path) all the re-analysis are saved, by default this is the file FWI.nc the working directory. This can be generated using the function \code{mergetime}.
+#' @param varname string with the name of the fire index
+#' @param thresholdBurntArea Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [0, 1], by default equal to 0.20 (20%).
+#' @param prob percentile corresponding to the threshold to validate. This is an integer in the range [1, 100], by default equal to 99.
+#' @param region string with the name of the region of interest
 #'
 #' @export
 #'
@@ -14,92 +15,53 @@
 #' \dontrun{
 #'   library("caliver")
 #'   setwd("/var/tmp/moc0/geff/")
-#'   RiskTable <- readRDS("RiskTable.rds")
-#'   validateThresholds(obsMerged = "BurnedArea.nc", riskTable = RiskTable,
-#'                      varname = "FWI", thresholdBurntArea = 20, prob = 99,
-#'                      region = "EURO")
+#'   validateThresholds(obsMerged = "BurnedArea.nc", reaMerged = "FWI.nc",
+#'                      varname = "FWI", thresholdBurntArea = 20,
+#'                      prob = 99, region = "EURO")
 #' }
 #'
 
-validateThresholds <- function(obsMerged, riskTable, varname = "FWI",
+validateThresholds <- function(obsMerged, reaMerged, varname = "FWI",
                                thresholdBurntArea = 20, prob = 99,
                                region = "EURO"){
-  
-  threshold <- as.numeric(riskTable[which(riskTable$Index == varname &
-                                            riskTable$Percentile == prob),
-                                    which(names(riskTable) == region)])
-  
+
+  # READ IN THE RE-ANALYSIS DATA (RasterLayer)
+
+  rea <- getGriddedCDF(ncfile = reaMerged, probs = prob, region = region,
+                       mask = "fuel_model")
+
+  # FIND CELLS WHERE THERE HAS BEEN A FIRE AFFECTING AT LEAST 20% OF THE AREA
+
+  # 1. Read in the observation
   # Because the data comes from a multilayer single file we generate a brick
   # (we use stack if layers derive from different files)
-  # Using brick over stack should result in better performances 
+  # Using brick over stack should result in better performances
   # (i.e. shorter processing time)
-  obs <- raster::brick(obsMerged, progress = 'text')
+  obs <- raster::brick(obsMerged, progress = "text")
+
+  # 2. Generate a mask of the region of interest
   regMASK <- regionalMask(region)
-  
+
+  # 3. Crop the observation brick using the mask
   message("Crop observations over region of interest")
-  obsRegion <- raster::crop(obs, regMASK, progress = 'text')
-  
-  whichBurned <- raster::calc(obsRegion, 
-                              function(x){ifelse(test = (any(x >= 0.20)), 
-                                                 yes = TRUE, no = FALSE)},
-                              progree = 'text')
-  
-  # There might be NAs, therefore 
-  idxBurned <- which(whichBurned == TRUE)
-  idxNotBurned <- which(whichBurned == FALSE)
-  
-  
-  for (varname in varnames){
-    
-    print(varname)
-    
-    for (prob in probs){
-      
-      print(prob)
-      
-      if (varname == varnames[1] & prob == probs[1]){
-        
-        ## Define the function to calculate whether each cell has ever burned
-        burnedAreaCalc <- function(x) {
-          if (all(is.na(x))) {
-            y <- NA
-          }else{
-            if (any(na.omit(x) >= thresholdBurntArea/100)){
-              y <- TRUE
-            }else{
-              y <- FALSE
-            }
-          }
-          return(y)
-        }
-        burnedRaster <- raster::calc(x = obs, fun = burnedAreaCalc, 
-                                     progress='text')
-        
-        DF <- data.frame(as.vector(burnedRaster), as.vector(idx))
-        DFnames <- c("Burned", paste0(varname, prob))
-        
-      }else{
-        
-        # Load the fire index file corresponding to the first probability in probs
-        idxDefaultFileName <- paste0(toupper(varname), "_", prob, ".nc")
-        if(file.exists(idxDefaultFileName)){
-          idx <- raster::raster(idxDefaultFileName)
-        }else{
-          message(paste0("File containing the index ", varname, "_", prob, 
-                         " is missing. Generate it using getGriddedCDF"))
-        }
-        
-        DF <- cbind(DF, as.vector(idx))
-        DFnames <- c(DFnames, paste0(varname, prob))
-        
-      }
-      
-    }
-    
-  }
-  
-  names(DF) <- DFnames
-  
-  return(DF)
-  
+  obsRegion <- raster::crop(obs, regMASK, progress = "text")
+
+  # 4. Resample the cropped observation brick based on the reanalysis attributes
+  message("Resample observations using fire index probability map")
+  obsResampled <- raster::resample(obsRegion, reaMerged,
+                                   method = "ngb", progress = "text")
+
+  # 4. Calculate which cells were burned
+  burnedMAP <- raster::calc(x = obsResampled,
+                            fun = function(x){ifelse(test = (any(x >= 0.20)),
+                                                     yes = TRUE, no = FALSE)},
+                            progress = "text")
+  # NOTE: the above operation can generate NAs!
+
+  # Compare burned cells versus fire index values in a data frame
+  burnedDF <- data.frame(Burned = as.vector(burnedMAP))
+  burnedDF$Index <- as.vector(rea)
+
+  return(burnedDF)
+
 }
