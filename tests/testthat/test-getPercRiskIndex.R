@@ -6,7 +6,7 @@ context("getPercRiskIndex")
 test_that("getPercRiskIndex works", {
   
   raster = readRDS(system.file("extdata", "RISICO", 'RISICO_raster.rds', package="caliver"))
-  shape = readShapePoly(system.file("extdata", "RISICO", 'italy_provinces.shp', package="caliver"))
+  shape = maptools::readShapePoly(system.file("extdata", "RISICO", 'italy_provinces.shp', package="caliver"))
   
   output_gt_75 <- getPercRiskIndex(raster, shape, perc.val = 75, mod = "gt")
   
