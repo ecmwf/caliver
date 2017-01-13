@@ -2,6 +2,8 @@ context("getGriddedCDF")
 
 test_that("getGriddedCDF works", {
   
+  skip_on_travis()
+  
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
   
   download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = file.path(myTempDir, "outTest.nc"))

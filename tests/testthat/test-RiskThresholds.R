@@ -2,6 +2,8 @@ context("RiskThresholds")
 
 test_that("RiskThresholds works", {
   
+  skip_on_travis()
+  
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
   
   download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/",

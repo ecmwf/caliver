@@ -2,6 +2,8 @@ context("shiftMap")
 
 test_that("shiftMap works", {
   
+  skip_on_travis()
+  
   skip_on_appveyor()
   
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
