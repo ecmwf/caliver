@@ -5,7 +5,7 @@
 #' @param obsMerged is the nc file name (or path) all the observations are saved, by default this is the file BurnedArea.nc the working directory. Observations can be obtained using the function \code{getBurnedAreas} and then merge them using the function \code{mergetime}.
 #' @param reaMerged is the nc file name (or path) all the re-analysis are saved, by default this is the file FWI.nc the working directory. This can be generated using the function \code{mergetime}.
 #' @param varname string with the name of the fire index
-#' @param thresholdBurntArea Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [0, 1], by default equal to 0.20 (20%).
+#' @param thresholdBurntArea Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [0, 1], by default equal to 0.20 (20\%).
 #' @param prob percentile corresponding to the threshold to validate. This is an integer in the range [1, 100], by default equal to 99.
 #' @param region string with the name of the region of interest
 #'

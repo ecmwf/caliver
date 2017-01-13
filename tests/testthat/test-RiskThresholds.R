@@ -18,7 +18,7 @@ test_that("RiskThresholds works", {
   
   RiskTableVar <- RiskThresholds(probMaps)
   
-  expect_equal(round(as.numeric(RiskTableVar[2,2]), 3), 10.217)
-  expect_equal(round(as.numeric(RiskTableVar[1,3]), 3), 0.079)
+  expect_equal(round(as.numeric(RiskTableVar[2,7]), 3), 0.962)
+  expect_equal(round(as.numeric(RiskTableVar[1,3]), 3), 5.257)
   
 })

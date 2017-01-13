@@ -14,14 +14,14 @@ validateThresholds(obsMerged, reaMerged, varname = "FWI",
 
 \item{varname}{string with the name of the fire index}
 
-\item{thresholdBurntArea}{Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [0, 1], by default equal to 0.20 (20%).}
+\item{thresholdBurntArea}{Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [0, 1], by default equal to 0.20 (20\%).}
 
 \item{prob}{percentile corresponding to the threshold to validate. This is an integer in the range [1, 100], by default equal to 99.}
 
 \item{region}{string with the name of the region of interest}
 }
 \description{
-This function allows to visually validate a fire danger threshold by plotting the distributions of burned and not-burned areas.
+This function generate a data.frame to compare (and validate) observed burned cells and a fire danger threshold.
 }
 \examples{
 \dontrun{

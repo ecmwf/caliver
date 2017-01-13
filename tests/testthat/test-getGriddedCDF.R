@@ -16,10 +16,10 @@ test_that("getGriddedCDF works", {
   expect_equal("RasterStack" %in% class(probsMaps), TRUE)
   
   # Check whether layers are named correctly
-  expect_equal(names(probsMaps), c("Prob50", "Prob75"))
+  expect_equal(names(probsMaps), c("FWI50", "FWI75"))
   
-  mean50 <- round(raster::cellStats(probsMaps$Prob50, stat = 'mean'), 0)
-  mean75 <- round(raster::cellStats(probsMaps$Prob75, stat = 'mean'), 0)
+  mean50 <- round(raster::cellStats(probsMaps$FWI50, stat = 'mean'), 0)
+  mean75 <- round(raster::cellStats(probsMaps$FWI75, stat = 'mean'), 0)
   expect_equal(mean50, 10)
   expect_equal(mean75, 17)
   
