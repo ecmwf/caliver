@@ -15,13 +15,13 @@
 #' \dontrun{
 #'   library("caliver")
 #'   setwd("/var/tmp/moc0/geff/")
-#'   validateThresholds(obsMerged = "BurnedArea.nc", reaMerged = "FWI.nc",
+#'   ThresholdsByRegion(obsMerged = "BurnedArea.nc", reaMerged = "FWI.nc",
 #'                      region = "EURO", varnames = "FWI", 
 #'                      MinBurnedArea = 20, probs = 99)
 #' }
 #'
 
-validateThresholds <- function(obsMerged, reaMerged, region = "EURO",
+ThresholdsByRegion <- function(obsMerged, reaMerged, region = "EURO",
                                varnames = "FWI", MinBurnedArea = 20, 
                                probs = 99){
   
