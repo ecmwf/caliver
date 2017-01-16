@@ -5,7 +5,7 @@
 \title{Validate thresholds}
 \usage{
 validateThresholds(obsMerged, reaMerged, region = "EURO", varnames = "FWI",
-  thresholdsBurntArea = 20, probs = 99)
+  thresholdsBurntArea = 0.2, probs = 99)
 }
 \arguments{
 \item{obsMerged}{is the nc file name (or path) all the observations are saved, by default this is the file BurnedArea.nc the working directory. Observations can be obtained using the function \code{getBurnedAreas} and then merge them using the function \code{mergetime}.}

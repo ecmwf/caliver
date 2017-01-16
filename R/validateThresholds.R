@@ -6,7 +6,7 @@
 #' @param reaMerged is the nc file name (or path) all the re-analysis are saved, by default this is the file FWI.nc the working directory. This can be generated using the function \code{mergetime}.
 #' @param region string with the name of the region of interest
 #' @param varnames string with the name of the fire index
-#' @param thresholdsBurntArea Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [0, 1], by default equal to 0.20 (20\%).
+#' @param MinBurnedArea Minimum percentage of area burned to consider a cell affected by fire. This is a numeric value in the range [1, 100], by default equal to 20 (20\%).
 #' @param probs percentile corresponding to the threshold to validate. This is an integer in the range [1, 100], by default equal to 99.
 #'
 #' @export
@@ -17,17 +17,17 @@
 #'   setwd("/var/tmp/moc0/geff/")
 #'   validateThresholds(obsMerged = "BurnedArea.nc", reaMerged = "FWI.nc",
 #'                      region = "EURO", varnames = "FWI", 
-#'                      thresholdsBurntArea = 20, probs = 99)
+#'                      MinBurnedArea = 20, probs = 99)
 #' }
 #'
 
 validateThresholds <- function(obsMerged, reaMerged, region = "EURO",
-                               varnames = "FWI", thresholdsBurntArea = 20, 
+                               varnames = "FWI", MinBurnedArea = 20, 
                                probs = 99){
   
   for (varname in varnames){
     
-    for (thresh in thresholdsBurntArea){
+    for (thresh in MinBurnedArea/100){
       
       for (prob in probs){
         
@@ -36,7 +36,7 @@ validateThresholds <- function(obsMerged, reaMerged, region = "EURO",
         rea <- getGriddedCDF(ncfile = reaMerged, probs = prob, region = region,
                              mask = "fuel_model")
         
-        if (varname == varnames[1] & thresh == thresholdsBurntArea[1] & 
+        if (varname == varnames[1] & thresh == MinBurnedArea[1] & 
             prob == probs[1]){
           
           # FIND CELLS WHERE THERE HAS BEEN A FIRE AFFECTING THRESH% OF THE AREA
@@ -64,23 +64,19 @@ validateThresholds <- function(obsMerged, reaMerged, region = "EURO",
           message("Calculate burned cells")
           burnedMAP <- raster::calc(x = obsResampled,
                                     fun = function(x){ifelse(any(x >= thresh),
-                                                             yes = TRUE, 
-                                                             no = FALSE)},
+                                                             yes = 1, no = 0)},
                                     progress = "text")
           # NOTE: this operation can generate NAs due to masking of fuel_model!
           
           # Compare burned cells versus fire index values in a data frame
           burnedDF <- data.frame(Burned = as.vector(burnedMAP))
-          burnedDF$Index <- as.vector(rea)
-          names(burnedDF)[dim(burnedDF)[2]] <- varname
-          
-        }else{
-          
-          # Compare burned cells versus fire index values in a data frame
-          burnedDF <- cbind(burnedDF, as.vector(rea))
-          names(burnedDF)[dim(burnedDF)[2]] <- varname
           
         }
+        
+        # Compare burned cells versus fire index values in a data frame
+        burnedDF <- cbind(burnedDF, as.vector(rea))
+        names(burnedDF)[dim(burnedDF)[2]] <- paste0(varname, "_", 
+                                                    prob, "_", thresh)
         
       }
       
