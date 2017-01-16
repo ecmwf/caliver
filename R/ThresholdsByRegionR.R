@@ -15,7 +15,8 @@
 #' \dontrun{
 #'   library("caliver")
 #'   setwd("/var/tmp/moc0/geff/")
-#'   ThresholdsByRegion(obsMerged = "BurnedArea.nc", reaMerged = "FWI.nc",
+#'   ThresholdsByRegion(obsMerged = "BurnedArea.nc", 
+#'                      reaMerged = "FWI.nc",
 #'                      region = "EURO", varnames = "FWI", 
 #'                      MinBurnedArea = 20, probs = 99)
 #' }
@@ -27,19 +28,23 @@ ThresholdsByRegion <- function(obsMerged, reaMerged, region = "EURO",
   
   for (varname in varnames){
     
-    for (thresh in MinBurnedArea/100){
+    i <- which(varnames %in% varname)
+    
+    for (thresh in MinBurnedArea){
       
       for (prob in probs){
         
         # READ IN THE RE-ANALYSIS DATA (RasterLayer)
-        # Note that this tasks is only performed once but takes 75% of the time!
-        rea <- getGriddedCDF(ncfile = reaMerged, probs = prob, region = region,
+        rea <- getGriddedCDF(ncfile = reaMerged[i], 
+                             probs = prob, 
+                             region = region,
                              mask = "fuel_model")
         
         if (varname == varnames[1] & thresh == MinBurnedArea[1] & 
             prob == probs[1]){
           
           # FIND CELLS WHERE THERE HAS BEEN A FIRE AFFECTING THRESH% OF THE AREA
+          # Note this tasks are only performed once but take 75% of the time!
           
           # 1. Generate a mask of the region of interest
           regMASK <- regionalMask(region)
@@ -62,14 +67,14 @@ ThresholdsByRegion <- function(obsMerged, reaMerged, region = "EURO",
           
           # 5. Calculate which cells were burned
           message("Calculate burned cells")
-          burnedMAP <- raster::calc(x = obsResampled,
-                                    fun = function(x){ifelse(any(x >= thresh),
-                                                             yes = 1, no = 0)},
+          burned <- raster::calc(x = obsResampled,
+                                 fun = function(x){ifelse(any(x >= thresh/100),
+                                                          yes = 1, no = 0)},
                                     progress = "text")
           # NOTE: this operation can generate NAs due to masking of fuel_model!
           
           # Compare burned cells versus fire index values in a data frame
-          burnedDF <- data.frame(Burned = as.vector(burnedMAP))
+          burnedDF <- data.frame(Burned = as.vector(burned))
           
         }
         

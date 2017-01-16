@@ -27,7 +27,8 @@ This function generate a data.frame to compare (and validate) observed burned ce
 \dontrun{
   library("caliver")
   setwd("/var/tmp/moc0/geff/")
-  ThresholdsByRegion(obsMerged = "BurnedArea.nc", reaMerged = "FWI.nc",
+  ThresholdsByRegion(obsMerged = "BurnedArea.nc", 
+                     reaMerged = "FWI.nc",
                      region = "EURO", varnames = "FWI", 
                      MinBurnedArea = 20, probs = 99)
 }
