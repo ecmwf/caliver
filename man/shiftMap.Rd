@@ -4,12 +4,12 @@
 \alias{shiftMap}
 \title{Shift map}
 \usage{
-shiftMap(inFile, outDir = getwd())
+shiftMap(inFile, outDir = tempdir())
 }
 \arguments{
 \item{inFile}{input file(s) to be shifted}
 
-\item{outDir}{is the directory where the output nc file is saved, by default this is the working directory.}
+\item{outDir}{is the directory where the output nc file is saved, by default this a temporary directory.}
 }
 \value{
 A shifted file for ech input file name

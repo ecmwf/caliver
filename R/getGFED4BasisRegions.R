@@ -2,7 +2,7 @@
 #'
 #' @description This function retrieves the GFED4 basis region from the fourth-generation global fire emissions database website (http://www.globalfiredata.org/data.html).
 #' 
-#' @param outDir is the directory where the converted file(s) are saved, by default this is the working directory.
+#' @param outDir is the directory where the converted file(s) are saved, by default this is a temporary directory.
 #' 
 #' @return A RasterLayer
 #'
@@ -14,7 +14,7 @@
 #' }
 #'
 
-getGFED4BasisRegions <- function(outDir = getwd()){
+getGFED4BasisRegions <- function(outDir = tempdir()){
   
   baseURL <- "http://www.falw.vu/~gwerf/GFED/GFED4/"
   fname <- "GFED4.1s_2015.hdf5"
@@ -22,7 +22,7 @@ getGFED4BasisRegions <- function(outDir = getwd()){
   
   if (httr::http_error(theURL)){
     
-    message("Server currently unavailable, please try again later.")
+    stop("Server currently unavailable, please try again later.")
     
   }else{
     
@@ -44,12 +44,10 @@ getGFED4BasisRegions <- function(outDir = getwd()){
     # rotate
     regionsRasterTR <- rotate_2_360(regionsRasterT)
     
-    # raster::plot(regionsRasterTR)
     regionsRasterTR[regionsRasterTR == 0] <- NA
     # Assign projection
     x <- rgdal::make_EPSG()
     regionsRasterTR@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
-    # raster::plot(regionsRasterTR)
     
     # remove hdf5 file
     unlink(file.path(outDir, fname))
@@ -57,8 +55,8 @@ getGFED4BasisRegions <- function(outDir = getwd()){
     # This might need to be resampled using the attributes of the lower/higher res raster
     # GFEDregions <- raster::resample(regionsRasterTR, OtherRaster, method = "ngb")
     
-    return(regionsRasterTR)
-    
   }
+  
+  return(regionsRasterTR)
   
 }

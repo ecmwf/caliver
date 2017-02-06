@@ -37,8 +37,8 @@ ThresholdsByRegion <- function(obsMerged, reaMerged, region = "EURO",
         # READ IN THE RE-ANALYSIS DATA (RasterLayer)
         rea <- getGriddedCDF(ncfile = reaMerged[i], 
                              probs = prob, 
-                             region = region,
-                             mask = "fuel_model")
+                             mask = "fuel_model",
+                             region = region)
         
         if (varname == varnames[1] & thresh == MinBurnedArea[1] & 
             prob == probs[1]){

@@ -22,7 +22,7 @@
 #'  \item{"Southeast Asia"}{or SEAS}
 #'  \item{"Equatorial Asia"}{or EQAS}
 #'  \item{"Australia and New Zealand"}{or AUST}}
-#' @param outDir is the directory where the output nc files are saved, by default this is the working directory.
+#' @param outDir is the directory where the output nc files are saved, by default this is a temporary directory.
 #' 
 #' @return list containing all the maps of fwi percentiles
 #'
@@ -39,7 +39,7 @@
 #'
 
 getGriddedCDF <- function(ncfile, probs, mask = "no mask", 
-                          region = "GLOB", outDir = getwd()){
+                          region = "GLOB", outDir = tempdir()){
   
   if (mask == "fuel_model"){
     

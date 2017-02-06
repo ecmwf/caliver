@@ -4,7 +4,7 @@ test_that("getGriddedCDF works", {
   
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
   
-  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = file.path(myTempDir, "outTest.nc"))
+  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = file.path(myTempDir, "outTest.nc"), method="curl")
   
   inFile <- file.path(myTempDir, "outTest.nc")
   

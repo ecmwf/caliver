@@ -8,10 +8,13 @@ test_that("decompression works", {
   
   download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/", 
                              "caliver_test_data/test.nc.gz"), 
-                destfile = file.path(myTempDir, "test.nc.gz"))
+                destfile = file.path(myTempDir, "test.nc.gz"), 
+                method="curl")
   
   decompressGZ(dirs = myTempDir, keep = FALSE)
   
   expect_equal("test.nc" %in% list.files(myTempDir), TRUE)
+  
+  file.remove(file.path(myTempDir, "test.nc"))
   
 })

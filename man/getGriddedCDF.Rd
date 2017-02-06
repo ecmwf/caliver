@@ -5,7 +5,7 @@
 \title{Calculate CDF and percentiles}
 \usage{
 getGriddedCDF(ncfile, probs, mask = "no mask", region = "GLOB",
-  outDir = getwd())
+  outDir = tempdir())
 }
 \arguments{
 \item{ncfile}{is the name of the file(path) to read}
@@ -32,7 +32,7 @@ getGriddedCDF(ncfile, probs, mask = "no mask", region = "GLOB",
  \item{"Equatorial Asia"}{or EQAS}
  \item{"Australia and New Zealand"}{or AUST}}}
 
-\item{outDir}{is the directory where the output nc files are saved, by default this is the working directory.}
+\item{outDir}{is the directory where the output nc files are saved, by default this is a temporary directory.}
 }
 \value{
 list containing all the maps of fwi percentiles

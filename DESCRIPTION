@@ -12,15 +12,14 @@ Description: Utility functions for the post-processing, calibration and
     validation of gridded model outputs. Initial test cases include the outputs of
     the following forest fire models: GEFF and RISICO.
 Depends:
-    R (>= 3.3)
+    R (>= 3.1)
 Imports:
-    sp,
     rgdal,
     ncdf4,
-    tibble,
+    raster,
+    sp,
     grDevices,
     rworldmap,
-    raster,
     rasterVis,
     latticeExtra,
     graphics,

@@ -17,7 +17,7 @@ test_that("mergetime works", {
   
   download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/",
                              "caliver_test_data/testA.nc"), 
-                destfile = file.path(myTempDir, "testA.nc"))
+                destfile = file.path(myTempDir, "testA.nc"), method="curl")
   
   inFile <- file.path(myTempDir, "testA.nc")
   

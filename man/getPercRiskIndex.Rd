@@ -2,7 +2,7 @@
 % Please edit documentation in R/getPercRiskIndex.R
 \name{getPercRiskIndex}
 \alias{getPercRiskIndex}
-\title{Generates the percentile risk index from a raster (stack) and a set of polygons}
+\title{Generates the percentile risk index from a raster stack and a set of polygons}
 \usage{
 getPercRiskIndex(r_stack, p_shape, perc.val = 75, mod = "gt")
 }
@@ -13,7 +13,7 @@ getPercRiskIndex(r_stack, p_shape, perc.val = 75, mod = "gt")
 
 \item{perc.val}{is the percentile value used as a threshold}
 
-\item{mod}{defines if the values considered for the mean are above ("gt") or below ("lt") the threshold}
+\item{mod}{defines if the values considered for the mean are above (gt) or below (lt) the threshold}
 }
 \description{
 generates the mean of the values over a certain percentile theshold 
@@ -21,8 +21,8 @@ generates the mean of the values over a certain percentile theshold
 }
 \examples{
 \dontrun{
-  r.index = getPercRiskIndex(r_stack, poly, perc.val=50, mod="lt")
-  poly@data$VALUE <- r.index
+  r.index <- getPercRiskIndex(r_stack = r_stack, p_shape = poly, 
+                              perc.val = 50, mod = "lt")
 }
 
 }

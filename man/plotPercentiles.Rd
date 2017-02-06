@@ -13,7 +13,7 @@ plotPercentiles(maps, rotateMap = FALSE, region = "GLOB", ...)
 
 \item{region}{string of characters describing the region.}
 
-\item{...}{additional graphical parameters inherited from raster::plot().}
+\item{...}{additional graphical parameters inherited from plot() in the raster package.}
 }
 \description{
 This function plots the maps of percentiles

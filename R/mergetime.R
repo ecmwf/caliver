@@ -7,7 +7,7 @@
 #' @param startingString string defining the beginning of the netcdf filenames (needed to exclude other files)
 #' @param recursive logical (TRUE by default). If set to TRUE it looks in folders and subfolders
 #' @param outFile filename where to store results
-#' @param outDir is the directory where outFile is saved, by default this is the working directory.
+#' @param outDir is the directory where outFile is saved, by default this is a temporary directory.
 #' 
 #' @export
 #'
@@ -29,7 +29,7 @@ mergetime <- function(dirs = NULL,
                       startingString = "", 
                       recursive = FALSE, 
                       outFile = "outfile.nc", 
-                      outDir = getwd()){  
+                      outDir = tempdir()){  
   
   outFilePath <- file.path(outDir, outFile)
   
@@ -60,7 +60,10 @@ mergetime <- function(dirs = NULL,
   }
   
   if (is.null(varname)){
-    system(paste0("cdo mergetime ", ifiles, " ", outFilePath))
+    # Mergetime opens all the file to order them over time
+    # system(paste0("cdo mergetime ", ifiles, " ", outFilePath))
+    # Cat opens 1 file at the time because it assumes they are already ordered
+    system(paste0("cdo cat ", ifiles, " ", outFilePath))
   }else{
     system(paste0("cdo select,name=", varname, " ", ifiles, " ", outFilePath))
   }

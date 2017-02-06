@@ -1,29 +1,24 @@
-#' Define Risk Threshold
+#' Calibrate Risk Threshold
 #'
 #' @description This function calculates the risk threshold given a vector of probabilities corresponding to Low-Medium-High-Extreme risk.
 #'
 #' @param probMaps is the RasterStack where all the pre-calculated probability maps are stored
-#' @param regions vector of strings describing the GFED4 region (see regionalMask for options).
 #' 
 #' @return A tibble (data.frame) listing thresholds based on regions (columns) and level of risk (percentile on the rows).
 #'
-#' @export
+#' # @export
 #'
 #' @examples
 #' \dontrun{
-#'   thresholdFWI <- RiskThresholds(probMaps)
+#'   thresholdFWI <- CalibrateRiskThresholds(probMaps)
 #' }
 #'
 
-RiskThresholds <- function(probMaps, regions = "GLOB"){
+CalibrateRiskThresholds <- function(probMaps){
   
-  if (is.null(regions)){
-    
-    # Set regions' names
-    regions <- c("GLOB", "BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO", 
-                 "MIDE", "NHAF", "SHAF", "BOAS", "CEAS", "SEAS", "EQAS", "AUST")
-    
-  }
+  # Set regions' names
+  regions <- c("GLOB", "BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO", 
+               "MIDE", "NHAF", "SHAF", "BOAS", "CEAS", "SEAS", "EQAS", "AUST")
   
   # Get probabilities from layer names
   layerNames <- names(probMaps)

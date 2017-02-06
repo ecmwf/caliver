@@ -18,15 +18,15 @@ rotate_2_360 <- function(x, filename='', ...){
     
   }
   
-  ext1 <- extent(0, 180, -90, 90)
-  if (is.null(intersect(e, ext1 ))) {
+  ext1 <- raster::extent(0, 180, -90, 90)
+  if (is.null(raster::intersect(e, ext1))) {
     r1 <- NULL
   } else {
     r1 <- raster::crop(x, ext1)
   }		
   #ext2 <- extent(-180+res(x)[1], 0, -90, 90)
   ext2 <- raster::extent(-180, 0, -90, 90)
-  if (is.null(intersect(e, ext2 ))) {
+  if (is.null(raster::intersect(e, ext2 ))) {
     r2 <- NULL
   } else {
     r2 <- raster::crop(x, ext2)

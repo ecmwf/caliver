@@ -3,7 +3,7 @@
 #' @description This function shifts a netcdf file to be in the following bounding box: -180,180-90,90
 #'
 #' @param inFile input file(s) to be shifted
-#' @param outDir is the directory where the output nc file is saved, by default this is the working directory.
+#' @param outDir is the directory where the output nc file is saved, by default this a temporary directory.
 #' 
 #' @return A shifted file for ech input file name
 #'
@@ -15,7 +15,7 @@
 #' }
 #'
 
-shiftMap <- function(inFile, outDir = getwd()){
+shiftMap <- function(inFile, outDir = tempdir()){
   
   outFilenames <- c()
   

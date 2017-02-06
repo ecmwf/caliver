@@ -7,16 +7,15 @@
 #'
 #' @import rgdal
 #' @import ncdf4
-#' @importFrom tibble as_tibble
+#' @importFrom raster raster stack mask crop rotate extent extract t plot
 #' @importFrom grDevices heat.colors
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines CRS
-#' @importFrom raster raster stack mask crop rotate extent extract t
 #' @importFrom rasterVis levelplot
 #' @importFrom latticeExtra layer
 #' @importFrom graphics plot
 #' @importFrom stats quantile
-#' @importFrom httr GET authenticate write_disk 
+#' @importFrom httr GET authenticate write_disk url_success
 #' @importFrom stringr str_pad
 #' @importFrom lubridate yday
 #' @importFrom rhdf5 h5read

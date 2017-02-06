@@ -2,7 +2,7 @@ context("regionalMask")
 
 test_that("regionalMask works", {
   
-  e <- regionalMask(region = "Europe")
+  e <- regionalMask(region = "EURO")
   
   expect_equal("RasterLayer" %in% class(e), TRUE)
   

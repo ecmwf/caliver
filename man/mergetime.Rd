@@ -5,7 +5,7 @@
 \title{Merge netcdf files on the time dimension}
 \usage{
 mergetime(dirs = NULL, varname = NULL, startingString = "",
-  recursive = FALSE, outFile = "outfile.nc", outDir = getwd())
+  recursive = FALSE, outFile = "outfile.nc", outDir = tempdir())
 }
 \arguments{
 \item{dirs}{is the directory where all the files to read are stored}
@@ -18,7 +18,7 @@ mergetime(dirs = NULL, varname = NULL, startingString = "",
 
 \item{outFile}{filename where to store results}
 
-\item{outDir}{is the directory where outFile is saved, by default this is the working directory.}
+\item{outDir}{is the directory where outFile is saved, by default this is a temporary directory.}
 }
 \description{
 This function merges all the netcdf files in a given directory over the time dimension. It saves the merged file in the working directory.

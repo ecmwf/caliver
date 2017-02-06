@@ -4,10 +4,10 @@
 \alias{getGFED4BasisRegions}
 \title{Get GFED4 Basis Regions}
 \usage{
-getGFED4BasisRegions(outDir = getwd())
+getGFED4BasisRegions(outDir = tempdir())
 }
 \arguments{
-\item{outDir}{is the directory where the converted file(s) are saved, by default this is the working directory.}
+\item{outDir}{is the directory where the converted file(s) are saved, by default this is a temporary directory.}
 }
 \value{
 A RasterLayer

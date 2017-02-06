@@ -5,7 +5,7 @@
 #' @param maps is the result of getGriddedCDF()
 #' @param rotateMap logical, if TRUE it uses a background map
 #' @param region string of characters describing the region.
-#' @param ... additional graphical parameters inherited from raster::plot().
+#' @param ... additional graphical parameters inherited from plot() in the raster package.
 #' 
 #' @export
 #'
@@ -32,7 +32,6 @@ plotPercentiles <- function(maps, rotateMap = FALSE, region = "GLOB", ...){
     lonRange = "0/360"
     
   }
-  # raster::plot(rotatedMap)
   
   if (region != "GLOB"){
     
@@ -47,22 +46,21 @@ plotPercentiles <- function(maps, rotateMap = FALSE, region = "GLOB", ...){
     croppedMap <- rotatedMap
     
   }
-  # raster::plot(croppedMap)
   
   # Define a background map
   backgroundMap <- rworldmap::getMap(resolution = "low")
   # We want to plot the background map on each layers of the stack, so we need 
-  # to create a function and pass it to the addfun argument (see ?raster::plot)
+  # to create a function and pass it to the addfun argument 
+  # (see ?plot in the raster package)
   fun <- function() {
-    raster::plot(backgroundMap, add = TRUE, border = 'lightgray')
+    plot(backgroundMap, add = TRUE, border = 'lightgray')
   }
   
   rastMin <- min(raster::cellStats(croppedMap, stat = 'min', na.rm = TRUE))
   rastMax <- max(raster::cellStats(croppedMap, stat = 'max', na.rm = TRUE))
   
-  raster::plot(croppedMap, addfun = fun, 
-               col = rev(heat.colors(10, alpha = 1)),
-               breaks = round(seq(from = rastMin, to = rastMax,
-                                  length.out = 10), 0), ...)
+  plot(croppedMap, addfun = fun, col = rev(heat.colors(10, alpha = 1)),
+       breaks = round(seq(from = rastMin, to = rastMax, 
+                          length.out = 10), 0), ...)
   
 }
