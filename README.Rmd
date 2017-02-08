@@ -39,6 +39,10 @@ packs <- c("devtools", "graphics", "grDevices", "knitr", "latticeExtra",
            "stats", "testthat", "rmarkdown", "rworldmap")
 new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
+
+# Install Bioconductor packages
+devtools::install_github("Bioconductor-mirror/zlibbioc")
+devtools::install_github("Bioconductor-mirror/rhdf5")
 ```
 
 Get the development version from github using [devtools](https://github.com/hadley/devtools):

@@ -3,7 +3,7 @@ Type: Package
 Title: CALIbration and VERification of gridded model outputs
 Version: 0.1
 Authors@R: c(person("Claudia", "Vitolo", email = "claudia.vitolo@ecmwf.int", role = c("aut", "cre")),
-             person("Mirko", "D'Andrea", role = c("ctb")),
+             person("Mirko", "D'Andrea", role = c("aut", "ctb")),
              person("Francesca", "Di Giuseppe", role = c("ctb")))
 Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
 URL: https://github.com/ecmwf/caliver

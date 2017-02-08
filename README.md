@@ -3,7 +3,9 @@
 caliver: CALIbration and VERification of gridded model outputs
 ==============================================================
 
-[![Travis-CI Build Status](https://travis-ci.org/ecmwf/caliver.svg?branch=master)](https://travis-ci.org/ecmwf/caliver) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/ecmwf/caliver?branch=master&svg=true)](https://ci.appveyor.com/project/ecmwf/caliver) [![Coverage Status](https://img.shields.io/codecov/c/github/ecmwf/caliver/master.svg)](https://codecov.io/github/ecmwf/caliver?branch=master)
+[![Travis-CI Build Status](https://travis-ci.org/ecmwf/caliver.svg?branch=master)](https://travis-ci.org/ecmwf/caliver)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/ecmwf/caliver?branch=master&svg=true)](https://ci.appveyor.com/project/ecmwf/caliver)
+[![Coverage Status](https://img.shields.io/codecov/c/github/ecmwf/caliver/master.svg)](https://codecov.io/github/ecmwf/caliver?branch=master)
 
 The name '[caliver](https://github.com/ecmwf/caliver)' stands for CALIbration and VERification of gridded model outputs. It is an extension package developed for the R programming language and available with a GPL-2 license from a public repository.
 
@@ -22,6 +24,10 @@ packs <- c("devtools", "graphics", "grDevices", "knitr", "latticeExtra",
            "stats", "testthat", "rmarkdown", "rworldmap")
 new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
+
+# Install Bioconductor packages
+devtools::install_github("Bioconductor-mirror/zlibbioc")
+devtools::install_github("Bioconductor-mirror/rhdf5")
 ```
 
 Get the development version from github using [devtools](https://github.com/hadley/devtools):

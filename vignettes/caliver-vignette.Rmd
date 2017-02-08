@@ -10,6 +10,17 @@ vignette: >
 ---
 
 ```{r echo=FALSE}
+# To print this as a vignette, make the following changes to the YAML header
+# date: "`r Sys.Date()`"
+# output: rmarkdown::html_vignette
+# vignette: >
+#   %\VignetteIndexEntry{Vignette Title}
+#   %\VignetteEngine{knitr::rmarkdown}
+#   %\VignetteEncoding{UTF-8}
+
+# This document can be compiled with the 'Knit Word' button in Rstudio, or:
+# rmarkdown::render("manuscript.Rmd", "word_document", "manuscript.docx")
+
 knitr::opts_chunk$set(
   comment = '#>',
   collapse = TRUE,
