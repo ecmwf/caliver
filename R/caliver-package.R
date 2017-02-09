@@ -15,7 +15,7 @@
 #' @importFrom latticeExtra layer
 #' @importFrom graphics plot
 #' @importFrom stats quantile
-#' @importFrom httr GET authenticate write_disk url_success
+#' @importFrom httr GET authenticate write_disk http_error
 #' @importFrom stringr str_pad
 #' @importFrom lubridate yday
 #' @importFrom rhdf5 h5read
