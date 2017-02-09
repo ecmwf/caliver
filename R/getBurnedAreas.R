@@ -8,7 +8,7 @@
 #' @param outFormat is the desired format for the output, by default it is "hdf5" but it can also be set equal to "netcdf".
 #' @param varname name of the variable to extract, by default it keeps all the available variables.
 #' @param merge logical (TRUE by default). If TRUE it merges all the file over the time dimension.
-#' #@param keep logical (FALSE by default). If FALSE it deletes temporary files.
+#' @param keep logical (FALSE by default). If FALSE it deletes temporary files.
 #' 
 #' @note The conversion from hdf5 to netcdf gets stuck in RStudio, please use the basic console.
 #'
