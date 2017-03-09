@@ -12,6 +12,8 @@ getFireSeason(DATES, FSS = NULL, FSE = NULL, emisphere = "north")
 \item{FSS}{Fire Season Start (date in the format Y-m-d)}
 
 \item{FSE}{Fire Season End (date in the format Y-m-d)}
+
+\item{emisphere}{this can either be "north" or "south"}
 }
 \description{
 Get the season for each date in a vector

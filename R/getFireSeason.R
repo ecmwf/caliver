@@ -3,6 +3,7 @@
 #' @param DATES vector of dates
 #' @param FSS Fire Season Start (date in the format Y-m-d)
 #' @param FSE Fire Season End (date in the format Y-m-d)
+#' @param emisphere this can either be "north" or "south"
 #'
 #' @export
 #'

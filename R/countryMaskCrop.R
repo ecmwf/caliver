@@ -16,7 +16,7 @@
 countryMaskCrop <- function(x, countryName){
   
   # Define country borders
-  countryMap <- maps::map(regions=sov.expand(countryName), 
+  countryMap <- maps::map(regions = maps::sov.expand(countryName), 
                           plot = FALSE, fill = TRUE)
   
   country <- maptools::map2SpatialPolygons(map = countryMap, 
