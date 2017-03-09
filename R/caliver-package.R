@@ -20,5 +20,8 @@
 #' @importFrom lubridate yday
 #' @importFrom rhdf5 h5read
 #' @importFrom utils download.file
+#' @importFrom maps map
+#' @importFrom maptools map2SpatialPolygons
+#' @importFrom grid grid.newpage pushViewport viewport grid.layout
 #'
 NULL

@@ -51,6 +51,7 @@ mergetime <- function(dirs = NULL,
                                  full.names = TRUE), collapse = " ")
     }else{
       ifiles <- file.path(dirs, "*.nc")
+      # ifiles <- paste(list.files(path = dirs, full.names = TRUE), collapse = " ")
     }
   }else{
     ifiles <- paste(list.files(path = dirs, 

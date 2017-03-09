@@ -26,7 +26,10 @@ Imports:
     httr,
     stringr,
     lubridate,
-    rhdf5
+    rhdf5,
+    maps,
+    maptools,
+    grid
 Suggests:
     testthat,
     knitr,

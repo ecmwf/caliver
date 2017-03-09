@@ -4,9 +4,11 @@
 \alias{getGFED4BasisRegions}
 \title{Get GFED4 Basis Regions}
 \usage{
-getGFED4BasisRegions(outDir = tempdir())
+getGFED4BasisRegions(region = NULL, outDir = tempdir())
 }
 \arguments{
+\item{region}{name of the GFED4 basis region.}
+
 \item{outDir}{is the directory where the converted file(s) are saved, by default this is a temporary directory.}
 }
 \value{
