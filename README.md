@@ -3,6 +3,8 @@
 caliver: CALIbration and VERification of gridded model outputs
 ==============================================================
 
+[![DOI](https://zenodo.org/badge/73203648.svg)](https://zenodo.org/badge/latestdoi/73203648)
+
 [![Travis-CI Build Status](https://travis-ci.org/ecmwf/caliver.svg?branch=master)](https://travis-ci.org/ecmwf/caliver)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/ecmwf/caliver?branch=master&svg=true)](https://ci.appveyor.com/project/ecmwf/caliver)
 [![Coverage Status](https://img.shields.io/codecov/c/github/ecmwf/caliver/master.svg)](https://codecov.io/github/ecmwf/caliver?branch=master)
