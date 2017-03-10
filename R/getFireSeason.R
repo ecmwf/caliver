@@ -36,12 +36,22 @@ getFireSeason <- function(DATES, FSS = NULL, FSE = NULL, emisphere = "north"){
   }
   
   if (emisphere == "north"){
-    season <- ifelse(d >= FSS & d <= FSE, 1, 0)
+    season <- ifelse(d >= FSS & d <= FSE, TRUE, FALSE)
   }else{
     FirstJan <- as.Date("2012-01-01", format = "%Y-%m-%d")
     LastDec <- as.Date("2012-12-31", format = "%Y-%m-%d")
-    season <- ifelse(d >= FirstJan & d <= FSE | d >= FSS & d <= LastDec, 1, 0)
+    season <- ifelse(d >= FirstJan & d <= FSE | d >= FSS & d <= LastDec, 
+                     TRUE, FALSE)
   }
+  
+#   if (zone == "tropics"){
+#     season <- ifelse(d >= FSS & d <= FSE, TRUE, FALSE)
+#   }else{
+#     FirstJan <- as.Date("2012-01-01", format = "%Y-%m-%d")
+#     LastDec <- as.Date("2012-12-31", format = "%Y-%m-%d")
+#     season <- ifelse(d >= FirstJan & d <= FSE | d >= FSS & d <= LastDec, 
+#                      TRUE, FALSE)
+#   }
   
   return(season)
   

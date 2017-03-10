@@ -5,8 +5,12 @@
 #' @name caliver
 #' @docType package
 #'
+#' @import maps
 #' @import rgdal
 #' @import ncdf4
+#' @importFrom ggplot2 ggplot aes element_text geom_density geom_segment 
+#' @importFrom ggplot2 geom_text scale_colour_manual theme theme_bw 
+#' @importFrom ggplot2 xlab ylab
 #' @importFrom raster raster stack mask crop rotate extent extract t plot
 #' @importFrom grDevices heat.colors
 #' @importFrom rworldmap getMap
@@ -14,14 +18,13 @@
 #' @importFrom rasterVis levelplot
 #' @importFrom latticeExtra layer
 #' @importFrom graphics plot
-#' @importFrom stats quantile
 #' @importFrom httr GET authenticate write_disk http_error
 #' @importFrom stringr str_pad
 #' @importFrom lubridate yday
 #' @importFrom rhdf5 h5read
 #' @importFrom utils download.file
-#' @importFrom maps map
 #' @importFrom maptools map2SpatialPolygons
 #' @importFrom grid grid.newpage pushViewport viewport grid.layout
-#'
+#' @importFrom stats median na.omit sd uniroot density quantile
+#' 
 NULL

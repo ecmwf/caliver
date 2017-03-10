@@ -2,9 +2,10 @@ Package: caliver
 Type: Package
 Title: CALIbration and VERification of gridded model outputs
 Version: 0.1
+Date: 2017-03-10
 Authors@R: c(person("Claudia", "Vitolo", email = "claudia.vitolo@ecmwf.int", role = c("aut", "cre")),
              person("Mirko", "D'Andrea", role = c("aut", "ctb")),
-             person("Francesca", "Di Giuseppe", role = c("ctb")))
+             person("Francesca", "Di Giuseppe", role = c("aut", "ctb")))
 Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
 URL: https://github.com/ecmwf/caliver
 BugReports: https://github.com/ecmwf/caliver/issues
@@ -12,10 +13,11 @@ Description: Utility functions for the post-processing, calibration and
     validation of gridded model outputs. Initial test cases include the outputs of
     the following forest fire models: GEFF and RISICO.
 Depends:
-    R (>= 3.1)
+    R (>= 3.1), maps
 Imports:
     rgdal,
     ncdf4,
+    ggplot2,
     raster,
     sp,
     grDevices,
@@ -27,7 +29,6 @@ Imports:
     stringr,
     lubridate,
     rhdf5,
-    maps,
     maptools,
     grid
 Suggests:
