@@ -10,7 +10,7 @@
 #' @import ncdf4
 #' @importFrom ggplot2 ggplot aes element_text geom_density geom_segment 
 #' @importFrom ggplot2 geom_text scale_colour_manual theme theme_bw 
-#' @importFrom ggplot2 xlab ylab
+#' @importFrom ggplot2 xlab ylab scale_x_continuous
 #' @importFrom raster raster stack mask crop rotate extent extract t plot
 #' @importFrom grDevices heat.colors
 #' @importFrom rworldmap getMap
@@ -26,5 +26,6 @@
 #' @importFrom maptools map2SpatialPolygons
 #' @importFrom grid grid.newpage pushViewport viewport grid.layout
 #' @importFrom stats median na.omit sd uniroot density quantile
+#' @importFrom methods slot
 #' 
 NULL

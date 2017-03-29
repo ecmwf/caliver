@@ -1,4 +1,4 @@
-#' Merge netcdf files on the time dimension
+#' @title Merge netcdf files on the time dimension
 #'
 #' @description This function merges all the netcdf files in a given directory over the time dimension. It saves the merged file in the working directory.
 #'
@@ -6,32 +6,32 @@
 #' @param varname name of the variable to extract
 #' @param startingString string defining the beginning of the netcdf filenames (needed to exclude other files)
 #' @param recursive logical (TRUE by default). If set to TRUE it looks in folders and subfolders
-#' @param outFile filename where to store results
-#' @param outDir is the directory where outFile is saved, by default this is a temporary directory.
+#' @param outFileName output filename
+#' @param outDir is the directory where outFileName is saved, by default this is the working directory.
 #' 
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #'   # Mergetime using single variable nc files
-#'   mergetime(dirs = "/var/tmp/moc0/forestfire",
+#'   catNetcdf(dirs = "/var/tmp/moc0/forestfire",
 #'             varname = NULL,
 #'             startingString = "geff_reanalysis_an_fwis_fwi_",
 #'             recursive = TRUE,
-#'             outFile = "outfile.nc",
+#'             outFileName = "outfile.nc",
 #'             outDir = getwd())
 #'             
 #' }
 #'
 
-mergetime <- function(dirs = NULL, 
-                      varname = NULL, 
-                      startingString = "", 
-                      recursive = FALSE, 
-                      outFile = "outfile.nc", 
-                      outDir = tempdir()){  
+catNetcdf <- function(dirs = NULL, 
+                      varname = NULL,
+                      startingString = "",
+                      recursive = FALSE,
+                      outFileName = "outfile.nc",
+                      outDir = getwd()){  
   
-  outFilePath <- file.path(outDir, outFile)
+  outFilePath <- file.path(outDir, outFileName)
   
   if(Sys.which("cdo")[[1]] == "") {
     
@@ -51,7 +51,6 @@ mergetime <- function(dirs = NULL,
                                  full.names = TRUE), collapse = " ")
     }else{
       ifiles <- file.path(dirs, "*.nc")
-      # ifiles <- paste(list.files(path = dirs, full.names = TRUE), collapse = " ")
     }
   }else{
     ifiles <- paste(list.files(path = dirs, 
@@ -61,12 +60,17 @@ mergetime <- function(dirs = NULL,
   }
   
   if (is.null(varname)){
+    
     # Mergetime opens all the file to order them over time
     # system(paste0("cdo mergetime ", ifiles, " ", outFilePath))
+    
     # Cat opens 1 file at the time because it assumes they are already ordered
     system(paste0("cdo cat ", ifiles, " ", outFilePath))
+    
   }else{
+    
     system(paste0("cdo select,name=", varname, " ", ifiles, " ", outFilePath))
+    
   }
   
   return(outFilePath)

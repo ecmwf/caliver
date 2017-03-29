@@ -1,6 +1,6 @@
-context("getGriddedCDF")
+context("makePercentileRaster")
 
-test_that("getGriddedCDF works", {
+test_that("makePercentileRaster works", {
   
   myTempDir <- tempdir() # works on all platforms with a platform-dependent result
   
@@ -8,9 +8,10 @@ test_that("getGriddedCDF works", {
   
   inFile <- file.path(myTempDir, "outTest.nc")
   
-  probsMaps <- getGriddedCDF(ncfile = inFile, 
-                             probs = c(50, 75), 
-                             outDir = myTempDir)
+  probsMaps <- makePercentileRaster(inFilePath = inFile, 
+                                    probs = c(50, 75),
+                                    outDir = myTempDir,
+                                    mask = "")
   
   # Check whether the class is correct
   expect_equal("RasterStack" %in% class(probsMaps), TRUE)

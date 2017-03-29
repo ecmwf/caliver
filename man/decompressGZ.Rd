@@ -2,9 +2,9 @@
 % Please edit documentation in R/decompressGZ.R
 \name{decompressGZ}
 \alias{decompressGZ}
-\title{Decompress all .gz files in a given folder}
+\title{decompressGZ}
 \usage{
-decompressGZ(dirs, keep = FALSE)
+decompressGZ(dirs = getwd(), keep = FALSE)
 }
 \arguments{
 \item{dirs}{is the directory where all the files to read are stored}

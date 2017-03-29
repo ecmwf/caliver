@@ -249,7 +249,7 @@ getGFED4 <- function(years = NULL,
         
       }
       
-      mergetime(dirs = outDir, outFile = outFileName, outDir = getwd())
+      catNetcdf(dirs = outDir, outFileName = outFileName, outDir = getwd())
       
       if (keep == FALSE) {
         

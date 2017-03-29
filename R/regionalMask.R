@@ -31,7 +31,7 @@
 
 regionalMask <- function(region = "GLOB"){
   
-  GFEDregions <- getGFED4BasisRegions()
+  GFEDregions <- getGFED4(varname = 'BasisRegions')
   
   if (region == "Boreal North America" | region == "BONA") {
     GFEDregions[GFEDregions != 1] <- NA

@@ -30,7 +30,8 @@ Imports:
     lubridate,
     rhdf5,
     maptools,
-    grid
+    grid,
+    methods
 Suggests:
     testthat,
     knitr,

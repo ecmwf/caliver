@@ -66,11 +66,18 @@ The conversion from hdf5 to netcdf gets stuck in RStudio, please use the basic c
   # Basis regions
   BasisRegions <- getGFED4(varname = "BasisRegions")
 
-  # Burned Areas
+  # Monthly burned areas
   BurnedAreas <- getGFED4(years = 1997:2015, tempRes = "monthly", 
                           varname = "BurnedArea", merge = TRUE, keep = FALSE,
                           outFileName = "BurnedArea_monthly.nc", 
                           outFormat = "netcdf")
+                          
+  # Daily burned areas
+  DailyBurnedAreas <- getGFED4(years = 2003:2017, tempRes = "daily", 
+                               varname = "BurnedArea", merge = TRUE, 
+                               keep = FALSE, 
+                               outFileName = "BurnedArea_daily.nc",
+                               outFormat = "netcdf")
            
 }
 

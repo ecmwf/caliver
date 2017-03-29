@@ -1,6 +1,6 @@
-context("mergetime")
+context("catNetcdf")
 
-test_that("mergetime works", {
+test_that("catNetcdf works", {
   
   skip_on_travis()
   
@@ -23,8 +23,8 @@ test_that("mergetime works", {
   
   file.copy(from = inFile, to = file.path(myTempDir, "testB.nc"))
   
-  mergedFile <- mergetime(dirs = myTempDir, 
-                          startingString = "test", 
+  mergedFile <- catNetcdf(dirs = myTempDir, 
+                          startingString = "test",
                           outFile = "TestAB.nc",
                           outDir = myTempDir)
   

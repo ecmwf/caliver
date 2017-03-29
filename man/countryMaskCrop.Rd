@@ -4,12 +4,16 @@
 \alias{countryMaskCrop}
 \title{Mask a Raster* object using the border of a country}
 \usage{
-countryMaskCrop(x, countryName)
+countryMaskCrop(x, countryName, mask = TRUE, crop = TRUE)
 }
 \arguments{
 \item{x}{Raster* to mask}
 
 \item{countryName}{name of the country to use as mask}
+
+\item{mask}{logical (TRUE by default) to decide whether to mask the layer.}
+
+\item{crop}{logical (TRUE by default) to decide whether to crop the layer.}
 }
 \description{
 Mask a Raster* object using the border of a country

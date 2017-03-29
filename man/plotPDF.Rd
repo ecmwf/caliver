@@ -4,7 +4,8 @@
 \alias{plotPDF}
 \title{Plot PDF of fire index}
 \usage{
-plotPDF(fireIndex = "fwi", countryName, baseDir, fireSeasonIndex, thresholds)
+plotPDF(fireIndex = "fwi", countryName, baseDir, fireSeasonIndex, thresholds,
+  upperLimit = NULL)
 }
 \arguments{
 \item{fireIndex}{fire index to calculate the thresholds for (default is fwi = fire weather index)}
@@ -16,6 +17,8 @@ plotPDF(fireIndex = "fwi", countryName, baseDir, fireSeasonIndex, thresholds)
 \item{fireSeasonIndex}{vector of indices (same length as dataDates) with TRUE if the date falls in the fire season, FALSE otherwise.}
 
 \item{thresholds}{thresholds calculated using the function \code{DangerLevels()}}
+
+\item{upperLimit}{FWI upper limit to visualise (the default is the maximum FWI)}
 }
 \description{
 Plot PDF of fire index

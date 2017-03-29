@@ -1,4 +1,4 @@
-#' Decompress all .gz files in a given folder
+#' @title decompressGZ
 #'
 #' @description This function decompresses all .gz files in a given folder
 #'
@@ -13,7 +13,7 @@
 #' }
 #'
 
-decompressGZ <- function(dirs, keep = FALSE){
+decompressGZ <- function(dirs = getwd(), keep = FALSE){
   
   # Decompress any gz files but keep originals
   for (i in list.files(path = dirs, pattern = "*.gz", full.names = TRUE)){
