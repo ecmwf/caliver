@@ -178,6 +178,10 @@ getGFED4 <- function(years = NULL,
       
     }
     
+    # Create a tmp directory
+    myTempDir <- tempdir()
+    dir.create(myTempDir, showWarnings = FALSE)
+    
     for (d in myDate){
       
       justYear <- substr(d, start = 1, stop = 4)
@@ -198,13 +202,13 @@ getGFED4 <- function(years = NULL,
       
       try(x <- httr::GET(url = myURL, 
                          httr::authenticate(user = "fire", password = "burnt"), 
-                         httr::write_disk(file.path(outDir, inFile), 
+                         httr::write_disk(file.path(myTempDir, inFile), 
                                           overwrite = TRUE)), silent = FALSE)
       
       # Check for unavailable data (HTTP 404 status)
       if (x$status_code == 404) {
         
-        unlink(file.path(outDir, inFile))
+        unlink(file.path(myTempDir, inFile))
         message("Data are currently unavailable")
         
       }else{
@@ -222,19 +226,21 @@ getGFED4 <- function(years = NULL,
         
         if (tolower(outFormat) == "netcdf"){
           
-          string2call <- paste0("ncl_convert2nc ", file.path(outDir, inFile), 
-                                varOption, " -o ", outDir, "/")
+          string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile), 
+                                varOption, " -o ", myTempDir, "/")
           
           # This can give problems in RStudio, but works fine in the console
           system(string2call)
           
-          unlink(file.path(outDir, inFile))
+          unlink(file.path(myTempDir, inFile))
           
         }
         
       }
       
     }
+    
+    message(paste0("Temporary files saved in: ", myTempDir))
     
     if (merge == TRUE) {
       
@@ -243,18 +249,15 @@ getGFED4 <- function(years = NULL,
         outFileName <- ifelse(is.null(varname), "GFED4.nc", 
                               paste0(varname,".nc"))
         
-      }else{
-        
-        outFileName <- ifelse(is.null(varname), "GFED4.nc", outFileName)
-        
       }
       
-      catNetcdf(dirs = outDir, outFileName = outFileName, outDir = getwd())
+      # myTempDir only contains Burned Area files!
+      catNetcdf(dirs = myTempDir, outFileName = outFileName)
       
       if (keep == FALSE) {
         
-        unlink(file.path(outDir, 
-                         list.files(path='.', pattern="GFED4.0_MQ_.*\\.nc$")))
+        message("Removing temporary files and folder")
+        unlink(file.path(myTempDir))
         
       }
       
@@ -262,10 +265,9 @@ getGFED4 <- function(years = NULL,
       # extent and the coordinate system should be set manually
       mergedRaster <- raster::brick(outFileName)
       
-      # Transform the rasterBrick
-      # transpose
+      # Transform the rasterBrick, flipping it on the y direction
       regionsRasterT <- raster::flip(mergedRaster, direction='y')
-      # set extent
+      # Set extent
       raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
       # Assign projection
       x <- rgdal::make_EPSG()

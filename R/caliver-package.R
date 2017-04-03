@@ -27,5 +27,6 @@
 #' @importFrom grid grid.newpage pushViewport viewport grid.layout
 #' @importFrom stats median na.omit sd uniroot density quantile
 #' @importFrom methods slot
+#' @importFrom countrycode countrycode
 #' 
 NULL

@@ -31,7 +31,8 @@ Imports:
     rhdf5,
     maptools,
     grid,
-    methods
+    methods,
+    countrycode
 Suggests:
     testthat,
     knitr,

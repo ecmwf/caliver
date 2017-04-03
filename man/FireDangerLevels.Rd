@@ -4,12 +4,14 @@
 \alias{FireDangerLevels}
 \title{Define Risk Threshold}
 \usage{
-FireDangerLevels(fireIndex, areaOfInterest = NULL)
+FireDangerLevels(fireIndex, areaOfInterest = NULL, fireSeasonIndex = NULL)
 }
 \arguments{
 \item{fireIndex}{fire index to calculate the thresholds for (default is fwi = fire weather index)}
 
 \item{areaOfInterest}{Raster* object or a Spatial* object}
+
+\item{fireSeasonIndex}{index of layers corresponding to the fire season}
 }
 \value{
 A numeric vector listing the thresholds.

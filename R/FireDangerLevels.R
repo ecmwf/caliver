@@ -4,6 +4,7 @@
 #'
 #' @param fireIndex fire index to calculate the thresholds for (default is fwi = fire weather index)
 #' @param areaOfInterest Raster* object or a Spatial* object
+#' @param fireSeasonIndex index of layers corresponding to the fire season
 #' 
 #' @return A numeric vector listing the thresholds.
 #'
@@ -36,32 +37,74 @@
 #' }
 #'
 
-FireDangerLevels <- function(fireIndex, areaOfInterest = NULL){
+FireDangerLevels <- function(fireIndex, 
+                             areaOfInterest = NULL, fireSeasonIndex = NULL){
+  
+  if ("RasterStack" %in% class(fireIndex)){
+    message('Convert stack of fire indices into a raster brick')
+    FWIbrick <- raster::brick(fireIndex, progress = 'text')
+  }
+  if ("RasterBrick" %in% class(fireIndex)){
+    FWIbrick <- fireIndex
+  }
+  if (!("RasterBrick" %in% class(fireIndex)) & 
+      !("RasterStack" %in% class(fireIndex))){
+    stop('Error: the fireIndex can only be a raster brick/stack')
+  }
   
   if (!is.null(areaOfInterest)){
     
-    # Crop over the areas of interest
+    # Polygonise the areas of interest
     if ('RasterLayer' %in% class(areaOfInterest)){
       areaOfInterest <- raster::rasterToPolygons(x = areaOfInterest)
     }
     
-    if ('RasterLayer' %in% class(areaOfInterest)){
-      areaOfInterest <- raster::rasterToPolygons(x = areaOfInterest)
-    }
+    # Rasterise the areas of interest
+    # if (!('RasterLayer' %in% class(areaOfInterest))){
+    #   areaOfInterest <- raster::rasterize(x = areaOfInterest, y = FWIbrick)
+    # }
     
+    # Option A: standard masking/cropping (~30 minutes for Italy)
+    # system.time({
     message('Masking fire index over area of interest')
-    FWImasked <- raster::mask(fireIndex, areaOfInterest, progress = 'text')
-    
+    FWImasked <- raster::mask(FWIbrick, areaOfInterest, progress = 'text')
     message('Cropping fire index over area of interest')
+    # FWIcropped <- raster::crop(FWImasked, areaOfInterest, progress = 'text')
     FWIareal <- raster::crop(FWImasked, areaOfInterest, progress = 'text')
-    # This generates a raster brick
+    # message('Trim fire index to remove as many NAs as possible')
+    # FWIareal <- raster::trim(FWIcropped, values = NA, progress = 'text')
+    # })
+    
+    # Option B: efficient serial computation (12.3 hours)
+    # mask
+    # system.time({
+    #   l <- lapply(1:dim(FWIseasonal)[3], function(n) {
+    #     print(n)
+    #     raster::trim(raster::mask(raster::subset(FWIseasonal, n), Italy))
+    #   })
+    #   s <- do.call(stack, l)
+    # })
+    
+    # Option C: parallel computation (never ending!)
+    # beginCluster(n = 4)
+    # system.time(FWImasked <- clusterR(x = FWIseasonal, fun = mask, 
+    #             args = list("mask" = Italy)))
+    # system.time(FWImasked <- clusterR(x = FWIseasonal, fun = mask, 
+    #             args = list("mask" = Italy)))
+    # endCluster()
     
   }else{
     
-    # The original fire index is a raster stack
-    message('Convert stack of fire indices into a raster brick')
-    FWIareal <- raster::brick(fireIndex, progress = 'text')
+    # Keep the global extent
+    FWIareal <- FWIbrick
     
+  }
+  
+  if (is.null(fireSeasonIndex)){
+    message("Subsetting FWI over the fire season")
+    FWIseasonal <- raster::subset(FWIareal, fireSeasonIndex)
+  }else{
+    FWIseasonal <- FWIareal
   }
   
   message("Calculating thresholds of danger levels")

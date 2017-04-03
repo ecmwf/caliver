@@ -64,7 +64,8 @@ catNetcdf <- function(dirs = NULL,
     # Mergetime opens all the file to order them over time
     # system(paste0("cdo mergetime ", ifiles, " ", outFilePath))
     
-    # Cat opens 1 file at the time because it assumes they are already ordered
+    # Cat is computational lighter than mergetime because it opens 1 file at the
+    # time and assumes they are already ordered (e.g. due to naming convention)
     system(paste0("cdo cat ", ifiles, " ", outFilePath))
     
   }else{
