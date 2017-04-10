@@ -1,6 +1,6 @@
 #' Plot PDF of fire index
 #'
-#' @param fireIndex fire index to calculate the thresholds for (default is fwi = fire weather index)
+#' @param fireIndex RasterBrick containing the fire index to calculate the thresholds for
 #' @param countryName string describing the country name.
 #' @param baseDir this is the directory where the reanalysis data are saved.
 #' @param fireSeasonIndex vector of indices (same length as dataDates) with TRUE if the date falls in the fire season, FALSE otherwise.
@@ -15,7 +15,7 @@
 #' }
 #'
 
-plotPDF <- function(fireIndex = "fwi",
+plotPDF <- function(fireIndex,
                     countryName,
                     baseDir,
                     fireSeasonIndex,
@@ -26,14 +26,15 @@ plotPDF <- function(fireIndex = "fwi",
                    "#E41A1C", "#6b3535", "#403131")
   
   # DENSITY PLOT WITH THRESHOLDS
-  filename <- file.path(baseDir, 
-                        paste0(fireIndex, "_rotated_masked_", 
-                               countryName, ".grd"))
-  IDXcountry <- raster::brick(filename)
+  #filename <- file.path(baseDir, 
+  #                      paste0(fireIndex, "_rotated_masked_", 
+  #                             countryName, ".grd"))
+  #IDXcountry <- raster::brick(filename)
   
   # Zero means there are are no suitable conditions to generate a fire, 
   # therefore zeros should be masked.
-  IDX <- na.omit(as.vector(raster::subset(IDXcountry, fireSeasonIndex)))
+  #IDX <- na.omit(as.vector(raster::subset(IDXcountry, fireSeasonIndex)))
+  IDX <- na.omit(as.vector(raster::subset(fireIndex, fireSeasonIndex)))
   IDXno0 <- IDX[IDX > 0]
   
   # percentiles corresponding to the danger thresholds: 

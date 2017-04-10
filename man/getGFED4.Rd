@@ -54,6 +54,9 @@ getGFED4(years = NULL, tempRes = "daily", varname = NULL, merge = TRUE,
 
 \item{outFormat}{is the desired format for the output, by default it is "hdf5" but it can also be set equal to "netcdf".}
 }
+\value{
+A RasterBrick
+}
 \description{
 Get data from the fourth-generation Global Fire Emissions Database (GFED4)
 }
@@ -73,10 +76,10 @@ The conversion from hdf5 to netcdf gets stuck in RStudio, please use the basic c
                           outFormat = "netcdf")
                           
   # Daily burned areas
-  DailyBurnedAreas <- getGFED4(years = 2003:2017, tempRes = "daily", 
+  DailyBurnedAreas <- getGFED4(years = 2003:2015, tempRes = "daily", 
                                varname = "BurnedArea", merge = TRUE, 
                                keep = FALSE, 
-                               outFileName = "BurnedArea_daily.nc",
+                               outFileName = "BurnedArea_daily_2003-2015.nc",
                                outFormat = "netcdf")
            
 }

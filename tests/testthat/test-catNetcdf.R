@@ -23,7 +23,7 @@ test_that("catNetcdf works", {
   
   file.copy(from = inFile, to = file.path(myTempDir, "testB.nc"))
   
-  mergedFile <- catNetcdf(dirs = myTempDir, 
+  mergedFile <- catNetcdf(inDir = myTempDir, 
                           startingString = "test",
                           outFile = "TestAB.nc",
                           outDir = myTempDir)

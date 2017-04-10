@@ -4,11 +4,11 @@
 \alias{catNetcdf}
 \title{Merge netcdf files on the time dimension}
 \usage{
-catNetcdf(dirs = NULL, varname = NULL, startingString = "",
+catNetcdf(inDir = NULL, varname = NULL, startingString = "",
   recursive = FALSE, outFileName = "outfile.nc", outDir = getwd())
 }
 \arguments{
-\item{dirs}{is the directory where all the files to read are stored}
+\item{inDir}{is the directory where all the files to read are stored}
 
 \item{varname}{name of the variable to extract}
 
@@ -26,7 +26,7 @@ This function merges all the netcdf files in a given directory over the time dim
 \examples{
 \dontrun{
   # Mergetime using single variable nc files
-  catNetcdf(dirs = "/var/tmp/moc0/forestfire",
+  catNetcdf(inDir = "/var/tmp/moc0/forestfire",
             varname = NULL,
             startingString = "geff_reanalysis_an_fwis_fwi_",
             recursive = TRUE,

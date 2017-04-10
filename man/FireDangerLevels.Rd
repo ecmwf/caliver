@@ -7,7 +7,7 @@
 FireDangerLevels(fireIndex, areaOfInterest = NULL, fireSeasonIndex = NULL)
 }
 \arguments{
-\item{fireIndex}{fire index to calculate the thresholds for (default is fwi = fire weather index)}
+\item{fireIndex}{RasterBrick containing the fire index to calculate the thresholds for}
 
 \item{areaOfInterest}{Raster* object or a Spatial* object}
 

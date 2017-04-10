@@ -4,11 +4,11 @@
 \alias{plotPDF}
 \title{Plot PDF of fire index}
 \usage{
-plotPDF(fireIndex = "fwi", countryName, baseDir, fireSeasonIndex, thresholds,
+plotPDF(fireIndex, countryName, baseDir, fireSeasonIndex, thresholds,
   upperLimit = NULL)
 }
 \arguments{
-\item{fireIndex}{fire index to calculate the thresholds for (default is fwi = fire weather index)}
+\item{fireIndex}{RasterBrick containing the fire index to calculate the thresholds for}
 
 \item{countryName}{string describing the country name.}
 

@@ -4,10 +4,10 @@
 \alias{decompressGZ}
 \title{decompressGZ}
 \usage{
-decompressGZ(dirs = getwd(), keep = FALSE)
+decompressGZ(inDir = getwd(), keep = FALSE)
 }
 \arguments{
-\item{dirs}{is the directory where all the files to read are stored}
+\item{inDir}{is the directory path where all the files to read have been previously stored}
 
 \item{keep}{logical, if TRUE it keeps the .gz files, removes them otherwise}
 }
@@ -16,7 +16,7 @@ This function decompresses all .gz files in a given folder
 }
 \examples{
 \dontrun{
-  decompressGZ(dirs = "/var/tmp/moc0/forestfire/")
+  decompressGZ(inDir = "/var/tmp/moc0/forestfire/")
 }
 
 }

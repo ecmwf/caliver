@@ -2,7 +2,7 @@
 #'
 #' @description This function calculates the danger levels (VeryLow-Low-Moderate-High-VeryHigh-Extreme) for a given country.
 #'
-#' @param fireIndex fire index to calculate the thresholds for (default is fwi = fire weather index)
+#' @param fireIndex RasterBrick containing the fire index to calculate the thresholds for
 #' @param areaOfInterest Raster* object or a Spatial* object
 #' @param fireSeasonIndex index of layers corresponding to the fire season
 #' 

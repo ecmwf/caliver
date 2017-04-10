@@ -40,6 +40,8 @@
 #' @param outFormat is the desired format for the output, by default it is "hdf5" but it can also be set equal to "netcdf".
 #' 
 #' @note The conversion from hdf5 to netcdf gets stuck in RStudio, please use the basic console.
+#' 
+#' @return A RasterBrick
 #'
 #' @export
 #'
@@ -56,10 +58,10 @@
 #'                           outFormat = "netcdf")
 #'                           
 #'   # Daily burned areas
-#'   DailyBurnedAreas <- getGFED4(years = 2003:2017, tempRes = "daily", 
+#'   DailyBurnedAreas <- getGFED4(years = 2003:2015, tempRes = "daily", 
 #'                                varname = "BurnedArea", merge = TRUE, 
 #'                                keep = FALSE, 
-#'                                outFileName = "BurnedArea_daily.nc",
+#'                                outFileName = "BurnedArea_daily_2003-2015.nc",
 #'                                outFormat = "netcdf")
 #'            
 #' }
@@ -181,6 +183,7 @@ getGFED4 <- function(years = NULL,
     # Create a tmp directory
     myTempDir <- tempdir()
     dir.create(myTempDir, showWarnings = FALSE)
+    message(paste0("Downloading temporary files in: ", myTempDir))
     
     for (d in myDate){
       
@@ -240,8 +243,6 @@ getGFED4 <- function(years = NULL,
       
     }
     
-    message(paste0("Temporary files saved in: ", myTempDir))
-    
     if (merge == TRUE) {
       
       if (is.null(outFileName)) {
@@ -252,21 +253,15 @@ getGFED4 <- function(years = NULL,
       }
       
       # myTempDir only contains Burned Area files!
-      catNetcdf(dirs = myTempDir, outFileName = outFileName)
-      
-      if (keep == FALSE) {
-        
-        message("Removing temporary files and folder")
-        unlink(file.path(myTempDir))
-        
-      }
+      catNetcdf(inDir = myTempDir, outFileName = outFileName)
       
       # The resulting raster brick is in a quater degree resolution but the 
       # extent and the coordinate system should be set manually
       mergedRaster <- raster::brick(outFileName)
       
       # Transform the rasterBrick, flipping it on the y direction
-      regionsRasterT <- raster::flip(mergedRaster, direction='y')
+      regionsRasterT <- raster::flip(mergedRaster, direction='y', 
+                                     progress = 'text')
       # Set extent
       raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
       # Assign projection
@@ -278,6 +273,14 @@ getGFED4 <- function(years = NULL,
       # raster::plot(y)
       # backgroundMap <- rworldmap::getMap(resolution = "low")
       # raster::plot(backgroundMap, add = TRUE)
+      
+      if (keep == FALSE) {
+        
+        message("Removing temporary files and folder")
+        unlink(file.path(myTempDir))
+        unlink(file.path(outDir, outFileName))
+        
+      }
       
       return(regionsRasterT)
       
