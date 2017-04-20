@@ -14,23 +14,7 @@ makePercentileRaster(inFilePath, probs, mask = "", region = "GLOB",
 
 \item{mask}{string identifying the name of the mask. By default it is set to "no mask", which means no mask is applied. The only mask implemented at the moment is the "fuelmodel" provided by JRC (containing non-vegetated areas).}
 
-\item{region}{string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask}): 
-\itemize{
-  \item{"Global"}{or GLOB}
- \item{"Boreal North America"}{or BONA}
- \item{"Temperate North America"}{or TENA}
- \item{"Central America"}{or CEAM}
- \item{"Northern Hemisphere South America"}{or NHSA}
- \item{"Southern Hemisphere South America"}{or SHSA}
- \item{"Europe"}{or EURO}
- \item{"Middle East"}{or MIDE}
- \item{"Northern Hemisphere Africa"}{or NHAF}
- \item{"Southern Hemisphere Africa"}{or SHAF}
- \item{"Boreal Asia"}{or BOAS}
- \item{"Central Asia"}{or CEAS}
- \item{"Southeast Asia"}{or SEAS}
- \item{"Equatorial Asia"}{or EQAS}
- \item{"Australia and New Zealand"}{or AUST}}}
+\item{region}{string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask})}
 
 \item{outDir}{is the directory where the output nc files are saved, by default this is a temporary directory.}
 }

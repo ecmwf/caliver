@@ -244,6 +244,7 @@ getGFED4 <- function(years = NULL,
                                    progress = 'text')
     # Set extent
     raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
+    
     # Assign projection
     x <- rgdal::make_EPSG()
     regionsRasterT@crs <- sp::CRS(x$prj4[which(x$code == "4326")])

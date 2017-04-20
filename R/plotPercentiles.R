@@ -35,7 +35,8 @@ plotPercentiles <- function(maps, rotateMap = FALSE, region = "GLOB", ...){
   
   if (region != "GLOB"){
     
-    maskMap <- regionalMask(region)
+    maskMap <- getGFED4(varname = 'BasisRegions', 
+                        region = region)
     maskMap <- raster::resample(maskMap, rotatedMap, method = "ngb")
     croppedMap <- raster::trim(raster::mask(rotatedMap, maskMap))
     # mapExtent <- regionalBBOX(region, lonRange = lonRange)

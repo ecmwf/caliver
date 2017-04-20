@@ -5,23 +5,7 @@
 #' @param inFilePath is the name of the file(path) to read
 #' @param probs numeric vector of probabilities with values in [0,100] listing which percentiles should be calculated
 #' @param mask string identifying the name of the mask. By default it is set to "no mask", which means no mask is applied. The only mask implemented at the moment is the "fuelmodel" provided by JRC (containing non-vegetated areas).
-#' @param region string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask}): 
-#' \itemize{
-#'   \item{"Global"}{or GLOB}
-#'  \item{"Boreal North America"}{or BONA}
-#'  \item{"Temperate North America"}{or TENA}
-#'  \item{"Central America"}{or CEAM}
-#'  \item{"Northern Hemisphere South America"}{or NHSA}
-#'  \item{"Southern Hemisphere South America"}{or SHSA}
-#'  \item{"Europe"}{or EURO}
-#'  \item{"Middle East"}{or MIDE}
-#'  \item{"Northern Hemisphere Africa"}{or NHAF}
-#'  \item{"Southern Hemisphere Africa"}{or SHAF}
-#'  \item{"Boreal Asia"}{or BOAS}
-#'  \item{"Central Asia"}{or CEAS}
-#'  \item{"Southeast Asia"}{or SEAS}
-#'  \item{"Equatorial Asia"}{or EQAS}
-#'  \item{"Australia and New Zealand"}{or AUST}}
+#' @param region string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask})
 #' @param outDir is the directory where the output nc files are saved, by default this is a temporary directory.
 #' 
 #' @return list containing all the maps of fwi percentiles
@@ -96,7 +80,8 @@ makePercentileRaster <- function(inFilePath, probs, mask = "",
     
     if (region != "GLOB") {
       
-      regionRaster <- raster::resample(regionalMask(region), 
+      regionRaster <- raster::resample(getGFED4(varname = 'BasisRegions', 
+                                                region = region), 
                                        probRaster, method = "ngb")
       
       # Mask&Crop the global file to the region's extent
