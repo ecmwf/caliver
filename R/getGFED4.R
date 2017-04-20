@@ -15,8 +15,6 @@
 #'   \item{"LandCoverDist"}{}
 #'   \item{"PeatFraction"}{}
 #' }
-#' @param merge logical variable that can either be TRUE or FALSE. If TRUE (default) all the files are merged over the time dimension (this only works if outFormat = "netcdf").
-#' @param keep logical variable that can either be TRUE or FALSE. If FALSE (default) all the temporary files are deleted (this only works if outFormat = "netcdf").
 #' @param region string of characters describing the region. It can only assume the 15 values listed below:
 #' \itemize{
 #'   \item{"Global"}{or GLOB}
@@ -35,13 +33,10 @@
 #'   \item{"Equatorial Asia"}{or EQAS}
 #'   \item{"Australia and New Zealand"}{or AUST}
 #' }
-#' @param outDir is the directory where files are saved, by default this is the working directory.
-#' @param outFileName is the name of the output file (if merged), by default this is the same as the varname.
-#' @param outFormat is the desired format for the output, by default it is "hdf5" but it can also be set equal to "netcdf".
 #' 
-#' @note The conversion from hdf5 to netcdf gets stuck in RStudio, please use the basic console.
+#' @note The conversion from hdf5 to netcdf gets stuck in RStudio (see \url{https://support.rstudio.com/hc/en-us/community/posts/200629578-system-call-from-RStudio-does-not-find-path-same-command-from-commandline-R-works-fine-}), please use the console.
 #' 
-#' @return A RasterBrick
+#' @return A RasterBrick (if downloading observations) or spatial polygons (if downloading basis regions)
 #'
 #' @export
 #'
@@ -53,29 +48,21 @@
 #' 
 #'   # Monthly burned areas
 #'   BurnedAreas <- getGFED4(years = 1997:2015, tempRes = "monthly", 
-#'                           varname = "BurnedArea", merge = TRUE, keep = FALSE,
-#'                           outFileName = "BurnedArea_monthly.nc", 
-#'                           outFormat = "netcdf")
+#'                           varname = "BurnedArea")
 #'                           
 #'   # Daily burned areas
 #'   DailyBurnedAreas <- getGFED4(years = 2003:2015, tempRes = "daily", 
-#'                                varname = "BurnedArea", merge = TRUE, 
-#'                                keep = FALSE, 
-#'                                outFileName = "BurnedArea_daily_2003-2015.nc",
-#'                                outFormat = "netcdf")
+#'                                varname = "BurnedArea")
 #'            
 #' }
 #'
 
 getGFED4 <- function(years = NULL, 
                      tempRes = "daily", 
-                     varname = NULL, 
-                     merge = TRUE, 
-                     keep = FALSE,
-                     region = "GLOB",
-                     outDir = getwd(), 
-                     outFileName = NULL,
-                     outFormat = "hdf5"){
+                     varname = NULL,
+                     region = "GLOB"){
+  
+  outDir <- tempdir()
   
   if (is.null(varname)) stop("Please enter valid varname")
   
@@ -139,7 +126,9 @@ getGFED4 <- function(years = NULL,
         if (region == "AUST") regionsRasterT[regionsRasterT != 14] <- NA
       }
       
-      return(regionsRasterT)
+      regionsPolygons <- raster::rasterToPolygons(x = regionsRasterT)
+      
+      return(regionsPolygons)
       
     }
     
@@ -227,64 +216,49 @@ getGFED4 <- function(years = NULL,
           
         }
         
-        if (tolower(outFormat) == "netcdf"){
-          
-          string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile), 
-                                varOption, " -o ", myTempDir, "/")
-          
-          # This can give problems in RStudio, but works fine in the console
-          system(string2call)
-          
-          unlink(file.path(myTempDir, inFile))
-          
-        }
+        string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile), 
+                              varOption, " -o ", myTempDir, "/")
+        
+        # This can give problems in RStudio, but works fine in the console
+        system(string2call)
+        
+        unlink(file.path(myTempDir, inFile))
         
       }
       
     }
     
-    if (merge == TRUE) {
-      
-      if (is.null(outFileName)) {
-        
-        outFileName <- ifelse(is.null(varname), "GFED4.nc", 
-                              paste0(varname,".nc"))
-        
-      }
-      
-      # myTempDir only contains Burned Area files!
-      catNetcdf(inDir = myTempDir, outFileName = outFileName)
-      
-      # The resulting raster brick is in a quater degree resolution but the 
-      # extent and the coordinate system should be set manually
-      mergedRaster <- raster::brick(outFileName)
-      
-      # Transform the rasterBrick, flipping it on the y direction
-      regionsRasterT <- raster::flip(mergedRaster, direction='y', 
-                                     progress = 'text')
-      # Set extent
-      raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
-      # Assign projection
-      x <- rgdal::make_EPSG()
-      regionsRasterT@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
-      
-      # TEST
-      # y <- sum(regionsRasterT, na.rm = TRUE)
-      # raster::plot(y)
-      # backgroundMap <- rworldmap::getMap(resolution = "low")
-      # raster::plot(backgroundMap, add = TRUE)
-      
-      if (keep == FALSE) {
-        
-        message("Removing temporary files and folder")
-        unlink(file.path(myTempDir))
-        unlink(file.path(outDir, outFileName))
-        
-      }
-      
-      return(regionsRasterT)
-      
-    }
+    outFileName <- ifelse(is.null(varname), "GFED4.nc", 
+                          paste0(varname,".nc"))
+    
+    # myTempDir only contains Burned Area files!
+    catNetcdf(inDir = myTempDir, outFileName = outFileName)
+    
+    # The resulting raster brick is in a quater degree resolution but the 
+    # extent and the coordinate system should be set manually
+    mergedRaster <- raster::brick(outFileName)
+    
+    # Transform the rasterBrick, flipping it on the y direction
+    message("Flipping the raster on the y-direction")
+    regionsRasterT <- raster::flip(mergedRaster, direction='y', 
+                                   progress = 'text')
+    # Set extent
+    raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
+    # Assign projection
+    x <- rgdal::make_EPSG()
+    regionsRasterT@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
+    
+    # TEST
+    # y <- sum(regionsRasterT, na.rm = TRUE)
+    # raster::plot(y)
+    # backgroundMap <- rworldmap::getMap(resolution = "low")
+    # raster::plot(backgroundMap, add = TRUE)
+    
+    message("Removing temporary files and folder")
+    unlink(file.path(myTempDir))
+    unlink(file.path(outDir, outFileName))
+    
+    return(regionsRasterT)
     
   }
   

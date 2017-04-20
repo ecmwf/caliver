@@ -4,9 +4,8 @@
 \alias{getGFED4}
 \title{getGFED4}
 \usage{
-getGFED4(years = NULL, tempRes = "daily", varname = NULL, merge = TRUE,
-  keep = FALSE, region = "GLOB", outDir = getwd(), outFileName = NULL,
-  outFormat = "hdf5")
+getGFED4(years = NULL, tempRes = "daily", varname = NULL,
+  region = "GLOB")
 }
 \arguments{
 \item{years}{is a vector containing the years to download}
@@ -24,10 +23,6 @@ getGFED4(years = NULL, tempRes = "daily", varname = NULL, merge = TRUE,
   \item{"LandCoverDist"}{}
   \item{"PeatFraction"}{}
 }}
-
-\item{merge}{logical variable that can either be TRUE or FALSE. If TRUE (default) all the files are merged over the time dimension (this only works if outFormat = "netcdf").}
-
-\item{keep}{logical variable that can either be TRUE or FALSE. If FALSE (default) all the temporary files are deleted (this only works if outFormat = "netcdf").}
 
 \item{region}{string of characters describing the region. It can only assume the 15 values listed below:
 \itemize{
@@ -47,21 +42,15 @@ getGFED4(years = NULL, tempRes = "daily", varname = NULL, merge = TRUE,
   \item{"Equatorial Asia"}{or EQAS}
   \item{"Australia and New Zealand"}{or AUST}
 }}
-
-\item{outDir}{is the directory where files are saved, by default this is the working directory.}
-
-\item{outFileName}{is the name of the output file (if merged), by default this is the same as the varname.}
-
-\item{outFormat}{is the desired format for the output, by default it is "hdf5" but it can also be set equal to "netcdf".}
 }
 \value{
-A RasterBrick
+A RasterBrick (if downloading observations) or spatial polygons (if downloading basis regions)
 }
 \description{
 Get data from the fourth-generation Global Fire Emissions Database (GFED4)
 }
 \note{
-The conversion from hdf5 to netcdf gets stuck in RStudio, please use the basic console.
+The conversion from hdf5 to netcdf gets stuck in RStudio (see \url{https://support.rstudio.com/hc/en-us/community/posts/200629578-system-call-from-RStudio-does-not-find-path-same-command-from-commandline-R-works-fine-}), please use the console.
 }
 \examples{
 \dontrun{
@@ -71,16 +60,11 @@ The conversion from hdf5 to netcdf gets stuck in RStudio, please use the basic c
 
   # Monthly burned areas
   BurnedAreas <- getGFED4(years = 1997:2015, tempRes = "monthly", 
-                          varname = "BurnedArea", merge = TRUE, keep = FALSE,
-                          outFileName = "BurnedArea_monthly.nc", 
-                          outFormat = "netcdf")
+                          varname = "BurnedArea")
                           
   # Daily burned areas
   DailyBurnedAreas <- getGFED4(years = 2003:2015, tempRes = "daily", 
-                               varname = "BurnedArea", merge = TRUE, 
-                               keep = FALSE, 
-                               outFileName = "BurnedArea_daily_2003-2015.nc",
-                               outFormat = "netcdf")
+                               varname = "BurnedArea")
            
 }
 
