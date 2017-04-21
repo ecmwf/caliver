@@ -4,7 +4,7 @@
 #'
 #' @param inFilePath is the name of the file(path) to read
 #' @param probs numeric vector of probabilities with values in [0,100] listing which percentiles should be calculated
-#' @param mask string identifying the name of the mask. By default it is set to "no mask", which means no mask is applied. The only mask implemented at the moment is the "fuelmodel" provided by JRC (containing non-vegetated areas).
+#' #@param mask string identifying the name of the mask. By default it is set to "no mask", which means no mask is applied. The only mask implemented at the moment is the "fuelmodel" provided by JRC (containing non-vegetated areas).
 #' @param region string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask})
 #' @param outDir is the directory where the output nc files are saved, by default this is a temporary directory.
 #' 
@@ -16,14 +16,15 @@
 #' \dontrun{
 #'   x <- makePercentileRaster(inFilePath = "./outfile.nc",
 #'                             probs = c(50, 75, 90, 99),
-#'                             mask = "",
+#'                             # mask = "",
 #'                             region = "EURO",
 #'                             outDir = getwd())
 #' }
 #'
 
-makePercentileRaster <- function(inFilePath, probs, mask = "", 
-                          region = "GLOB", outDir = tempdir()){
+makePercentileRaster <- function(inFilePath, probs, 
+                                 # mask = "", 
+                                 region = "GLOB", outDir = tempdir()){
   
   if (mask == "fuelmodel"){
     

@@ -10,8 +10,7 @@ test_that("makePercentileRaster works", {
   
   probsMaps <- makePercentileRaster(inFilePath = inFile, 
                                     probs = c(50, 75),
-                                    outDir = myTempDir,
-                                    mask = "")
+                                    outDir = myTempDir)
   
   # Check whether the class is correct
   expect_equal("RasterStack" %in% class(probsMaps), TRUE)
