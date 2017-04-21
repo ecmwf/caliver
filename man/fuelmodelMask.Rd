@@ -2,7 +2,7 @@
 % Please edit documentation in R/fuelmodelMask.R
 \name{fuelmodelMask}
 \alias{fuelmodelMask}
-\title{Mask an Raster* object using JRC's fuelmodel}
+\title{fuelmodelMask}
 \usage{
 fuelmodelMask(x)
 }
@@ -10,7 +10,7 @@ fuelmodelMask(x)
 \item{x}{Raster* to mask}
 }
 \description{
-This function masks an Raster* object using JRC's fuelmodel.
+This function masks a Raster* object using JRC's fuelmodel.
 }
 \details{
 In absence of vegetation the risk of ignition reduces considerably, regardless of the state of the soil. These areas are mapped in the JRC's fuelmodel. This package contains a cached version of this map. This is stored in the 'inst/extdata' folder of the package. For evaluating fire danger we use this map to mask deserts, glaciers, urban areas, etc. These areas have codes > 20.
