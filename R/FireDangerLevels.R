@@ -32,8 +32,9 @@
 #'   FWI <- raster::subset(FWIall, fireSeasonIndex)
 #'   
 #'   # Calculate the thresholds
-#'   thresholdFWI <- FireDangerLevels(fireIndex = "fwi", countryName = "Spain",
-#'                           baseDir, dataDates, fireSeasonIndex)
+#'   thresholdFWI <- FireDangerLevels(fireIndex = "fwi", 
+#'                                    areaOfInterest = "Spain",
+#'                                    baseDir, dataDates, fireSeasonIndex)
 #' }
 #'
 

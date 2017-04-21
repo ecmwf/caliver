@@ -1,6 +1,6 @@
 #' Plot PDF of fire index
 #'
-#' @param fireIndex RasterBrick containing the fire index to calculate the thresholds for
+#' @param fireIndex RasterBrick containing the fire index
 #' @param countryName string describing the country name.
 #' @param baseDir this is the directory where the reanalysis data are saved.
 #' @param fireSeasonIndex vector of indices (same length as dataDates) with TRUE if the date falls in the fire season, FALSE otherwise.
@@ -34,7 +34,7 @@ plotPDF <- function(fireIndex,
   # Zero means there are are no suitable conditions to generate a fire, 
   # therefore zeros should be masked.
   #IDX <- na.omit(as.vector(raster::subset(IDXcountry, fireSeasonIndex)))
-  IDX <- na.omit(as.vector(raster::subset(fireIndex, fireSeasonIndex)))
+  IDX <- na.omit(as.vector(raster::subset(fireIndex, fireSeasonIndex, progress = 'text')))
   IDXno0 <- IDX[IDX > 0]
   
   # percentiles corresponding to the danger thresholds: 
@@ -78,7 +78,7 @@ plotPDF <- function(fireIndex,
     theme_bw() + xlab("FWI") + ylab("Density") +
     theme(legend.title = element_text(size=14, face="bold"),
           text = element_text(size=14, lineheight=.8),
-          legend.justification=c(1,0), legend.position=c(0.95,0.5)) +
+          legend.justification=c(1,0), legend.position=c(0.97,0.65)) +
     scale_x_continuous(limits = c(0, upperLimit))
   
 }

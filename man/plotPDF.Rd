@@ -8,7 +8,7 @@ plotPDF(fireIndex, countryName, baseDir, fireSeasonIndex, thresholds,
   upperLimit = NULL)
 }
 \arguments{
-\item{fireIndex}{RasterBrick containing the fire index to calculate the thresholds for}
+\item{fireIndex}{RasterBrick containing the fire index}
 
 \item{countryName}{string describing the country name.}
 
