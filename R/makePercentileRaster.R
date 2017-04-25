@@ -4,49 +4,24 @@
 #'
 #' @param inFilePath is the name of the file(path) to read
 #' @param probs numeric vector of probabilities with values in [0,100] listing which percentiles should be calculated
-#' #@param mask string identifying the name of the mask. By default it is set to "no mask", which means no mask is applied. The only mask implemented at the moment is the "fuelmodel" provided by JRC (containing non-vegetated areas).
-#' @param region string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask})
 #' @param outDir is the directory where the output nc files are saved, by default this is a temporary directory.
 #' 
-#' @return list containing all the maps of fwi percentiles
+#' @return list containing all the generated percentile maps
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#'
 #'   x <- makePercentileRaster(inFilePath = "./outfile.nc",
 #'                             probs = c(50, 75, 90, 99),
-#'                             # mask = "",
-#'                             region = "EURO",
 #'                             outDir = getwd())
 #' }
 #'
 
-makePercentileRaster <- function(inFilePath, probs, 
-                                 # mask = "", 
-                                 region = "GLOB", outDir = tempdir()){
-  
-  if (mask == "fuelmodel"){
-    
-    # In this map, water-barren-marsh-Snow and Ice-Urban-Agriculture-NoData 
-    # are identified by the codes 21-27. Therefore we assume all the values 
-    # from 0 to 20 are valid, while 21 and above should be masked.
-    fuelmodel <- raster::raster(system.file(file.path("extdata", 
-                                                      "clim_fuelmodel.nc"), 
-                                            package = "caliver"))
-    fuelmodel[fuelmodel > 20] <- NA
-    
-  }
-  
-  if (region != "GLOB") {
-    
-    mapExtent <- regionalBBOX(region)
-    
-    if (mapExtent@xmin > mapExtent@xmax){
-      mapExtent@xmin <- 0
-      mapExtent@xmax <- 360
-    }
-  }
+makePercentileRaster <- function(inFilePath, 
+                                 probs,
+                                 outDir = tempdir()){
   
   stackedMaps <- raster::stack() 
   
@@ -64,47 +39,16 @@ makePercentileRaster <- function(inFilePath, probs,
     
     probRaster <- raster::raster(outFile)
     
-    if (mask == "fuelmodel"){
-      
-      if (i == 1) {
-        fuelmodel <- raster::resample(fuelmodel, probRaster, method = "ngb")
-      }
-      
-      maskedProbRaster <- raster::mask(probRaster, fuelmodel)
-      
-    }else{
-      
-      # message("No vegetation mask has been used.")
-      maskedProbRaster <- probRaster
-      
-    }
-    
-    if (region != "GLOB") {
-      
-      regionRaster <- raster::resample(getGFED4(varname = 'BasisRegions', 
-                                                region = region), 
-                                       probRaster, method = "ngb")
-      
-      # Mask&Crop the global file to the region's extent
-      regMaskedProbRaster <- raster::mask(maskedProbRaster, regionRaster)
-      croppedMaps <- raster::crop(regMaskedProbRaster, mapExtent)
-      
-    }else{
-      
-      croppedMaps <- maskedProbRaster
-      
-    }
-    
     varname <- names(ncdf4::nc_open(inFilePath)$var)
-    names(croppedMaps) <- paste0(toupper(varname), prob)
+    names(probRaster) <- paste0(toupper(varname), prob)
     
     if (length(probs) > 1) {
       
-      stackedMaps <- raster::stack(stackedMaps, croppedMaps)
+      stackedMaps <- raster::stack(stackedMaps, probRaster)
       
     }else{
       
-      stackedMaps <- croppedMaps
+      stackedMaps <- probRaster
       
     }
     

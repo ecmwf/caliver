@@ -4,30 +4,26 @@
 \alias{makePercentileRaster}
 \title{makePercentileRaster}
 \usage{
-makePercentileRaster(inFilePath, probs, region = "GLOB", outDir = tempdir())
+makePercentileRaster(inFilePath, probs, outDir = tempdir())
 }
 \arguments{
 \item{inFilePath}{is the name of the file(path) to read}
 
-\item{probs}{numeric vector of probabilities with values in [0,100] listing which percentiles should be calculated
-#@param mask string identifying the name of the mask. By default it is set to "no mask", which means no mask is applied. The only mask implemented at the moment is the "fuelmodel" provided by JRC (containing non-vegetated areas).}
-
-\item{region}{string identifying the name of the region of interest. By default it is set to provide global coverage (GLOB) but it can also be used to focus on the following 15 regions (see also \code{regionalMask})}
+\item{probs}{numeric vector of probabilities with values in [0,100] listing which percentiles should be calculated}
 
 \item{outDir}{is the directory where the output nc files are saved, by default this is a temporary directory.}
 }
 \value{
-list containing all the maps of fwi percentiles
+list containing all the generated percentile maps
 }
 \description{
 This function calculates the given percentile at each grid point
 }
 \examples{
 \dontrun{
+
   x <- makePercentileRaster(inFilePath = "./outfile.nc",
                             probs = c(50, 75, 90, 99),
-                            # mask = "",
-                            region = "EURO",
                             outDir = getwd())
 }
 

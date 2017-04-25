@@ -2,8 +2,6 @@
 #'
 #' @param fireIndex RasterBrick containing the fire index
 #' @param countryName string describing the country name.
-#' @param baseDir this is the directory where the reanalysis data are saved.
-#' @param fireSeasonIndex vector of indices (same length as dataDates) with TRUE if the date falls in the fire season, FALSE otherwise.
 #' @param thresholds thresholds calculated using the function \code{DangerLevels()}
 #' @param upperLimit FWI upper limit to visualise (the default is the maximum FWI)
 #' 
@@ -17,24 +15,13 @@
 
 plotPDF <- function(fireIndex,
                     countryName,
-                    baseDir,
-                    fireSeasonIndex,
                     thresholds,
                     upperLimit = NULL){
   
   firePalette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
                    "#E41A1C", "#6b3535", "#403131")
   
-  # DENSITY PLOT WITH THRESHOLDS
-  #filename <- file.path(baseDir, 
-  #                      paste0(fireIndex, "_rotated_masked_", 
-  #                             countryName, ".grd"))
-  #IDXcountry <- raster::brick(filename)
-  
-  # Zero means there are are no suitable conditions to generate a fire, 
-  # therefore zeros should be masked.
-  #IDX <- na.omit(as.vector(raster::subset(IDXcountry, fireSeasonIndex)))
-  IDX <- na.omit(as.vector(raster::subset(fireIndex, fireSeasonIndex, progress = 'text')))
+  IDX <- na.omit(as.vector(fireIndex))
   IDXno0 <- IDX[IDX > 0]
   
   # percentiles corresponding to the danger thresholds: 
@@ -78,7 +65,7 @@ plotPDF <- function(fireIndex,
     theme_bw() + xlab("FWI") + ylab("Density") +
     theme(legend.title = element_text(size=14, face="bold"),
           text = element_text(size=14, lineheight=.8),
-          legend.justification=c(1,0), legend.position=c(0.97,0.65)) +
+          legend.position = c(0.98, 0.98), legend.justification = c(1, 1)) +
     scale_x_continuous(limits = c(0, upperLimit))
   
 }

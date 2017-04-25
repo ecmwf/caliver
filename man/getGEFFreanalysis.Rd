@@ -4,7 +4,7 @@
 \alias{getGEFFreanalysis}
 \title{getGEFFreanalysis}
 \usage{
-getGEFFreanalysis(startDate, endDate, varname = "fwi", bb = NULL)
+getGEFFreanalysis(startDate, endDate, bb = NULL)
 }
 \arguments{
 \item{startDate}{this is a string with the first date to download, e.g '2015-01-01'}

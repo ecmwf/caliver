@@ -4,14 +4,10 @@
 \alias{FireDangerLevels}
 \title{Define Risk Threshold}
 \usage{
-FireDangerLevels(fireIndex, areaOfInterest = NULL, fireSeasonIndex = NULL)
+FireDangerLevels(fireIndex)
 }
 \arguments{
-\item{fireIndex}{RasterBrick containing the fire index to calculate the thresholds for}
-
-\item{areaOfInterest}{Raster* object or a Spatial* object}
-
-\item{fireSeasonIndex}{index of layers corresponding to the fire season}
+\item{fireIndex}{RasterBrick containing the fire index to calculate the thresholds for.}
 }
 \value{
 A numeric vector listing the thresholds.
@@ -33,17 +29,19 @@ This function calculates the danger levels (VeryLow-Low-Moderate-High-VeryHigh-E
   seasons <- getFireSeason(dataDates, emisphere = "north")
   fireSeasonIndex <- which(seasons == TRUE)
   
-  # Get area of interest: Europe
-  Europe <- getGFED4(varname = 'BasisRegions', region = 'EURO')
+  r <- raster::brick('FWI_1980-2016.nc') 
+  p <- raster::getData(name = "GADM", country = "Italy", level = 0)        
+  maskcrop(r, p, mask = TRUE, crop = TRUE)
   
-  # Load and subset FWI
-  FWIall <- raster::brick("FWI.nc")
-  FWI <- raster::subset(FWIall, fireSeasonIndex)
+  # Mask and crop over country
+  FWIcountry <- maskcrop(FWI, country, mask = TRUE, crop = TRUE)
   
-  # Calculate the thresholds
-  thresholdFWI <- FireDangerLevels(fireIndex = "fwi", 
-                                   areaOfInterest = "Spain",
-                                   baseDir, dataDates, fireSeasonIndex)
+  # Subset based on fire season
+  FWIseasonal <- raster::subset(FWIcountry, fireSeasonIndex)
+  
+  # Generate thresholds for the country of interest
+  countryThr <- FireDangerLevels(fireIndex = FWIseasonal)
+  
 }
 
 }

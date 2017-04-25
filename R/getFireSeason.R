@@ -11,8 +11,8 @@
 #' \dontrun{
 #'   # Modify default seasons
 #'   seasons <- getFireSeason(DATES, 
-#'                        FSS = as.Date("2012-04-01", format = "%Y-%m-%d"), 
-#'                        FSE = as.Date("2012-10-31", format = "%Y-%m-%d"))
+#'                            FSS = as.Date("2012-04-01", format = "%Y-%m-%d"), 
+#'                            FSE = as.Date("2012-10-31", format = "%Y-%m-%d"))
 #' }
 #'
 

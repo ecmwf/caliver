@@ -2,9 +2,7 @@
 #'
 #' @description This function calculates the danger levels (VeryLow-Low-Moderate-High-VeryHigh-Extreme) for a given country.
 #'
-#' @param fireIndex RasterBrick containing the fire index to calculate the thresholds for
-#' @param areaOfInterest Raster* object or a Spatial* object
-#' @param fireSeasonIndex index of layers corresponding to the fire season
+#' @param fireIndex RasterBrick containing the fire index to calculate the thresholds for.
 #' 
 #' @return A numeric vector listing the thresholds.
 #'
@@ -24,93 +22,27 @@
 #'   seasons <- getFireSeason(dataDates, emisphere = "north")
 #'   fireSeasonIndex <- which(seasons == TRUE)
 #'   
-#'   # Get area of interest: Europe
-#'   Europe <- getGFED4(varname = 'BasisRegions', region = 'EURO')
+#'   r <- raster::brick('FWI_1980-2016.nc') 
+#'   p <- raster::getData(name = "GADM", country = "Italy", level = 0)        
+#'   maskcrop(r, p, mask = TRUE, crop = TRUE)
 #'   
-#'   # Load and subset FWI
-#'   FWIall <- raster::brick("FWI.nc")
-#'   FWI <- raster::subset(FWIall, fireSeasonIndex)
+#'   # Mask and crop over country
+#'   FWIcountry <- maskcrop(FWI, country, mask = TRUE, crop = TRUE)
 #'   
-#'   # Calculate the thresholds
-#'   thresholdFWI <- FireDangerLevels(fireIndex = "fwi", 
-#'                                    areaOfInterest = "Spain",
-#'                                    baseDir, dataDates, fireSeasonIndex)
+#'   # Subset based on fire season
+#'   FWIseasonal <- raster::subset(FWIcountry, fireSeasonIndex)
+#'   
+#'   # Generate thresholds for the country of interest
+#'   countryThr <- FireDangerLevels(fireIndex = FWIseasonal)
+#'   
 #' }
 #'
 
-FireDangerLevels <- function(fireIndex, 
-                             areaOfInterest = NULL, fireSeasonIndex = NULL){
-  
-  if ("RasterStack" %in% class(fireIndex)){
-    message('Convert stack of fire indices into a raster brick')
-    FWIbrick <- raster::brick(fireIndex, progress = 'text')
-  }
-  if ("RasterBrick" %in% class(fireIndex)){
-    FWIbrick <- fireIndex
-  }
-  if (!("RasterBrick" %in% class(fireIndex)) & 
-      !("RasterStack" %in% class(fireIndex))){
-    stop('Error: the fireIndex can only be a raster brick/stack')
-  }
-  
-  if (!is.null(areaOfInterest)){
-    
-    # Polygonise the areas of interest
-    if ('RasterLayer' %in% class(areaOfInterest)){
-      areaOfInterest <- raster::rasterToPolygons(x = areaOfInterest)
-    }
-    
-    # Rasterise the areas of interest
-    # if (!('RasterLayer' %in% class(areaOfInterest))){
-    #   areaOfInterest <- raster::rasterize(x = areaOfInterest, y = FWIbrick)
-    # }
-    
-    # Option A: standard masking/cropping (~30 minutes for Italy)
-    # system.time({
-    message('Masking fire index over area of interest')
-    FWImasked <- raster::mask(FWIbrick, areaOfInterest, progress = 'text')
-    message('Cropping fire index over area of interest')
-    # FWIcropped <- raster::crop(FWImasked, areaOfInterest, progress = 'text')
-    FWIareal <- raster::crop(FWImasked, areaOfInterest, progress = 'text')
-    # message('Trim fire index to remove as many NAs as possible')
-    # FWIareal <- raster::trim(FWIcropped, values = NA, progress = 'text')
-    # })
-    
-    # Option B: efficient serial computation (12.3 hours)
-    # mask
-    # system.time({
-    #   l <- lapply(1:dim(FWIseasonal)[3], function(n) {
-    #     print(n)
-    #     raster::trim(raster::mask(raster::subset(FWIseasonal, n), Italy))
-    #   })
-    #   s <- do.call(stack, l)
-    # })
-    
-    # Option C: parallel computation (never ending!)
-    # beginCluster(n = 4)
-    # system.time(FWImasked <- clusterR(x = FWIseasonal, fun = mask, 
-    #             args = list("mask" = Italy)))
-    # system.time(FWImasked <- clusterR(x = FWIseasonal, fun = mask, 
-    #             args = list("mask" = Italy)))
-    # endCluster()
-    
-  }else{
-    
-    # Keep the global extent
-    FWIareal <- FWIbrick
-    
-  }
-  
-  if (is.null(fireSeasonIndex)){
-    message("Subsetting FWI over the fire season")
-    FWIseasonal <- raster::subset(FWIareal, fireSeasonIndex)
-  }else{
-    FWIseasonal <- FWIareal
-  }
+FireDangerLevels <- function(fireIndex){
   
   message("Calculating thresholds of danger levels")
   # Calculate extreme yearly danger
-  years <- substr(x = names(FWIareal@data), start = 2, stop = 5)
+  years <- substr(x = names(fireIndex), start = 2, stop = 5)
   
   # Number of days per year = extreme yearly danger (assumption)
   ndays <- 4 
@@ -122,7 +54,7 @@ FireDangerLevels <- function(fireIndex,
   for (FireYear in unique(years)){
     # print(FireYear)
     yearIDX <- which(years == FireYear)
-    subFWI <- raster::subset(FWIareal, yearIDX)
+    subFWI <- raster::subset(fireIndex, yearIDX)
     IDXyear <- quantile(na.omit(as.vector(subFWI)), extremePercentile)
     extremeValues <- c(extremeValues, as.numeric(IDXyear))
   }

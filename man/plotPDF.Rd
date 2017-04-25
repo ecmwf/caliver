@@ -4,17 +4,12 @@
 \alias{plotPDF}
 \title{Plot PDF of fire index}
 \usage{
-plotPDF(fireIndex, countryName, baseDir, fireSeasonIndex, thresholds,
-  upperLimit = NULL)
+plotPDF(fireIndex, countryName, thresholds, upperLimit = NULL)
 }
 \arguments{
 \item{fireIndex}{RasterBrick containing the fire index}
 
 \item{countryName}{string describing the country name.}
-
-\item{baseDir}{this is the directory where the reanalysis data are saved.}
-
-\item{fireSeasonIndex}{vector of indices (same length as dataDates) with TRUE if the date falls in the fire season, FALSE otherwise.}
 
 \item{thresholds}{thresholds calculated using the function \code{DangerLevels()}}
 

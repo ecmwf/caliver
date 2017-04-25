@@ -21,7 +21,6 @@
 
 getGEFFreanalysis <- function(startDate, 
                               endDate, 
-                              varname = 'fwi', 
                               bb = NULL){
   
   # Internal ECMWF proxy
@@ -39,7 +38,7 @@ getGEFFreanalysis <- function(startDate,
   }
   
   tempF <- file.path(tempdir(), "geff_fire_weather_index.nc")
-  download.file(url = request2, destfile = tempF)
+  download.file(url = request, destfile = tempF)
   
   rea <- raster::brick(tempF)
   
