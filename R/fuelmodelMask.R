@@ -32,12 +32,11 @@ fuelmodelMask <- function(x){
 	  fuelmodel <- raster::raster(fuelmodelFilePath)
   }
   
-  # To make comparisons, 
-  # fuelmodel and x should have same extent and numer of rows/cols
-  fuel <- raster::resample(fuelmodel, x, method = "ngb")
-  
   # Remove areas with code > 20 (deserts, glaciers, urban areas, etc.)
-  fuel[fuel > 20] <- NA
+  fuelmodel[fuelmodel > 20] <- NA
+  
+  # Fuel and x should have same extent and numer of rows/cols
+  fuel <- raster::resample(fuelmodel, x, method = "ngb")
   
   # Finaly, mask x
   xmasked <- raster::mask(x, fuel, progress = 'text')
