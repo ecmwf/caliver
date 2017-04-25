@@ -2,6 +2,8 @@ context("catNetcdf")
 
 test_that("catNetcdf works", {
   
+  skip_on_travis()
+  
   myTempDir <- tempdir()
   
   if (length(grep("test", list.files(myTempDir))) > 0) {

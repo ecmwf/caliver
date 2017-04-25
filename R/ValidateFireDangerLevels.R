@@ -35,8 +35,7 @@
 #' }
 #'
 
-ValidateFireDangerLevels <- function(fireIndex, observation, fireThr, obsThr,
-                                     areaOfInterest = NULL){
+ValidateFireDangerLevels <- function(fireIndex, observation, fireThr, obsThr){
   
   if (!("RasterBrick" %in% class(fireIndex)) & 
       !("RasterStack" %in% class(fireIndex))){
@@ -66,57 +65,20 @@ ValidateFireDangerLevels <- function(fireIndex, observation, fireThr, obsThr,
     OBSbrick <- observation
   }
   
-  if (!is.null(areaOfInterest)){
-    
-    # Polygonise the areas of interest
-    if ('RasterLayer' %in% class(areaOfInterest)){
-      areaOfInterest <- raster::rasterToPolygons(x = areaOfInterest)
-    }
-    
-    message('Masking fire index over area of interest')
-    FWImasked <- raster::mask(FWIbrick, areaOfInterest, progress = 'text')
-    
-    message('Cropping fire index over area of interest')
-    FWIareal <- raster::crop(FWImasked, areaOfInterest, progress = 'text')
-    
-    message('Masking observations over area of interest')
-    OBSmasked <- raster::mask(OBSbrick, areaOfInterest, progress = 'text')
-    
-    message('Cropping observations over area of interest')
-    OBSareal <- raster::crop(OBSmasked, areaOfInterest, progress = 'text')
-    
-  }else{
-    
-    # Keep the global extent
-    FWIareal <- FWIbrick
-    OBSareal <- OBSbrick
-    
-  }
-  
   # Aggregate/Resample observations to match the resolution of the fire index
-  fact <- round(dim(OBSareal)[1:2] / dim(FWIareal)[1:2], 0)
+  fact <- round(dim(OBSbrick)[1:2]/dim(FWIbrick)[1:2], 0)
   message("Aggregate observations to match the resolution of the fire index")
-  BurnedAreasA <- raster::aggregate(OBSareal, fact, fun = sum, 
+  BurnedAreasA <- raster::aggregate(OBSbrick, fact, fun = sum, 
                                     progress = 'text')
   message("Resample observations to match the resolution of the fire index")
-  BAresampled <- raster::resample(BurnedAreasA, FWIareal, 
+  BAresampled <- raster::resample(BurnedAreasA, FWIbrick, 
                                   method = "bilinear", progress = 'text')
   
   # Select only period in common
-  fwiIndex <- which(names(FWIareal) %in% names(BAresampled))
-  obsIndex <- which(names(BAresampled) %in% names(FWIareal))
-  FWIseasonal <- raster::subset(FWIareal, fwiIndex)
+  fwiIndex <- which(names(FWIbrick) %in% names(BAresampled))
+  obsIndex <- which(names(BAresampled) %in% names(FWIbrick))
+  FWIseasonal <- raster::subset(FWIbrick, fwiIndex)
   OBSseasonal <- raster::subset(BAresampled, obsIndex)
-  # check: dim(FWIseasonal) == dim(OBSseasonal)
-  
-#   if (is.null(fireSeasonIndex)){
-#     message("Subsetting FWI over the fire season")
-#     FWIseasonal <- raster::subset(FWIareal, fireSeasonIndex)
-#     OBSseasonal <- raster::subset(OBSareal, fireSeasonIndex)
-#   }else{
-#     FWIseasonal <- FWIareal
-#     OBSseasonal <- OBSareal
-#   }
   
   message("Calculating contingency table")
   # Transform BurnedAreas to binary (is BurnedAreas for AreaOfInterest > 50 hectares?)

@@ -4,8 +4,7 @@
 \alias{ValidateFireDangerLevels}
 \title{Validate Fire Danger Levels}
 \usage{
-ValidateFireDangerLevels(fireIndex, observation, fireThr, obsThr,
-  areaOfInterest = NULL)
+ValidateFireDangerLevels(fireIndex, observation, fireThr, obsThr)
 }
 \arguments{
 \item{fireIndex}{RasterBrick containing the fire index (only one variable)}
