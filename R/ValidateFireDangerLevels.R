@@ -6,7 +6,6 @@
 #' @param observation RasterBrick containing the observation (only one variable)
 #' @param fireThr threshold to use to select relevant fire indices
 #' @param obsThr threshold to use to select relevant observations
-#' @param areaOfInterest Raster* object or a Spatial* object
 #' 
 #' @return A contingency table
 #' 

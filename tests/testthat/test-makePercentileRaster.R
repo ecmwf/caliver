@@ -12,11 +12,8 @@ test_that("makePercentileRaster works with one prob", {
                                     probs = 50,
                                     outDir = myTempDir)
   
-  # Check whether the class is correct
-  expect_equal("RasterStack" %in% class(probsMaps), TRUE)
-  
   # Check whether layers are named correctly
-  expect_equal(names(probsMaps), c("FWI50", "FWI75"))
+  expect_equal(names(probsMaps), "FWI50")
   
   mean50 <- round(raster::cellStats(probsMaps$FWI50, stat = 'mean'), 0)
   expect_equal(mean50, 10)

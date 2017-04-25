@@ -14,8 +14,6 @@ ValidateFireDangerLevels(fireIndex, observation, fireThr, obsThr)
 \item{fireThr}{threshold to use to select relevant fire indices}
 
 \item{obsThr}{threshold to use to select relevant observations}
-
-\item{areaOfInterest}{Raster* object or a Spatial* object}
 }
 \value{
 A contingency table
