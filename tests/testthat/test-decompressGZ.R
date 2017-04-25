@@ -1,20 +1,25 @@
 context("test-decompressGZ")
 
-test_that("decompression works", {
+myTempDir <- tempdir() # works on all platforms with a platform-dependent result
 
-  skip_on_appveyor()
+download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/",
+                           "caliver_test_data/test.nc.gz"),
+              destfile = file.path(myTempDir, "test.nc.gz"),
+              method="curl")
 
-  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
+test_that("decompression works with keep = TRUE", {
 
-  download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/",
-                             "caliver_test_data/test.nc.gz"),
-                destfile = file.path(myTempDir, "test.nc.gz"),
-                method="curl")
-
-  decompressGZ(inDir = myTempDir, keep = FALSE)
-
-  expect_equal("test.nc" %in% list.files(myTempDir), TRUE)
-
+  decompressGZ(inDir = myTempDir, keep = TRUE)
+  expect_equal(list.files(myTempDir), c("test.nc", "test.nc.gz"))
   file.remove(file.path(myTempDir, "test.nc"))
 
+})
+
+test_that("decompression works with keep = FALSE", {
+
+  decompressGZ(inDir = myTempDir, keep = FALSE)
+  expect_equal(list.files(myTempDir), "test.nc")
+  
+  file.remove(file.path(myTempDir, "test.nc"))
+  
 })
