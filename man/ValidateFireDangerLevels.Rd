@@ -32,14 +32,10 @@ This function compares observed and modelled fire data and return a contingency 
                                  to = as.Date("2015-12-31"), by = "day")
   FWI <- raster::brick('GEFF/reanalysis/FWI_1980-2016.nc')
   
-  # Get area of interest: Europe
-  Europe <- getGFED4(varname = 'BasisRegions', region = 'EURO')
-  
   # Generate the contingency table
   ct <- ValidateFireDangerLevels(fireIndex = FWI, 
                                  observation = BurnedAreas,
-                                 fireThr = 10, obsThr = 50, 
-                                 areaOfInterest = Europe)
+                                 fireThr = 10, obsThr = 50)
                           
 }
 

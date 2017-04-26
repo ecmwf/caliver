@@ -22,14 +22,10 @@
 #'                                  to = as.Date("2015-12-31"), by = "day")
 #'   FWI <- raster::brick('GEFF/reanalysis/FWI_1980-2016.nc')
 #'   
-#'   # Get area of interest: Europe
-#'   Europe <- getGFED4(varname = 'BasisRegions', region = 'EURO')
-#'   
 #'   # Generate the contingency table
 #'   ct <- ValidateFireDangerLevels(fireIndex = FWI, 
 #'                                  observation = BurnedAreas,
-#'                                  fireThr = 10, obsThr = 50, 
-#'                                  areaOfInterest = Europe)
+#'                                  fireThr = 10, obsThr = 50)
 #'                           
 #' }
 #'
@@ -37,29 +33,39 @@
 ValidateFireDangerLevels <- function(fireIndex, observation, fireThr, obsThr){
   
   if (!("RasterBrick" %in% class(fireIndex)) & 
-      !("RasterStack" %in% class(fireIndex))){
+      !("RasterStack" %in% class(fireIndex)) &
+      !("RasterLayer" %in% class(fireIndex))){
     stop('Error: the fireIndex can only be a raster brick/stack')
   }
   
   if (!("RasterBrick" %in% class(observation)) & 
-      !("RasterStack" %in% class(observation))){
+      !("RasterStack" %in% class(observation)) &
+      !("RasterLayer" %in% class(observation))){
     stop('Error: the observation can only be a raster brick/stack')
   }
   
+  # RasterLayer
+  if ("RasterLayer" %in% class(fireIndex)){
+    FWIbrick <- fireIndex
+  }
+  if ("RasterLayer" %in% class(observation)){
+    OBSbrick <- observation
+  }
+  
+  # RasterStack
   if ("RasterStack" %in% class(fireIndex)){
     message('Convert stack of fire indices into a raster brick')
     FWIbrick <- raster::brick(fireIndex, progress = 'text')
   }
-  
   if ("RasterStack" %in% class(observation)){
     message('Convert stack of observations into a raster brick')
     OBSbrick <- raster::brick(observation, progress = 'text')
   }
   
+  # RasterBrick
   if ("RasterBrick" %in% class(fireIndex)){
     FWIbrick <- fireIndex
   }
-  
   if ("RasterBrick" %in% class(observation)){
     OBSbrick <- observation
   }

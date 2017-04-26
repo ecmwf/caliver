@@ -52,6 +52,7 @@ r_packages:
   - roxygen2
   - rprojroot
   - rmarkdown
+  - png
 
 r_github_packages:
   - jimhester/covr
