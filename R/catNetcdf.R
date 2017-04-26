@@ -66,11 +66,22 @@ catNetcdf <- function(inDir = NULL,
     
     # Cat is computational lighter than mergetime because it opens 1 file at the
     # time and assumes they are already ordered (e.g. due to naming convention)
+    
+    
+    # For basic precision
     system(paste0("cdo cat ", ifiles, " ", outFilePath))
+    
+    # For higher precision
+    # system(paste0("cdo -b F64 cat ", ifiles, " ", outFilePath))
     
   }else{
     
+    # For basic precision
     system(paste0("cdo select,name=", varname, " ", ifiles, " ", outFilePath))
+    
+    # For higher precision
+    # system(paste0("cdo -b F64 select,name=", 
+    #               varname, " ", ifiles, " ", outFilePath))
     
   }
   
