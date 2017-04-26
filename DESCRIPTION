@@ -38,6 +38,7 @@ Suggests:
     testthat,
     png,
     visualTest,
+    proto,
     knitr,
     rmarkdown,
     covr

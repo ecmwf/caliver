@@ -18,7 +18,6 @@ test_that("plotPercentiles works with rotateMap = TRUE", {
   plotPercentiles(maps = probsMaps, rotateMap = TRUE)
   dev.off()
   
-  # Check whether layers are named correctly
   isSimilar(file = test1, fingerprint = "B30F6C1B71ECC4B0", threshold = 0.1)
   
 })
@@ -31,7 +30,6 @@ test_that("plotPercentiles works with rotateMap = FALSE", {
   plotPercentiles(maps = probsMaps, rotateMap = FALSE)
   dev.off()
   
-  # Check whether layers are named correctly
   isSimilar(file = test2, fingerprint = "B32B784FCCCCC4D0", threshold = 0.1)
   
 })
@@ -44,7 +42,6 @@ test_that("plotPercentiles works with region = EURO", {
   plotPercentiles(maps = probsMaps, rotateMap = TRUE, region = "EURO")
   dev.off()
   
-  # Check whether layers are named correctly
   # getFingerprint(test3)
   isSimilar(file = test3, fingerprint = "AF0F306FF8B0C4D0", threshold = 0.1)
   
@@ -68,7 +65,6 @@ test_that("plotPercentiles works with multi probs", {
   plotPercentiles(maps = probsMaps, rotateMap = TRUE, region = "EURO")
   dev.off()
   
-  # Check whether layers are named correctly
   # getFingerprint(test4)
   isSimilar(file = test4, fingerprint = "A0092F017F6F196F", threshold = 0.1)
   

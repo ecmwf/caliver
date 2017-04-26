@@ -1,24 +1,18 @@
 context("plotPDF")
 
-test_that("plotPDF works", {
+myTempDir <- tempdir()
+download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = file.path(myTempDir, "outTest.nc"), method="curl")
+inFile <- file.path(myTempDir, "outTest.nc")
+
+x <- raster::raster(inFile)
+
+test_that("Plot layers match expectations",{
   
-  skip_on_travis()
+  p <- plotPDF(fireIndex = x, countryName = "Italy", 
+               thresholds = c(1,2,3,4,5), upperLimit = 100)
   
-  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
-  
-  download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = file.path(myTempDir, "outTest.nc"), method="curl")
-  
-  inFile <- file.path(myTempDir, "outTest.nc")
-  
-  x <- raster::raster(inFile)
-  
-  test1 <- file.path(myTempDir, "test1.png")
-  
-  png(filename = test1)
-  plotPDF(x, "Italy", c(1,2,3,4,5), upperLimit = 100)
-  dev.off()
-  
-  # getFingerprint(test1)
-  isSimilar(file = test1, fingerprint = "D2EDAD31859233CA", threshold = 0.1)
+  expect_equal(length(p$layers) == 3, TRUE)
+  expect_identical(p$labels$y, "Density")
+  expect_identical(p$labels$x, "FWI")
   
 })
