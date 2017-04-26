@@ -20,7 +20,7 @@ Plot PDF of fire index
 }
 \examples{
 \dontrun{
-  plotPDF(countryName = "Spain", baseDir, fireSeasonIndex, thresholds)
+  plotPDF(fireIndex, countryName, thresholds, upperLimit = 100)
 }
 
 }

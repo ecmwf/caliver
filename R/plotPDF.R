@@ -9,14 +9,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   plotPDF(countryName = "Spain", baseDir, fireSeasonIndex, thresholds)
+#'   plotPDF(fireIndex, countryName, thresholds, upperLimit = 100)
 #' }
 #'
 
-plotPDF <- function(fireIndex,
-                    countryName,
-                    thresholds,
-                    upperLimit = NULL){
+plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL){
   
   firePalette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
                    "#E41A1C", "#6b3535", "#403131")

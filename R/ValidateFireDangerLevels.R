@@ -86,11 +86,11 @@ ValidateFireDangerLevels <- function(fireIndex, observation, fireThr, obsThr){
   OBSseasonal <- raster::subset(BAresampled, obsIndex)
   
   message("Calculating contingency table")
-  # Transform BurnedAreas to binary (is BurnedAreas for AreaOfInterest > 50 hectares?)
+  # Transform BurnedAreas to binary (is BurnedAreas > 50 hectares?)
   BA <- as.vector(OBSseasonal)
   BAlogic <- ifelse(test = (BA >= obsThr), yes = TRUE, no = FALSE)
   
-  # Transform FWI to binary (Is FWI for AreaOfInterest > high danger level?)
+  # Transform FWI to binary (Is FWI > high danger level?)
   FWI <- as.vector(FWIseasonal)
   FWIlogic <- ifelse(test = (FWI >= fireThr), yes = TRUE, no = FALSE)
   

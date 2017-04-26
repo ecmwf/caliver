@@ -15,6 +15,7 @@ test_that("getGFED4 works with basis regions", {
 test_that("getGFED4 works with BurnedAreas", {
   
   skip_on_os("linux")
+  skip_on_travis()
   
   DailyBurnedAreas <- getGFED4(years = 2003, 
                                tempRes = "daily", 
