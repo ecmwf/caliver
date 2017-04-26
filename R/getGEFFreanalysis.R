@@ -11,9 +11,9 @@
 #' @examples
 #' \dontrun{
 #' 
-#'   # Get reanalysis data for 2015 over Italy
+#'   # Get reanalysis data for 2015-01-01 over Italy
 #'   GEFFreanalysis2015 <- getGEFFreanalysis(startDate = '2015-01-01', 
-#'                                           endDate = '2015-12-31',
+#'                                           endDate = '2015-01-02',
 #'                                           bb = c(35, 47, 6, 18))
 #'            
 #' }
@@ -36,6 +36,8 @@ getGEFFreanalysis <- function(startDate,
   }else{
     request <- noquote(paste0(baseURL, query1, query2, query3))
   }
+  
+  x <- RCurl::getURL(request)
   
   tempF <- file.path(tempdir(), "geff_fire_weather_index.nc")
   download.file(url = request, destfile = tempF)
