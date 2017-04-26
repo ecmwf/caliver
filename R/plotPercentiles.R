@@ -24,23 +24,17 @@ plotPercentiles <- function(maps, rotateMap = FALSE, region = "GLOB", ...){
     # Longitude between 0 and 360 is frequently used in data 
     # from global climate models.
     rotatedMap <- raster::rotate(maps)
-    lonRange = "-180/+180"
     
   }else{
     
     rotatedMap <- maps
-    lonRange = "0/360"
     
   }
   
   if (region != "GLOB"){
     
-    maskMap <- getGFED4(varname = 'BasisRegions', 
-                        region = region)
-    maskMap <- raster::resample(maskMap, rotatedMap, method = "ngb")
+    maskMap <- getGFED4(varname = 'BasisRegions', region = region)
     croppedMap <- raster::trim(raster::mask(rotatedMap, maskMap))
-    # mapExtent <- regionalBBOX(region, lonRange = lonRange)
-    # rotatedMap <- raster::crop(rotatedMap, mapExtent)
     
   }else{
     
@@ -60,8 +54,11 @@ plotPercentiles <- function(maps, rotateMap = FALSE, region = "GLOB", ...){
   rastMin <- min(raster::cellStats(croppedMap, stat = 'min', na.rm = TRUE))
   rastMax <- max(raster::cellStats(croppedMap, stat = 'max', na.rm = TRUE))
   
-  plot(croppedMap, addfun = fun, col = rev(heat.colors(10, alpha = 1)),
-       breaks = round(seq(from = rastMin, to = rastMax, 
-                          length.out = 10), 0), ...)
+  raster::plot(croppedMap, 
+               addfun = fun, 
+               col = rev(heat.colors(10, alpha = 1)),
+               breaks = round(seq(from = rastMin, 
+                                  to = rastMax, 
+                                  length.out = 10), 0))
   
 }

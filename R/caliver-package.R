@@ -28,5 +28,6 @@
 #' @importFrom stats median na.omit sd uniroot density quantile
 #' @importFrom methods slot
 #' @importFrom countrycode countrycode
+#' @importFrom RCurl getURL
 #' 
 NULL

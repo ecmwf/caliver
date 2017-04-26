@@ -32,9 +32,11 @@ Imports:
     maptools,
     grid,
     methods,
-    countrycode
+    countrycode,
+    RCurl
 Suggests:
     testthat,
+    visualTest,
     knitr,
     rmarkdown,
     covr
