@@ -14,5 +14,10 @@ test_that("Plot layers match expectations",{
   expect_equal(length(p$layers) == 3, TRUE)
   expect_identical(p$labels$y, "Density")
   expect_identical(p$labels$x, "FWI")
+  expect_equal(p$scales$scales[[2]]$limits, c(0, 100))
+  
+  p <- plotPDF(fireIndex = x, countryName = "Italy", 
+               thresholds = c(1,2,3,4,5))
+  expect_equal(p$scales$scales[[2]]$limits, c(0, 40))
   
 })
