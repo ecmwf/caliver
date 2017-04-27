@@ -4,7 +4,7 @@
 #'
 #' @param inDir is the directory where all the files to read are stored
 #' @param varname name of the variable to extract
-#' @param startingString string defining the beginning of the netcdf filenames (needed to exclude other files)
+#' @param pattern regular expression pattern to select a subset of files
 #' @param recursive logical (TRUE by default). If set to TRUE it looks in folders and subfolders
 #' @param outFileName output filename
 #' @param outDir is the directory where outFileName is saved, by default this is the working directory.
@@ -16,7 +16,7 @@
 #'   # Mergetime using single variable nc files
 #'   catNetcdf(inDir = "/var/tmp/moc0/forestfire",
 #'             varname = NULL,
-#'             startingString = "geff_reanalysis_an_fwis_fwi_",
+#'             pattern = "geff_reanalysis_an_fwis_fwi_",
 #'             recursive = TRUE,
 #'             outFileName = "outfile.nc",
 #'             outDir = getwd())
@@ -26,7 +26,7 @@
 
 catNetcdf <- function(inDir = NULL, 
                       varname = NULL,
-                      startingString = "",
+                      pattern = NULL,
                       recursive = FALSE,
                       outFileName = "outfile.nc",
                       outDir = getwd()){  
@@ -45,19 +45,22 @@ catNetcdf <- function(inDir = NULL,
     
   }
   
-  if (startingString == "") {
+  if (is.null(pattern)) {
+    
     if (recursive == TRUE){
       ifiles <- paste(list.files(path = inDir, recursive = recursive, 
                                  full.names = TRUE), collapse = " ")
     }else{
       ifiles <- file.path(inDir, "*.nc")
     }
+    
   }else{
-    ifiles <- paste(list.files(path = inDir, 
-                               # pattern = paste0(startingString, ".*.nc$"),
-                               pattern = paste0("^", startingString),
+    
+    ifiles <- paste(list.files(path = inDir,
+                               pattern = pattern,
                                recursive = recursive, full.names = TRUE), 
                     collapse = " ")
+    
   }
   
   if (is.null(varname)){
@@ -67,7 +70,6 @@ catNetcdf <- function(inDir = NULL,
     
     # Cat is computational lighter than mergetime because it opens 1 file at the
     # time and assumes they are already ordered (e.g. due to naming convention)
-    
     
     # For basic precision
     system(paste0("cdo cat ", ifiles, " ", outFilePath))
@@ -80,7 +82,7 @@ catNetcdf <- function(inDir = NULL,
     # For basic precision
     system(paste0("cdo select,name=", varname, " ", ifiles, " ", outFilePath))
     
-    # For higher precision
+    # For higher precision (this generates larger files!)
     # system(paste0("cdo -b F64 select,name=", 
     #               varname, " ", ifiles, " ", outFilePath))
     

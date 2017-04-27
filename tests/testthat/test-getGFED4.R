@@ -61,6 +61,7 @@ test_that("getGFED4 works with monthly data (1 month)", {
                                tempRes = "monthly", varname = "BurnedArea")
   
   expect_equal("RasterLayer" %in% class(DailyBurnedAreas), TRUE)
+  expect_equal(dim(DailyBurnedAreas), c(720, 1440, 1))
   
 })
 

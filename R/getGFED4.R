@@ -68,7 +68,9 @@ getGFED4 <- function(startDate = NULL,
                      varname = NULL,
                      region = "GLOB"){
   
+  # Create a tmp directory
   outDir <- tempdir()
+  message(paste0("Downloading temporary files in: ", outDir))
   
   if (is.null(varname)) stop("Please enter valid varname")
   
@@ -177,11 +179,6 @@ getGFED4 <- function(startDate = NULL,
       
     }
     
-    # Create a tmp directory
-    myTempDir <- tempdir()
-    dir.create(myTempDir, showWarnings = FALSE)
-    message(paste0("Downloading temporary files in: ", myTempDir))
-    
     for (d in myDate){
       
       justYear <- substr(d, start = 1, stop = 4)
@@ -202,13 +199,13 @@ getGFED4 <- function(startDate = NULL,
       
       try(x <- httr::GET(url = myURL, 
                          httr::authenticate(user = "fire", password = "burnt"), 
-                         httr::write_disk(file.path(myTempDir, inFile), 
+                         httr::write_disk(file.path(outDir, inFile), 
                                           overwrite = TRUE)), silent = FALSE)
       
       # Check for unavailable data (HTTP 404 status)
       if (x$status_code == 404) {
         
-        unlink(file.path(myTempDir, inFile))
+        unlink(file.path(outDir, inFile))
         message("Either the server or the data are temporarily unavailable.")
         stop("Please try again later.")
         
@@ -225,13 +222,13 @@ getGFED4 <- function(startDate = NULL,
           
         }
         
-        string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile), 
-                              varOption, " -o ", myTempDir, "/")
+        string2call <- paste0("ncl_convert2nc ", file.path(outDir, inFile), 
+                              varOption, " -o ", outDir, "/")
         
         # This can give problems in RStudio, but works fine in the console
         system(string2call)
         
-        unlink(file.path(myTempDir, inFile))
+        unlink(file.path(outDir, inFile))
         
       }
       
@@ -239,30 +236,30 @@ getGFED4 <- function(startDate = NULL,
     
     outFileName <- ifelse(is.null(varname), "GFED4.nc", 
                           paste0(varname,".nc"))
-    listOfFiles <- list.files(myTempDir, pattern = filePattern)
+    listOfFiles <- list.files(outDir, pattern = filePattern)
     
-    # myTempDir only contains Burned Area files!
-    if (length(list.files(myTempDir)) == 0){
+    # outDir only contains Burned Area files!
+    if (length(list.files(outDir)) == 0){
       stop("No files have been downloaded, please check your connection.")
     }
     
     if (length(listOfFiles) == 1){
-      if (tempRes == "daily" & substr(list.files(myTempDir), 9, 9) == "D"){
-        outFileName <- file.path(myTempDir, listOfFiles)
+      if (tempRes == "daily" & substr(listOfFiles, 9, 9) == "D"){
+        outFileName <- file.path(outDir, listOfFiles)
       }
-      if (tempRes == "monthly"& substr(list.files(myTempDir), 9, 9) == "M"){
-        outFileName <- file.path(myTempDir, listOfFiles)
+      if (tempRes == "monthly"& substr(listOfFiles, 9, 9) == "M"){
+        outFileName <- file.path(outDir, listOfFiles)
       }
       mergedRaster <- raster::raster(outFileName)
     }
     
     if (length(listOfFiles) > 1){
       if (tempRes == "daily"){
-        catNetcdf(inDir = myTempDir, #startingString = "GFED4.0_DQ_", 
+        catNetcdf(inDir = outDir, #startingString = "GFED4.0_DQ_", 
                   outFileName = outFileName)
       }
       if (tempRes == "monthly"){
-        catNetcdf(inDir = myTempDir, #startingString = "GFED4.0_MQ_", 
+        catNetcdf(inDir = outDir, #startingString = "GFED4.0_MQ_", 
                   outFileName = outFileName)
       }
       mergedRaster <- raster::brick(outFileName)
@@ -289,7 +286,7 @@ getGFED4 <- function(startDate = NULL,
     # raster::plot(backgroundMap, add = TRUE)
     
     message("Removing temporary files and folder")
-    unlink(file.path(myTempDir))
+    unlink(file.path(outDir))
     unlink(file.path(outDir, outFileName))
     
     return(regionsRasterT)
