@@ -6,6 +6,14 @@ inFile <- file.path(myTempDir, "outTest.nc")
 
 x <- raster::raster(inFile)
 
+test_that("plotPDF match expectations for no y-limit",{
+  
+  p <- plotPDF(fireIndex = x, countryName = "Italy", 
+               thresholds = c(1,2,3,4,5))
+  expect_equal(p$scales$scales[[2]]$limits, c(0, 40))
+  
+})
+
 test_that("Plot layers match expectations",{
   
   p <- plotPDF(fireIndex = x, countryName = "Italy", 
@@ -15,9 +23,5 @@ test_that("Plot layers match expectations",{
   expect_identical(p$labels$y, "Density")
   expect_identical(p$labels$x, "FWI")
   expect_equal(p$scales$scales[[2]]$limits, c(0, 100))
-  
-  p <- plotPDF(fireIndex = x, countryName = "Italy", 
-               thresholds = c(1,2,3,4,5))
-  expect_equal(p$scales$scales[[2]]$limits, c(0, 40))
   
 })
