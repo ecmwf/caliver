@@ -2,7 +2,8 @@
 #'
 #' @description Get data from the fourth-generation Global Fire Emissions Database (GFED4)
 #'
-#' @param years is a vector containing the years to download
+#' @param startDate first date to download (string)
+#' @param endDate last date to download (string)
 #' @param tempRes is the temporal resolution, it can be "daily" (default) or "monthly"
 #' @param varname name of the variable to extract, this can be one of the following:
 #' \itemize{
@@ -47,17 +48,22 @@
 #'   BasisRegions <- getGFED4(varname = "BasisRegions")
 #' 
 #'   # Monthly burned areas
-#'   BurnedAreas <- getGFED4(years = 1997:2015, tempRes = "monthly", 
+#'   BurnedAreas <- getGFED4(startDate = "2003-01-01"
+#'                           endDate = "2003-01-31", 
+#'                           tempRes = "monthly", 
 #'                           varname = "BurnedArea")
 #'                           
 #'   # Daily burned areas
-#'   DailyBurnedAreas <- getGFED4(years = 2003:2015, tempRes = "daily", 
+#'   DailyBurnedAreas <- getGFED4(startDate = "2003-01-01"
+#'                                endDate = "2003-01-02",
+#'                                tempRes = "daily", 
 #'                                varname = "BurnedArea")
 #'            
 #' }
 #'
 
-getGFED4 <- function(years = NULL, 
+getGFED4 <- function(startDate = NULL,
+                     endDate = NULL,
                      tempRes = "daily", 
                      varname = NULL,
                      region = "GLOB"){
@@ -134,15 +140,14 @@ getGFED4 <- function(years = NULL,
     
   }else{
     
-    if (is.null(years)) stop("Please enter valid years")
+    if (is.null(startDate) | is.null(endDate)) stop("Please enter valid dates")
     if (is.null(tempRes)) stop("Please enter valid tempRes")
     
     baseURL <- "ftp://fuoco.geog.umd.edu/gfed4"
     
     if (tempRes == "monthly"){
       
-      tmpDate <- seq.Date(from = as.Date(paste0(years[1],"-01-01")), 
-                          to = as.Date(paste0(years[length(years)], "-12-31")),  
+      tmpDate <- seq.Date(from = as.Date(startDate), to = as.Date(endDate),  
                           by = "month")
       
       myDate <- substr(x = gsub("-", "", as.character(tmpDate)), 
@@ -150,12 +155,13 @@ getGFED4 <- function(years = NULL,
       
       dirURL <- paste0(baseURL, "/monthly/")
       
+      filePattern <- "^GFED4.0_MQ_"
+      
     }
     
     if (tempRes == "daily"){
       
-      tmpDate <- seq.Date(from = as.Date(paste0(years[1],"-01-01")), 
-                          to = as.Date(paste0(years[length(years)], "-12-31")),   
+      tmpDate <- seq.Date(from = as.Date(startDate), to = as.Date(endDate),  
                           by = "day")
       
       dayOfYear <- lubridate::yday(tmpDate)
@@ -166,6 +172,8 @@ getGFED4 <- function(years = NULL,
       myDate <- paste0(justYear, dayOfYear3CHR)
       
       dirURL <- paste0(baseURL, "/daily/")
+      
+      filePattern <- "^GFED4.0_DQ_"
       
     }
     
@@ -201,7 +209,8 @@ getGFED4 <- function(years = NULL,
       if (x$status_code == 404) {
         
         unlink(file.path(myTempDir, inFile))
-        message("Data are currently unavailable")
+        message("Either the server or the data are temporarily unavailable.")
+        stop("Please try again later.")
         
       }else{
         
@@ -230,13 +239,37 @@ getGFED4 <- function(years = NULL,
     
     outFileName <- ifelse(is.null(varname), "GFED4.nc", 
                           paste0(varname,".nc"))
+    listOfFiles <- list.files(myTempDir, pattern = filePattern)
     
     # myTempDir only contains Burned Area files!
-    catNetcdf(inDir = myTempDir, outFileName = outFileName)
+    if (length(list.files(myTempDir)) == 0){
+      stop("No files have been downloaded, please check your connection.")
+    }
     
-    # The resulting raster brick is in a quater degree resolution but the 
+    if (length(listOfFiles) == 1){
+      if (tempRes == "daily" & substr(list.files(myTempDir), 9, 9) == "D"){
+        outFileName <- file.path(myTempDir, listOfFiles)
+      }
+      if (tempRes == "monthly"& substr(list.files(myTempDir), 9, 9) == "M"){
+        outFileName <- file.path(myTempDir, listOfFiles)
+      }
+      mergedRaster <- raster::raster(outFileName)
+    }
+    
+    if (length(listOfFiles) > 1){
+      if (tempRes == "daily"){
+        catNetcdf(inDir = myTempDir, #startingString = "GFED4.0_DQ_", 
+                  outFileName = outFileName)
+      }
+      if (tempRes == "monthly"){
+        catNetcdf(inDir = myTempDir, #startingString = "GFED4.0_MQ_", 
+                  outFileName = outFileName)
+      }
+      mergedRaster <- raster::brick(outFileName)
+    }
+    
+    # The resulting raster layer/brick is in a quater degree resolution but the 
     # extent and the coordinate system should be set manually
-    mergedRaster <- raster::brick(outFileName)
     
     # Transform the rasterBrick, flipping it on the y direction
     message("Flipping the raster on the y-direction")

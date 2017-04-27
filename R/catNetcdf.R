@@ -54,7 +54,8 @@ catNetcdf <- function(inDir = NULL,
     }
   }else{
     ifiles <- paste(list.files(path = inDir, 
-                               pattern = paste0(startingString, ".*.nc$"),
+                               # pattern = paste0(startingString, ".*.nc$"),
+                               pattern = paste0("^", startingString),
                                recursive = recursive, full.names = TRUE), 
                     collapse = " ")
   }

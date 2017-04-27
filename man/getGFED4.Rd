@@ -4,11 +4,13 @@
 \alias{getGFED4}
 \title{getGFED4}
 \usage{
-getGFED4(years = NULL, tempRes = "daily", varname = NULL,
-  region = "GLOB")
+getGFED4(startDate = NULL, endDate = NULL, tempRes = "daily",
+  varname = NULL, region = "GLOB")
 }
 \arguments{
-\item{years}{is a vector containing the years to download}
+\item{startDate}{first date to download (string)}
+
+\item{endDate}{last date to download (string)}
 
 \item{tempRes}{is the temporal resolution, it can be "daily" (default) or "monthly"}
 
@@ -59,11 +61,15 @@ The conversion from hdf5 to netcdf gets stuck in RStudio (see \url{https://suppo
   BasisRegions <- getGFED4(varname = "BasisRegions")
 
   # Monthly burned areas
-  BurnedAreas <- getGFED4(years = 1997:2015, tempRes = "monthly", 
+  BurnedAreas <- getGFED4(startDate = "2003-01-01"
+                          endDate = "2003-01-31", 
+                          tempRes = "monthly", 
                           varname = "BurnedArea")
                           
   # Daily burned areas
-  DailyBurnedAreas <- getGFED4(years = 2003:2015, tempRes = "daily", 
+  DailyBurnedAreas <- getGFED4(startDate = "2003-01-01"
+                               endDate = "2003-01-02",
+                               tempRes = "daily", 
                                varname = "BurnedArea")
            
 }
