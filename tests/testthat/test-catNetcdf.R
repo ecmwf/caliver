@@ -15,7 +15,7 @@ test_that("catNetcdf works", {
                           outFile = "TestAB.nc",
                           outDir = myTempDir)
   
-  x <- raster::stack(mergedFile)
+  x <- raster::brick(mergedFile)
   
   expect_equal(dim(x), c(256, 512, 2))
   

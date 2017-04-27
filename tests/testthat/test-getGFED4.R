@@ -70,7 +70,6 @@ test_that("getGFED4 works with monthly data (1 month)", {
 test_that("getGFED4 works with daily data (2 days)", {
   
   skip_on_travis()
-  skip_on_os("linux")
   
   DailyBurnedAreas <- getGFED4(startDate = "2003-01-01", endDate = "2003-01-02",
                                tempRes = "daily", varname = "BurnedArea")
