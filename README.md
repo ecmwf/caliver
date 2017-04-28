@@ -1,4 +1,4 @@
-caliver
+# caliver R package
 
 > CALIbration and VERification of gridded (fire risk) models
 
