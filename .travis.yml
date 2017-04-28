@@ -54,9 +54,9 @@ r_packages:
   - rmarkdown
   - png
   - htmltools
+  - covr
 
 r_github_packages:
-  - jimhester/covr
   - MangoTheCat/visualTest
 
 after_success:

@@ -1,7 +1,6 @@
+caliver
 
-<!-- Edit the README.Rmd only!!! The README.md is generated automatically from README.Rmd. -->
-caliver: CALIbration and VERification of gridded model outputs
-==============================================================
+> CALIbration and VERification of gridded (fire risk) models
 
 [![DOI](https://zenodo.org/badge/73203648.svg)](https://zenodo.org/badge/latestdoi/73203648)
 [![Travis-CI Build Status](https://travis-ci.org/ecmwf/caliver.svg?branch=master)](https://travis-ci.org/ecmwf/caliver)

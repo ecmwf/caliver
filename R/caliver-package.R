@@ -15,19 +15,13 @@
 #' @importFrom grDevices heat.colors
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines CRS
-#' @importFrom rasterVis levelplot
-#' @importFrom latticeExtra layer
 #' @importFrom graphics plot
 #' @importFrom httr GET authenticate write_disk http_error
 #' @importFrom stringr str_pad
 #' @importFrom lubridate yday
 #' @importFrom rhdf5 h5read
 #' @importFrom utils download.file
-#' @importFrom maptools map2SpatialPolygons
-#' @importFrom grid grid.newpage pushViewport viewport grid.layout
 #' @importFrom stats median na.omit sd uniroot density quantile
-#' @importFrom methods slot
-#' @importFrom countrycode countrycode
 #' @importFrom RCurl getURL
 #' 
 NULL

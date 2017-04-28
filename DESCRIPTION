@@ -22,17 +22,11 @@ Imports:
     sp,
     grDevices,
     rworldmap,
-    rasterVis,
-    latticeExtra,
     graphics,
     httr,
     stringr,
     lubridate,
     rhdf5,
-    maptools,
-    grid,
-    methods,
-    countrycode,
     RCurl
 Suggests:
     testthat,
@@ -42,6 +36,7 @@ Suggests:
     knitr,
     rmarkdown,
     covr
+Remotes: MangoTheCat/visualTest
 biocViews:
 VignetteBuilder: knitr
 Encoding: UTF-8
