@@ -53,6 +53,7 @@ r_packages:
   - rprojroot
   - rmarkdown
   - png
+  - htmltools
 
 r_github_packages:
   - jimhester/covr
