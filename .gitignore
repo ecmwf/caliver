@@ -29,7 +29,6 @@ Read-and-delete-me
 .directory
 README.html
 inst/doc
-
 # Temporarly ignore inst and vignettes folder
 inst/blog/*
 inst/PLOSONEpaper/*

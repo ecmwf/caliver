@@ -18,9 +18,8 @@ Dependencies and Installation
 The installation of the caliver package depends on the Climate Data Operators ([cdo](https://code.zmaw.de/projects/cdo/wiki)), a large tool set for working on climate and NWP model data), the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats), the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)) and the following R packages:
 
 ``` r
-packs <- c("devtools", "graphics", "grDevices", "knitr", "latticeExtra", 
-           "raster", "rasterVis", "rgdal", "sp", 
-           "stats", "testthat", "rmarkdown", "rworldmap")
+packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "grDevices", "RCurl",
+           "rworldmap", "graphics", "httr", "stringr", "lubridate", "rhdf5")
 new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -48,4 +47,4 @@ Meta
 -   Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
 -   Please [report any issues or bugs](https://github.com/ecmwf/caliver/issues).
 -   License: [GPL-2](https://opensource.org/licenses/GPL-2.0)
--   Get citation information for `caliver` in R doing `citation(package = 'caliver')`
+-   Get citation information for `caliver` in R doing `citation(package = "caliver")`

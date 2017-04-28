@@ -54,9 +54,14 @@ plotPercentiles <- function(maps, rotateMap = FALSE, region = "GLOB", ...){
   rastMin <- min(raster::cellStats(croppedMap, stat = 'min', na.rm = TRUE))
   rastMax <- max(raster::cellStats(croppedMap, stat = 'max', na.rm = TRUE))
   
+  # Define palette (from: rev(grDevices::heat.colors(n = 10)))
+  heatcolors <- c("#FFFFBFFF", "#FFFF40FF", "#FFFF00FF", "#FFDB00FF", 
+                  "#FFB600FF", "#FF9200FF", "#FF6D00FF", "#FF4900FF",
+                  "#FF2400FF", "#FF0000FF")
+  
   raster::plot(croppedMap, 
                addfun = fun, 
-               col = rev(heat.colors(10, alpha = 1)),
+               col = heatcolors,
                breaks = round(seq(from = rastMin, 
                                   to = rastMax, 
                                   length.out = 10), 0))
