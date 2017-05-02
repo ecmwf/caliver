@@ -69,8 +69,8 @@ getGFED4 <- function(startDate = NULL,
                      region = "GLOB"){
   
   # Create a tmp directory
-  outDir <- tempdir()
-  message(paste0("Downloading temporary files in: ", outDir))
+  myTempDir <- tempdir()
+  message(paste0("Downloading temporary files in: ", myTempDir))
   
   if (is.null(varname)) stop("Please enter valid varname")
   
@@ -89,11 +89,11 @@ getGFED4 <- function(startDate = NULL,
     }else{
       
       # Download the file
-      download.file(url = theURL, destfile = file.path(outDir, fname), 
+      download.file(url = theURL, destfile = file.path(myTempDir, fname), 
                     quiet = TRUE, cacheOK = TRUE)
       
       # Extract dataset with basis regions
-      regions <- rhdf5::h5read(file.path(outDir, fname), 
+      regions <- rhdf5::h5read(file.path(myTempDir, fname), 
                                "/ancill/basis_regions")
       
       # Convert hdf5 to raster
@@ -111,7 +111,7 @@ getGFED4 <- function(startDate = NULL,
       regionsRasterT@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
       
       # remove hdf5 file
-      unlink(file.path(outDir, fname))
+      unlink(file.path(myTempDir, fname))
       
       # This might need to be resampled using the attributes of the lower/higher
       # resolution of the other raster (e.g. rasterB):
@@ -199,13 +199,13 @@ getGFED4 <- function(startDate = NULL,
       
       try(x <- httr::GET(url = myURL, 
                          httr::authenticate(user = "fire", password = "burnt"), 
-                         httr::write_disk(file.path(outDir, inFile), 
+                         httr::write_disk(file.path(myTempDir, inFile), 
                                           overwrite = TRUE)), silent = FALSE)
       
       # Check for unavailable data (HTTP 404 status)
       if (x$status_code == 404) {
         
-        unlink(file.path(outDir, inFile))
+        unlink(file.path(myTempDir, inFile))
         message("Either the server or the data are temporarily unavailable.")
         stop("Please try again later.")
         
@@ -222,13 +222,13 @@ getGFED4 <- function(startDate = NULL,
           
         }
         
-        string2call <- paste0("ncl_convert2nc ", file.path(outDir, inFile), 
-                              varOption, " -o ", outDir, "/")
+        string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile), 
+                              varOption, " -o ", myTempDir, "/")
         
         # This can give problems in RStudio, but works fine in the console
         system(string2call)
         
-        unlink(file.path(outDir, inFile))
+        unlink(file.path(myTempDir, inFile))
         
       }
       
@@ -236,36 +236,37 @@ getGFED4 <- function(startDate = NULL,
     
     outFileName <- ifelse(is.null(varname), "GFED4.nc", 
                           paste0(varname,".nc"))
-    listOfFiles <- list.files(outDir, pattern = filePattern)
+    listOfFiles <- list.files(myTempDir, pattern = filePattern)
     
-    # outDir only contains Burned Area files!
-    if (length(list.files(outDir)) == 0){
+    # myTempDir only contains Burned Area files!
+    if (length(list.files(myTempDir)) == 0){
       stop("No files have been downloaded, please check your connection.")
     }
     
     if (length(listOfFiles) == 1){
       if (tempRes == "daily" & substr(listOfFiles, 9, 9) == "D"){
-        outFileName <- file.path(outDir, listOfFiles)
+        outFileName <- file.path(myTempDir, listOfFiles)
       }
       if (tempRes == "monthly"& substr(listOfFiles, 9, 9) == "M"){
-        outFileName <- file.path(outDir, listOfFiles)
+        outFileName <- file.path(myTempDir, listOfFiles)
       }
       mergedRaster <- raster::raster(outFileName)
     }
     
     if (length(listOfFiles) > 1){
       if (tempRes == "daily"){
-        outFilePath <- catNetcdf(inDir = outDir, 
-                                 #pattern = "^GFED4.0_DQ_",
+        outFilePath <- catNetcdf(inDir = myTempDir, 
+                                 pattern = "^GFED4.0_DQ_",
                                  outFileName = outFileName,
-                                 outDir = outDir)
+                                 outDir = myTempDir)
       }
       if (tempRes == "monthly"){
-        outFilePath <- catNetcdf(inDir = outDir, 
-                                 #pattern = "^GFED4.0_MQ_",
+        outFilePath <- catNetcdf(inDir = myTempDir, 
+                                 pattern = "^GFED4.0_MQ_",
                                  outFileName = outFileName)
       }
-      mergedRaster <- raster::brick(outFileName)
+      message("Generating RasterBrick")
+      mergedRaster <- raster::brick(file.path(myTempDir, outFileName))
     }
     
     # The resulting raster layer/brick is in a quater degree resolution but the 
@@ -275,9 +276,10 @@ getGFED4 <- function(startDate = NULL,
     message("Flipping the raster on the y-direction")
     regionsRasterT <- raster::flip(mergedRaster, direction='y', 
                                    progress = 'text')
+    
+    message("Setting extent and assigning projection")
     # Set extent
     raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
-    
     # Assign projection
     x <- rgdal::make_EPSG()
     regionsRasterT@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
@@ -289,8 +291,8 @@ getGFED4 <- function(startDate = NULL,
     # raster::plot(backgroundMap, add = TRUE)
     
     message("Removing temporary files and folder")
-    unlink(file.path(outDir))
-    unlink(file.path(outDir, outFileName))
+    unlink(file.path(myTempDir))
+    unlink(file.path(myTempDir, outFileName))
     
     return(regionsRasterT)
     
