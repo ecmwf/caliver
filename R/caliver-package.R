@@ -6,7 +6,6 @@
 #' @docType package
 #'
 #' @import ncdf4
-#' @importFrom rgdal make_EPSG
 #' @importFrom ggplot2 ggplot aes element_text geom_density geom_segment 
 #' @importFrom ggplot2 geom_text scale_colour_manual theme theme_bw 
 #' @importFrom ggplot2 xlab ylab scale_x_continuous

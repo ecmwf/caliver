@@ -106,12 +106,12 @@ getGFED4 <- function(startDate = NULL,
       raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
       # Define zeros as NAs
       regionsRasterT[regionsRasterT == 0] <- NA
-      # Assign projection
-      x <- rgdal::make_EPSG()
-      regionsRasterT@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
+      # Assign CRS (WGS84)
+      regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
       
       # remove hdf5 file
-      unlink(file.path(myTempDir, fname))
+      # unlink(file.path(myTempDir, fname))
+      unlink(myTempDir)
       
       # This might need to be resampled using the attributes of the lower/higher
       # resolution of the other raster (e.g. rasterB):
@@ -277,12 +277,11 @@ getGFED4 <- function(startDate = NULL,
     regionsRasterT <- raster::flip(mergedRaster, direction='y', 
                                    progress = 'text')
     
-    message("Setting extent and assigning projection")
+    message("Setting extent and assigning CRS")
     # Set extent
     raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
-    # Assign projection
-    x <- rgdal::make_EPSG()
-    regionsRasterT@crs <- sp::CRS(x$prj4[which(x$code == "4326")])
+    # Assign CRS (WGS84)
+    regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
     
     # TEST
     # y <- sum(regionsRasterT, na.rm = TRUE)
@@ -291,7 +290,8 @@ getGFED4 <- function(startDate = NULL,
     # raster::plot(backgroundMap, add = TRUE)
     
     message("Removing temporary files and folder")
-    unlink(myTempDir, recursive=TRUE)
+    # unlink(myTempDir, recursive=TRUE)
+    unlink(list.files(path = myTempDir))
     
     return(regionsRasterT)
     
