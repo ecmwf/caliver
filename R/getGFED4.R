@@ -109,13 +109,8 @@ getGFED4 <- function(startDate = NULL,
       # Assign CRS (WGS84)
       regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
       
-      # remove hdf5 file
-      # unlink(file.path(myTempDir, fname))
-      unlink(myTempDir)
-      
-      # This might need to be resampled using the attributes of the lower/higher
-      # resolution of the other raster (e.g. rasterB):
-      # GFEDregions <- raster::resample(regionsRasterT, rasterB, method = "ngb")
+      message("Removing temporary files")
+      unlink(list.files(path = myTempDir))
       
       if (!is.null(region)){
         if (region == "BONA") regionsRasterT[regionsRasterT != 1] <- NA
@@ -283,14 +278,7 @@ getGFED4 <- function(startDate = NULL,
     # Assign CRS (WGS84)
     regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
     
-    # TEST
-    # y <- sum(regionsRasterT, na.rm = TRUE)
-    # raster::plot(y)
-    # backgroundMap <- rworldmap::getMap(resolution = "low")
-    # raster::plot(backgroundMap, add = TRUE)
-    
-    message("Removing temporary files and folder")
-    # unlink(myTempDir, recursive=TRUE)
+    message("Removing temporary files")
     unlink(list.files(path = myTempDir))
     
     return(regionsRasterT)

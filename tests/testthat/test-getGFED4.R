@@ -59,11 +59,13 @@ test_that("getGFED4 works with monthly data (1 month)", {
   
   # skip_on_travis()
   
-  DailyBurnedAreas <- getGFED4(startDate = "2003-01-01", endDate = "2003-01-31",
-                               tempRes = "monthly", varname = "BurnedArea")
+  MonthlyBurnedAreas <- getGFED4(startDate = "2003-01-01", 
+                                 endDate = "2003-01-31",
+                                 tempRes = "monthly", 
+                                 varname = "BurnedArea")
   
-  expect_equal("RasterLayer" %in% class(DailyBurnedAreas), TRUE)
-  expect_equal(dim(DailyBurnedAreas), c(720, 1440, 1))
+  expect_equal("RasterLayer" %in% class(MonthlyBurnedAreas), TRUE)
+  expect_equal(dim(MonthlyBurnedAreas), c(720, 1440, 1))
   
 })
 
