@@ -48,13 +48,13 @@
 #'   BasisRegions <- getGFED4(varname = "BasisRegions")
 #' 
 #'   # Monthly burned areas
-#'   BurnedAreas <- getGFED4(startDate = "2003-01-01"
+#'   BurnedAreas <- getGFED4(startDate = "2003-01-01",
 #'                           endDate = "2003-01-31", 
 #'                           tempRes = "monthly", 
 #'                           varname = "BurnedArea")
 #'                           
 #'   # Daily burned areas
-#'   DailyBurnedAreas <- getGFED4(startDate = "2003-01-01"
+#'   DailyBurnedAreas <- getGFED4(startDate = "2003-01-01",
 #'                                endDate = "2003-01-02",
 #'                                tempRes = "daily", 
 #'                                varname = "BurnedArea")
@@ -291,8 +291,7 @@ getGFED4 <- function(startDate = NULL,
     # raster::plot(backgroundMap, add = TRUE)
     
     message("Removing temporary files and folder")
-    unlink(file.path(myTempDir))
-    unlink(file.path(myTempDir, outFileName))
+    unlink(myTempDir, recursive=TRUE)
     
     return(regionsRasterT)
     
