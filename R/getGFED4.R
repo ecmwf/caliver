@@ -93,8 +93,8 @@ getGFED4 <- function(startDate = NULL,
                     quiet = TRUE, cacheOK = TRUE)
       
       # Extract dataset with basis regions
-      regions <- rhdf5::h5read(file.path(myTempDir, fname), 
-                               "/ancill/basis_regions")
+      regions <- rhdf5::h5read(file = file.path(myTempDir, fname), 
+                               name = "/ancill/basis_regions")
       
       # Convert hdf5 to raster
       regionsRaster <- raster::raster(regions)
@@ -108,9 +108,6 @@ getGFED4 <- function(startDate = NULL,
       regionsRasterT[regionsRasterT == 0] <- NA
       # Assign CRS (WGS84)
       regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
-      
-      message("Removing temporary files")
-      unlink(list.files(path = myTempDir))
       
       if (!is.null(region)){
         if (region == "BONA") regionsRasterT[regionsRasterT != 1] <- NA
@@ -130,6 +127,9 @@ getGFED4 <- function(startDate = NULL,
       }
       
       regionsPolygons <- raster::rasterToPolygons(x = regionsRasterT)
+      
+      message("Removing temporary files")
+      unlink(file.path(myTempDir, fname))
       
       return(regionsPolygons)
       
@@ -217,10 +217,10 @@ getGFED4 <- function(startDate = NULL,
           
         }
         
-        string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile), 
+        # This approach uses ncl (dependency) and can give problems in RStudio,
+        # but works fine in the console
+        string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile),
                               varOption, " -o ", myTempDir, "/")
-        
-        # This can give problems in RStudio, but works fine in the console
         system(string2call)
         
         unlink(file.path(myTempDir, inFile))
@@ -229,8 +229,7 @@ getGFED4 <- function(startDate = NULL,
       
     }
     
-    outFileName <- ifelse(is.null(varname), "GFED4.nc", 
-                          paste0(varname,".nc"))
+    outFileName <- ifelse(is.null(varname), "GFED4.nc", paste0(varname,".nc"))
     listOfFiles <- list.files(myTempDir, pattern = filePattern)
     
     # myTempDir only contains Burned Area files!
@@ -279,7 +278,7 @@ getGFED4 <- function(startDate = NULL,
     regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
     
     message("Removing temporary files")
-    unlink(list.files(path = myTempDir))
+    unlink(file.path(myTempDir, list.files(path = myTempDir)))
     
     return(regionsRasterT)
     
