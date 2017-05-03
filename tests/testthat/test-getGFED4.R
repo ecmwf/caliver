@@ -57,8 +57,6 @@ test_that("getGFED4 stops with null varname", {
 
 test_that("getGFED4 works with monthly data (1 month)", {
   
-  # skip_on_travis()
-  
   MonthlyBurnedAreas <- getGFED4(startDate = "2003-01-01", 
                                  endDate = "2003-01-31",
                                  tempRes = "monthly", 
@@ -70,8 +68,6 @@ test_that("getGFED4 works with monthly data (1 month)", {
 })
 
 test_that("getGFED4 works with daily data (5 days)", {
-  
-  skip_on_travis()
   
   DailyBurnedAreas <- getGFED4(startDate = "2003-01-01", endDate = "2003-01-05",
                                tempRes = "daily", varname = "BurnedArea")
