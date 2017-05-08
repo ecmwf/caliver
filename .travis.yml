@@ -10,7 +10,6 @@ bioc_use_devel: true
 addons:
   apt:
     packages:
-    - autopoint
     - cfortran
     - dh-autoreconf
     - dh-buildinfo
