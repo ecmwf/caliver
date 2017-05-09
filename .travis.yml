@@ -10,14 +10,6 @@ bioc_use_devel: true
 addons:
   apt:
     packages:
-    - libcurl4-gnutls-dev
-    - libgcrypt11-dev
-    - libgnutls-dev
-    - libgnutlsxx27
-    - libgpg-error-dev
-    - libp11-kit-dev
-    - libtasn1-6-dev
-    - libterralib
     - libproj-dev
     - libgdal-dev
     - libhdf5-dev
