@@ -18,23 +18,13 @@ addons:
     - libp11-kit-dev
     - libtasn1-6-dev
     - libterralib
-    - libhdf5-dev
-    - libnetcdf-dev
     - libproj-dev
     - libgdal-dev
+    - libhdf5-dev
+    - libnetcdf-dev
     - netcdf-bin
     - ncl-ncarg
-
-before_install:
-  - wget https://code.zmaw.de/attachments/download/11392/cdo-1.7.0.tar.gz
-  - tar zxvf cdo-1.7.0.tar.gz
-  - cd cdo-1.7.0
-  - ./configure --with-hdf5=yes --with-netcdf=yes --with-proj=yes
-  - make check
-  - sudo make install
-  - cd ..
-  - rm cdo-1.7.0.tar.gz
-  - rm -rf cdo-1.7.0
+    - cdo
   
 r_packages:
   - rgdal
