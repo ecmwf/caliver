@@ -10,8 +10,6 @@ bioc_use_devel: true
 addons:
   apt:
     packages:
-    - dh-autoreconf
-    - dh-buildinfo
     - libcurl4-gnutls-dev
     - libgcrypt11-dev
     - libgnutls-dev
