@@ -19,12 +19,6 @@ addons:
     - cdo
   
 r_packages:
-  - rgdal
-  - roxygen2
-  - rprojroot
-  - rmarkdown
-  - png
-  - htmltools
   - covr
 
 r_github_packages:
