@@ -10,7 +10,6 @@ bioc_use_devel: true
 addons:
   apt:
     packages:
-    - cfortran
     - dh-autoreconf
     - dh-buildinfo
     - libcurl4-gnutls-dev
