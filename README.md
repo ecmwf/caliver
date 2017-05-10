@@ -32,28 +32,26 @@ Here is how to install these dependencies on a Ubuntu machine via terminal:
 sudo apt-get install libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo
 ```
 
+Windows users should install [Rtools](https://cran.r-project.org/bin/windows/Rtools/). 
+
 Caliver also depends on additional R packages from CRAN and Bioconductor. 
 
 Here is how to install Bioconductor from an R console:
 
 ``` r
 source("https://bioconductor.org/biocLite.R")
-tryCatch(useDevel(TRUE),
-         error=function(e) {if (!grepl("already in use", e$message)) {e}})
-cat(append = TRUE, file = "~/.Rprofile.site", 
-    "options(repos = BiocInstaller::biocinstallRepos())
 ```
 
-Here is how to install the necessary R package (from an R console):
+Here is how to install the necessary R packages (from an R console):
 
 ``` r
-packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "grDevices", "RCurl",
-           "rworldmap", "graphics", "httr", "stringr", "lubridate")
+# Install CRAN packages
+packs <- c("devtools", "rgdal", "ncdf4", "ggplot2", "raster", "sp", "grDevices", 
+           "RCurl", "rworldmap", "graphics", "httr", "stringr", "lubridate")
 new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
-# Install Bioconductor packages
-devtools::install_github("Bioconductor-mirror/zlibbioc")
+# Install Bioconductor's rhdf5 package
 devtools::install_github("Bioconductor-mirror/rhdf5")
 ```
 
