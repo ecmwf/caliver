@@ -1,7 +1,7 @@
 Package: caliver
 Type: Package
 Title: CALIbration and VERification of gridded model outputs
-Version: 0.2
+Version: 1.0
 Date: 2017-03-10
 Authors@R: c(person("Claudia", "Vitolo", email = "claudia.vitolo@ecmwf.int", role = c("aut", "cre")),
              person("Francesca", "Di Giuseppe", role = c("aut", "ctb")),
@@ -39,5 +39,6 @@ Remotes: MangoTheCat/visualTest
 biocViews:
 VignetteBuilder: knitr
 Encoding: UTF-8
-License: GPL-2
+SystemRequirements: cdo,ncl,gdal,netcdf4
+License: file LICENSE
 RoxygenNote: 5.0.1

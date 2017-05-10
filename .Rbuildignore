@@ -9,3 +9,4 @@
 ^codecov\.yml$
 ^README\.html$
 inst/PLOSONEpaper/caliver-vignette_cache/*
+^NOTICE$

@@ -1,3 +1,10 @@
+# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
+# This software is licensed under the terms of the Apache Licence Version 2.0 
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
+# In applying this licence, ECMWF does not waive the privileges and immunities 
+# granted to it by virtue of its status as an intergovernmental organisation nor
+# does it submit to any jurisdiction.
+
 #' @title Validate Fire Danger Levels
 #'
 #' @description This function compares observed and modelled fire data and return a contingency table summarising the hit rates, false alarms, misses and correct negatives. The validation can be done using various thresholds and input data.
