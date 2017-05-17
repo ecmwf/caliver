@@ -7,7 +7,7 @@
 
 #' @title Generates the percentile risk index from a raster stack and a set of polygons
 #'
-#' @description generates the mean of the values over a certain percentile theshold 
+#' @description generates the mean of the values over a certain percentile threshold 
 #'              for the pixel of the raster stack under the polygons of a shapefile
 #'
 #' @param r_stack is the raster or raster stack
