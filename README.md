@@ -42,22 +42,10 @@ Here is how to install Bioconductor from an R console:
 source("https://bioconductor.org/biocLite.R")
 ```
 
-Here is how to install the necessary R packages (from an R console):
-
-``` r
-# Install CRAN packages
-packs <- c("devtools", "rgdal", "ncdf4", "ggplot2", "raster", "sp", "grDevices", 
-           "RCurl", "rworldmap", "graphics", "httr", "stringr", "lubridate")
-new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-
-# Install Bioconductor's rhdf5 package
-devtools::install_github("Bioconductor-mirror/rhdf5")
-```
-
 Get the development version from github using [devtools](https://github.com/hadley/devtools):
 
 ``` r
+install.packages("devtools")
 devtools::install_github("ecmwf/caliver")
 ```
 
