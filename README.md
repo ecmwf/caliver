@@ -34,9 +34,7 @@ sudo apt-get install libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bi
 
 Windows users should install [Rtools](https://cran.r-project.org/bin/windows/Rtools/). 
 
-Caliver also depends on additional R packages from CRAN and Bioconductor. 
-
-Here is how to install Bioconductor from an R console:
+Caliver also depends on additional R packages from CRAN and Bioconductor. Here is how to install Bioconductor from an R console:
 
 ``` r
 source("https://bioconductor.org/biocLite.R")
