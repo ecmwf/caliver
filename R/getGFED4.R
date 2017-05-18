@@ -93,6 +93,7 @@ getGFED4 <- function(startDate = NULL,
     
     if (class(x) == "try-error"){
       
+      
       stop("Server currently unavailable, please try again later.")
       
     }else{
@@ -207,7 +208,7 @@ getGFED4 <- function(startDate = NULL,
                                           overwrite = TRUE)), silent = FALSE)
       
       # Check for unavailable data (HTTP 404 status)
-      if (x$status_code != 200) {
+      if (x$status_code == 404) {
         
         unlink(file.path(myTempDir, inFile))
         message("Either the server or the data are temporarily unavailable.")
