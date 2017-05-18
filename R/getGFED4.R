@@ -89,7 +89,9 @@ getGFED4 <- function(startDate = NULL,
     fname <- "GFED4.1s_2015.hdf5"
     theURL <- paste0(baseURL, fname)
     
-    if (httr::http_error(theURL)){
+    x <- try(httr::http_error(theURL), silent = TRUE)
+    
+    if (class(x) == "try-error"){
       
       stop("Server currently unavailable, please try again later.")
       
