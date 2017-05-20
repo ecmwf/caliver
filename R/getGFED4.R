@@ -261,13 +261,12 @@ getGFED4 <- function(startDate = NULL,
       if (tempRes == "daily"){
         outFilePath <- catNetcdf(inDir = myTempDir, 
                                  pattern = "^GFED4.0_DQ_",
-                                 outFileName = outFileName,
-                                 outDir = myTempDir)
+                                 outFile = file.path(myTempDir,outFileName))
       }
       if (tempRes == "monthly"){
         outFilePath <- catNetcdf(inDir = myTempDir, 
                                  pattern = "^GFED4.0_MQ_",
-                                 outFileName = outFileName)
+                                 outFile = outFileName)
       }
       message("Generating RasterBrick")
       mergedRaster <- raster::brick(file.path(myTempDir, outFileName))
