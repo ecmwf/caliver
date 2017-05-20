@@ -12,8 +12,7 @@ test_that("catNetcdf works", {
   
   mergedFile <- catNetcdf(inDir = myTempDir, 
                           pattern = "^test",
-                          outFile = "TestAB.nc",
-                          outDir = myTempDir)
+                          outFile = file.path(myTempDir, "TestAB.nc"))
   
   x <- raster::stack(mergedFile)
   
