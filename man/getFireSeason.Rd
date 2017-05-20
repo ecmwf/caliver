@@ -27,4 +27,3 @@ Get the season for each date in a vector
 }
 
 }
-

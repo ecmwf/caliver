@@ -20,4 +20,3 @@ This function decompresses all .gz files in a given folder
 }
 
 }
-

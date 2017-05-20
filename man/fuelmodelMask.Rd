@@ -21,4 +21,3 @@ In absence of vegetation the risk of ignition reduces considerably, regardless o
 }
 
 }
-

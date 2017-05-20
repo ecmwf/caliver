@@ -40,4 +40,3 @@ This function compares observed and modelled fire data and return a contingency 
 }
 
 }
-

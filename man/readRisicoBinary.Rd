@@ -18,4 +18,3 @@ This function reads a RISICO output file and returns a raster map
 }
 
 }
-

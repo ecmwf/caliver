@@ -16,4 +16,3 @@ mean_percs(vals, perc.val, mod)
 \description{
 Calculate average percentile
 }
-

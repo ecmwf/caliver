@@ -24,4 +24,3 @@ Plot PDF of fire index
 }
 
 }
-

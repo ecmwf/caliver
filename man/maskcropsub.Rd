@@ -33,4 +33,3 @@ mask and/or crop a Raster* based on a Polygon.
 }
 
 }
-

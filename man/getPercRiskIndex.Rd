@@ -16,7 +16,7 @@ getPercRiskIndex(r_stack, p_shape, perc.val = 75, mod = "gt")
 \item{mod}{defines if the values considered for the mean are above (gt) or below (lt) the threshold}
 }
 \description{
-generates the mean of the values over a certain percentile theshold 
+generates the mean of the values over a certain percentile threshold 
              for the pixel of the raster stack under the polygons of a shapefile
 }
 \examples{
@@ -26,4 +26,3 @@ generates the mean of the values over a certain percentile theshold
 }
 
 }
-

@@ -45,4 +45,3 @@ This function calculates the danger levels (VeryLow-Low-Moderate-High-VeryHigh-E
 }
 
 }
-

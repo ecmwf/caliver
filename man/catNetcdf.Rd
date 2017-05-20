@@ -5,7 +5,7 @@
 \title{Merge netcdf files on the time dimension}
 \usage{
 catNetcdf(inDir = NULL, varname = NULL, pattern = NULL,
-  recursive = FALSE, outFileName = "outfile.nc", outDir = getwd())
+  recursive = FALSE, outFile = "outfile.nc")
 }
 \arguments{
 \item{inDir}{is the directory where all the files to read are stored}
@@ -16,9 +16,7 @@ catNetcdf(inDir = NULL, varname = NULL, pattern = NULL,
 
 \item{recursive}{logical (TRUE by default). If set to TRUE it looks in folders and subfolders}
 
-\item{outFileName}{output filename}
-
-\item{outDir}{is the directory where outFileName is saved, by default this is the working directory.}
+\item{outFile}{output filename (including path)}
 }
 \description{
 This function merges all the netcdf files in a given directory over the time dimension. It saves the merged file in the working directory.
@@ -30,10 +28,8 @@ This function merges all the netcdf files in a given directory over the time dim
             varname = NULL,
             pattern = "geff_reanalysis_an_fwis_fwi_",
             recursive = TRUE,
-            outFileName = "outfile.nc",
-            outDir = getwd())
+            outFile = "outfile.nc")
             
 }
 
 }
-

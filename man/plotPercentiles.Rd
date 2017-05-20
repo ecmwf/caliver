@@ -24,4 +24,3 @@ This function plots the maps of percentiles
 }
 
 }
-

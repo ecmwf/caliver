@@ -13,8 +13,7 @@
 #' @param varname name of the variable to extract
 #' @param pattern regular expression pattern to select a subset of files
 #' @param recursive logical (TRUE by default). If set to TRUE it looks in folders and subfolders
-#' @param outFileName output filename
-#' @param outDir is the directory where outFileName is saved, by default this is the working directory.
+#' @param outFile output filename (including path)
 #' 
 #' @export
 #'
@@ -25,8 +24,7 @@
 #'             varname = NULL,
 #'             pattern = "geff_reanalysis_an_fwis_fwi_",
 #'             recursive = TRUE,
-#'             outFileName = "outfile.nc",
-#'             outDir = getwd())
+#'             outFile = "outfile.nc")
 #'             
 #' }
 #'
@@ -35,10 +33,7 @@ catNetcdf <- function(inDir = NULL,
                       varname = NULL,
                       pattern = NULL,
                       recursive = FALSE,
-                      outFileName = "outfile.nc",
-                      outDir = getwd()){  
-  
-  outFilePath <- file.path(outDir, outFileName)
+                      outFile = "outfile.nc"){
   
   if(Sys.which("cdo")[[1]] == "") {
     
@@ -73,28 +68,28 @@ catNetcdf <- function(inDir = NULL,
   if (is.null(varname)){
     
     # Mergetime opens all the file to order them over time
-    # system(paste0("cdo mergetime ", ifiles, " ", outFilePath))
+    # system(paste0("cdo mergetime ", ifiles, " ", outFile))
     
     # Cat is computational lighter than mergetime because it opens 1 file at the
     # time and assumes they are already ordered (e.g. due to naming convention)
     
     # For basic precision
-    system(paste0("cdo cat ", ifiles, " ", outFilePath))
+    system(paste0("cdo cat ", ifiles, " ", outFile))
     
     # For higher precision
-    # system(paste0("cdo -b F64 cat ", ifiles, " ", outFilePath))
+    # system(paste0("cdo -b F64 cat ", ifiles, " ", outFile))
     
   }else{
     
     # For basic precision
-    system(paste0("cdo select,name=", varname, " ", ifiles, " ", outFilePath))
+    system(paste0("cdo select,name=", varname, " ", ifiles, " ", outFile))
     
     # For higher precision (this generates larger files!)
     # system(paste0("cdo -b F64 select,name=", 
-    #               varname, " ", ifiles, " ", outFilePath))
+    #               varname, " ", ifiles, " ", outFile))
     
   }
   
-  return(outFilePath)
+  return(outFile)
   
 }
