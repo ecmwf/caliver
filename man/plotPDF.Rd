@@ -4,7 +4,8 @@
 \alias{plotPDF}
 \title{Plot PDF of fire index}
 \usage{
-plotPDF(fireIndex, countryName, thresholds, upperLimit = NULL)
+plotPDF(fireIndex, countryName, thresholds, upperLimit = NULL,
+  vLines = NULL)
 }
 \arguments{
 \item{fireIndex}{RasterBrick containing the fire index}
@@ -14,6 +15,8 @@ plotPDF(fireIndex, countryName, thresholds, upperLimit = NULL)
 \item{thresholds}{thresholds calculated using the function \code{DangerLevels()}}
 
 \item{upperLimit}{FWI upper limit to visualise (the default is the maximum FWI)}
+
+\item{vLines}{named vector of values to plot as vertical lines (this can be quantiles for comparison)}
 }
 \description{
 Plot PDF of fire index

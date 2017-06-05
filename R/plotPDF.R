@@ -11,6 +11,7 @@
 #' @param countryName string describing the country name.
 #' @param thresholds thresholds calculated using the function \code{DangerLevels()}
 #' @param upperLimit FWI upper limit to visualise (the default is the maximum FWI)
+#' @param vLines named vector of values to plot as vertical lines (this can be quantiles for comparison)
 #' 
 #' @export
 #'
@@ -20,7 +21,8 @@
 #' }
 #'
 
-plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL){
+plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL,
+                    vLines = NULL){
   
   firePalette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
                    "#E41A1C", "#6b3535", "#403131")
@@ -54,12 +56,13 @@ plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL){
                    DangerLevels = factor(x = firePalette,
                                          levels=c(firePalette)))
   
-  ggplot(as.data.frame(IDXno0), aes(IDXno0)) + 
+  p <- ggplot(as.data.frame(IDXno0), aes(IDXno0)) + 
     geom_density(colour = "#6d6b6b", fill = "grey") + 
     geom_segment(aes(x = x1, y = y1, 
                      xend = x2, yend = y2, colour = df$DangerLevels),
                  data = df, size = 14) +
-    scale_colour_manual(name=paste0("Danger classes (", countryName, ")"), 
+    scale_colour_manual(name=paste0("Danger classes (", 
+                                    countryName$NAME_ENGLISH, ")"), 
                         values = firePalette, 
                         labels = c("Very Low", "Low", "Moderate", 
                                    "High", "Very high", "Extreme")) +
@@ -71,5 +74,16 @@ plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL){
           text = element_text(size=14, lineheight=.8),
           legend.position = c(0.98, 0.98), legend.justification = c(1, 1)) +
     scale_x_continuous(limits = c(0, upperLimit))
+  
+  if (!is.null(vLines)){
+    dfv <- data.frame(label = names(vLines), value = as.numeric(vLines))
+    p <- p + geom_vline(data=dfv, mapping=aes(xintercept=value), 
+                        color="darkgray", linetype = 2) +
+      geom_text(data=dfv, mapping=aes(x=value, y=max(density(IDXno0)$y), 
+                                      label=label), 
+                angle=90, vjust=-0.4, colour = "#585858")
+  }
+  
+  plot(p)
   
 }
