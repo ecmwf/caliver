@@ -62,7 +62,7 @@ plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL,
                      xend = x2, yend = y2, colour = df$DangerLevels),
                  data = df, size = 14) +
     scale_colour_manual(name=paste0("Danger classes (", 
-                                    countryName$NAME_ENGLISH, ")"), 
+                                    countryName, ")"), 
                         values = firePalette, 
                         labels = c("Very Low", "Low", "Moderate", 
                                    "High", "Very high", "Extreme")) +
@@ -84,6 +84,6 @@ plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL,
                 angle=90, vjust=-0.4, colour = "#585858")
   }
   
-  plot(p)
+  return(p)
   
 }

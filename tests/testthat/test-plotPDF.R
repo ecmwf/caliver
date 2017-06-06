@@ -8,8 +8,8 @@ x <- raster::raster(inFile)
 
 test_that("plotPDF match expectations for no y-limit",{
   
-  p <- plotPDF(fireIndex = x, countryName = "Italy", 
-               thresholds = c(1,2,3,4,5))
+  p <- plotPDF(fireIndex = x, countryName = "Italy", thresholds = c(1,2,3,4,5),
+               upperLimit = NULL, vLines = NULL)
   expect_equal(p$scales$scales[[2]]$limits, c(0, 40))
   
 })
