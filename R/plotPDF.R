@@ -75,6 +75,7 @@ plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL,
           legend.position = c(0.98, 0.98), legend.justification = c(1, 1)) +
     scale_x_continuous(limits = c(0, upperLimit))
   
+  label <- value <- NULL # to avoid NOTE during check
   if (!is.null(vLines)){
     dfv <- data.frame(label = names(vLines), value = as.numeric(vLines))
     p <- p + geom_vline(data=dfv, mapping=aes(xintercept=value), 
