@@ -93,7 +93,6 @@ getGFED4 <- function(startDate = NULL,
     
     if (class(x) == "try-error"){
       
-      
       stop("Server currently unavailable, please try again later.")
       
     }else{
