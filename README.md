@@ -26,15 +26,13 @@ Dependencies and Installation
 
 The installation of the caliver package depends on the Climate Data Operators ([cdo](https://code.zmaw.de/projects/cdo/wiki)), a large tool set for working on climate and NWP model data); the NCAR Command Language ([ncl](https://www.ncl.ucar.edu/)), an interpred language with built-in functionalities to convert hdf5 files to netcdf format; the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats) and the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)).
 
-Here is how to install these dependencies on a Ubuntu machine via terminal:
+To install these dependencies:
 
-```
-sudo apt-get install libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo
-```
+* On Windows, install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
+* On Mac, install [Xcode](https://developer.apple.com/xcode/) from the app store.
+* On Ubuntu-Linux, `sudo apt-get install r-base-dev libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo`.
 
-Windows users should install [Rtools](https://cran.r-project.org/bin/windows/Rtools/). 
-
-Caliver also depends on additional R packages from CRAN and Bioconductor. Here is how to install Bioconductor from an R console:
+Caliver also depends on additional R packages from both CRAN and Bioconductor. Here is how to install Bioconductor from an R console:
 
 ``` r
 source("https://bioconductor.org/biocLite.R")
