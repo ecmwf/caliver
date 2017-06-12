@@ -129,15 +129,21 @@ rm(Italy1, Italy2)
 
 ## Utilities
 
+Decompress archives using the function `decompressGZ()` and set the argument `keep = TRUE` if you want to keep the original archive once decompressed.
+
 ``` r
 decompressGZ(inDir = "./tmp", keep = TRUE)
+```
 
+Once all the files are decompressed they can be merged in a unique netCDF file using the function `catNetcdf()`.
+```r
 processingTime <- system.time(catNetcdf(inDir = 'GEFF1.2/fwi_rotated/',
                                         outFileName = 'FWIr_1980-2016.nc'))
-
 ```
 
 ## Analysis and visualisation
+
+A first understanding of how FWI value are distributed over time can be achieved by creating a map of percentiles. In the example below we generate two maps: 1 for the median and the othe for the 90th percentile. 
 
 ``` r
 maps <- makePercentileRaster(inFilePath = "FWIr_1980-2016.nc",
@@ -145,11 +151,16 @@ maps <- makePercentileRaster(inFilePath = "FWIr_1980-2016.nc",
 ```
 
 ### Mask/crop/subset
+
+FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `maskcropsub()` is used to extract the FWI for the first data of the reanalysis (setting argument `i2subset = 1`), masked and cropped over Europe.
+
 ``` r
 mapEurope <- maskcropsub(r = maps, p = Europe, mask = T, crop = T, i2subset = 1)
 ```
 
 ### Plot
+
+The function `plotPercentiles()` provides a modified version of the `raster::plot()` function. Below is a comparison.
 
 ``` r
 # Use the raster plot method
@@ -166,6 +177,9 @@ dev.off()
 ```
 
 ### Assemble the FWI dataset
+
+In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe, starting in April and ending in October each year.
+
 ``` r
 # Define period for Reanalysis
 dataDates <- seq.Date(from = as.Date('1980-01-01'),
@@ -173,7 +187,7 @@ dataDates <- seq.Date(from = as.Date('1980-01-01'),
                       by = "day")
 
 # Define a function to extract fire seasons in Europe
-seasons <- getFireSeason(DATES = dataDates, emisphere = 'north')
+seasons <- getFireSeason(DATES = dataDates, zone = 'north')
 
 # Create an index of summer dates
 fireSeasonIndex <- which(seasons == TRUE)
@@ -183,6 +197,9 @@ FWI <- raster::brick('FWIr_1980-2016.nc')
 ```
 
 ### Calculate danger levels
+
+Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe, regions and a province in Italy. The result shows that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level. 
+
 ``` r
 # Mask/Crop/Subset FWI and generate thresholds for Europe
 EURO <- maskcropsub(r = FWI, p = Europe, mask = T, crop = T, 
@@ -227,12 +244,16 @@ GENThr <- FireDangerLevels(fireIndex = GEN)
 
 ### Plot density with thresholds
 
+The thresholds are different fromt the percentiles, the PDF  below shows a comparison for Italy.
+
 ``` r
-countryPDF <- plotPDF(fireIndex = IT, countryName = "Italy", ItalyThr, 
-                      upperLimit = 75)
+countryPDF <- plotPDF(fireIndex = IT, countryName = "Italy", 
+                      ItalyThr, upperLimit = 75, vLines = c(0.50, 0.75, 0.90))
 ```
 
 ### Validate danger levels
+
+In order to test whether the classes identified correspond to 
 
 ``` r
 BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")

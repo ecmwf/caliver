@@ -4,7 +4,7 @@
 \alias{getFireSeason}
 \title{Get the season for each date in a vector}
 \usage{
-getFireSeason(DATES, FSS = NULL, FSE = NULL, emisphere = "north")
+getFireSeason(DATES, FSS = NULL, FSE = NULL, zone = "north")
 }
 \arguments{
 \item{DATES}{vector of dates}
@@ -13,7 +13,7 @@ getFireSeason(DATES, FSS = NULL, FSE = NULL, emisphere = "north")
 
 \item{FSE}{Fire Season End (date in the format Y-m-d)}
 
-\item{emisphere}{this can either be "north" or "south"}
+\item{zone}{this can either: "north", "south" or "tropics"}
 }
 \description{
 Get the season for each date in a vector

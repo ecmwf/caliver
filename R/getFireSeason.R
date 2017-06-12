@@ -10,7 +10,7 @@
 #' @param DATES vector of dates
 #' @param FSS Fire Season Start (date in the format Y-m-d)
 #' @param FSE Fire Season End (date in the format Y-m-d)
-#' @param emisphere this can either be "north" or "south"
+#' @param zone this can either: "north", "south" or "tropics"
 #'
 #' @export
 #'
@@ -23,42 +23,41 @@
 #' }
 #'
 
-getFireSeason <- function(DATES, FSS = NULL, FSE = NULL, emisphere = "north"){
+getFireSeason <- function(DATES, FSS = NULL, FSE = NULL, zone = "north"){
   
   # Convert dates from any year to 2012 dates
   d <- as.Date(strftime(DATES, format="2012-%m-%d"))
   
-  # Fire Season Start
-  if (is.null(FSS) & emisphere == "north") {
+  if (is.null(FSS) & zone == "north"){
+    # Fire Season Start
     FSS <- as.Date("2012-04-01",  format = "%Y-%m-%d") 
-  }else{
-    FSS <- as.Date("2012-10-01", format = "%Y-%m-%d")
+    # Fire Season End
+    FSE <- as.Date("2012-10-31",  format = "%Y-%m-%d")
   }
   
-  # Fire Season End
-  if (is.null(FSE) & emisphere == "north") {
-    FSE <- as.Date("2012-10-31",  format = "%Y-%m-%d") 
-  }else{
+  if (is.null(FSS) & zone == "south"){
+    # Fire Season Start
+    FSS <- as.Date("2012-10-01", format = "%Y-%m-%d")
+    # Fire Season End
     FSE <- as.Date("2012-04-30", format = "%Y-%m-%d")
   }
   
-  if (emisphere == "north"){
-    season <- ifelse(d >= FSS & d <= FSE, TRUE, FALSE)
-  }else{
-    FirstJan <- as.Date("2012-01-01", format = "%Y-%m-%d")
-    LastDec <- as.Date("2012-12-31", format = "%Y-%m-%d")
-    season <- ifelse(d >= FirstJan & d <= FSE | d >= FSS & d <= LastDec, 
-                     TRUE, FALSE)
+  if (is.null(FSE) & zone == "tropics"){
+    # Fire Season Start
+    FSS <- as.Date("2012-07-01", format = "%Y-%m-%d")
+    # Fire Season End
+    FSE <- as.Date("2012-10-31", format = "%Y-%m-%d")
   }
   
-#   if (zone == "tropics"){
-#     season <- ifelse(d >= FSS & d <= FSE, TRUE, FALSE)
-#   }else{
-#     FirstJan <- as.Date("2012-01-01", format = "%Y-%m-%d")
-#     LastDec <- as.Date("2012-12-31", format = "%Y-%m-%d")
-#     season <- ifelse(d >= FirstJan & d <= FSE | d >= FSS & d <= LastDec, 
-#                      TRUE, FALSE)
-#   }
+  # Season
+  FirstJan <- as.Date("2012-01-01", format = "%Y-%m-%d")
+  LastDec <- as.Date("2012-12-31", format = "%Y-%m-%d")
+  if (FSS < FSE){
+    season <- ifelse(d >= FSS & d <= FSE, TRUE, FALSE)
+  }else{
+    season <- ifelse(d >= FirstJan & d <= FSE | d >= FSS & d <= LastDec, TRUE,
+                     FALSE)
+  }
   
   return(season)
   
