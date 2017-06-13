@@ -13,9 +13,7 @@
 #' @docType package
 #'
 #' @import ncdf4
-#' @importFrom ggplot2 ggplot aes element_text geom_density geom_segment 
-#' @importFrom ggplot2 geom_text scale_colour_manual theme theme_bw 
-#' @importFrom ggplot2 xlab ylab scale_x_continuous geom_vline
+#' @import ggplot2
 #' @importFrom raster raster stack mask crop rotate extent extract t plot
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines CRS
@@ -27,5 +25,7 @@
 #' @importFrom utils download.file
 #' @importFrom stats median na.omit sd uniroot density quantile
 #' @importFrom RCurl getURL
+#' @importFrom plotrix rescale
+#' @importFrom reshape2 melt
 #' 
 NULL

@@ -8,7 +8,6 @@
 #' Plot PDF of fire index
 #'
 #' @param fireIndex RasterBrick containing the fire index
-#' @param countryName string describing the country name.
 #' @param thresholds thresholds calculated using the function \code{DangerLevels()}
 #' @param upperLimit FWI upper limit to visualise (the default is the maximum FWI)
 #' @param vLines named vector of values to plot as vertical lines (this can be quantiles for comparison)
@@ -17,11 +16,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   plotPDF(fireIndex, countryName, thresholds, upperLimit = 100)
+#'   plotPDF(fireIndex, thresholds, upperLimit = 100)
 #' }
 #'
 
-plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL,
+plotPDF <- function(fireIndex, thresholds, upperLimit = NULL,
                     vLines = NULL){
   
   firePalette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
@@ -61,8 +60,7 @@ plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL,
     geom_segment(aes(x = x1, y = y1, 
                      xend = x2, yend = y2, colour = df$DangerLevels),
                  data = df, size = 14) +
-    scale_colour_manual(name=paste0("Danger classes (", 
-                                    countryName, ")"), 
+    scale_colour_manual(name="Danger classes", 
                         values = firePalette, 
                         labels = c("Very Low", "Low", "Moderate", 
                                    "High", "Very high", "Extreme")) +
@@ -70,8 +68,8 @@ plotPDF <- function(fireIndex, countryName, thresholds, upperLimit = NULL,
                          label = round(x1,0)), 
               data = df[2:6,], size=5, colour = "#e1dbdb") +
     theme_bw() + xlab("FWI") + ylab("Density") +
-    theme(legend.title = element_text(size=14, face="bold"),
-          text = element_text(size=14, lineheight=.8),
+    theme(legend.title = element_text(size=10, face="bold"),
+          text = element_text(size=10, lineheight=.8),
           legend.position = c(0.98, 0.98), legend.justification = c(1, 1)) +
     scale_x_continuous(limits = c(0, upperLimit))
   

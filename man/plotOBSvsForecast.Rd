@@ -18,7 +18,7 @@ plotOBSvsForecast(inDir, areaOfInterest, threshold, startDate, endDate,
 
 \item{endDate}{named vector of values to plot as vertical lines (this can be quantiles for comparison)}
 
-\item{obsFilePathfile}{path to observations (3D raster)}
+\item{obsFilePath}{file path to observations (3D raster)}
 }
 \description{
 Plot observations versus forecast
@@ -29,7 +29,7 @@ Plot observations versus forecast
                     areaOfInterest = fireBBOX, 
                     threshold = 20, 
                     startDate = "2017-01-01", endDate = "2017-01-31",
-                    obsFilePath = "/scratch/mo/moc0/fire/events/CAMS_2017-01-01_2017-01-31_frpfire_rotated.nc")
+                    obsFilePath = "CAMS_2017-01-01_2017-01-31_frpfire_rotated.nc")
 }
 
 }

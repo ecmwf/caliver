@@ -26,7 +26,9 @@ Imports:
     stringr,
     lubridate,
     rhdf5,
-    RCurl
+    RCurl,
+    plotrix,
+    reshape2
 Suggests:
     testthat,
     png,

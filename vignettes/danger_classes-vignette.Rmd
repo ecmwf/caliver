@@ -21,7 +21,6 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
-                      cache = TRUE,
                       eval = FALSE)
 ```
 
@@ -37,10 +36,11 @@ install.packages("devtools")
 devtools::install_github("ecmwf/caliver")
 ```
 
-```{r, eval = TRUE}
+```{r}
 library("caliver")
 library("raster")
 library("ggplot2")
+# setwd("/scratch/mo/moc0/fire/")
 ```
 
 ## Get data
@@ -49,7 +49,7 @@ library("ggplot2")
 
 For a matter of consistency with the introductory vignette, we will use the FWI as index to estimate the fire danger classes. The first step is to download (from the [GEFF-reanalysis web app](http://apps.ecmwf.int/datasets/data/geff-reanalysis/)) reanalysis data from 1980 to 2016. Assuming that data is downloaded in the folder 'reanalysis' of the working directory, we can use catNetcdf to aggregate all the files into one netcdf file (this is not necessary if you have run through the examples in the intro vignette) and load it as RasterBrick.
 
-```{r, eval = TRUE}
+```{r}
 # FWI reanalysis dataset
 # catNetcdf(inDir = 'reanalysis', outFileName = 'FWIr_1980-2016.nc')
 FWI <- raster::brick("/scratch/mo/moc0/fire/FWIr_1980-2016.nc")
@@ -68,7 +68,7 @@ We will demonstrate how to calculate and validate fire danger levels for 4 GFED4
 - Equatorial Asia (EQAS) and Indonesia,
 - Southern Hemisphere South America (SHSA) and Chile.
 
-```{r, eval = FALSE}
+```{r, eval}
 # GFED4 regions of interest
 BONA <- getGFED4(varname = "BasisRegions", region = "BONA")
 EURO <- getGFED4(varname = "BasisRegions", region = "EURO")
@@ -76,7 +76,7 @@ EQAS <- getGFED4(varname = "BasisRegions", region = "EQAS")
 SHSA <- getGFED4(varname = "BasisRegions", region = "SHSA")
 ```
 
-```{r, eval = TRUE}
+```{r}
 # Countries of interest (GADM administrative boundaries)
 Spain     <- raster::getData(name = "GADM", country = "Spain", level = 0)
 Canada    <- raster::getData(name = "GADM", country = "Canada", level = 0)
@@ -148,16 +148,22 @@ worldcountries <- world +
                fill = NA) +
   scale_colour_manual(name = "Countries", values = cols)
 
-# ggsave(file="Fig1.eps", plot= worldcountries, 
-#        device = cairo_ps, fallback_resolution = 600, 
-#        width=unit(8, "in"), height=unit(5, "in"))
+worldcountries
 ```
+
+```{r, echo = FALSE, eval = FALSE}
+ggsave(file="Fig1.eps", plot= worldcountries,
+       device = cairo_ps, fallback_resolution = 600,
+       width=unit(8, "in"), height=unit(5, "in"))
+```
+
+<img src="figures/world.png" width="700" />
 
 ## Calculate fire danger classes by GFED4 areas and countries
 
 Define fire seasons for the three cases: north and south hemispheres, and tropics.
 
-```{r, eval = TRUE}
+```{r}
 # Extract fire seasons for the northern emisphere
 seasonsN <- getFireSeason(DATES = dataDates, zone = "north")
 # Create Fire Season Indices (FSI)
@@ -172,15 +178,15 @@ southFSI <- which(seasonsS == TRUE)
 seasonsT <- getFireSeason(DATES = dataDates, zone = "tropics")
 # Create Fire Season Indices (FSI)
 tropicFSI <- which(seasonsT == TRUE)
+
+# Initialise empty matrix to store thresholds
+df <- matrix(data = NA, nrow = 0, ncol = 7)
 ```
 
 Calculate fire danger classes as shown in the introductory vignette.
 
 ```{r}
-# Initialise empty matrix to store thresholds
-df <- matrix(data = NA, nrow = 0, ncol = 7)
-
-# Mask/Crop/Subset FWI and generate thresholds for BONA & Canada ###############
+# Mask/Crop/Subset FWI and generate thresholds for BONA & Canada
 region <- BONA
 regionR <- maskcropsub(r = FWI, p = region, mask = T, crop = T,
                        i2subset = northFSI)
@@ -196,18 +202,25 @@ percs <- round(quantile(na.omit(as.vector(countryFWI)),
                         probs = c(0.70, 0.90, 0.98)), 0)
 
 # Density plot with thresholds
-countryPDF <- plotPDF(fireIndex = countryFWI, 
-                      countryName = country$NAME_ENGLISH, 
-                      thresholds = as.numeric(df[which(df[,1]== 
-                                                         country$NAME_ENGLISH),
-                                                 3:7]),
-                      upperLimit = 105, 
-                      vLines = percs)
+CanadaPDF <- plotPDF(fireIndex = countryFWI,
+                     thresholds = as.numeric(df[which(df[,1]==                                                          country$NAME_ENGLISH), 3:7]),
+                     upperLimit = 110, vLines = percs)
+CanadaPDF
+```
 
-# ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
-#        plot = countryPDF, width=unit(8, "in"), height=unit(5, "in"))
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
+       plot = CanadaPDF, width=unit(8, "in"), height=unit(5, "in"))
+# For HTML vignette
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.png"),
+       plot = CanadaPDF, width=unit(8, "in"), height=unit(5, "in"))
+```
 
-# Mask/Crop/Subset FWI and generate thresholds for EURO/Spain ##################
+<img src="figures/CanadaPDF.png" width="700" />
+
+```{r}
+# Mask/Crop/Subset FWI and generate thresholds for EURO/Spain
 region <- EURO
 regionR <- maskcropsub(r = FWI, p = region, mask = T, crop = T,
                        i2subset = northFSI)
@@ -223,18 +236,25 @@ percs <- round(quantile(na.omit(as.vector(countryFWI)),
                         probs = c(0.70, 0.90, 0.98)), 0)
 
 # Density plot with thresholds
-countryPDF <- plotPDF(fireIndex = countryFWI, 
-                      countryName = country$NAME_ENGLISH, 
-                      thresholds = as.numeric(df[which(df[,1]== 
-                                                         country$NAME_ENGLISH),
-                                                 3:7]),
-                      upperLimit = 105, 
-                      vLines = percs)
+SpainPDF <- plotPDF(fireIndex = countryFWI,
+                    thresholds = as.numeric(df[which(df[,1]==                                                         country$NAME_ENGLISH), 3:7]),
+                    upperLimit = 110, vLines = percs)
+SpainPDF
+```
 
-# ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
-#        plot = countryPDF, width=unit(8, "in"), height=unit(5, "in"))
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
+       plot = SpainPDF, width=unit(8, "in"), height=unit(5, "in"))
+# For HTML vignette
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.png"),
+       plot = SpainPDF, width=unit(8, "in"), height=unit(5, "in"))
+```
 
-# Mask/Crop/Subset FWI and generate thresholds for EQAS/Indonesia ##############
+<img src="figures/SpainPDF.png" width="700" />
+
+```{r}
+# Mask/Crop/Subset FWI and generate thresholds for EQAS/Indonesia
 region <- EQAS
 regionR <- maskcropsub(r = FWI, p = region, mask = T, crop = T,
                        i2subset = tropicFSI)
@@ -250,18 +270,25 @@ percs <- round(quantile(na.omit(as.vector(countryFWI)),
                         probs = c(0.70, 0.90, 0.98)), 0)
 
 # Density plot with thresholds
-countryPDF <- plotPDF(fireIndex = countryFWI, 
-                      countryName = country$NAME_ENGLISH, 
-                      thresholds = as.numeric(df[which(df[,1]== 
-                                                         country$NAME_ENGLISH),
-                                                 3:7]),
-                      upperLimit = 105, 
-                      vLines = percs)
+IndonesiaPDF <- plotPDF(fireIndex = countryFWI,
+                    thresholds = as.numeric(df[which(df[,1]==                                                         country$NAME_ENGLISH), 3:7]),
+                    upperLimit = 110, vLines = percs)
+IndonesiaPDF
+```
 
-# ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
-#        plot = countryPDF, width=unit(8, "in"), height=unit(5, "in"))
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
+       plot = IndonesiaPDF, width=unit(8, "in"), height=unit(5, "in"))
+# For HTML vignette
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.png"),
+       plot = IndonesiaPDF, width=unit(8, "in"), height=unit(5, "in"))
+```
 
-# Mask/Crop/Subset FWI and generate thresholds for SHSA/Chile ##################
+<img src="figures/IndonesiaPDF.png" width="700" />
+
+```{r}
+# Mask/Crop/Subset FWI and generate thresholds for SHSA/Chile
 region <- SHSA
 regionR <- maskcropsub(r = FWI, p = region, mask = T, crop = T, 
                        i2subset = southFSI)
@@ -272,33 +299,72 @@ countryFWI <- maskcropsub(r = FWI, p = country, mask = T, crop = T,
                         i2subset = southFSI)
 df <- rbind(df, c(country$NAME_ENGLISH, 0,
                   FireDangerLevels(fireIndex = countryFWI)))
-saveRDS(df, "thresholds.rds")
 
 percs <- round(quantile(na.omit(as.vector(countryFWI)), 
                         probs = c(0.70, 0.90, 0.98)), 0)
 
 # Density plot with thresholds
-countryPDF <- plotPDF(fireIndex = countryFWI, 
-                      countryName = country$NAME_ENGLISH, 
-                      thresholds = as.numeric(df[which(df[,1]== 
-                                                         country$NAME_ENGLISH),
-                                                 3:7]),
-                      upperLimit = 105, 
-                      vLines = percs)
+ChilePDF <- plotPDF(fireIndex = countryFWI,
+                    thresholds = as.numeric(df[which(df[,1]==                                                         country$NAME_ENGLISH), 3:7]),
+                    upperLimit = 110, vLines = percs)
+ChilePDF
+```
 
-# ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
-#        plot = countryPDF, width=unit(8, "in"), height=unit(5, "in"))
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.eps"),
+       plot = ChilePDF, width=unit(8, "in"), height=unit(5, "in"))
+# For HTML vignette
+ggsave(file = paste0(country$NAME_ENGLISH, "PDF.png"),
+       plot = ChilePDF, width=unit(8, "in"), height=unit(5, "in"))
+```
 
+<img src="figures/ChilePDF.png" width="700" />
+
+```{r, echo = FALSE}
+# Combine the PDF plots for publication (by the end I used the single plots).
+# Source: 
+# https://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots
+library(gridExtra)
+
+# Extract legend
+#https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+g_legend<-function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+mylegend<-g_legend(CanadaPDF)
+
+p1 <- CanadaPDF + 
+  theme(legend.position="none") + 
+  ggtitle("Canada") + theme(plot.title = element_text(hjust = 0.5))
+p2 <- SpainPDF + 
+  theme(legend.position="none") + 
+  ggtitle("Spain") + theme(plot.title = element_text(hjust = 0.5))
+p3 <- IndonesiaPDF + 
+  theme(legend.position="none") + 
+  ggtitle("Indonesia") + theme(plot.title = element_text(hjust = 0.5))
+p4 <- ChilePDF + 
+  theme(legend.position="none") + 
+  ggtitle("Chile") + theme(plot.title = element_text(hjust = 0.5))
+
+p <- grid.arrange(arrangeGrob(p1, p2, p3, p4, nrow=2), mylegend, ncol=1, widths = c(10, 10, 1))
+```
+
+
+```{r}
 # Convert matrix to data frame, assign column names and save
-df2 <- data.frame(df, stringsAsFactors = FALSE)
+df <- data.frame(df, stringsAsFactors = FALSE)
 names(df) <- c("Area", "VeryLow", "Low", "Moderate", 
                "High", "VeryHigh", "Extreme")
-saveRDS(df, "thresholds.rds")
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
+# saveRDS(df, "thresholds.rds")
 df <- readRDS("/scratch/mo/moc0/fire/thresholds.rds")
-
 knitr::kable(df[1:8,], row.names = FALSE)
 ```
 
@@ -331,30 +397,31 @@ The code below shows how to perform the verification for the 4 events.
 
 Numerous wildfire in the Alberta region (Canada) were reported in May 2016. 
 
-```{r, eval = TRUE}
+```{r}
 Alberta <- raster::getData(name = "GADM", 
                            country = "Canada", 
                            level = 1)
 Alberta <- Alberta[which(Alberta$NAME_1 == "Alberta"),]
 ```
 
-```{r, eval = FALSE}
+```{r}
 subRegion <- Alberta
 subRegionFWI <- maskcropsub(r = FWI, p = subRegion, mask = T, crop = T,
                             i2subset = northFSI)
 df <- as.matrix(df)
 df <- rbind(df, c(subRegion$NAME_1, 0, FireDangerLevels(fireIndex = subRegionFWI)))
 df <- data.frame(df, stringsAsFactors = FALSE)
-# saveRDS(df, "thresholds.rds")
+df
 ```
 
 In the table below we compare the danger levels at large scale, national and regional level.
 
 ```{r, eval = TRUE, echo = FALSE}
+# saveRDS(df, "thresholds.rds")
 knitr::kable(df[c(1,2,9),], row.names = FALSE)
 ```
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
+```{r}
 # 2. Load the frp file as RasterBrick:
 startDate <- "2016-05-01"
 endDate <- "2016-05-31"
@@ -380,102 +447,33 @@ fireBBOX <- as(raster::extent(raster::trim(maskcropsub(r = xsum,
 raster::plot(fireBBOX, border = "red", add = TRUE)
 ```
 
+<img src="figures/CanadaMap.png" width="700" />
+
 In the figure above Canada is shaded in gray, Alberta is identified by the black polygon while the areas in green show the most important fire activities. If we focus on the Alberta region, the most important fire activities are enclosed in the red polygon (called fireBBOX hereafter). 
 
 At this point we compare the fire activities in the fireBBOX with the high danger level calculated previously for Canada.
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
-# Choose the area of interest
-areaOfInterest <- fireBBOX # It could be: fireBBOX, Alberta, Canada, BONA
-
-# Modify script to get forecasts /home/mo/moc0/Repositories/fire_utilities/sh/GEFF_Forecast.sh
-# Download forecasted FWI
-# sh /home/mo/moc0/Repositories/fire_utilities/sh/GEFF_Forecast.sh
-# Set forecast and observation dates
-ForecastDates <- ObservationDates <- seq.Date(from = as.Date(startDate), 
-                                              to = as.Date(endDate),
-                                              by = "day")
-
-thresholds <- c(as.numeric(as.character(as.matrix(df[df$Area ==
-                                                       "Canada",2:7]))), 100)
-
-# Initialise the matrix to hold the values
-rastMean <- matrix(NA, 
-                   nrow = length(ObservationDates), 
-                   ncol = length(ForecastDates))
-
-# For each starting date and forecast date, calculate average the percentage of
-# pixels exceeding the high danger level
-for (i in 1:length(ObservationDates)){
-  
-  # transform dates to strings to build file name
-  startD <- gsub("-", "", as.character(ObservationDates[i]))
-  
-  for (j in 1:length(ForecastDates)){
-    
-    # transform dates to strings to build file name
-    endD <- gsub("-", "", as.character(ForecastDates[j]))
-    
-    file2read <- paste0("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/", 
-                        startD, "_", endD, "_ecfire_fwi_fwi.nc")
-    
-    if (file.exists(file2read)){
-      
-      rasterMap <- raster::raster(file2read)
-      if (round(rasterMap@extent@xmin,0) == 0) rasterMap <- raster::rotate(rasterMap)
-      rM <- raster::crop(rasterMap, areaOfInterest)
-      nTotal <- dim(rM)[1]*dim(rM)[2]
-      perc <- length(rM[rM >= thresholds[4]])/nTotal
-      rastMean[i,j] <- perc
-      
-    }
-    
-  }
-  
-}
-x <- reshape2::melt(rastMean*100)
-
-# Get FRP
-rangeIDX <- 1:length(ForecastDates)
-frp <- raster::brick(paste0("/scratch/mo/moc0/fire/events/CAMS_", ObservationDates[1],
-                            "_", ObservationDates[length(ObservationDates)],
-                            "_frpfire_rotated.nc"))
-frpCROPPED <- maskcropsub(r = frp, p = areaOfInterest, 
-                          mask = TRUE, crop = FALSE, i2subset = rangeIDX)
-frpTS <- as.numeric(raster::cellStats(frpCROPPED, sum))
-dfFRP <- data.frame(date = ForecastDates, 
-                    frp = plotrix::rescale(frpTS, c(0, length(rangeIDX))))
-
-# Make the boxy forecast plot using ggplot2
-ggplot(x, aes(Var1, Var2)) + 
-  geom_tile(aes(fill = value), colour = "white") + 
-  scale_fill_distiller(palette = "Spectral", na.value = NA,
-                       name = "% of pixels\nexceeding the\nhigh danger level") +
-  geom_line(data=dfFRP, aes(x=1:dim(dfFRP)[1], y=frp), linetype = 2, col="#47494c") +
-  scale_color_manual("Fire radiative power", 
-                     values=c("gray", "#47494c"), 
-                     labels="Fire radiative power", 
-                     guide=guide_legend(direction="vertical", 
-                                        title.position="top", 
-                                        override.aes=list(shape = "A"))) +
-  theme_bw() + labs(x = "Observation date", y = "Forecast date") + 
-  scale_x_continuous(expand = c(0, 0), 
-                     breaks = 1:dim(dfFRP)[1], 
-                     labels = as.character(ObservationDates)) +
-  theme(axis.text.x = element_text(angle = 90), 
-        panel.grid.major = element_blank(), legend.position = c(.08, .85)) +
-  scale_y_continuous(expand = c(0, 0), 
-                     breaks = 1:dim(dfFRP)[1], 
-                     labels = as.character(ForecastDates),
-                     sec.axis = sec_axis(~., 
-                                         name = "Fire radiative power [Wm-2]", 
-                                         breaks = 1:dim(dfFRP)[1],
-                                         labels = round(plotrix::rescale(rangeIDX,
-                                                                         c(min(frpTS), 
-                                                                           max(frpTS))),0)[1:dim(dfFRP)[1]])) + ggtitle("Canada") + theme(plot.title = element_text(hjust = 0.5))
-
-# ggsave(file="/scratch/mo/moc0/fire/CanadaFRP.eps")
+```{r}
+CanadaFRP <- plotOBSvsForecast(inDir = "GEFF1.2/forecast_fwi", 
+                               areaOfInterest = fireBBOX, 
+                               threshold = as.numeric(df$High[df$Area == "Canada"]), 
+                               startDate = startDate, endDate = endDate,
+                               obsFilePath = paste0("events/CAMS_", 
+                                                    startDate, "_", endDate, 
+                                                    "_frpfire_rotated.nc"))
+CanadaFRP
 ```
+
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = "/scratch/mo/moc0/fire/CanadaFRP.eps",
+       plot = CanadaFRP, width=unit(10, "in"), height=unit(8, "in"))
+# For HTML vignette
+ggsave(file = "/scratch/mo/moc0/fire/CanadaFRP.png",
+       plot = CanadaFRP, width=unit(10, "in"), height=unit(8, "in"))
+```
+
+<img src="figures/CanadaFRP.png" width="700" />
 
 #### Spain
 
@@ -485,7 +483,7 @@ Numerous wildfire in Spain were reported in August-September 2016. In the table 
 knitr::kable(df[c(3,4),], row.names = FALSE)
 ```
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
+```{r}
 # 2. Load the frp file as RasterBrick:
 startDate <- "2016-08-19"
 endDate <- "2016-09-18"
@@ -510,110 +508,41 @@ fireBBOX <- as(raster::extent(raster::trim(maskcropsub(r = xsum,
 raster::plot(fireBBOX, border = "red", add = TRUE)
 ```
 
+<img src="figures/SpainMap.png" width="700" />
+
 In the figure above Spain is shaded in gray while the areas in green show the most important fire activities(fireBBOX), which we compare below with the high danger level calculated previously for Spain.
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
-# Choose the area of interest
-areaOfInterest <- fireBBOX
-
-# Modify script to get forecasts /home/mo/moc0/Repositories/fire_utilities/sh/GEFF_Forecast.sh
-# Download forecasted FWI
-# sh /home/mo/moc0/Repositories/fire_utilities/sh/GEFF_Forecast.sh
-# Set forecast and observation dates
-ForecastDates <- ObservationDates <- seq.Date(from = as.Date(startDate), 
-                                              to = as.Date(endDate),
-                                              by = "day")
-
-thresholds <- c(as.numeric(as.character(as.matrix(df[df$Area ==
-                                                       "Spain",2:7]))), 100)
-
-# Initialise the matrix to hold the values
-rastMean <- matrix(NA, 
-                   nrow = length(ObservationDates), 
-                   ncol = length(ForecastDates))
-
-# For each starting date and forecast date, calculate average the percentage of
-# pixels exceeding the high danger level
-for (i in 1:length(ObservationDates)){
-  
-  # transform dates to strings to build file name
-  startD <- gsub("-", "", as.character(ObservationDates[i]))
-  
-  for (j in 1:length(ForecastDates)){
-    
-    # transform dates to strings to build file name
-    endD <- gsub("-", "", as.character(ForecastDates[j]))
-    
-    file2read <- paste0("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/", 
-                        startD, "_", endD, "_ecfire_fwi_fwi.nc")
-    
-    if (file.exists(file2read)){
-      
-      rasterMap <- raster::raster(file2read)
-      if (round(rasterMap@extent@xmin,0) == 0) rasterMap <- raster::rotate(rasterMap)
-      rM <- raster::crop(rasterMap, areaOfInterest)
-      nTotal <- dim(rM)[1]*dim(rM)[2]
-      perc <- length(rM[rM >= thresholds[4]])/nTotal
-      rastMean[i,j] <- perc
-      
-    }
-    
-  }
-  
-}
-x <- reshape2::melt(rastMean*100)
-
-# Get FRP
-rangeIDX <- 1:length(ForecastDates)
-frp <- raster::brick(paste0("/scratch/mo/moc0/fire/events/CAMS_", ObservationDates[1],
-                            "_", ObservationDates[length(ObservationDates)],
-                            "_frpfire_rotated.nc"))
-frpCROPPED <- maskcropsub(r = frp, p = areaOfInterest, 
-                          mask = TRUE, crop = FALSE, i2subset = rangeIDX)
-frpTS <- as.numeric(raster::cellStats(frpCROPPED, sum))
-dfFRP <- data.frame(date = ForecastDates, 
-                    frp = plotrix::rescale(frpTS, c(0, length(rangeIDX))))
-
-# Make the boxy forecast plot using ggplot2
-ggplot(x, aes(Var1, Var2)) + 
-  geom_tile(aes(fill = value), colour = "white") + 
-  scale_fill_distiller(palette = "Spectral", na.value = NA,
-                       name = "% of pixels\nexceeding the\nhigh danger level") +
-  geom_line(data=dfFRP, aes(x=1:dim(dfFRP)[1], y=frp), linetype = 2, col="#47494c") +
-  scale_color_manual("Fire radiative power", 
-                     values=c("gray", "#47494c"), 
-                     labels="Fire radiative power", 
-                     guide=guide_legend(direction="vertical", 
-                                        title.position="top", 
-                                        override.aes=list(shape = "A"))) +
-  theme_bw() + labs(x = "Observation date", y = "Forecast date") + 
-  scale_x_continuous(expand = c(0, 0), 
-                     breaks = 1:dim(dfFRP)[1], 
-                     labels = as.character(ObservationDates)) +
-  theme(axis.text.x = element_text(angle = 90), 
-        panel.grid.major = element_blank(), legend.position = c(.08, .85)) +
-  scale_y_continuous(expand = c(0, 0), 
-                     breaks = 1:dim(dfFRP)[1], 
-                     labels = as.character(ForecastDates),
-                     sec.axis = sec_axis(~., 
-                                         name = "Fire radiative power [Wm-2]", 
-                                         breaks = 1:dim(dfFRP)[1],
-                                         labels = round(plotrix::rescale(rangeIDX,
-                                                                         c(min(frpTS), 
-                                                                           max(frpTS))),0)[1:dim(dfFRP)[1]])) + ggtitle("Spain") + theme(plot.title = element_text(hjust = 0.5))
-
-# ggsave(file="/scratch/mo/moc0/fire/SpainFRP.eps")
+```{r}
+SpainFRP <- plotOBSvsForecast(inDir = "GEFF1.2/forecast_fwi", 
+                              areaOfInterest = fireBBOX, 
+                              threshold = as.numeric(df$High[df$Area == "Spain"]), 
+                              startDate = startDate, endDate = endDate,
+                              obsFilePath = paste0("events/CAMS_", 
+                                                   startDate, "_", endDate, 
+                                                   "_frpfire_rotated.nc"))
+SpainFRP
 ```
+
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = "/scratch/mo/moc0/fire/SpainFRP.eps",
+       plot = SpainFRP, width=unit(10, "in"), height=unit(8, "in"))
+# For HTML vignette
+ggsave(file = "/scratch/mo/moc0/fire/SpainFRP.png",
+       plot = SpainFRP, width=unit(10, "in"), height=unit(8, "in"))
+```
+
+<img src="figures/SpainFRP.png" width="700" />
 
 #### Indonesia
 
 Numerous wildfire in Indonesia were reported from August to October 2015, but we will only look at September 2015 here. In the table below we compare the danger levels at large scale and national level.
 
 ```{r, eval = TRUE, echo = FALSE}
-knitr::kable(df[c(7,8),], row.names = FALSE)
+knitr::kable(df[c(5,6),], row.names = FALSE)
 ```
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
+```{r}
 # 2. Load the frp file as RasterBrick:
 startDate <- "2015-09-01"
 endDate <- "2015-09-30"
@@ -638,100 +567,31 @@ fireBBOX <- as(raster::extent(raster::trim(maskcropsub(r = xsum,
 raster::plot(fireBBOX, border = "red", add = TRUE)
 ```
 
+<img src="figures/IndonesiaMap.png" width="700" />
+
 In the figure above Indonesia is shaded in gray while the areas in green show the most important fire activities(fireBBOX), which we compare below with the high danger level calculated previously for Indonesia.
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
-# Choose the area of interest
-areaOfInterest <- fireBBOX
-
-# Modify script to get forecasts /home/mo/moc0/Repositories/fire_utilities/sh/GEFF_Forecast.sh
-# Download forecasted FWI
-# sh /home/mo/moc0/Repositories/fire_utilities/sh/GEFF_Forecast.sh
-# Set forecast and observation dates
-ForecastDates <- ObservationDates <- seq.Date(from = as.Date(startDate), 
-                                              to = as.Date(endDate),
-                                              by = "day")
-
-thresholds <- c(as.numeric(as.character(as.matrix(df[df$Area ==
-                                                       "Indonesia",2:7]))), 100)
-
-# Initialise the matrix to hold the values
-rastMean <- matrix(NA, 
-                   nrow = length(ObservationDates), 
-                   ncol = length(ForecastDates))
-
-# For each starting date and forecast date, calculate average the percentage of
-# pixels exceeding the high danger level
-for (i in 1:length(ObservationDates)){
-  
-  # transform dates to strings to build file name
-  startD <- gsub("-", "", as.character(ObservationDates[i]))
-  
-  for (j in 1:length(ForecastDates)){
-    
-    # transform dates to strings to build file name
-    endD <- gsub("-", "", as.character(ForecastDates[j]))
-    
-    file2read <- paste0("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/", 
-                        startD, "_", endD, "_ecfire_fwi_fwi.nc")
-    
-    if (file.exists(file2read)){
-      
-      rasterMap <- raster::raster(file2read)
-      if (round(rasterMap@extent@xmin,0) == 0) rasterMap <- raster::rotate(rasterMap)
-      rM <- raster::crop(rasterMap, areaOfInterest)
-      nTotal <- dim(rM)[1]*dim(rM)[2]
-      perc <- length(rM[rM >= thresholds[4]])/nTotal
-      rastMean[i,j] <- perc
-      
-    }
-    
-  }
-  
-}
-x <- reshape2::melt(rastMean*100)
-
-# Get FRP
-rangeIDX <- 1:length(ForecastDates)
-frp <- raster::brick(paste0("/scratch/mo/moc0/fire/events/CAMS_", ObservationDates[1],
-                            "_", ObservationDates[length(ObservationDates)],
-                            "_frpfire_rotated.nc"))
-frpCROPPED <- maskcropsub(r = frp, p = areaOfInterest, 
-                          mask = TRUE, crop = FALSE, i2subset = rangeIDX)
-frpTS <- as.numeric(raster::cellStats(frpCROPPED, sum))
-dfFRP <- data.frame(date = ForecastDates, 
-                    frp = plotrix::rescale(frpTS, c(0, length(rangeIDX))))
-
-# Make the boxy forecast plot using ggplot2
-ggplot(x, aes(Var1, Var2)) + 
-  geom_tile(aes(fill = value), colour = "white") + 
-  scale_fill_distiller(palette = "Spectral", na.value = NA,
-                       name = "% of pixels\nexceeding the\nhigh danger level") +
-  geom_line(data=dfFRP, aes(x=1:dim(dfFRP)[1], y=frp), linetype = 2, col="#47494c") +
-  scale_color_manual("Fire radiative power", 
-                     values=c("gray", "#47494c"), 
-                     labels="Fire radiative power", 
-                     guide=guide_legend(direction="vertical", 
-                                        title.position="top", 
-                                        override.aes=list(shape = "A"))) +
-  theme_bw() + labs(x = "Observation date", y = "Forecast date") + 
-  scale_x_continuous(expand = c(0, 0), 
-                     breaks = 1:dim(dfFRP)[1], 
-                     labels = as.character(ObservationDates)) +
-  theme(axis.text.x = element_text(angle = 90), 
-        panel.grid.major = element_blank(), legend.position = c(.08, .85)) +
-  scale_y_continuous(expand = c(0, 0), 
-                     breaks = 1:dim(dfFRP)[1], 
-                     labels = as.character(ForecastDates),
-                     sec.axis = sec_axis(~., 
-                                         name = "Fire radiative power [Wm-2]", 
-                                         breaks = 1:dim(dfFRP)[1],
-                                         labels = round(plotrix::rescale(rangeIDX,
-                                                                         c(min(frpTS), 
-                                                                           max(frpTS))),0)[1:dim(dfFRP)[1]])) + ggtitle("Indonesia") + theme(plot.title = element_text(hjust = 0.5))
-
-# ggsave(file="/scratch/mo/moc0/fire/IndonesiaFRP.eps")
+```{r}
+IndonesiaFRP <- plotOBSvsForecast(inDir = "GEFF1.2/forecast_fwi", 
+                                  areaOfInterest = fireBBOX, 
+                                  threshold = as.numeric(df$High[df$Area == "Indonesia"]), 
+                                  startDate = startDate, endDate = endDate,
+                                  obsFilePath = paste0("events/CAMS_", 
+                                                       startDate, "_", endDate,
+                                                       "_frpfire_rotated.nc"))
+IndonesiaFRP
 ```
+
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = "/scratch/mo/moc0/fire/IndonesiaFRP.eps",
+       plot = IndonesiaFRP, width=unit(10, "in"), height=unit(8, "in"))
+# For HTML vignette
+ggsave(file = "/scratch/mo/moc0/fire/IndonesiaFRP.png",
+       plot = IndonesiaFRP, width=unit(10, "in"), height=unit(8, "in"))
+```
+
+<img src="figures/IndonesiaFRP.png" width="700" />
 
 #### Chile
 
@@ -741,7 +601,7 @@ Numerous wildfire in Chile were reported in January 2017. In the table below we 
 knitr::kable(df[c(7,8),], row.names = FALSE)
 ```
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
+```{r}
 # 2. Load the frp file as RasterBrick:
 startDate <- "2017-01-01"
 endDate <- "2017-01-31"
@@ -766,13 +626,28 @@ fireBBOX <- as(raster::extent(raster::trim(maskcropsub(r = xsum,
 raster::plot(fireBBOX, border = "red", add = TRUE)
 ```
 
+<img src="figures/ChileMap.png" width="700" />
+
 In the figure above Chile is shaded in gray while the areas in green show the most important fire activities(fireBBOX), which we compare below with the high danger level calculated previously for Chile.
 
-```{r, eval = TRUE, fig.height=10, fig.width=10}
-plotOBSvsForecast(inDir = "/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi", 
-                  areaOfInterest = fireBBOX, 
-                  threshold = df$High[df$Area == "Chile"], 
-                  startDate = "2017-01-01", endDate = "2017-01-31",
-                  obsFilePath = "/scratch/mo/moc0/fire/events/CAMS_2017-01-01_2017-01-31_frpfire_rotated.nc")
-# ggsave(file="/scratch/mo/moc0/fire/ChileFRP.eps")
+```{r}
+ChileFRP <- plotOBSvsForecast(inDir = "GEFF1.2/forecast_fwi", 
+                              areaOfInterest = fireBBOX, 
+                              threshold = as.numeric(df$High[df$Area == "Chile"]), 
+                              startDate = startDate, endDate = endDate,
+                              obsFilePath = paste0("events/CAMS_", 
+                                                   startDate, "_", endDate, 
+                                                   "_frpfire_rotated.nc"))
+ChileFRP
 ```
+
+```{r, echo = FALSE, eval = FALSE}
+# For publication
+ggsave(file = "/scratch/mo/moc0/fire/ChileFRP.eps",
+       plot = ChileFRP, width=unit(10, "in"), height=unit(8, "in"))
+# For HTML vignette
+ggsave(file = "/scratch/mo/moc0/fire/ChileFRP.png",
+       plot = ChileFRP, width=unit(10, "in"), height=unit(8, "in"))
+```
+
+<img src="figures/ChileFRP.png" width="700" />

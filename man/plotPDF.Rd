@@ -4,13 +4,10 @@
 \alias{plotPDF}
 \title{Plot PDF of fire index}
 \usage{
-plotPDF(fireIndex, countryName, thresholds, upperLimit = NULL,
-  vLines = NULL)
+plotPDF(fireIndex, thresholds, upperLimit = NULL, vLines = NULL)
 }
 \arguments{
 \item{fireIndex}{RasterBrick containing the fire index}
-
-\item{countryName}{string describing the country name.}
 
 \item{thresholds}{thresholds calculated using the function \code{DangerLevels()}}
 
@@ -23,7 +20,7 @@ Plot PDF of fire index
 }
 \examples{
 \dontrun{
-  plotPDF(fireIndex, countryName, thresholds, upperLimit = 100)
+  plotPDF(fireIndex, thresholds, upperLimit = 100)
 }
 
 }

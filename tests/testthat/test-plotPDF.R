@@ -8,7 +8,7 @@ x <- raster::raster(inFile)
 
 test_that("plotPDF match expectations for no y-limit",{
   
-  p <- plotPDF(fireIndex = x, countryName = "Italy", thresholds = c(1,2,3,4,5),
+  p <- plotPDF(fireIndex = x, thresholds = c(1,2,3,4,5),
                upperLimit = NULL, vLines = NULL)
   expect_equal(p$scales$scales[[2]]$limits, c(0, 40))
   
@@ -16,7 +16,7 @@ test_that("plotPDF match expectations for no y-limit",{
 
 test_that("Plot layers match expectations without vLines",{
   
-  p <- plotPDF(fireIndex = x, countryName = "Italy", 
+  p <- plotPDF(fireIndex = x, 
                thresholds = c(1,2,3,4,5), upperLimit = 100)
   
   expect_equal(length(p$layers) == 3, TRUE)
@@ -28,7 +28,7 @@ test_that("Plot layers match expectations without vLines",{
 
 test_that("Plot layers match expectations with vLines",{
   
-  p <- plotPDF(fireIndex = x, countryName = "Italy", 
+  p <- plotPDF(fireIndex = x, 
                thresholds = c(1,2,3,4,5), 
                upperLimit = 100, vLines = c("90%" = 0.90))
   

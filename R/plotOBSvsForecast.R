@@ -12,7 +12,7 @@
 #' @param threshold danger threshold calculated using the function \code{DangerLevels()}, usually the high danger level.
 #' @param startDate FWI upper limit to visualise (the default is the maximum FWI)
 #' @param endDate named vector of values to plot as vertical lines (this can be quantiles for comparison)
-#' @param obsFilePathfile path to observations (3D raster)
+#' @param obsFilePath file path to observations (3D raster)
 #' 
 #' @export
 #'
@@ -22,7 +22,7 @@
 #'                     areaOfInterest = fireBBOX, 
 #'                     threshold = 20, 
 #'                     startDate = "2017-01-01", endDate = "2017-01-31",
-#'                     obsFilePath = "/scratch/mo/moc0/fire/events/CAMS_2017-01-01_2017-01-31_frpfire_rotated.nc")
+#'                     obsFilePath = "CAMS_2017-01-01_2017-01-31_frpfire_rotated.nc")
 #' }
 #'
 
@@ -88,8 +88,8 @@ plotOBSvsForecast <- function(inDir,
                      0)[1:dim(dfFRP)[1]]
   
   # Make the boxy forecast plot using ggplot2
-  p <- ggplot(x, aes(Var1, Var2)) + 
-    geom_tile(aes(fill = value), colour = "white") + 
+  p <- ggplot(x, aes_string("Var1", "Var2")) + 
+    geom_tile(aes_string(fill = "value"), colour = "white") + 
     scale_fill_distiller(palette = "Spectral", na.value = NA,
                          name = "% of pixels\nexceeding the\nhigh danger level") +
     geom_line(data=dfFRP, aes(x=1:dim(dfFRP)[1], y=frp), linetype = 2, col="#47494c") +
@@ -112,7 +112,6 @@ plotOBSvsForecast <- function(inDir,
                                            name = "Fire radiative power [Wm-2]", 
                                            breaks = 1:dim(dfFRP)[1],
                                            labels = labelsObs)) + 
-    # ggtitle("Chile") + 
     theme(plot.title = element_text(hjust = 0.5))
   
   # ggsave(file="/scratch/mo/moc0/fire/ChileFRP.eps")
