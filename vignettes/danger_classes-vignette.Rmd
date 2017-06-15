@@ -76,7 +76,7 @@ EQAS <- getGFED4(varname = "BasisRegions", region = "EQAS")
 SHSA <- getGFED4(varname = "BasisRegions", region = "SHSA")
 ```
 
-```{r}
+```{r, eval = TRUE}
 # Countries of interest (GADM administrative boundaries)
 Spain     <- raster::getData(name = "GADM", country = "Spain", level = 0)
 Canada    <- raster::getData(name = "GADM", country = "Canada", level = 0)
@@ -651,3 +651,120 @@ ggsave(file = "/scratch/mo/moc0/fire/ChileFRP.png",
 ```
 
 <img src="figures/ChileFRP.png" width="700" />
+
+## Scores
+
+Let's take a large area, such as Canada. The advantage of using the above danger levels over the continuous values is that we have a better correspondance between hit rate and false alarms.
+
+For the fire in Canada, the peak in radiative power was obtained on the 2015-06-16.
+
+```{r, eval = TRUE}
+library("verification")
+x <- c()
+
+# DAY 1
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160516_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+
+frp <- caliver::maskcropsub(r = raster::brick("/scratch/mo/moc0/fire/events/CAMS_2016-05-01_2016-05-31_frpfire_rotated.nc"), p = Canada, mask = TRUE, crop = FALSE, i2subset = 16)
+
+frp_resampled <- as.vector(raster::resample(x = frp, y = fwi, progress = 'text'))
+frp_resampled[frp_resampled < 0.5] <- FALSE
+frp_resampled[frp_resampled >= 0.5] <- TRUE
+
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0.77
+
+# DAY 2
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160517_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0.59
+
+# DAY 3
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160518_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0.45
+
+# DAY 4
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160519_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0.25
+
+# DAY 5
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160520_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0
+
+# DAY 6
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160521_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0
+
+# DAY 7
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160522_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0
+
+# DAY 8
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160523_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0
+
+# DAY 9
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160524_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0
+
+# DAY 10
+fwi <- caliver::maskcropsub(r = raster::raster("/scratch/mo/moc0/fire/GEFF1.2/forecast_fwi/20160516_20160525_ecfire_fwi_fwi.nc"), p = Canada, mask = TRUE, crop = FALSE)
+fwi_v <- as.vector(fwi)
+fwi_v[fwi_v < 9] <- FALSE
+fwi_v[fwi_v >= 9] <- TRUE
+A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+            frcst.type = "binary", obs.type = "binary")
+x <- c(x, A$POD) # 0
+```
+
+```{r, eval = TRUE, fig.width=10}
+myTS <- data.frame("POD" = x, "Day" = seq(1, 10))
+
+ggplot(myTS, aes(Day, POD)) + geom_point() + geom_line() +
+  ggtitle("POD decrease with lead time") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 1)
+```
