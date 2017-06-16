@@ -712,7 +712,7 @@ fwi <- caliver::maskcropsub(r = fwiR, p = Canada, mask = TRUE, crop = FALSE)
 fwi_v <- as.vector(fwi)
 fwi_v[fwi_v < 9] <- FALSE
 fwi_v[fwi_v >= 9] <- TRUE
-A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+A <- verify(obs = frp_resampled, pred = fwi_v, 
             frcst.type = "binary", obs.type = "binary")
 x <- c(x, A$POD) # 0.25
 
@@ -723,7 +723,7 @@ fwi <- caliver::maskcropsub(r = fwiR, p = Canada, mask = TRUE, crop = FALSE)
 fwi_v <- as.vector(fwi)
 fwi_v[fwi_v < 9] <- FALSE
 fwi_v[fwi_v >= 9] <- TRUE
-A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+A <- verify(obs = frp_resampled, pred = fwi_v,
             frcst.type = "binary", obs.type = "binary")
 x <- c(x, A$POD) # 0
 
@@ -734,7 +734,7 @@ fwi <- caliver::maskcropsub(r = fwiR, p = Canada, mask = TRUE, crop = FALSE)
 fwi_v <- as.vector(fwi)
 fwi_v[fwi_v < 9] <- FALSE
 fwi_v[fwi_v >= 9] <- TRUE
-A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+A <- verify(obs = frp_resampled, pred = fwi_v,
             frcst.type = "binary", obs.type = "binary")
 x <- c(x, A$POD) # 0
 
@@ -745,7 +745,7 @@ fwi <- caliver::maskcropsub(r = fwiR, p = Canada, mask = TRUE, crop = FALSE)
 fwi_v <- as.vector(fwi)
 fwi_v[fwi_v < 9] <- FALSE
 fwi_v[fwi_v >= 9] <- TRUE
-A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+A <- verify(obs = frp_resampled, pred = fwi_v,
             frcst.type = "binary", obs.type = "binary")
 x <- c(x, A$POD) # 0
 
@@ -756,7 +756,7 @@ fwi <- caliver::maskcropsub(r = fwiR, p = Canada, mask = TRUE, crop = FALSE)
 fwi_v <- as.vector(fwi)
 fwi_v[fwi_v < 9] <- FALSE
 fwi_v[fwi_v >= 9] <- TRUE
-A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+A <- verify(obs = frp_resampled, pred = fwi_v,
             frcst.type = "binary", obs.type = "binary")
 x <- c(x, A$POD) # 0
 
@@ -767,7 +767,7 @@ fwi <- caliver::maskcropsub(r = fwiR, p = Canada, mask = TRUE, crop = FALSE)
 fwi_v <- as.vector(fwi)
 fwi_v[fwi_v < 9] <- FALSE
 fwi_v[fwi_v >= 9] <- TRUE
-A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+A <- verify(obs = frp_resampled, pred = fwi_v,
             frcst.type = "binary", obs.type = "binary")
 x <- c(x, A$POD) # 0
 
@@ -778,7 +778,7 @@ fwi <- caliver::maskcropsub(r = fwiR, p = Canada, mask = TRUE, crop = FALSE)
 fwi_v <- as.vector(fwi)
 fwi_v[fwi_v < 9] <- FALSE
 fwi_v[fwi_v >= 9] <- TRUE
-A <- verify(obs = frp_resampled, pred = fwi_v, #baseline = climatology,
+A <- verify(obs = frp_resampled, pred = fwi_v,
             frcst.type = "binary", obs.type = "binary")
 x <- c(x, A$POD) # 0
 ```
