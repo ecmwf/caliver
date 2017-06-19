@@ -85,10 +85,9 @@ getGFED4 <- function(startDate = NULL,
     
     if (is.null(region)) stop("Please enter valid region")
     
-    # baseURL <- "http://www.falw.vu/~gwerf/GFED/GFED4/"
-    # fname <- "GFED4.1s_2015.hdf5"
-    # theURL <- paste0(baseURL, fname)
-    theURL <- "http://www.geo.vu.nl/~gwerf/GFED/GFED4/GFED4.1s_2015.hdf5"
+    baseURL <- "http://www.geo.vu.nl/~gwerf/GFED/GFED4/"
+    fname <- "GFED4.1s_2015.hdf5"
+    theURL <- paste0(baseURL, fname)
     
     x <- try(httr::http_error(theURL), silent = TRUE)
     
