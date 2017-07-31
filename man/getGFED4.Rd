@@ -59,6 +59,9 @@ The conversion from hdf5 to netcdf gets stuck in RStudio (see \url{https://suppo
 
   # Basis regions
   BasisRegions <- getGFED4(varname = "BasisRegions")
+  
+  # Only BONA region
+  BONA <- getGFED4(varname = "BasisRegions", region = "BONA")
 
   # Monthly burned areas
   BurnedAreas <- getGFED4(startDate = "2003-01-01",

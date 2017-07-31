@@ -53,6 +53,9 @@
 #' 
 #'   # Basis regions
 #'   BasisRegions <- getGFED4(varname = "BasisRegions")
+#'   
+#'   # Only BONA region
+#'   BONA <- getGFED4(varname = "BasisRegions", region = "BONA")
 #' 
 #'   # Monthly burned areas
 #'   BurnedAreas <- getGFED4(startDate = "2003-01-01",
@@ -102,11 +105,11 @@ getGFED4 <- function(startDate = NULL,
                     quiet = TRUE, cacheOK = TRUE)
       
       # Extract dataset with basis regions
-      regions <- rhdf5::h5read(file = file.path(myTempDir, fname), 
-                               name = "/ancill/basis_regions")
+      allRegions <- rhdf5::h5read(file = file.path(myTempDir, fname), 
+                                  name = "/ancill/basis_regions")
       
       # Convert hdf5 to raster
-      regionsRaster <- raster::raster(regions)
+      regionsRaster <- raster::raster(allRegions)
       
       # Transform the raster
       # transpose
@@ -119,23 +122,25 @@ getGFED4 <- function(startDate = NULL,
       regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
       
       if (!is.null(region)){
-        if (region == "BONA") regionsRasterT[regionsRasterT != 1] <- NA
-        if (region == "TENA") regionsRasterT[regionsRasterT != 2] <- NA
-        if (region == "CEAM") regionsRasterT[regionsRasterT != 3] <- NA
-        if (region == "NHSA") regionsRasterT[regionsRasterT != 4] <- NA
-        if (region == "SHSA") regionsRasterT[regionsRasterT != 5] <- NA
-        if (region == "EURO") regionsRasterT[regionsRasterT != 6] <- NA
-        if (region == "MIDE") regionsRasterT[regionsRasterT != 7] <- NA
-        if (region == "NHAF") regionsRasterT[regionsRasterT != 8] <- NA
-        if (region == "SHAF") regionsRasterT[regionsRasterT != 9] <- NA
-        if (region == "BOAS") regionsRasterT[regionsRasterT != 10] <- NA
-        if (region == "CEAS") regionsRasterT[regionsRasterT != 11] <- NA
-        if (region == "SEAS") regionsRasterT[regionsRasterT != 12] <- NA
-        if (region == "EQAS") regionsRasterT[regionsRasterT != 13] <- NA
-        if (region == "AUST") regionsRasterT[regionsRasterT != 14] <- NA
+        if (region == "BONA") {regionsRasterT[regionsRasterT != 1] <- NA}
+        if (region == "TENA") {regionsRasterT[regionsRasterT != 2] <- NA}
+        if (region == "CEAM") {regionsRasterT[regionsRasterT != 3] <- NA}
+        if (region == "NHSA") {regionsRasterT[regionsRasterT != 4] <- NA}
+        if (region == "SHSA") {regionsRasterT[regionsRasterT != 5] <- NA}
+        if (region == "EURO") {regionsRasterT[regionsRasterT != 6] <- NA}
+        if (region == "MIDE") {regionsRasterT[regionsRasterT != 7] <- NA}
+        if (region == "NHAF") {regionsRasterT[regionsRasterT != 8] <- NA}
+        if (region == "SHAF") {regionsRasterT[regionsRasterT != 9] <- NA}
+        if (region == "BOAS") {regionsRasterT[regionsRasterT != 10] <- NA}
+        if (region == "CEAS") {regionsRasterT[regionsRasterT != 11] <- NA}
+        if (region == "SEAS") {regionsRasterT[regionsRasterT != 12] <- NA}
+        if (region == "EQAS") {regionsRasterT[regionsRasterT != 13] <- NA}
+        if (region == "AUST") {regionsRasterT[regionsRasterT != 14] <- NA}
       }
       
-      regionsPolygons <- raster::rasterToPolygons(x = regionsRasterT)
+      regionsRasterT_noNAs <- raster::trim(regionsRasterT)
+      
+      regionsPolygons <- raster::rasterToPolygons(x = regionsRasterT_noNAs)
       
       message("Removing temporary files")
       unlink(file.path(myTempDir, fname))
