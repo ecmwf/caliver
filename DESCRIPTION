@@ -36,7 +36,8 @@ Suggests:
     proto,
     knitr,
     rmarkdown,
-    covr
+    covr,
+    lintr
 Remotes: MangoTheCat/visualTest
 biocViews:
 VignetteBuilder: knitr
