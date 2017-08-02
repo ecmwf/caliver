@@ -22,7 +22,7 @@
 #'                     areaOfInterest = fireBBOX, 
 #'                     threshold = 14, 
 #'                     startDate = "2017-06-01", endDate = "2017-06-30",
-#'                     obsFilePath = "/scratch/mo/moc0/fire/events/CAMS_2017-06-01_2017-06-19_frpfire_rotated.nc")
+#'                     obsFilePath = "CAMS_2017-06-01_2017-06-19_frpfire.nc")
 #' }
 #'
 

@@ -18,7 +18,7 @@ import_GEFF_data_from_tar <- function(archive){
 
   # From .tar to .gz, and finally to .nc
   myTempDir <- tempdir()
-  untar(tarfile = archive, exdir = myTempDir)
+  utils::untar(tarfile = archive, exdir = myTempDir)
 
   list_of_gzfiles <- list.files(path = myTempDir,
                                 pattern = "*.gz", full.names = TRUE)

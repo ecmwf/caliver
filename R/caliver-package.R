@@ -17,7 +17,7 @@
 #' @importFrom stringr str_pad
 #' @importFrom lubridate yday
 #' @importFrom rhdf5 h5read
-#' @importFrom utils download.file
+#' @importFrom utils download.file untar
 #' @importFrom stats median na.omit sd uniroot density quantile
 #' @importFrom RCurl getURL
 #' @importFrom plotrix rescale
