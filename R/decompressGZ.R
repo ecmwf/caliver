@@ -1,16 +1,8 @@
-# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
-# This software is licensed under the terms of the Apache Licence Version 2.0 
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
-# In applying this licence, ECMWF does not waive the privileges and immunities 
-# granted to it by virtue of its status as an intergovernmental organisation nor
-# does it submit to any jurisdiction.
-
 #' @title decompressGZ
 #'
 #' @description This function decompresses all .gz files in a given folder
 #'
-#' @param inDir is the directory path where all the files to read have been previously stored
-#' @param keep logical, if TRUE it keeps the .gz files, removes them otherwise
+#' @param inDir directory path where all the files to read have been stored
 #'
 #' @export
 #'
@@ -20,25 +12,16 @@
 #' }
 #'
 
-decompressGZ <- function(inDir = getwd(), keep = FALSE){
+decompressGZ <- function(inDir = getwd()){
 
-  # Decompress any gz files but keep originals
-  for (i in list.files(path = inDir, pattern = "*.gz", full.names = TRUE)){
+  list_of_gzfiles <- list.files(path = inDir,
+                                pattern = "*.gz", full.names = TRUE)
 
-    if (substr(i, nchar(i) - 2, nchar(i)) == ".gz" &
-        Sys.which("gunzip")[[1]] != ""){
+  # Decompress any gz files
+  for (i in seq_along(list_of_gzfiles)){
 
-      if (keep == TRUE){
+    R.utils::gunzip(list_of_gzfiles[i])
 
-        system(paste("gunzip -k", i))
-
-      }else{
-
-        system(paste("gunzip", i))
-
-      }
-
-    }
   }
 
 }

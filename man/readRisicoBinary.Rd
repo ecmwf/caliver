@@ -2,7 +2,7 @@
 % Please edit documentation in R/readRisicoBinary.R
 \name{readRisicoBinary}
 \alias{readRisicoBinary}
-\title{Reads a RISICO output file and returns a raster map}
+\title{Read a RISICO output file and return a raster map}
 \usage{
 readRisicoBinary(filename)
 }
@@ -10,7 +10,7 @@ readRisicoBinary(filename)
 \item{filename}{is the file to read}
 }
 \description{
-This function reads a RISICO output file and returns a raster map
+Reads a RISICO output file and returns a raster map
 }
 \examples{
 \dontrun{

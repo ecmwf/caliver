@@ -9,14 +9,14 @@ plotPDF(fireIndex, thresholds, upperLimit = NULL, vLines = NULL)
 \arguments{
 \item{fireIndex}{RasterBrick containing the fire index}
 
-\item{thresholds}{thresholds calculated using the function \code{DangerLevels()}}
+\item{thresholds}{thresholds calculated using the function
+\code{DangerLevels()}}
 
-\item{upperLimit}{FWI upper limit to visualise (the default is the maximum FWI)}
+\item{upperLimit}{FWI upper limit to visualise
+(the default is the maximum FWI)}
 
-\item{vLines}{named vector of values to plot as vertical lines (this can be quantiles for comparison)}
-}
-\description{
-Plot PDF of fire index
+\item{vLines}{named vector of values to plot as vertical lines
+(this can be quantiles for comparison)}
 }
 \examples{
 \dontrun{

@@ -19,11 +19,13 @@ ValidateFireDangerLevels(fireIndex, observation, fireThr, obsThr)
 A contingency table
 }
 \description{
-This function compares observed and modelled fire data and return a contingency table summarising the hit rates, false alarms, misses and correct negatives. The validation can be done using various thresholds and input data.
+This function compares observed and modelled fire data and
+return a contingency table summarising the hit rates, false alarms, misses
+and correct negatives. The validation can be done using various thresholds
+and input data.
 }
 \examples{
 \dontrun{
-
   setwd("/scratch/mo/moc0/fire/")
 
   # Load and subset FWI
@@ -31,12 +33,12 @@ This function compares observed and modelled fire data and return a contingency 
   names(BurnedAreas) <- seq.Date(from = as.Date("2003-01-01"),
                                  to = as.Date("2015-12-31"), by = "day")
   FWI <- raster::brick('GEFF/reanalysis/FWI_1980-2016.nc')
-  
+
   # Generate the contingency table
   ct <- ValidateFireDangerLevels(fireIndex = FWI, 
                                  observation = BurnedAreas,
                                  fireThr = 10, obsThr = 50)
-                          
+
 }
 
 }

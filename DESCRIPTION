@@ -28,7 +28,8 @@ Imports:
     rhdf5,
     RCurl,
     plotrix,
-    reshape2
+    reshape2,
+    R.utils
 Suggests:
     testthat,
     png,

@@ -9,9 +9,11 @@ makePercentileRaster(inFilePath, probs, outDir = tempdir())
 \arguments{
 \item{inFilePath}{is the name of the file(path) to read}
 
-\item{probs}{numeric vector of probabilities with values in [0,100] listing which percentiles should be calculated}
+\item{probs}{numeric vector of probabilities with values in [0,100] listing
+which percentiles should be calculated}
 
-\item{outDir}{is the directory where the output nc files are saved, by default this is a temporary directory.}
+\item{outDir}{is the directory where the output nc files are saved, by
+default this is a temporary directory.}
 }
 \value{
 list containing all the generated percentile maps

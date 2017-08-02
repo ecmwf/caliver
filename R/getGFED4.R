@@ -1,18 +1,12 @@
-# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
-# This software is licensed under the terms of the Apache Licence Version 2.0 
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
-# In applying this licence, ECMWF does not waive the privileges and immunities 
-# granted to it by virtue of its status as an intergovernmental organisation nor
-# does it submit to any jurisdiction.
-
 #' @title getGFED4
 #'
 #' @description Get data from the fourth-generation Global Fire Emissions Database (GFED4)
 #'
 #' @param startDate first date to download (string)
 #' @param endDate last date to download (string)
-#' @param tempRes is the temporal resolution, it can be "daily" (default) or "monthly"
-#' @param varname name of the variable to extract, this can be one of the following:
+#' @param tempRes temporal resolution, it can be "daily" (default) or "monthly"
+#' @param varname name of the variable to extract. 
+#' This can be one of the following:
 #' \itemize{
 #'   \item{"BasisRegions"}{}
 #'   \item{"BurnedArea"}{}
@@ -23,7 +17,8 @@
 #'   \item{"LandCoverDist"}{}
 #'   \item{"PeatFraction"}{}
 #' }
-#' @param region string of characters describing the region. It can only assume the 15 values listed below:
+#' @param region string of characters describing the region. 
+#' It can only assume the 15 values listed below:
 #' \itemize{
 #'   \item{"Global"}{or GLOB}
 #'   \item{"Boreal North America"}{or BONA}
@@ -41,76 +36,78 @@
 #'   \item{"Equatorial Asia"}{or EQAS}
 #'   \item{"Australia and New Zealand"}{or AUST}
 #' }
-#' 
-#' @note The conversion from hdf5 to netcdf gets stuck in RStudio (see \url{https://support.rstudio.com/hc/en-us/community/posts/200629578-system-call-from-RStudio-does-not-find-path-same-command-from-commandline-R-works-fine-}), please use the console.
-#' 
-#' @return A RasterBrick (if downloading observations) or spatial polygons (if downloading basis regions)
+#'
+#' @note The conversion from hdf5 to netcdf gets stuck in RStudio
+#' (see \url{https://goo.gl/Rcvp9x}), please use the console.
+#'
+#' @return A RasterBrick (if downloading observations) or spatial polygons
+#' (if downloading basis regions)
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #'   # Basis regions
 #'   BasisRegions <- getGFED4(varname = "BasisRegions")
-#'   
+#'
 #'   # Only BONA region
 #'   BONA <- getGFED4(varname = "BasisRegions", region = "BONA")
-#' 
+#'
 #'   # Monthly burned areas
 #'   BurnedAreas <- getGFED4(startDate = "2003-01-01",
-#'                           endDate = "2003-01-31", 
-#'                           tempRes = "monthly", 
+#'                           endDate = "2003-01-31",
+#'                           tempRes = "monthly",
 #'                           varname = "BurnedArea")
-#'                           
+#'
 #'   # Daily burned areas
 #'   DailyBurnedAreas <- getGFED4(startDate = "2003-01-01",
 #'                                endDate = "2003-01-02",
-#'                                tempRes = "daily", 
+#'                                tempRes = "daily",
 #'                                varname = "BurnedArea")
-#'            
+#'
 #' }
 #'
 
 getGFED4 <- function(startDate = NULL,
                      endDate = NULL,
-                     tempRes = "daily", 
+                     tempRes = "daily",
                      varname = NULL,
                      region = "GLOB"){
   
   # Create a tmp directory
   myTempDir <- tempdir()
   message(paste0("Downloading temporary files in: ", myTempDir))
-  
+
   if (is.null(varname)) stop("Please enter valid varname")
-  
-  if(varname == "BasisRegions"){
-    
+
+  if (varname == "BasisRegions") {
+
     if (is.null(region)) stop("Please enter valid region")
     
     baseURL <- "http://www.geo.vu.nl/~gwerf/GFED/GFED4/"
     fname <- "GFED4.1s_2015.hdf5"
     theURL <- paste0(baseURL, fname)
-    
+
     x <- try(httr::http_error(theURL), silent = TRUE)
-    
-    if (class(x) == "try-error"){
-      
+
+    if (class(x) == "try-error") {
+
       stop("Server currently unavailable, please try again later.")
-      
-    }else{
-      
+
+    } else {
+
       # Download the file
-      download.file(url = theURL, destfile = file.path(myTempDir, fname), 
+      download.file(url = theURL, destfile = file.path(myTempDir, fname),
                     quiet = TRUE, cacheOK = TRUE)
-      
+
       # Extract dataset with basis regions
-      allRegions <- rhdf5::h5read(file = file.path(myTempDir, fname), 
+      allRegions <- rhdf5::h5read(file = file.path(myTempDir, fname),
                                   name = "/ancill/basis_regions")
-      
+
       # Convert hdf5 to raster
       regionsRaster <- raster::raster(allRegions)
-      
+
       # Transform the raster
       # transpose
       regionsRasterT <- raster::t(regionsRaster)
@@ -120,8 +117,8 @@ getGFED4 <- function(startDate = NULL,
       regionsRasterT[regionsRasterT == 0] <- NA
       # Assign CRS (WGS84)
       regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
-      
-      if (!is.null(region)){
+
+      if (!is.null(region)) {
         if (region == "BONA") regionsRasterT[regionsRasterT != 1] <- NA
         if (region == "TENA") regionsRasterT[regionsRasterT != 2] <- NA
         if (region == "CEAM") regionsRasterT[regionsRasterT != 3] <- NA
@@ -137,164 +134,182 @@ getGFED4 <- function(startDate = NULL,
         if (region == "EQAS") regionsRasterT[regionsRasterT != 13] <- NA
         if (region == "AUST") regionsRasterT[regionsRasterT != 14] <- NA
       }
-      
+
       regionsRasterT_noNAs <- raster::trim(regionsRasterT)
-      
+
       regionsPolygons <- raster::rasterToPolygons(x = regionsRasterT_noNAs)
-      
+
       message("Removing temporary files")
       unlink(file.path(myTempDir, fname))
-      
+
       return(regionsPolygons)
-      
+
     }
-    
+
   }else{
-    
+
     if (is.null(startDate) | is.null(endDate)) stop("Please enter valid dates")
     if (is.null(tempRes)) stop("Please enter valid tempRes")
-    
+
     baseURL <- "ftp://fuoco.geog.umd.edu/gfed4"
-    
+
     if (tempRes == "monthly"){
-      
-      tmpDate <- seq.Date(from = as.Date(startDate), to = as.Date(endDate),  
+
+      tmpDate <- seq.Date(from = as.Date(startDate), to = as.Date(endDate),
                           by = "month")
-      
-      myDate <- substr(x = gsub("-", "", as.character(tmpDate)), 
+
+      myDate <- substr(x = gsub("-", "", as.character(tmpDate)),
                        start = 1, stop = 6)
-      
+
       dirURL <- paste0(baseURL, "/monthly/")
-      
+
       filePattern <- "^GFED4.0_MQ_"
-      
+
     }
-    
-    if (tempRes == "daily"){
-      
+
+    if (tempRes == "daily") {
+
       tmpDate <- seq.Date(from = as.Date(startDate), to = as.Date(endDate),  
                           by = "day")
-      
+
       dayOfYear <- lubridate::yday(tmpDate)
       dayOfYear3CHR <- stringr::str_pad(dayOfYear, 3, pad = "0")
-      justYear <- substr(x = gsub("-", "", as.character(tmpDate)), 
+      justYear <- substr(x = gsub("-", "", as.character(tmpDate)),
                          start = 1, stop = 4)
-      
+
       myDate <- paste0(justYear, dayOfYear3CHR)
       
       dirURL <- paste0(baseURL, "/daily/")
-      
+
       filePattern <- "^GFED4.0_DQ_"
-      
+
     }
-    
-    for (d in myDate){
-      
+
+    for (d in myDate) {
+
       justYear <- substr(d, start = 1, stop = 4)
-      
-      if (tempRes == "monthly"){
-        
+
+      if (tempRes == "monthly") {
+
         inFile <- paste0("GFED4.0_MQ_", d, "_BA.hdf")
         myURL <- paste0(dirURL, inFile)
-        
+
       }
-      
-      if (tempRes == "daily"){
-        
+
+      if (tempRes == "daily") {
+
         inFile <- paste0("GFED4.0_DQ_", d, "_BA.hdf")
         myURL <- paste0(dirURL, justYear, "/", inFile)
-        
+
       }
-      
+
       try(x <- httr::GET(url = myURL, 
                          httr::authenticate(user = "fire", password = "burnt"), 
                          httr::write_disk(file.path(myTempDir, inFile), 
                                           overwrite = TRUE)), silent = FALSE)
-      
+
       # Check for unavailable data (HTTP 404 status)
       if (x$status_code == 404) {
-        
+
         unlink(file.path(myTempDir, inFile))
         message("Either the server or the data are temporarily unavailable.")
         stop("Please try again later.")
-        
+
       }else{
-        
+
         # Check whether we need to save all the variables or only some of them
         if (is.null(varname)){
-          
+
           varOption <- ""
-          
+
         }else{
-          
+
           varOption <- paste0(" -v ", varname)
-          
+
         }
-        
+
         # This approach uses ncl (dependency) and can give problems in RStudio,
         # but works fine in the console
         string2call <- paste0("ncl_convert2nc ", file.path(myTempDir, inFile),
                               varOption, " -o ", myTempDir, "/")
         system(string2call)
-        
+
         unlink(file.path(myTempDir, inFile))
-        
+
       }
-      
+
     }
-    
+
     outFileName <- ifelse(is.null(varname), "GFED4.nc", paste0(varname,".nc"))
     listOfFiles <- list.files(myTempDir, pattern = filePattern)
-    
+
     # myTempDir only contains Burned Area files!
-    if (length(list.files(myTempDir)) == 0){
+    if (length(list.files(myTempDir)) == 0) {
+
       stop("No files have been downloaded, please check your connection.")
+
     }
-    
-    if (length(listOfFiles) == 1){
-      if (tempRes == "daily" & substr(listOfFiles, 9, 9) == "D"){
+
+    if (length(listOfFiles) == 1) {
+
+      if (tempRes == "daily" & substr(listOfFiles, 9, 9) == "D") {
+
         outFileName <- file.path(myTempDir, listOfFiles)
+
       }
-      if (tempRes == "monthly"& substr(listOfFiles, 9, 9) == "M"){
+
+      if (tempRes == "monthly"& substr(listOfFiles, 9, 9) == "M") {
+
         outFileName <- file.path(myTempDir, listOfFiles)
+
       }
+
       mergedRaster <- raster::raster(outFileName)
+
     }
-    
-    if (length(listOfFiles) > 1){
-      if (tempRes == "daily"){
-        outFilePath <- catNetcdf(inDir = myTempDir, 
+
+    if (length(listOfFiles) > 1) {
+
+      if (tempRes == "daily") {
+
+        outFilePath <- catNetcdf(inDir = myTempDir,
                                  pattern = "^GFED4.0_DQ_",
                                  outFile = file.path(myTempDir,outFileName))
+
       }
-      if (tempRes == "monthly"){
-        outFilePath <- catNetcdf(inDir = myTempDir, 
+
+      if (tempRes == "monthly") {
+
+        outFilePath <- catNetcdf(inDir = myTempDir,
                                  pattern = "^GFED4.0_MQ_",
                                  outFile = outFileName)
+
       }
+
       message("Generating RasterBrick")
       mergedRaster <- raster::brick(file.path(myTempDir, outFileName))
+
     }
-    
+
     # The resulting raster layer/brick is in a quater degree resolution but the 
     # extent and the coordinate system should be set manually
-    
+
     # Transform the rasterBrick, flipping it on the y direction
     message("Flipping the raster on the y-direction")
-    regionsRasterT <- raster::flip(mergedRaster, direction='y', 
+    regionsRasterT <- raster::flip(mergedRaster, direction='y',
                                    progress = 'text')
-    
+
     message("Setting extent and assigning CRS")
     # Set extent
     raster::extent(regionsRasterT) <- raster::extent(-180, 180, -90, 90)
     # Assign CRS (WGS84)
     regionsRasterT@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
-    
+
     message("Removing temporary files")
     unlink(file.path(myTempDir, list.files(path = myTempDir)))
-    
+
     return(regionsRasterT)
-    
+
   }
-  
+
 }

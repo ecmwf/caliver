@@ -14,12 +14,14 @@ catNetcdf(inDir = NULL, varname = NULL, pattern = NULL,
 
 \item{pattern}{regular expression pattern to select a subset of files}
 
-\item{recursive}{logical (TRUE by default). If set to TRUE it looks in folders and subfolders}
+\item{recursive}{logical (TRUE by default). If set to TRUE it looks in
+folders and subfolders}
 
 \item{outFile}{output filename (including path)}
 }
 \description{
-This function merges all the netcdf files in a given directory over the time dimension. It saves the merged file in the working directory.
+This function merges all the netcdf files in a given directory
+over the time dimension. It saves the merged file in the working directory.
 }
 \examples{
 \dontrun{
@@ -29,7 +31,6 @@ This function merges all the netcdf files in a given directory over the time dim
             pattern = "geff_reanalysis_an_fwis_fwi_",
             recursive = TRUE,
             outFile = "outfile.nc")
-            
 }
 
 }

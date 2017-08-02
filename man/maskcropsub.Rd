@@ -26,10 +26,10 @@ mask and/or crop a Raster* based on a Polygon.
 \examples{
 \dontrun{
 
-  r <- raster::brick('FWI_1980-2016.nc') 
-  p <- raster::getData(name = "GADM", country = "Italy", level = 0)        
+  r <- raster::brick('FWI_1980-2016.nc')
+  p <- raster::getData(name = "GADM", country = "Italy", level = 0)
   maskcropsub(r, p, mask = TRUE, crop = TRUE)
-  
+
 }
 
 }

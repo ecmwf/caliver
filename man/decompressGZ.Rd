@@ -4,12 +4,10 @@
 \alias{decompressGZ}
 \title{decompressGZ}
 \usage{
-decompressGZ(inDir = getwd(), keep = FALSE)
+decompressGZ(inDir = getwd())
 }
 \arguments{
-\item{inDir}{is the directory path where all the files to read have been previously stored}
-
-\item{keep}{logical, if TRUE it keeps the .gz files, removes them otherwise}
+\item{inDir}{directory path where all the files to read have been stored}
 }
 \description{
 This function decompresses all .gz files in a given folder

@@ -1,20 +1,15 @@
-# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
-# This software is licensed under the terms of the Apache Licence Version 2.0 
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
-# In applying this licence, ECMWF does not waive the privileges and immunities 
-# granted to it by virtue of its status as an intergovernmental organisation nor
-# does it submit to any jurisdiction.
-
 #' caliver: CALIbration and VERification of gridded model outputs
 #'
-#' Utility functions for the post-processing, calibration and validation of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO.
-#' 
+#' Utility functions for the post-processing, calibration and validation of
+#' gridded model outputs. Initial test cases include the outputs of the
+#' following forest fire models: GEFF and RISICO.
+#'
 #' @name caliver
 #' @docType package
 #'
 #' @import ncdf4
 #' @import ggplot2
-#' @importFrom raster raster stack mask crop rotate extent extract t plot
+#' @importFrom raster raster stack mask crop rotate extent extract t plot cellFromPolygon
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines CRS
 #' @importFrom graphics plot
@@ -27,5 +22,6 @@
 #' @importFrom RCurl getURL
 #' @importFrom plotrix rescale
 #' @importFrom reshape2 melt
-#' 
+#' @importFrom R.utils gunzip
+#'
 NULL

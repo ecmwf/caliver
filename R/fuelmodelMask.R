@@ -1,17 +1,15 @@
-# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
-# This software is licensed under the terms of the Apache Licence Version 2.0 
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
-# In applying this licence, ECMWF does not waive the privileges and immunities 
-# granted to it by virtue of its status as an intergovernmental organisation nor
-# does it submit to any jurisdiction.
-
 #' @title fuelmodelMask
 #'
 #' @description This function masks a Raster* object using JRC's fuelmodel.
-#' 
+#'
 #' @param x Raster* to mask
-#' 
-#' @details In absence of vegetation the risk of ignition reduces considerably, regardless of the state of the soil. These areas are mapped in the JRC's fuelmodel. This package contains a cached version of this map. This is stored in the 'inst/extdata' folder of the package. For evaluating fire danger we use this map to mask deserts, glaciers, urban areas, etc. These areas have codes > 20. 
+#'
+#' @details In absence of vegetation the risk of ignition reduces considerably,
+#' regardless of the state of the soil. These areas are mapped in the JRC's
+#' fuelmodel. This package contains a cached version of this map. This is stored
+#' in the 'inst/extdata' folder of the package. For evaluating fire danger we
+#' use this map to mask deserts, glaciers, urban areas, etc.
+#' These areas have codes > 20.
 #'
 #' @export
 #'
@@ -24,30 +22,34 @@
 fuelmodelMask <- function(x){
   
   # Load JRC fuelmodel map (longitudes in range [0, 360])
-  fuelmodelFilePath <- system.file(file.path("extdata", 
+  fuelmodelFilePath <- system.file(file.path("extdata",
                                              "clim_fuelmodel.nc"),
                                    package = "caliver")
                                    
   # Get extent of the raster* object
   ext <- raster::extent(x)
   
-  # Transform map to raster and rotate longitudes to the range 
+  # Transform map to raster and rotate longitudes to the range
   # [-180, +180], if x's extent is in this range
   if (round(ext[1], 0) == -180 & round(ext[2], 0) == +180) {
-	  fuelmodel <- raster::rotate(raster::raster(fuelmodelFilePath))
-  }else{
-	  fuelmodel <- raster::raster(fuelmodelFilePath)
+
+    fuelmodel <- raster::rotate(raster::raster(fuelmodelFilePath))
+
+  } else {
+
+    fuelmodel <- raster::raster(fuelmodelFilePath)
+
   }
-  
+
   # Remove areas with code > 20 (deserts, glaciers, urban areas, etc.)
   fuelmodel[fuelmodel > 20] <- NA
-  
+
   # Fuel and x should have same extent and numer of rows/cols
   fuel <- raster::resample(fuelmodel, x, method = "ngb")
-  
+
   # Finaly, mask x
-  xmasked <- raster::mask(x, fuel, progress = 'text')
-  
+  xmasked <- raster::mask(x, fuel, progress = "text")
+
   return(xmasked)
-  
+
 }

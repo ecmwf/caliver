@@ -7,13 +7,15 @@
 FireDangerLevels(fireIndex)
 }
 \arguments{
-\item{fireIndex}{RasterBrick containing the fire index to calculate the thresholds for.}
+\item{fireIndex}{RasterBrick containing the fire index to calculate the
+thresholds for. Please note that names(fireIndex) should contain dates.}
 }
 \value{
 A numeric vector listing the thresholds.
 }
 \description{
-This function calculates the danger levels (VeryLow-Low-Moderate-High-VeryHigh-Extreme) for a given country.
+This function calculates the danger levels 
+(VeryLow-Low-Moderate-High-VeryHigh-Extreme) for a given country.
 }
 \examples{
 \dontrun{
@@ -24,24 +26,24 @@ This function calculates the danger levels (VeryLow-Low-Moderate-High-VeryHigh-E
                         to = as.Date(strptime(paste("2016", 366),
                                                 format="\%Y \%j")),
                         by = "day")
-                        
+
   # Create an index of fire season dates
   seasons <- getFireSeason(dataDates, emisphere = "north")
   fireSeasonIndex <- which(seasons == TRUE)
-  
-  r <- raster::brick('FWI_1980-2016.nc') 
-  p <- raster::getData(name = "GADM", country = "Italy", level = 0)        
+
+  r <- raster::brick('FWI_1980-2016.nc')
+  p <- raster::getData(name = "GADM", country = "Italy", level = 0)
   maskcrop(r, p, mask = TRUE, crop = TRUE)
-  
+
   # Mask and crop over country
   FWIcountry <- maskcrop(FWI, country, mask = TRUE, crop = TRUE)
-  
+
   # Subset based on fire season
   FWIseasonal <- raster::subset(FWIcountry, fireSeasonIndex)
-  
+
   # Generate thresholds for the country of interest
   countryThr <- FireDangerLevels(fireIndex = FWIseasonal)
-  
+
 }
 
 }

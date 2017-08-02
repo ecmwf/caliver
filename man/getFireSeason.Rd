@@ -15,14 +15,11 @@ getFireSeason(DATES, FSS = NULL, FSE = NULL, zone = "north")
 
 \item{zone}{this can either: "north", "south" or "tropics"}
 }
-\description{
-Get the season for each date in a vector
-}
 \examples{
 \dontrun{
   # Modify default seasons
-  seasons <- getFireSeason(DATES, 
-                           FSS = as.Date("2012-04-01", format = "\%Y-\%m-\%d"), 
+  seasons <- getFireSeason(DATES,
+                           FSS = as.Date("2012-04-01", format = "\%Y-\%m-\%d"),
                            FSE = as.Date("2012-10-31", format = "\%Y-\%m-\%d"))
 }
 

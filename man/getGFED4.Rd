@@ -12,9 +12,10 @@ getGFED4(startDate = NULL, endDate = NULL, tempRes = "daily",
 
 \item{endDate}{last date to download (string)}
 
-\item{tempRes}{is the temporal resolution, it can be "daily" (default) or "monthly"}
+\item{tempRes}{temporal resolution, it can be "daily" (default) or "monthly"}
 
-\item{varname}{name of the variable to extract, this can be one of the following:
+\item{varname}{name of the variable to extract. 
+This can be one of the following:
 \itemize{
   \item{"BasisRegions"}{}
   \item{"BurnedArea"}{}
@@ -26,7 +27,8 @@ getGFED4(startDate = NULL, endDate = NULL, tempRes = "daily",
   \item{"PeatFraction"}{}
 }}
 
-\item{region}{string of characters describing the region. It can only assume the 15 values listed below:
+\item{region}{string of characters describing the region. 
+It can only assume the 15 values listed below:
 \itemize{
   \item{"Global"}{or GLOB}
   \item{"Boreal North America"}{or BONA}
@@ -46,35 +48,37 @@ getGFED4(startDate = NULL, endDate = NULL, tempRes = "daily",
 }}
 }
 \value{
-A RasterBrick (if downloading observations) or spatial polygons (if downloading basis regions)
+A RasterBrick (if downloading observations) or spatial polygons
+(if downloading basis regions)
 }
 \description{
 Get data from the fourth-generation Global Fire Emissions Database (GFED4)
 }
 \note{
-The conversion from hdf5 to netcdf gets stuck in RStudio (see \url{https://support.rstudio.com/hc/en-us/community/posts/200629578-system-call-from-RStudio-does-not-find-path-same-command-from-commandline-R-works-fine-}), please use the console.
+The conversion from hdf5 to netcdf gets stuck in RStudio
+(see \url{https://goo.gl/Rcvp9x}), please use the console.
 }
 \examples{
 \dontrun{
 
   # Basis regions
   BasisRegions <- getGFED4(varname = "BasisRegions")
-  
+
   # Only BONA region
   BONA <- getGFED4(varname = "BasisRegions", region = "BONA")
 
   # Monthly burned areas
   BurnedAreas <- getGFED4(startDate = "2003-01-01",
-                          endDate = "2003-01-31", 
-                          tempRes = "monthly", 
+                          endDate = "2003-01-31",
+                          tempRes = "monthly",
                           varname = "BurnedArea")
-                          
+
   # Daily burned areas
   DailyBurnedAreas <- getGFED4(startDate = "2003-01-01",
                                endDate = "2003-01-02",
-                               tempRes = "daily", 
+                               tempRes = "daily",
                                varname = "BurnedArea")
-           
+
 }
 
 }

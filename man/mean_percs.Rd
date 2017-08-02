@@ -11,7 +11,8 @@ mean_percs(vals, perc.val, mod)
 
 \item{perc.val}{is the percentile value used as a threshold}
 
-\item{mod}{defines if the values considered for the mean are above ("gt") or below ("lt") the threshold}
+\item{mod}{defines if the values considered for the mean are above ("gt") or
+below ("lt") the threshold}
 }
 \description{
 Calculate average percentile
