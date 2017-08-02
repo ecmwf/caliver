@@ -1,4 +1,6 @@
-#' @title Plot PDF of fire index
+#' @title plotPDF
+#' 
+#' @description Plot PDF of fire index
 #'
 #' @param fireIndex RasterBrick containing the fire index
 #' @param thresholds thresholds calculated using the function

@@ -1,13 +1,13 @@
-#' @title Plot observations versus forecast
+#' @title plotOBSvsForecast
+#' 
+#' @description Plot observations versus forecast
 #'
 #' @param inDir folder containing forecast files
 #' @param areaOfInterest SpatialPolygon* identifying the area affected by fires.
 #' @param threshold danger threshold calculated using the function
 #' \code{DangerLevels()}, usually the high danger level.
-#' @param startDate FWI upper limit to visualise
-#' (the default is the maximum FWI)
-#' @param endDate named vector of values to plot as vertical lines
-#' (this can be quantiles for comparison)
+#' @param startDate date when observations start
+#' @param endDate date when observations end
 #' @param obsFilePath file path to observations (3D raster)
 #' @param origin This is the rating system of interest:
 #' fwi (default), mark5, nfdrs.
@@ -32,6 +32,7 @@ plotOBSvsForecast <- function(inDir,
                               startDate,
                               endDate,
                               obsFilePath,
+                              forecastType = "fc",
                               origin = "fwi",
                               index = "fwi"){
 
@@ -55,26 +56,31 @@ plotOBSvsForecast <- function(inDir,
 
       # transform dates to strings to build file name
       endD <- gsub("-", "", as.character(myDates[j]))
-
+      
       file2read <- file.path(inDir,
-                             paste0(startD, "_", endD, "_ecfire_fc_",
-                             origin, "_", index, ".nc"))
-
+                             paste0(startD, "_", endD, "_ecfire_",
+                                    forecastType, "_",
+                                    origin, "_", index, ".nc"))
+      
       if (file.exists(file2read)) {
-
+        
         rasterMap <- raster::raster(file2read)
-
+        
         if (round(rasterMap@extent@xmin,0) == 0) {
-
+          
           rasterMap <- raster::rotate(rasterMap)
-
+          
         }
-
+        
         rM <- raster::crop(rasterMap, areaOfInterest)
         nTotal <- dim(rM)[1]*dim(rM)[2]
         perc <- length(rM[rM >= threshold])/nTotal
         rastMean[i,j] <- perc
-
+        
+      } else {
+        
+        rastMean[i,j] <- NA
+        
       }
 
     }

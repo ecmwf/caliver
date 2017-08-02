@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPDF.R
 \name{plotPDF}
 \alias{plotPDF}
-\title{Plot PDF of fire index}
+\title{plotPDF}
 \usage{
 plotPDF(fireIndex, thresholds, upperLimit = NULL, vLines = NULL)
 }
@@ -17,6 +17,9 @@ plotPDF(fireIndex, thresholds, upperLimit = NULL, vLines = NULL)
 
 \item{vLines}{named vector of values to plot as vertical lines
 (this can be quantiles for comparison)}
+}
+\description{
+Plot PDF of fire index
 }
 \examples{
 \dontrun{

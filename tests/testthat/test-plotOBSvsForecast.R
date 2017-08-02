@@ -1,38 +1,52 @@
 context("plotOBSvsForecast")
 
-myTempDir <- tempdir()
+test_that("plotOBSvsForecast works",{
 
-url <- "https://www.dropbox.com/s/53kuamyycc285f1/CAMS_2017-06-15_2017-06-17_frpfire_rotated.nc?dl=0"
-inFile <- file.path(myTempDir, "cams.nc")
-download.file(url = url, destfile = inFile)
+  myTempDir <- tempdir()
 
-geffDir <- file.path(myTempDir, "geff")
-dir.create(geffDir)
+  url <- "https://u23404805.dl.dropboxusercontent.com/u/23404805/caliver_test_data/CAMS_2015-01-01_2015-01-02_frpfire_rotated.nc"
+  inFile <- file.path(myTempDir, "cams.nc")
+  download.file(url = url, destfile = inFile)
 
-url <- "https://www.dropbox.com/s/2fszm9btqewxdqf/20170615_20170615_FWI.nc?dl=0"
-download.file(url = url, destfile = file.path(geffDir, "20170615_20170615_FWI.nc"))
-url <- "https://www.dropbox.com/s/2fszm9btqewxdqf/20170615_20170616_FWI.nc?dl=0"
-download.file(url = url, destfile = file.path(geffDir, "20170615_20170616_FWI.nc"))
-url <- "https://www.dropbox.com/s/2fszm9btqewxdqf/20170615_20170617_FWI.nc?dl=0"
-download.file(url = url, destfile = file.path(geffDir, "20170615_20170617_FWI.nc"))
-url <- "https://www.dropbox.com/s/ql22wlwky516y59/20170616_20170616_FWI.nc?dl=0"
-download.file(url = url, destfile = file.path(geffDir, "20170616_20170616_FWI.nc"))
-url <- "https://www.dropbox.com/s/ql22wlwky516y59/20170616_20170617_FWI.nc?dl=0"
-download.file(url = url, destfile = file.path(geffDir, "20170616_20170617_FWI.nc"))
-url <- "https://www.dropbox.com/s/885lnpcni4mahik/20170617_20170617_FWI.nc?dl=0"
-download.file(url = url, destfile = file.path(geffDir, "20170617_20170617_FWI.nc"))
-
-test_that("plotPDF match expectations for no y-limit",{
+  geffDir <- file.path(myTempDir, "geff")
+  dir.create(geffDir)
   
-  p <- plotOBSvsForecast(inDir = geffDir, 
-                         areaOfInterest = as(raster::extent(-9.2, -7.5, 38.8, 41.4),
+  testfileURL <- "https://u23404805.dl.dropboxusercontent.com/u/23404805/caliver_test_data/20150101_20150101_ecfire_fc_fwi_fwi.nc"
+  download.file(url = testfileURL, 
+                destfile = file.path(geffDir, 
+                                     "20150101_20150101_ecfire_fc_fwi_fwi.nc"))
+  
+  testfileURL <- "https://u23404805.dl.dropboxusercontent.com/u/23404805/caliver_test_data/20150101_20150102_ecfire_fc_fwi_fwi.nc"
+  download.file(url = testfileURL, 
+                destfile = file.path(geffDir, 
+                                     "20150101_20150102_ecfire_fc_fwi_fwi.nc"))
+
+  testfileURL <- "https://u23404805.dl.dropboxusercontent.com/u/23404805/caliver_test_data/20150102_20150102_ecfire_fc_fwi_fwi.nc"
+  download.file(url = testfileURL, 
+                destfile = file.path(geffDir, 
+                                     "20150102_20150102_ecfire_fc_fwi_fwi.nc"))
+
+  p <- plotOBSvsForecast(inDir = geffDir,
+                         areaOfInterest = as(raster::extent(-9.2, -7.5,
+                                                            38.8, 41.4),
                                              "SpatialPolygons"), 
                          threshold = 14, 
-                         startDate = "2017-06-15", endDate = "2017-06-17",
+                         startDate = "2015-01-01",
+                         endDate = "2015-01-02",
                          obsFilePath = inFile)
-  
+
   expect_equal(length(p$layers) == 2, TRUE)
   expect_identical(p$labels$y, "Forecast date")
   expect_identical(p$labels$x, "Observation date")
   
+  test <- file.path(myTempDir, "test.png")
+  png(filename = test)
+    p
+  dev.off()
+
+  # visualTest::getFingerprint(test)
+  visualTest::isSimilar(file = test, 
+                        fingerprint = "A4E39A1CD9EAD834", 
+                        threshold = 0.1)
+
 })

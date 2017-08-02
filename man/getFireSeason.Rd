@@ -2,7 +2,7 @@
 % Please edit documentation in R/getFireSeason.R
 \name{getFireSeason}
 \alias{getFireSeason}
-\title{Get the season for each date in a vector}
+\title{getFireSeason}
 \usage{
 getFireSeason(DATES, FSS = NULL, FSE = NULL, zone = "north")
 }
@@ -14,6 +14,9 @@ getFireSeason(DATES, FSS = NULL, FSE = NULL, zone = "north")
 \item{FSE}{Fire Season End (date in the format Y-m-d)}
 
 \item{zone}{this can either: "north", "south" or "tropics"}
+}
+\description{
+Get the season for each date in a vector
 }
 \examples{
 \dontrun{

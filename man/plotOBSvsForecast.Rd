@@ -2,10 +2,10 @@
 % Please edit documentation in R/plotOBSvsForecast.R
 \name{plotOBSvsForecast}
 \alias{plotOBSvsForecast}
-\title{Plot observations versus forecast}
+\title{plotOBSvsForecast}
 \usage{
 plotOBSvsForecast(inDir, areaOfInterest, threshold, startDate, endDate,
-  obsFilePath, origin = "fwi", index = "fwi")
+  obsFilePath, forecastType = "fc", origin = "fwi", index = "fwi")
 }
 \arguments{
 \item{inDir}{folder containing forecast files}
@@ -15,11 +15,9 @@ plotOBSvsForecast(inDir, areaOfInterest, threshold, startDate, endDate,
 \item{threshold}{danger threshold calculated using the function
 \code{DangerLevels()}, usually the high danger level.}
 
-\item{startDate}{FWI upper limit to visualise
-(the default is the maximum FWI)}
+\item{startDate}{date when observations start}
 
-\item{endDate}{named vector of values to plot as vertical lines
-(this can be quantiles for comparison)}
+\item{endDate}{date when observations end}
 
 \item{obsFilePath}{file path to observations (3D raster)}
 
@@ -28,6 +26,9 @@ fwi (default), mark5, nfdrs.}
 
 \item{index}{This is the index to analyse
 (default is fwi, belonging to fwi origin).}
+}
+\description{
+Plot observations versus forecast
 }
 \examples{
 \dontrun{

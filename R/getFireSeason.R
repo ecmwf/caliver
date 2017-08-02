@@ -1,4 +1,6 @@
-#' @title Get the season for each date in a vector
+#' @title getFireSeason
+#' 
+#' @description Get the season for each date in a vector
 #'
 #' @param DATES vector of dates
 #' @param FSS Fire Season Start (date in the format Y-m-d)
