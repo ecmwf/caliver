@@ -9,6 +9,7 @@
 #' @param startDate date when observations start
 #' @param endDate date when observations end
 #' @param obsFilePath file path to observations (3D raster)
+#' @param forecastType type of forecast: fc (high resolution/deterministic), cf (control forecast), pf (perturbed forecast/probabilistic)
 #' @param origin This is the rating system of interest:
 #' fwi (default), mark5, nfdrs.
 #' @param index This is the index to analyse

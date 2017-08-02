@@ -21,6 +21,8 @@ plotOBSvsForecast(inDir, areaOfInterest, threshold, startDate, endDate,
 
 \item{obsFilePath}{file path to observations (3D raster)}
 
+\item{forecastType}{type of forecast: fc (high resolution/deterministic), cf (control forecast), pf (perturbed forecast/probabilistic)}
+
 \item{origin}{This is the rating system of interest:
 fwi (default), mark5, nfdrs.}
 
