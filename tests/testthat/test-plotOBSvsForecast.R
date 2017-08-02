@@ -39,14 +39,14 @@ test_that("plotOBSvsForecast works",{
   expect_identical(p$labels$y, "Forecast date")
   expect_identical(p$labels$x, "Observation date")
   
-  test <- file.path(myTempDir, "test.png")
-  png(filename = test)
-    p
-  dev.off()
-
-  # visualTest::getFingerprint(test)
-  visualTest::isSimilar(file = test, 
-                        fingerprint = "A4E39A1CD9EAD834", 
-                        threshold = 0.1)
+  # test <- file.path(myTempDir, "test.png")
+  # png(filename = test)
+  #   p
+  # dev.off()
+  # 
+  # # visualTest::getFingerprint(test)
+  # visualTest::isSimilar(file = test, 
+  #                       fingerprint = "A4E39A1CD9EAD834", 
+  #                       threshold = 0.1)
 
 })
