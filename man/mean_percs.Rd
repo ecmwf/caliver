@@ -4,12 +4,12 @@
 \alias{mean_percs}
 \title{Calculate average percentile}
 \usage{
-mean_percs(vals, perc.val, mod)
+mean_percs(vals, perc_val, mod)
 }
 \arguments{
 \item{vals}{is the a raster object}
 
-\item{perc.val}{is the percentile value used as a threshold}
+\item{perc_val}{is the percentile value used as a threshold}
 
 \item{mod}{defines if the values considered for the mean are above ("gt") or
 below ("lt") the threshold}

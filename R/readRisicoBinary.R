@@ -1,4 +1,4 @@
-#' @title Read a RISICO output file and return a raster map
+#' @title read_risico_binary
 #'
 #' @description Reads a RISICO output file and returns a raster map
 #'
@@ -8,11 +8,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   r_values <- readRisicoBinary("data/RISICO2015_VPPF_201611140300")
+#'   r_values <- read_risico_binary("data/RISICO2015_VPPF_201611140300")
 #' }
 #'
 
-readRisicoBinary <- function(filename){
+read_risico_binary <- function(filename){
   
   myFile <- gzfile(filename, "rb")
   grid_type <- readBin(myFile, integer(), 1)

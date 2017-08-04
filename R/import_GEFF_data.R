@@ -1,4 +1,4 @@
-#' @title import_GEFF_data_from_tar
+#' @title import_geff_data_from_tar
 #'
 #' @description This function imports GEFF data (reanalysis or realtime) from a
 #' tar file into a raster stack. Depending on the user's query to the web
@@ -10,17 +10,17 @@
 #'
 #' @examples
 #' \dontrun{
-#'   s <- import_GEFF_data_from_tar(archive = "test.tar")
+#'   s <- import_geff_data_from_tar(archive = "test.tar")
 #' }
 #'
 
-import_GEFF_data_from_tar <- function(archive){
+import_geff_data_from_tar <- function(archive){
 
   # From .tar to .gz, and finally to .nc
-  myTempDir <- tempdir()
-  utils::untar(tarfile = archive, exdir = myTempDir)
+  my_temp_dir <- tempdir()
+  utils::untar(tarfile = archive, exdir = my_temp_dir)
 
-  list_of_gzfiles <- list.files(path = myTempDir,
+  list_of_gzfiles <- list.files(path = my_temp_dir,
                                 pattern = "*.gz", full.names = TRUE)
 
   # Decompress any gz files
@@ -30,11 +30,11 @@ import_GEFF_data_from_tar <- function(archive){
 
   }
 
-  s <- raster::stack(list.files(path = myTempDir,
+  s <- raster::stack(list.files(path = my_temp_dir,
                                 pattern = "*.nc",
                                 full.names = TRUE))
 
-  unlink(myTempDir)
+  unlink(my_temp_dir)
 
   closeAllConnections()
 
