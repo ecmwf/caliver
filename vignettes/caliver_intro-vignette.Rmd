@@ -10,14 +10,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-<!--
-# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
-# This software is licensed under the terms of the Apache Licence Version 2.0 
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
-# In applying this licence, ECMWF does not waive the privileges and immunities 
-# granted to it by virtue of its status as an intergovernmental organisation nor
-# does it submit to any jurisdiction.
--->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = FALSE)
+```
 
 The name caliver stands for **CALI**bration and **VER**ification of gridded model outputs. It is a package developed for the R programming language and available with an APACHE-2 license from a public repository. The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regard to outputs of the following forest fire models: GEFF and RISICO. Applicability to other model results will be investigated in future works. Complete documentation is available within the package. This vignette contains the code to run all the examples in [@vitolo:2017b], please refer to this paper for more information.
 
@@ -70,8 +66,8 @@ Observed burned areas around the world are collected by the GFED4 in hdf format 
 
 ``` r
 # Get daily burned area maps from 2003 to 2015 (to be run in the console!)
-BurnedAreas <- getGFED4(years=2003:2015,
-                        tempRes = 'daily',
+BurnedAreas <- get_gfed4(years=2003:2015,
+                        temporal_resolution = 'daily',
                         varname = 'BurnedArea',
                         outFormat = 'netcdf',
                         merge = TRUE,
@@ -91,13 +87,13 @@ The fourth-generation global fire emissions database also provides as ancillary 
 
 ``` r
 # Get BasisRegions
-BasisRegions <- getGFED4(varname = 'BasisRegions')
+BasisRegions <- get_gfed4(varname = 'BasisRegions')
 ```
 
 Get administrative areas using getdata from the raster package
 ``` r
 # Europe
-Europe <- getGFED4(varname = 'BasisRegions', region = 'EURO')
+Europe <- get_gfed4(varname = 'BasisRegions', region = 'EURO')
 
 # United Kingdom
 UnitedK <- raster::getData(name = "GADM", country = "United Kingdom", level = 0)
@@ -129,16 +125,18 @@ rm(Italy1, Italy2)
 
 ## Utilities
 
-Decompress archives using the function `decompressGZ()` and set the argument `keep = TRUE` if you want to keep the original archive once decompressed.
+Decompress archives using the function `decompress_gz()` and set the argument `keep = TRUE` if you want to keep the original archive once decompressed.
 
 ``` r
-decompressGZ(inDir = "./tmp", keep = TRUE)
+decompress_gz(input_dir = "./tmp", keep = TRUE)
 ```
 
-Once all the files are decompressed they can be merged in a unique netCDF file using the function `catNetcdf()`.
+Once all the files are decompressed they can be merged in a unique netCDF file using the function `stack_netcdf_files()`.
 ```r
-processingTime <- system.time(catNetcdf(inDir = 'GEFF1.2/fwi_rotated/',
-                                        outFileName = 'FWIr_1980-2016.nc'))
+processingTime <- system.time({
+  stack_netcdf_files(input_dir = 'GEFF1.2/fwi_rotated/',
+                     output_file = 'FWIr_1980-2016.nc')
+})
 ```
 
 ## Analysis and visualisation
@@ -152,10 +150,10 @@ maps <- makePercentileRaster(inFilePath = "FWIr_1980-2016.nc",
 
 ### Mask/crop/subset
 
-FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `maskcropsub()` is used to extract the FWI for the first data of the reanalysis (setting argument `i2subset = 1`), masked and cropped over Europe.
+FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `mask_crop_subset()` is used to extract the FWI for the first data of the reanalysis (setting argument `idx = 1`), masked and cropped over Europe.
 
 ``` r
-mapEurope <- maskcropsub(r = maps, p = Europe, mask = T, crop = T, i2subset = 1)
+mapEurope <- mask_crop_subset(r = maps, p = Europe, mask = T, crop = T, idx = 1)
 ```
 
 ### Plot
@@ -187,7 +185,7 @@ dataDates <- seq.Date(from = as.Date('1980-01-01'),
                       by = "day")
 
 # Define a function to extract fire seasons in Europe
-seasons <- getFireSeason(DATES = dataDates, zone = 'north')
+seasons <- get_fire_season(DATES = dataDates, zone = 'north')
 
 # Create an index of summer dates
 fireSeasonIndex <- which(seasons == TRUE)
@@ -202,44 +200,44 @@ Threshold for every area of interest are calculate on the subset of the FWI bric
 
 ``` r
 # Mask/Crop/Subset FWI and generate thresholds for Europe
-EURO <- maskcropsub(r = FWI, p = Europe, mask = T, crop = T, 
-                    i2subset = fireSeasonIndex)
-EuropeThr <- FireDangerLevels(fireIndex = EURO)
+EURO <- mask_crop_subset(r = FWI, p = Europe, mask = T, crop = T, 
+                    idx = fireSeasonIndex)
+EuropeThr <- FireDangerLevels(fire_index = EURO)
 
 # Mask/Crop/Subset FWI and generate thresholds for United Kingdom
-UK <- maskcropsub(r = FWI, p = UnitedK, mask = T, crop = T, 
-                  i2subset = fireSeasonIndex)
-UnitedKThr <- FireDangerLevels(fireIndex = UK)
+UK <- mask_crop_subset(r = FWI, p = UnitedK, mask = T, crop = T, 
+                  idx = fireSeasonIndex)
+UnitedKThr <- FireDangerLevels(fire_index = UK)
 
 # Mask/Crop/Subset FWI and generate thresholds for Spain
-ES <- maskcropsub(r = FWI, p = Spain, mask = T, crop = T, 
-                  i2subset = fireSeasonIndex)
-SpainThr <- FireDangerLevels(fireIndex = ES)
+ES <- mask_crop_subset(r = FWI, p = Spain, mask = T, crop = T, 
+                  idx = fireSeasonIndex)
+SpainThr <- FireDangerLevels(fire_index = ES)
 
 # Mask/Crop/Subset FWI and generate thresholds for Italy
-IT <- maskcropsub(r = FWI, p = Italy, mask = T, crop = T, 
-                    i2subset = fireSeasonIndex)
-ItalyThr <- FireDangerLevels(fireIndex = IT)
+IT <- mask_crop_subset(r = FWI, p = Italy, mask = T, crop = T, 
+                    idx = fireSeasonIndex)
+ItalyThr <- FireDangerLevels(fire_index = IT)
 
 # Mask/Crop/Subset FWI and generate thresholds for Calabria
-CAL <- maskcropsub(r = FWI, p = Calabria, mask = T, crop = T, 
-                  i2subset = fireSeasonIndex)
-CALThr <- FireDangerLevels(fireIndex = CAL)
+CAL <- mask_crop_subset(r = FWI, p = Calabria, mask = T, crop = T, 
+                  idx = fireSeasonIndex)
+CALThr <- FireDangerLevels(fire_index = CAL)
 
 # Mask/Crop/Subset FWI and generate thresholds for Sicily
-SIC <- maskcropsub(r = FWI, p = Sicily, mask = T, crop = T, 
-                  i2subset = fireSeasonIndex)
-SICThr <- FireDangerLevels(fireIndex = SIC)
+SIC <- mask_crop_subset(r = FWI, p = Sicily, mask = T, crop = T, 
+                  idx = fireSeasonIndex)
+SICThr <- FireDangerLevels(fire_index = SIC)
 
 # Mask/Crop/Subset FWI and generate thresholds for Liguria
-LIG <- maskcropsub(r = FWI, p = Liguria, mask = T, crop = T, 
-                  i2subset = fireSeasonIndex)
-LIGThr <- FireDangerLevels(fireIndex = LIG)
+LIG <- mask_crop_subset(r = FWI, p = Liguria, mask = T, crop = T, 
+                  idx = fireSeasonIndex)
+LIGThr <- FireDangerLevels(fire_index = LIG)
 
 # Mask/Crop/Subset FWI and generate thresholds for Genoa
-GEN <- maskcropsub(r = FWI, p = Genoa, mask = T, crop = T, 
-                   i2subset = fireSeasonIndex)
-GENThr <- FireDangerLevels(fireIndex = GEN)
+GEN <- mask_crop_subset(r = FWI, p = Genoa, mask = T, crop = T, 
+                   idx = fireSeasonIndex)
+GENThr <- FireDangerLevels(fire_index = GEN)
 ```
 
 ### Plot density with thresholds
@@ -247,7 +245,7 @@ GENThr <- FireDangerLevels(fireIndex = GEN)
 The thresholds are different fromt the percentiles, the PDF  below shows a comparison for Italy.
 
 ``` r
-countryPDF <- plotPDF(fireIndex = IT, countryName = "Italy", 
+countryPDF <- plotPDF(fire_index = IT, countryName = "Italy", 
                       ItalyThr, upperLimit = 75, vLines = c(0.50, 0.75, 0.90))
 ```
 
@@ -259,18 +257,18 @@ In order to test whether the classes identified correspond to
 BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")
 
 # Mask and crop burned areas over Europe
-BA <- maskcropsub(r = BurnedAreas, p = Europe, mask = T, crop = T)
+BA <- mask_crop_subset(r = BurnedAreas, p = Europe, mask = T, crop = T)
 
 # If observations layers have no date, assign it!
 names(BA) <- seq.Date(from = as.Date("2003-01-01"),
                       to = as.Date("2015-12-31"), by = "day")
 
 # For the validation we do not want to subset over the fire season, subset to match days in BA
-EURO2 <- maskcropsub(r = FWI, p = Europe, mask = T, crop = T, 
-                    i2subset = which(names(FWI) %in% names(BA)))
+EURO2 <- mask_crop_subset(r = FWI, p = Europe, mask = T, crop = T, 
+                    idx = which(names(FWI) %in% names(BA)))
 
 # Generate the contingency table for Europe
-x <- ValidateFireDangerLevels(fireIndex = EURO2, 
+x <- ValidateFireDangerLevels(fire_index = EURO2, 
                               observation = BA,
                               fireThr = 10, obsThr = 50)
                          
@@ -289,48 +287,48 @@ FBI <- (hits+falsealarms)/(hits+misses) # 38%
 TS <- hits/(hits+misses+falsealarms)    # 1.7%
 
 # Generate the contingency table for Europe using JRC's high level threshold
-xJRC <- ValidateFireDangerLevels(fireIndex = EURO2, 
+xJRC <- ValidateFireDangerLevels(fire_index = EURO2, 
                                  observation = BA,
                                  fireThr = 21.3, obsThr = 50)
 # Contingency table
 yJRC <- data.frame(round(prop.table(xJRC),3))
 
 # Repeat the above for UK
-BA_UK <- maskcropsub(r = BurnedAreas, p = UnitedK, mask = T, crop = T)
+BA_UK <- mask_crop_subset(r = BurnedAreas, p = UnitedK, mask = T, crop = T)
 names(BA_UK) <- seq.Date(from = as.Date("2003-01-01"),
                          to = as.Date("2015-12-31"), by = "day")
-UK2 <- maskcropsub(r = FWI, p = UnitedK, mask = T, crop = T, 
-                   i2subset = which(names(FWI) %in% names(BA_UK)))
-xUK_caliver <- data.frame(ValidateFireDangerLevels(fireIndex = UK2, 
+UK2 <- mask_crop_subset(r = FWI, p = UnitedK, mask = T, crop = T, 
+                   idx = which(names(FWI) %in% names(BA_UK)))
+xUK_caliver <- data.frame(ValidateFireDangerLevels(fire_index = UK2, 
                                                    observation = BA_UK,
                                                    fireThr = 10, obsThr = 50))
-xUK_JRC <- data.frame(ValidateFireDangerLevels(fireIndex = UK2, 
+xUK_JRC <- data.frame(ValidateFireDangerLevels(fire_index = UK2, 
                                                observation = BA_UK,
                                                fireThr = 21.3, obsThr = 50))
                                                    
 # Repeat the above for Spain
-BA_ES <- maskcropsub(r = BurnedAreas, p = Spain, mask = T, crop = T)
+BA_ES <- mask_crop_subset(r = BurnedAreas, p = Spain, mask = T, crop = T)
 names(BA_ES) <- seq.Date(from = as.Date("2003-01-01"),
                          to = as.Date("2015-12-31"), by = "day")
-ES2 <- maskcropsub(r = FWI, p = Spain, mask = T, crop = T, 
-                   i2subset = which(names(FWI) %in% names(BA_ES)))
-xES_caliver <- data.frame(ValidateFireDangerLevels(fireIndex = ES2, 
+ES2 <- mask_crop_subset(r = FWI, p = Spain, mask = T, crop = T, 
+                   idx = which(names(FWI) %in% names(BA_ES)))
+xES_caliver <- data.frame(ValidateFireDangerLevels(fire_index = ES2, 
                                                    observation = BA_ES,
                                                    fireThr = 10, obsThr = 50))
-xES_JRC <- data.frame(ValidateFireDangerLevels(fireIndex = ES2, 
+xES_JRC <- data.frame(ValidateFireDangerLevels(fire_index = ES2, 
                                                observation = BA_ES,
                                                fireThr = 21.3, obsThr = 50))
                                                    
 # Repeat the above for Italy
-BA_IT <- maskcropsub(r = BurnedAreas, p = Italy, mask = T, crop = T)
+BA_IT <- mask_crop_subset(r = BurnedAreas, p = Italy, mask = T, crop = T)
 names(BA_IT) <- seq.Date(from = as.Date("2003-01-01"),
                          to = as.Date("2015-12-31"), by = "day")
-IT2 <- maskcropsub(r = FWI, p = Italy, mask = T, crop = T, 
-                   i2subset = which(names(FWI) %in% names(BA_IT)))
-xIT_caliver <- data.frame(ValidateFireDangerLevels(fireIndex = IT2, 
+IT2 <- mask_crop_subset(r = FWI, p = Italy, mask = T, crop = T, 
+                   idx = which(names(FWI) %in% names(BA_IT)))
+xIT_caliver <- data.frame(ValidateFireDangerLevels(fire_index = IT2, 
                                                    observation = BA_IT,
                                                    fireThr = 10, obsThr = 50))
-xIT_JRC <- data.frame(ValidateFireDangerLevels(fireIndex = IT2, 
+xIT_JRC <- data.frame(ValidateFireDangerLevels(fire_index = IT2, 
                                                observation = BA_IT,
                                                fireThr = 21.3, obsThr = 50))
 ```
