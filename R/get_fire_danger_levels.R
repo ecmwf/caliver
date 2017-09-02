@@ -1,4 +1,4 @@
-#' @title Define Risk Threshold
+#' @title get_fire_danger_levels
 #'
 #' @description This function calculates the danger levels
 #' (VeryLow-Low-Moderate-High-VeryHigh-Extreme) for a given country.
@@ -61,9 +61,9 @@ get_fire_danger_levels <- function(fire_index){
     extreme_percentile <- floor(x = (1 - ndays / 365) * 100) / 100
     extreme_value <- c()
 
-    for (FireYear in unique(years)) {
+    for (fire_year in unique(years)) {
 
-      year_idx <- which(years == FireYear)
+      year_idx <- which(years == fire_year)
       sub_fwi <- raster::subset(fire_index, year_idx)
       idx_year <- quantile(na.omit(as.vector(sub_fwi)), extreme_percentile)
       extreme_value <- c(extreme_value, as.numeric(idx_year))

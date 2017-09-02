@@ -37,7 +37,7 @@ plot_obs_vs_forecast <- function(input_dir,
                                  origin = "fwi",
                                  index = "fwi"){
 
-  my_dates <- seq.Date(from = as.Date(start_date), 
+  my_dates <- seq.Date(from = as.Date(start_date),
                       to = as.Date(end_date),
                       by = "day")
 
@@ -53,37 +53,38 @@ plot_obs_vs_forecast <- function(input_dir,
   for (i in 1:length(my_dates)) {
 
     # transform dates to strings to build file name
-    startD <- gsub("-", "", as.character(my_dates[i]))
+    start_d <- gsub("-", "", as.character(my_dates[i]))
 
     for (j in 1:length(my_dates)) {
 
       # transform dates to strings to build file name
-      endD <- gsub("-", "", as.character(my_dates[j]))
-      
+      end_d <- gsub("-", "", as.character(my_dates[j]))
+
       file2read <- file.path(input_dir,
-                             paste0(startD, "_", endD, "_ecfire_",
+                             paste0(start_d, "_", end_d, "_ecfire_",
                                     forecast_type, "_",
                                     origin, "_", index, ".nc"))
-      
+
       if (file.exists(file2read)) {
-        
-        rasterMap <- raster::raster(file2read)
-        
-        if (round(rasterMap@extent@xmin,0) == 0) {
-          
-          rasterMap <- raster::rotate(rasterMap)
-          
+
+        raster_map <- raster::raster(file2read)
+
+        if (round(raster_map@extent@xmin, 0) == 0) {
+
+          raster_map <- raster::rotate(raster_map)
+
         }
-        
-        rM <- raster::crop(rasterMap, p)
-        nTotal <- dim(rM)[1]*dim(rM)[2]
-        perc <- length(rM[rM >= threshold])/nTotal
-        raster_mean_matrix[i,j] <- perc
-        
+
+        raster_cropped <- raster::crop(raster_map, p)
+        n_total <- dim(raster_cropped)[1] * dim(raster_cropped)[2]
+        perc <- length(raster_cropped[raster_cropped >= threshold]) /
+          n_total
+        raster_mean_matrix[i, j] <- perc
+
       } else {
-        
-        raster_mean_matrix[i,j] <- NA
-        
+
+        raster_mean_matrix[i, j] <- NA
+
       }
 
     }
@@ -101,7 +102,7 @@ plot_obs_vs_forecast <- function(input_dir,
   observation_dates <- my_dates[1:dim(raster_mean_matrix)[2]]
 
   # reshape the data.frame with forecast values
-  x <- reshape2::melt(raster_mean_matrix*100)
+  x <- reshape2::melt(raster_mean_matrix * 100)
 
   frp <- raster::brick(obs_file_path)
   frp_cropped <- mask_crop_subset(r = frp, p = p,
@@ -119,7 +120,7 @@ plot_obs_vs_forecast <- function(input_dir,
     geom_tile(aes_string(fill = "value"), colour = "white") +
     scale_fill_distiller(palette = "Spectral",
                          na.value = NA,
-                         limits = c(0,100),
+                         limits = c(0, 100),
                          name = my_name) +
     geom_line(data = df_frp,
               aes(x = 1:dim(df_frp)[1], y = frp),

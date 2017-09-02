@@ -40,8 +40,10 @@ setwd('/scratch/mo/moc0/fire/')
 Caliver does not require compilation but imports functions from several R packages. In order to reproduce the examples in this paper we suggest to sort out missing dependencies using the code below.
 
 ```{r, eval=FALSE}
-packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "grDevices", "RCurl",
-           "rworldmap", "graphics", "httr", "stringr", "lubridate", "rhdf5")
+packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "grDevices",
+           "RCurl", "rworldmap", "graphics", "httr", "stringr",
+           "lubridate", "rhdf5", "RColorBrewer", "dplyr", "ggmap",
+           "purrr", "viridis")
 new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -66,13 +68,11 @@ Observed burned areas around the world are collected by the GFED4 in hdf format 
 
 ``` r
 # Get daily burned area maps from 2003 to 2015 (to be run in the console!)
-BurnedAreas <- get_gfed4(years=2003:2015,
-                        temporal_resolution = 'daily',
-                        varname = 'BurnedArea',
-                        outFormat = 'netcdf',
-                        merge = TRUE,
-                        keep = FALSE,
-                        outDir = "GFED4_BurnedAreas/")
+BurnedAreas <- get_gfed4(start_date = "2003-01-01",
+                         end_date = "2015-12-31",
+                         temporal_resolution = "daily",
+                         varname = "BurnedArea",
+                         region = "GLOB")
 ```
 
 The above can be saved and re-loaded as follows:
@@ -86,15 +86,15 @@ BurnedAreas <- raster::brick("BurnedArea.grd")
 The fourth-generation global fire emissions database also provides as ancillary data a map of 14 basis regions used to evaluate regional annual emission estimates. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the sp package) setting `varname = "BasisRegions"'.
 
 ``` r
-# Get BasisRegions
-BasisRegions <- get_gfed4(varname = 'BasisRegions')
+# Get all the BasisRegions
+BasisRegions <- get_gfed4(varname = "BasisRegions")
+
+# Europe
+Europe <- get_gfed4(varname = 'BasisRegions', region = 'EURO')
 ```
 
 Get administrative areas using getdata from the raster package
 ``` r
-# Europe
-Europe <- get_gfed4(varname = 'BasisRegions', region = 'EURO')
-
 # United Kingdom
 UnitedK <- raster::getData(name = "GADM", country = "United Kingdom", level = 0)
 
@@ -125,10 +125,10 @@ rm(Italy1, Italy2)
 
 ## Utilities
 
-Decompress archives using the function `decompress_gz()` and set the argument `keep = TRUE` if you want to keep the original archive once decompressed.
+Decompress archives using the function `decompress_gz()`.
 
 ``` r
-decompress_gz(input_dir = "./tmp", keep = TRUE)
+decompress_gz(input_dir = "./tmp")
 ```
 
 Once all the files are decompressed they can be merged in a unique netCDF file using the function `stack_netcdf_files()`.
@@ -137,6 +137,18 @@ processingTime <- system.time({
   stack_netcdf_files(input_dir = 'GEFF1.2/fwi_rotated/',
                      output_file = 'FWIr_1980-2016.nc')
 })
+```
+
+A simple benchmark
+``` r
+library(microbenchmark)
+raster::writeRaster(s, filename='inst/testdata/GEFF.nc', format="CDF", overwrite=TRUE)
+
+microbenchmark(
+  sqrt(x),
+  x ^ 0.5
+)
+
 ```
 
 ## Analysis and visualisation

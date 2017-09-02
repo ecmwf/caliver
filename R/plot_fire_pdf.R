@@ -4,7 +4,7 @@
 #'
 #' @param fire_index RasterBrick containing the fire index
 #' @param thresholds thresholds calculated using the function
-#' \code{DangerLevels()}
+#' \code{danger_levels()}
 #' @param upper_limit FWI upper limit to visualise
 #' (the default is the maximum FWI)
 #' @param v_lines named vector of values to plot as vertical lines
@@ -23,52 +23,52 @@ plot_fire_pdf <- function(fire_index,
                           upper_limit = NULL,
                           v_lines = NULL){
 
-  firePalette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
-                   "#E41A1C", "#6b3535", "#403131")
+  fire_palette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
+                    "#E41A1C", "#6b3535", "#403131")
 
   IDX <- na.omit(as.vector(fire_index))
   IDXno0 <- IDX[IDX > 0]
 
   # percentiles corresponding to the danger thresholds:
-  cols <- c("VeryLow" = firePalette[1],
-            "Low" = firePalette[2],
-            "Moderate" = firePalette[3],
-            "High" = firePalette[4],
-            "Very high" = firePalette[5],
-            "Extreme" = firePalette[6])
-  
+  cols <- c("VeryLow" = fire_palette[1],
+            "Low" = fire_palette[2],
+            "Moderate" = fire_palette[3],
+            "High" = fire_palette[4],
+            "Very high" = fire_palette[5],
+            "Extreme" = fire_palette[6])
+
   if (is.null(upper_limit)) {
 
     upper_limit <- ceiling(max(IDXno0))
 
   }
 
-  dangerClasses <- c(0, thresholds, upper_limit)
+  danger_classes <- c(0, thresholds, upper_limit)
 
-  vdistance <- max(density(IDXno0)$y)/15
-  hdistance <- max(dangerClasses)/100
+  vdistance <- max(density(IDXno0)$y) / 15
+  hdistance <- max(danger_classes) / 100
 
   x1 <- x2 <- y1 <- y2 <- NULL # to avoid warning in check!
 
-  df <- data.frame(x1 = dangerClasses[1:6],
-                   x2 = dangerClasses[2:7],
+  df <- data.frame(x1 = danger_classes[1:6],
+                   x2 = danger_classes[2:7],
                    y1 = min(density(IDXno0)$y) - vdistance,
                    y2 = min(density(IDXno0)$y) - vdistance,
-                   DangerLevels = factor(x = firePalette,
-                                         levels = c(firePalette)))
+                   danger_levels = factor(x = fire_palette,
+                                         levels = c(fire_palette)))
 
   p <- ggplot(as.data.frame(IDXno0), aes(IDXno0)) +
     geom_density(colour = "#6d6b6b", fill = "grey") +
     geom_segment(aes(x = x1, y = y1,
-                     xend = x2, yend = y2, colour = df$DangerLevels),
+                     xend = x2, yend = y2, colour = df$danger_levels),
                  data = df, size = 14) +
     scale_colour_manual(name = "Danger classes",
-                        values = firePalette,
+                        values = fire_palette,
                         labels = c("Very Low", "Low", "Moderate",
                                    "High", "Very high", "Extreme")) +
     geom_text(aes(x = x1 + hdistance, y = y1,
-                         label = round(x1,0)),
-              data = df[2:6,], size=5, colour = "#e1dbdb") +
+                         label = round(x1, 0)),
+              data = df[2:6, ], size = 5, colour = "#e1dbdb") +
     theme_bw() + xlab("FWI") + ylab("Density") +
     theme(legend.title = element_text(size = 10, face = "bold"),
           text = element_text(size = 10, lineheight = .8),

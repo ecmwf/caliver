@@ -25,7 +25,7 @@ mask_with_fuelmodel <- function(x){
   fuelmodel_file_path <- system.file(file.path("extdata",
                                              "clim_fuelmodel.nc"),
                                    package = "caliver")
-                                   
+
   # Get extent of the raster* object
   ext <- raster::extent(x)
 

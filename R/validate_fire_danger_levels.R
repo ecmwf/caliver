@@ -41,7 +41,7 @@ validate_fire_danger_levels <- function(fire_index,
       !("RasterStack" %in% class(fire_index)) &
       !("RasterLayer" %in% class(fire_index))) {
 
-    stop('Error: the fire_index can only be a raster brick/stack')
+    stop("Error: the fire_index can only be a raster brick/stack")
 
   }
 
@@ -49,7 +49,7 @@ validate_fire_danger_levels <- function(fire_index,
       !("RasterStack" %in% class(observation)) &
       !("RasterLayer" %in% class(observation))) {
 
-    stop('Error: the observation can only be a raster brick/stack')
+    stop("Error: the observation can only be a raster brick/stack")
 
   }
 
@@ -69,15 +69,15 @@ validate_fire_danger_levels <- function(fire_index,
   # RasterStack
   if ("RasterStack" %in% class(fire_index)) {
 
-    message('Convert stack of fire indices into a raster brick')
-    fwi_brick <- raster::brick(fire_index, progress = 'text')
+    message("Convert stack of fire indices into a raster brick")
+    fwi_brick <- raster::brick(fire_index, progress = "text")
 
   }
 
   if ("RasterStack" %in% class(observation)) {
 
-    message('Convert stack of observations into a raster brick')
-    obs_brick <- raster::brick(observation, progress = 'text')
+    message("Convert stack of observations into a raster brick")
+    obs_brick <- raster::brick(observation, progress = "text")
 
   }
 
@@ -95,19 +95,19 @@ validate_fire_danger_levels <- function(fire_index,
   }
 
   # Aggregate/Resample observations to match the resolution of the fire index
-  fact <- round(dim(obs_brick)[1:2]/dim(fwi_brick)[1:2], 0)
+  fact <- round(dim(obs_brick)[1:2] / dim(fwi_brick)[1:2], 0)
   message("Aggregate observations to match the resolution of the fire index")
   burned_areas <- raster::aggregate(obs_brick, fact, fun = sum,
-                                    progress = 'text')
+                                    progress = "text")
   message("Resample observations to match the resolution of the fire index")
   burned_areas_resampled <- raster::resample(burned_areas, fwi_brick,
-                                  method = "bilinear", progress = 'text')
+                                  method = "bilinear", progress = "text")
 
   # Select only period in common
-  fwiIndex <- which(names(fwi_brick) %in% names(burned_areas_resampled))
-  obsIndex <- which(names(burned_areas_resampled) %in% names(fwi_brick))
-  seasonal_fwi <- raster::subset(fwi_brick, fwiIndex)
-  seasonal_obs <- raster::subset(burned_areas_resampled, obsIndex)
+  fwi_index <- which(names(fwi_brick) %in% names(burned_areas_resampled))
+  obs_index <- which(names(burned_areas_resampled) %in% names(fwi_brick))
+  seasonal_fwi <- raster::subset(fwi_brick, fwi_index)
+  seasonal_obs <- raster::subset(burned_areas_resampled, obs_index)
 
   message("Calculating contingency table")
   # Transform BurnedAreas to binary (is BurnedAreas > 50 hectares?)
@@ -122,18 +122,6 @@ validate_fire_danger_levels <- function(fire_index,
                                                   fire_threshold),
                                         yes = TRUE, no = FALSE)
 
-  # Contingency table
-  # x <- data.frame(table(seasonal_fwi_vector_logical, seasonal_obs_vector_logical))
-  # round(prop.table(table(seasonal_fwi_vector_logical, seasonal_obs_vector_logical)), 3)
-  # hits <- x$Freq[which(x$seasonal_fwi_vector_logical == TRUE & x$seasonal_obs_vector_logical == TRUE)]
-  # misses <- x$Freq[which(x$seasonal_fwi_vector_logical == FALSE & x$seasonal_obs_vector_logical == TRUE)]
-  # falsealarms <- x$Freq[which(x$seasonal_fwi_vector_logical == TRUE & x$seasonal_obs_vector_logical == FALSE)]
-  # correctneg <- x$Freq[which(x$seasonal_fwi_vector_logical == FALSE & x$seasonal_obs_vector_logical == FALSE)]
-  # POD <- hits/(hits+misses)               # 66%
-  # FAR <- falsealarms/(hits+falsealarms)   # 98%
-  # FBI <- (hits+falsealarms)/(hits+misses) # 38%
-  # TS <- hits/(hits+misses+falsealarms)    # 1.7%
-  
   return(table(seasonal_fwi_vector_logical, seasonal_obs_vector_logical))
-  
+
 }

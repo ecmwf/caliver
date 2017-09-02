@@ -2,16 +2,21 @@ context("test-decompress_gz")
 
 test_that("decompress_gz works", {
 
-  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
+  # Dropbox link
+  dlink <- "https://www.dropbox.com/s/4afx6o33hkl0lfk/test.nc.gz?dl=0"
 
-  download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/",
-                             "caliver_test_data/test.nc.gz"),
-                destfile = file.path(myTempDir, "test.nc.gz"))
+  # Create a temporary directory
+  my_temp_dir <- tempdir()
 
-  decompress_gz(input_dir = myTempDir)
-  expect_equal("test.nc" %in% list.files(myTempDir), TRUE)
-  expect_equal("test.nc.gz" %in% list.files(myTempDir), FALSE)
+  # Download file
+  download.file(url = dlink, destfile = file.path(my_temp_dir, "test.nc.gz"))
 
-  file.remove(file.path(myTempDir, "test.nc"))
+  # Decompress downloaded file
+  decompress_gz(input_dir = my_temp_dir)
+  
+  # Test whether the file is in the temporary dir
+  expect_equal("test.nc" %in% list.files(my_temp_dir), TRUE)
+
+  file.remove(file.path(my_temp_dir, "test.nc"))
 
 })

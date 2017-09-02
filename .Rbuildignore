@@ -13,3 +13,4 @@
 ^vignettes/Fire_201706_Portugal\.Rmd$
 ^vignettes/danger_classes-vignette\.Rmd$
 ^vignettes/fire_danger_classes_Europe-vignette\.Rmd$
+^inst/tmp

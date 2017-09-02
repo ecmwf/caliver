@@ -2,7 +2,7 @@
 % Please edit documentation in R/mean_percs.R
 \name{mean_percs}
 \alias{mean_percs}
-\title{Calculate average percentile}
+\title{mean_percs}
 \usage{
 mean_percs(vals, perc_val, mod)
 }

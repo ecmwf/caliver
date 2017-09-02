@@ -1,5 +1,4 @@
-#' @title Generates the percentile risk index from a raster stack and a set of
-#' polygons
+#' @title get_perc_risk_index
 #'
 #' @description Generates the mean of the values over a certain percentile
 #' threshold for the pixel of the raster stack under the polygons of a shapefile

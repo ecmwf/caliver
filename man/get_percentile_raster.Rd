@@ -4,29 +4,32 @@
 \alias{get_percentile_raster}
 \title{get_percentile_raster}
 \usage{
-get_percentile_raster(input_file_path, probs, outDir = tempdir())
+get_percentile_raster(probs, input_raster = NULL, input_file_path = NULL,
+  output_dir = tempdir())
 }
 \arguments{
-\item{input_file_path}{is the name of the file(path) to read}
-
 \item{probs}{numeric vector of probabilities with values in [0,100] listing
-which percentiles should be calculated}
+which percentiles should be calculated.}
 
-\item{outDir}{is the directory where the output nc files are saved, by
+\item{input_raster}{is the RasterStack or RasterBrick to use.}
+
+\item{input_file_path}{is the name of the file(path) to read.}
+
+\item{output_dir}{is the directory where the output nc files are saved, by
 default this is a temporary directory.}
 }
 \value{
 list containing all the generated percentile maps
 }
 \description{
-This function calculates the given percentile at each grid point
+This function calculates percentile(s) at each grid point.
 }
 \examples{
 \dontrun{
 
-  x <- get_percentile_raster(input_file_path = "./outfile.nc",
-                            probs = c(50, 75, 90, 99),
-                            outDir = getwd())
+  x <- get_percentile_raster(probs = c(50, 75, 90, 99),
+                             input_file_path = "./outfile.nc",
+                             output_dir = getwd())
 }
 
 }

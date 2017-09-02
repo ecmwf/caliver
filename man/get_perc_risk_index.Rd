@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_perc_risk_index.R
 \name{get_perc_risk_index}
 \alias{get_perc_risk_index}
-\title{Generates the percentile risk index from a raster stack and a set of
-polygons}
+\title{get_perc_risk_index}
 \usage{
 get_perc_risk_index(r_stack, p_shape, perc_val = 75, mod = "gt")
 }

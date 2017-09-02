@@ -13,20 +13,20 @@
 #'
 
 read_risico_binary <- function(filename){
-  
-  myFile <- gzfile(filename, "rb")
-  grid_type <- readBin(myFile, integer(), 1)
+
+  my_file <- gzfile(filename, "rb")
+  grid_type <- readBin(my_file, integer(), 1)
 
   if (grid_type == 1) {
 
     #regular grid
-    grid_size <- readBin(myFile, "integer", 2, size = 4)
-    n_values <- grid_size[1]* grid_size[2]
+    grid_size <- readBin(my_file, "integer", 2, size = 4)
+    n_values <- grid_size[1] * grid_size[2]
 
-    lats <- readBin(myFile, "double", 2, size = 4)
-    lons <- readBin(myFile, "double", 2, size = 4)	
+    lats <- readBin(my_file, "double", 2, size = 4)
+    lons <- readBin(my_file, "double", 2, size = 4)
 
-    values_vect <- readBin(myFile, "double", n_values, size = 4)
+    values_vect <- readBin(my_file, "double", n_values, size = 4)
     values_vect[values_vect == -9999] <- NA
 
     vals <- matrix(values_vect, nrow = grid_size[1], byrow = T)
@@ -37,7 +37,7 @@ read_risico_binary <- function(filename){
 
   }
 
-  close(myFile)
+  close(my_file)
 
   return(r_values)
 

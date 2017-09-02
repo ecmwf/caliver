@@ -28,7 +28,7 @@ stack_netcdf_files <- function(input_dir = NULL,
                                pattern = NULL,
                                recursive = FALSE,
                                output_file = "outfile.nc"){
-  
+
   if (Sys.which("cdo")[[1]] == "") {
 
     stop("cdo executable not found. Check PATH or install cdo.")

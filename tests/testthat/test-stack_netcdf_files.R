@@ -1,21 +1,26 @@
 context("stack_netcdf_files")
 
 test_that("stack_netcdf_files works", {
+
+  my_temp_dir <- tempdir()
+
+  file.copy(from = geff5nc,
+            to = file.path(my_temp_dir, "teststackA.nc"),
+            overwrite = TRUE)
+
+  file.copy(from = geff5nc,
+            to = file.path(my_temp_dir, "teststackB.nc"),
+            overwrite = TRUE)
+
+  merged_file <- stack_netcdf_files(input_dir = my_temp_dir,
+                                   pattern = "^teststack",
+                                   output_file = file.path(my_temp_dir,
+                                                           "TestAB.nc"))
   
-  myTempDir <- tempdir()
-  download.file(url = paste0("https://dl.dropboxusercontent.com/u/23404805/",
-                             "caliver_test_data/testA.nc"), 
-                destfile = file.path(myTempDir, "testA.nc"))
-  inFile <- file.path(myTempDir, "testA.nc")
+  x <- raster::brick(merged_file)
   
-  file.copy(from = inFile, to = file.path(myTempDir, "testB.nc"))
+  print(dim(x))
   
-  mergedFile <- stack_netcdf_files(input_dir = myTempDir,
-                                   pattern = "^test",
-                                   output_file = file.path(myTempDir, "TestAB.nc"))
-  
-  x <- raster::stack(mergedFile)
-  
-  expect_equal(dim(x), c(256, 512, 2))
+  expect_equal(dim(x), c(256, 512, 10))
   
 })

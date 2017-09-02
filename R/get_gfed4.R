@@ -76,7 +76,7 @@ get_gfed4 <- function(start_date = NULL,
                       temporal_resolution = "daily",
                       varname = NULL,
                       region = "GLOB"){
-  
+
   # Create a tmp directory
   my_temp_dir <- tempdir()
   message(paste0("Downloading temporary files in: ", my_temp_dir))
@@ -105,7 +105,7 @@ get_gfed4 <- function(start_date = NULL,
 
       # Extract dataset with basis regions
       all_regions <- rhdf5::h5read(file = file.path(my_temp_dir, fname),
-                                  name = "/ancill/basis_regions")
+                                   name = "/ancill/basis_regions")
 
       # Convert hdf5 to raster
       regions_raster <- raster::raster(all_regions)
@@ -163,7 +163,7 @@ get_gfed4 <- function(start_date = NULL,
     if (temporal_resolution == "monthly"){
 
       tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                          by = "month")
+                           by = "month")
 
       my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
                        start = 1, stop = 6)
@@ -177,15 +177,15 @@ get_gfed4 <- function(start_date = NULL,
     if (temporal_resolution == "daily") {
 
       tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                          by = "day")
+                           by = "day")
 
-      dayOfYear <- lubridate::yday(tmp_date)
-      dayOfYear3CHR <- stringr::str_pad(dayOfYear, 3, pad = "0")
-      justYear <- substr(x = gsub("-", "", as.character(tmp_date)),
+      day_of_year <- lubridate::yday(tmp_date)
+      day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
+      just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
                          start = 1, stop = 4)
 
-      my_date <- paste0(justYear, dayOfYear3CHR)
-      
+      my_date <- paste0(just_year, day_of_year_3_chr)
+
       dir_url <- paste0(base_url, "/daily/")
 
       file_pattern <- "^GFED4.0_DQ_"
@@ -194,7 +194,7 @@ get_gfed4 <- function(start_date = NULL,
 
     for (d in my_date) {
 
-      justYear <- substr(d, start = 1, stop = 4)
+      just_year <- substr(d, start = 1, stop = 4)
 
       if (temporal_resolution == "monthly") {
 
@@ -206,11 +206,11 @@ get_gfed4 <- function(start_date = NULL,
       if (temporal_resolution == "daily") {
 
         input_file <- paste0("GFED4.0_DQ_", d, "_BA.hdf")
-        my_url <- paste0(dir_url, justYear, "/", input_file)
+        my_url <- paste0(dir_url, just_year, "/", input_file)
 
       }
 
-      try(x <- httr::GET(url = my_url, 
+      try(x <- httr::GET(url = my_url,
                          httr::authenticate(user = "fire", password = "burnt"),
                          httr::write_disk(file.path(my_temp_dir, input_file),
                                           overwrite = TRUE)), silent = FALSE)
@@ -249,7 +249,7 @@ get_gfed4 <- function(start_date = NULL,
     }
 
     output_file_name <- ifelse(is.null(varname), "GFED4.nc",
-                               paste0(varname,".nc"))
+                               paste0(varname, ".nc"))
     list_of_files <- list.files(my_temp_dir, pattern = file_pattern)
 
     # my_temp_dir only contains Burned Area files!

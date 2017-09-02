@@ -8,7 +8,15 @@ library(visualTest)
 library(ggplot2)
 library(proto)
 
+# Load location of datasets for testing
+geff5tar <- system.file(file.path("testdata", "geff5.tar"), package = "caliver")
+temp <- import_geff_data_from_tar(geff5tar, stack_ncfiles = FALSE)
+geff5nc <- stack_netcdf_files(input_dir = gsub(basename(temp)[1],"",temp[1]))
+b <- raster::brick(geff5nc)
+
 test_check("caliver")
+
+unlink(geff5nc)
 
 # Static code analysis
 # Integration with lintr: tests to fail if there are any lints in the project

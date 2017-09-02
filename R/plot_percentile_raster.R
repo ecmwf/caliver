@@ -16,7 +16,9 @@
 #' }
 #'
 
-plot_percentile_raster <- function(maps, rotate_map = FALSE, region = "GLOB", ...){
+plot_percentile_raster <- function(maps,
+                                   rotate_map = FALSE,
+                                   region = "GLOB", ...){
 
   if (rotate_map == TRUE) {
 
@@ -34,7 +36,7 @@ plot_percentile_raster <- function(maps, rotate_map = FALSE, region = "GLOB", ..
 
   if (region != "GLOB") {
 
-    mask_map <- get_gfed4(varname = 'BasisRegions', region = region)
+    mask_map <- get_gfed4(varname = "BasisRegions", region = region)
     cropped_map <- raster::trim(raster::mask(rotated_map, mask_map))
 
   } else {
@@ -44,18 +46,18 @@ plot_percentile_raster <- function(maps, rotate_map = FALSE, region = "GLOB", ..
   }
 
   # Define a background map
-  backgroundMap <- rworldmap::getMap(resolution = "low")
-  # We want to plot the background map on each layers of the stack, so we need 
-  # to create a function and pass it to the addfun argument 
+  background_map <- rworldmap::getMap(resolution = "low")
+  # We want to plot the background map on each layers of the stack, so we need
+  # to create a function and pass it to the addfun argument
   # (see ?plot in the raster package)
   fun <- function() {
 
-    plot(backgroundMap, add = TRUE, border = 'lightgray')
+    plot(background_map, add = TRUE, border = "lightgray")
 
   }
 
-  raster_min <- min(raster::cellStats(cropped_map, stat = 'min', na.rm = TRUE))
-  raster_max <- max(raster::cellStats(cropped_map, stat = 'max', na.rm = TRUE))
+  raster_min <- min(raster::cellStats(cropped_map, stat = "min", na.rm = TRUE))
+  raster_max <- max(raster::cellStats(cropped_map, stat = "max", na.rm = TRUE))
 
   # Define palette (from: rev(grDevices::heat.colors(n = 10)))
   heatcolors <- c("#FFFFBFFF", "#FFFF40FF", "#FFFF00FF", "#FFDB00FF",

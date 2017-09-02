@@ -1,4 +1,4 @@
-#' @title Calculate average percentile
+#' @title mean_percs
 #'
 #' @description Calculate average percentile
 #'
@@ -10,7 +10,7 @@
 
 mean_percs <- function(vals, perc_val, mod){
 
-  p_val <- stats::quantile(vals, perc_val/100, na.rm = T)
+  p_val <- stats::quantile(vals, perc_val / 100, na.rm = T)
 
   if (mod == "gt") {
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_fire_danger_levels.R
 \name{get_fire_danger_levels}
 \alias{get_fire_danger_levels}
-\title{Define Risk Threshold}
+\title{get_fire_danger_levels}
 \usage{
 get_fire_danger_levels(fire_index)
 }

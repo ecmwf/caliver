@@ -26,7 +26,7 @@ get_fire_season <- function(DATES, fss = NULL, fse = NULL, zone = "north"){
   if (is.null(fss) & zone == "north"){
 
     # Fire Season Start
-    fss <- as.Date("2012-04-01",  format = "%Y-%m-%d") 
+    fss <- as.Date("2012-04-01",  format = "%Y-%m-%d")
     # Fire Season End
     fse <- as.Date("2012-10-31",  format = "%Y-%m-%d")
 
