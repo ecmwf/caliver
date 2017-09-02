@@ -10,6 +10,7 @@ bioc_use_devel: true
 addons:
   apt:
     packages:
+    - libssl-dev
     - libproj-dev
     - libgdal-dev
     - libhdf5-dev
