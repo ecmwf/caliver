@@ -1,11 +1,12 @@
 #' @title get_percentile_raster
 #'
-#' @description This function calculates the given percentile at each grid point
+#' @description This function calculates percentile(s) at each grid point.
 #'
-#' @param input_file_path is the name of the file(path) to read
 #' @param probs numeric vector of probabilities with values in [0,100] listing
-#' which percentiles should be calculated
-#' @param outDir is the directory where the output nc files are saved, by
+#' which percentiles should be calculated.
+#' @param input_raster is the RasterStack or RasterBrick to use.
+#' @param input_file_path is the name of the file(path) to read.
+#' @param output_dir is the directory where the output nc files are saved, by
 #' default this is a temporary directory.
 #' 
 #' @return list containing all the generated percentile maps
@@ -15,47 +16,80 @@
 #' @examples
 #' \dontrun{
 #'
-#'   x <- get_percentile_raster(input_file_path = "./outfile.nc",
-#'                             probs = c(50, 75, 90, 99),
-#'                             outDir = getwd())
+#'   x <- get_percentile_raster(probs = c(50, 75, 90, 99),
+#'                              input_file_path = "./outfile.nc",
+#'                              output_dir = getwd())
 #' }
 #'
 
-get_percentile_raster <- function(input_file_path,
-                                 probs,
-                                 outDir = tempdir()){
+get_percentile_raster <- function(probs,
+                                  input_raster = NULL,
+                                  input_file_path = NULL,
+                                  output_dir = tempdir()){
 
-  stackedMaps <- raster::stack() 
+  if (all(is.null(input_raster), is.null(input_file_path))) {
+    stop("Please define either an input_raster or input_file_path")
+  }
 
-  for (i in 1:length(probs)) {
+  if (all(!is.null(input_raster), !is.null(input_file_path))) {
+    stop("Please define either an input_raster or input_file_path, the other must be NULL")
+  }
 
-    prob <- probs[i]
+  if (!is.null(input_raster)) {
 
-    fileName <- tools::file_path_sans_ext(basename(input_file_path))
+    fun <- function(x) {quantile(x, probs = probs/100, na.rm = TRUE)}
 
-    output_file <- file.path(outDir, paste0(fileName, "_", prob, ".nc"))
+    stacked_maps <- raster::calc(input_raster, fun)
 
-    system(paste0("cdo timpctl,", prob, " ", input_file_path,
-                  " -timmin ", input_file_path,
-                  " -timmax ", input_file_path, " ", output_file))
+    names(stacked_maps) <- paste0("FWI", probs)
 
-    probRaster <- raster::raster(output_file)
+    return(stacked_maps)
 
-    varname <- names(ncdf4::nc_open(input_file_path)$var)
-    names(probRaster) <- paste0(toupper(varname), prob)
+  } else if (!is.null(input_file_path)) {
+
+    # Use cdo to stack rasters
+
+    stacked_maps <- raster::stack()
+
+    for (i in 1:length(probs)) {
+
+      prob <- probs[i]
+
+      file_name <- tools::file_path_sans_ext(basename(input_file_path))
+
+      output_file <- file.path(output_dir, paste0(file_name, "_", prob, ".nc"))
+
+      system(paste0("cdo timpctl,", prob, " ", input_file_path,
+                    " -timmin ", input_file_path,
+                    " -timmax ", input_file_path, " ", output_file))
+
+      probability_raster <- raster::raster(output_file)
+
+      varname <- names(ncdf4::nc_open(input_file_path)$var)
+      names(probability_raster) <- paste0(toupper(varname), prob)
+
+      if (length(probs) > 1) {
+
+        stacked_maps <- raster::stack(stacked_maps, probability_raster)
+
+      } else {
+
+        stacked_maps <- probability_raster
+
+      }
+
+    }
 
     if (length(probs) > 1) {
 
-      stackedMaps <- raster::stack(stackedMaps, probRaster)
+      return(raster::brick(stacked_maps))
 
     } else {
 
-      stackedMaps <- probRaster
+      return(stacked_maps)
 
     }
 
   }
-
-  return(stackedMaps)
 
 }
