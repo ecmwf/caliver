@@ -105,7 +105,8 @@ get_gfed4 <- function(start_date = NULL,
 
       # Extract dataset with basis regions
       all_regions <- rhdf5::h5read(file = file.path(my_temp_dir, fname),
-                                   name = "/ancill/basis_regions")
+                                   name = paste0("/", "ancill",
+                                                 "/", "basis_regions"))
 
       # Convert hdf5 to raster
       regions_raster <- raster::raster(all_regions)
@@ -168,7 +169,7 @@ get_gfed4 <- function(start_date = NULL,
       my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
                        start = 1, stop = 6)
 
-      dir_url <- paste0(base_url, "/monthly/")
+      dir_url <- paste0(base_url, "/", "monthly", "/")
 
       file_pattern <- "^GFED4.0_MQ_"
 
@@ -186,7 +187,7 @@ get_gfed4 <- function(start_date = NULL,
 
       my_date <- paste0(just_year, day_of_year_3_chr)
 
-      dir_url <- paste0(base_url, "/daily/")
+      dir_url <- paste0(base_url, "/", "daily", "/")
 
       file_pattern <- "^GFED4.0_DQ_"
 

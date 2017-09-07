@@ -44,7 +44,7 @@ get_percentile_raster <- function(probs,
 
     fun <- function(x) {
 
-      quantile(x, probs = probs/100, na.rm = TRUE)
+      quantile(x, probs = probs / 100, na.rm = TRUE)
 
     }
 
