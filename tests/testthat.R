@@ -1,18 +1,19 @@
 library(testthat)
 library(caliver)
 
-##  Load the visualTest library to get fingerprint of basic plots
-library(visualTest)
-
 ##  Load the proto library for accessing sub-components of the ggplot2
 library(ggplot2)
 library(proto)
 
-# Load location of datasets for testing
+##  Load the visualTest library to get fingerprint of basic plots
+library(visualTest)
+
+# Testdata
 geff5tar <- system.file(file.path("testdata", "geff5.tar"), package = "caliver")
-temp <- import_geff_data_from_tar(geff5tar, stack_ncfiles = FALSE)
-geff5nc <- stack_netcdf_files(input_dir = gsub(basename(temp)[1],"",temp[1]))
-b <- raster::brick(geff5nc)
+s <- import_geff_data_from_tar(geff5tar)
+geff5nc <- stack_netcdf_files(input_dir = tempdir(),
+                              pattern = "^geff_reanalysis_an_fwis_fwi_1980010.*_0000_00.nc$", 
+                              output_file = "geff5.nc")
 
 test_check("caliver")
 

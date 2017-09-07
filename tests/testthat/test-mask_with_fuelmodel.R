@@ -1,21 +1,17 @@
 context("mask_with_fuelmodel")
 
-inFile <- tempfile()
-download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = inFile)
-x <- raster::raster(inFile)
-
 test_that("mask_with_fuelmodel works in the range 0+360", {
   
-  xmasked <- mask_with_fuelmodel(x)
+  xmasked <- mask_with_fuelmodel(s[[1]])
   
   # Check whether layers are named correctly
-  expect_equal(round(raster::cellStats(xmasked, mean),3), 1.618)
+  expect_equal(round(raster::cellStats(xmasked, mean),3), 7.582)
   
 })
 
 test_that("mask_with_fuelmodel works in the range -180+180", {
   
-  y <- raster::rotate(x)
+  y <- raster::rotate(s[[1]])
   
   ymasked <- mask_with_fuelmodel(y)
   

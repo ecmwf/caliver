@@ -9,11 +9,13 @@ context("validate_fire_danger_levels")
 # raster::writeRaster(simTest, filename='simTest.nc', format="CDF", overwrite=TRUE)
 
 obsTest <- tempfile()
-download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/obsTest.nc", destfile = obsTest)
+download.file(url = "https://www.dropbox.com/s/v5dpnxyxjxf2kwq/obsTest.nc?dl=0", 
+              destfile = obsTest)
 x <- raster::raster(obsTest)
 
 simTest <- tempfile()
-download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/simTest.nc", destfile = simTest)
+download.file(url = "https://www.dropbox.com/s/vjk8f67rw0oy0kl/simTest.nc?dl=0", 
+              destfile = simTest)
 y <- raster::raster(simTest)
 
 test_that("validate_fire_danger_levels works", {

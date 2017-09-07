@@ -1,10 +1,6 @@
 context("plot_fire_pdf")
 
-myTempDir <- tempdir()
-download.file(url = "https://dl.dropboxusercontent.com/u/23404805/caliver_test_data/outTest.nc", destfile = file.path(myTempDir, "outTest.nc"), method="curl")
-inFile <- file.path(myTempDir, "outTest.nc")
-
-x <- raster::raster(inFile)
+x <- s[[1]]
 
 test_that("plot_fire_pdf match expectations for no y-limit",{
   
@@ -13,7 +9,7 @@ test_that("plot_fire_pdf match expectations for no y-limit",{
                      upper_limit = NULL,
                      v_lines = NULL)
 
-  expect_equal(p$scales$scales[[2]]$limits, c(0, 40))
+  expect_equal(p$scales$scales[[2]]$limits, c(0, 120))
   
 })
 
@@ -23,7 +19,7 @@ test_that("Plot layers match expectations without vLines",{
                      thresholds = c(1,2,3,4,5),
                      upper_limit = 100)
   
-  expect_equal(length(p$layers) == 3, TRUE)
+  expect_equal(length(p$layers), 3)
   expect_identical(p$labels$y, "Density")
   expect_identical(p$labels$x, "FWI")
   expect_equal(p$scales$scales[[2]]$limits, c(0, 100))
@@ -37,7 +33,7 @@ test_that("Plot layers match expectations with vLines",{
                      upper_limit = 100,
                      v_lines = c("90%" = 0.90))
   
-  expect_equal(length(p$layers) == 5, TRUE)
+  expect_equal(length(p$layers), 5)
   expect_identical(p$labels$y, "Density")
   expect_identical(p$labels$x, "FWI")
   expect_equal(p$scales$scales[[2]]$limits, c(0, 100))

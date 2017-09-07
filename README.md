@@ -1,12 +1,3 @@
-<!--
-# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
-# This software is licensed under the terms of the Apache Licence Version 2.0 
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
-# In applying this licence, ECMWF does not waive the privileges and immunities 
-# granted to it by virtue of its status as an intergovernmental organisation nor
-# does it submit to any jurisdiction.
--->
-
 # caliver R package
 
 > CALIbration and VERification of gridded (fire risk) models
@@ -30,12 +21,23 @@ To install these dependencies:
 
 * On Windows, install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
 * On Mac, install [Xcode](https://developer.apple.com/xcode/) from the app store.
-* On Ubuntu-Linux, `sudo apt-get install r-base-dev libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo`.
+* On Ubuntu-Linux, `sudo apt-get install libssl-dev libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo`.
 
-Caliver also depends on additional R packages from both CRAN and Bioconductor. Here is how to install Bioconductor from an R console:
+Caliver also depends on additional R packages from both CRAN and Bioconductor. Here is how to install all the necessary packages:
 
 ``` r
+# Install packages from CRAN
+packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "rworldmap", "httr", "stringr", "lubridate", "RCurl", "plotrix", "reshape2", "R.utils", "devtools", "proto", "roxygen2", "png", "rmarkdown", "pkgdown")
+install.packages(packs)
+
+# Install package from BIOCONDUCTOR 
 source("https://bioconductor.org/biocLite.R")
+biocLite("rhdf5")
+
+# Install packages from GitHub
+devtools::install_github("jimhester/covr")
+devtools::install_github("jimhester/lintr")
+devtools::install_github("MangoTheCat/visualTest")
 ```
 
 Get the development version from github using [devtools](https://github.com/hadley/devtools):
