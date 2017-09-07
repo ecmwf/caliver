@@ -1,5 +1,5 @@
 #' @title plot_fire_pdf
-#' 
+#'
 #' @description Plot PDF of fire index
 #'
 #' @param fire_index RasterBrick containing the fire index
