@@ -19,7 +19,7 @@
 #'                      varname = NULL,
 #'                      pattern = "geff_reanalysis_an_fwis_fwi_",
 #'                      recursive = TRUE,
-#'                      output_file = "outfile.nc")
+#'                      output_file = "~/outfile.nc")
 #' }
 #'
 
@@ -27,7 +27,7 @@ stack_netcdf_files <- function(input_dir = NULL,
                                varname = NULL,
                                pattern = NULL,
                                recursive = FALSE,
-                               output_file = "outfile.nc"){
+                               output_file = NULL){
 
   if (Sys.which("cdo")[[1]] == "") {
 
@@ -62,6 +62,12 @@ stack_netcdf_files <- function(input_dir = NULL,
                                recursive = recursive,
                                full.names = TRUE),
                     collapse = " ")
+
+  }
+
+  if (is.null(output_file)) {
+
+    output_file <- file.path(getwd(), "outfile.nc")
 
   }
 

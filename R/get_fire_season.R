@@ -2,7 +2,7 @@
 #' 
 #' @description Get the season for each date in a vector
 #'
-#' @param DATES vector of dates
+#' @param dates vector of dates
 #' @param fss Fire Season Start (date in the format Y-m-d)
 #' @param fse Fire Season End (date in the format Y-m-d)
 #' @param zone this can either: "north", "south" or "tropics"
@@ -12,16 +12,16 @@
 #' @examples
 #' \dontrun{
 #'   # Modify default seasons
-#'   seasons <- get_fire_season(DATES,
+#'   seasons <- get_fire_season(dates,
 #'                            fss = as.Date("2012-04-01", format = "%Y-%m-%d"),
 #'                            fse = as.Date("2012-10-31", format = "%Y-%m-%d"))
 #' }
 #'
 
-get_fire_season <- function(DATES, fss = NULL, fse = NULL, zone = "north"){
+get_fire_season <- function(dates, fss = NULL, fse = NULL, zone = "north"){
 
   # Convert dates from any year to 2012 dates
-  d <- as.Date(strftime(DATES, format = "2012-%m-%d"))
+  d <- as.Date(strftime(dates, format = "2012-%m-%d"))
 
   if (is.null(fss) & zone == "north"){
 

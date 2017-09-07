@@ -8,7 +8,7 @@ dataDates <- seq.Date(from = as.Date('1980-01-01'),
 test_that("get_fire_season works for north hemisphere", {
   
   # Define a function to extract fire seasons in the north hemisphere
-  seasons <- get_fire_season(DATES = dataDates, zone = 'north')
+  seasons <- get_fire_season(dates = dataDates, zone = 'north')
   # View(data.frame("dates" = dataDates, "season" = seasons))
   
   # Check whether the proportion of days is correct
@@ -19,7 +19,7 @@ test_that("get_fire_season works for north hemisphere", {
 test_that("get_fire_season works for south hemisphere", {  
   
   # Define a function to extract fire seasons in the south hemisphere
-  seasons <- get_fire_season(DATES = dataDates, zone = 'south')
+  seasons <- get_fire_season(dates = dataDates, zone = 'south')
   
   # Check whether the proportion of days is correct
   expect_equal(table(seasons)[[1]], 5661)
@@ -30,7 +30,7 @@ test_that("get_fire_season works for south hemisphere", {
 test_that("get_fire_season works for tropics", {  
   
   # Define a function to extract fire seasons in the tropics
-  seasons <- get_fire_season(DATES = dataDates, zone = 'tropics')
+  seasons <- get_fire_season(dates = dataDates, zone = 'tropics')
   
   # Check whether the proportion of days is correct
   expect_equal(table(seasons)[[1]], 8964)

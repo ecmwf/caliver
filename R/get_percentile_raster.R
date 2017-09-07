@@ -8,7 +8,7 @@
 #' @param input_file_path is the name of the file(path) to read.
 #' @param output_dir is the directory where the output nc files are saved, by
 #' default this is a temporary directory.
-#' 
+#'
 #' @return list containing all the generated percentile maps
 #'
 #' @export
@@ -28,16 +28,25 @@ get_percentile_raster <- function(probs,
                                   output_dir = tempdir()){
 
   if (all(is.null(input_raster), is.null(input_file_path))) {
+
     stop("Please define either an input_raster or input_file_path")
+
   }
 
   if (all(!is.null(input_raster), !is.null(input_file_path))) {
-    stop("Please define either an input_raster or input_file_path, the other must be NULL")
+
+    stop(paste("Please define either an input_raster or input_file_path,",
+               "the other must be NULL"))
+
   }
 
   if (!is.null(input_raster)) {
 
-    fun <- function(x) {quantile(x, probs = probs/100, na.rm = TRUE)}
+    fun <- function(x) {
+
+      quantile(x, probs = probs/100, na.rm = TRUE)
+
+    }
 
     stacked_maps <- raster::calc(input_raster, fun)
 

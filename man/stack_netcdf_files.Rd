@@ -5,7 +5,7 @@
 \title{stack_netcdf_files}
 \usage{
 stack_netcdf_files(input_dir = NULL, varname = NULL, pattern = NULL,
-  recursive = FALSE, output_file = "outfile.nc")
+  recursive = FALSE, output_file = NULL)
 }
 \arguments{
 \item{input_dir}{is the directory where all the files to read are stored}
@@ -30,7 +30,7 @@ over the time dimension. It saves the merged file in the working directory.
                      varname = NULL,
                      pattern = "geff_reanalysis_an_fwis_fwi_",
                      recursive = TRUE,
-                     output_file = "outfile.nc")
+                     output_file = "~/outfile.nc")
 }
 
 }
