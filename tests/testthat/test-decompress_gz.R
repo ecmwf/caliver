@@ -13,7 +13,7 @@ test_that("decompress_gz works", {
 
   # Decompress downloaded file
   decompress_gz(input_dir = my_temp_dir)
-  
+
   # Test whether the file is in the temporary dir
   expect_equal("test.nc" %in% list.files(my_temp_dir), TRUE)
 

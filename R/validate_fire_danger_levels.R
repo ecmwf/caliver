@@ -25,7 +25,7 @@
 #'   FWI <- raster::brick('GEFF/reanalysis/FWI_1980-2016.nc')
 #'
 #'   # Generate the contingency table
-#'   ct <- validate_fire_danger_levels(fire_index = FWI, 
+#'   ct <- validate_fire_danger_levels(fire_index = FWI,
 #'                                  observation = BurnedAreas,
 #'                                  fire_threshold = 10, obs_threshold = 50)
 #'
