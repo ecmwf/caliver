@@ -35,9 +35,9 @@ Plot observations versus forecast
 }
 \examples{
 \dontrun{
-  plot_obs_vs_forecast(input_dir = "/scratch/mo/moc0/fire/GEFF1.2/forecast", 
-                    p = fireBBOX, 
-                    threshold = 14, 
+  plot_obs_vs_forecast(input_dir = "/scratch/mo/moc0/fire/GEFF1.2/forecast",
+                    p = fireBBOX,
+                    threshold = 14,
                     start_date = "2017-06-01", end_date = "2017-06-30",
                     obs_file_path = "CAMS_2017-06-01_2017-06-19_frpfire.nc")
 }
