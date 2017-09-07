@@ -21,7 +21,8 @@ plot_obs_vs_forecast(input_dir, p, threshold, start_date, end_date,
 
 \item{obs_file_path}{file path to observations (3D raster)}
 
-\item{forecast_type}{type of forecast: fc (high resolution/deterministic), cf (control forecast), pf (perturbed forecast/probabilistic)}
+\item{forecast_type}{type of forecast: fc (high resolution/deterministic),
+cf (control forecast), pf (perturbed forecast/probabilistic)}
 
 \item{origin}{This is the rating system of interest:
 fwi (default), mark5, nfdrs.}

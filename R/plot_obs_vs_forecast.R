@@ -1,5 +1,5 @@
 #' @title plot_obs_vs_forecast
-#' 
+#'
 #' @description Plot observations versus forecast
 #'
 #' @param input_dir folder containing forecast files
@@ -9,7 +9,8 @@
 #' @param start_date date when observations start
 #' @param end_date date when observations end
 #' @param obs_file_path file path to observations (3D raster)
-#' @param forecast_type type of forecast: fc (high resolution/deterministic), cf (control forecast), pf (perturbed forecast/probabilistic)
+#' @param forecast_type type of forecast: fc (high resolution/deterministic),
+#' cf (control forecast), pf (perturbed forecast/probabilistic)
 #' @param origin This is the rating system of interest:
 #' fwi (default), mark5, nfdrs.
 #' @param index This is the index to analyse

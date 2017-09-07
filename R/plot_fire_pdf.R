@@ -26,8 +26,8 @@ plot_fire_pdf <- function(fire_index,
   fire_palette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
                     "#E41A1C", "#6b3535", "#403131")
 
-  IDX <- na.omit(as.vector(fire_index))
-  IDXno0 <- IDX[IDX > 0]
+  idx <- na.omit(as.vector(fire_index))
+  idxno0 <- idx[idx > 0]
 
   # percentiles corresponding to the danger thresholds:
   cols <- c("VeryLow" = fire_palette[1],
@@ -39,25 +39,25 @@ plot_fire_pdf <- function(fire_index,
 
   if (is.null(upper_limit)) {
 
-    upper_limit <- ceiling(max(IDXno0))
+    upper_limit <- ceiling(max(idxno0))
 
   }
 
   danger_classes <- c(0, thresholds, upper_limit)
 
-  vdistance <- max(density(IDXno0)$y) / 15
+  vdistance <- max(density(idxno0)$y) / 15
   hdistance <- max(danger_classes) / 100
 
   x1 <- x2 <- y1 <- y2 <- NULL # to avoid warning in check!
 
   df <- data.frame(x1 = danger_classes[1:6],
                    x2 = danger_classes[2:7],
-                   y1 = min(density(IDXno0)$y) - vdistance,
-                   y2 = min(density(IDXno0)$y) - vdistance,
+                   y1 = min(density(idxno0)$y) - vdistance,
+                   y2 = min(density(idxno0)$y) - vdistance,
                    danger_levels = factor(x = fire_palette,
                                          levels = c(fire_palette)))
 
-  p <- ggplot(as.data.frame(IDXno0), aes(IDXno0)) +
+  p <- ggplot(as.data.frame(idxno0), aes(idxno0)) +
     geom_density(colour = "#6d6b6b", fill = "grey") +
     geom_segment(aes(x = x1, y = y1,
                      xend = x2, yend = y2, colour = df$danger_levels),
@@ -81,7 +81,7 @@ plot_fire_pdf <- function(fire_index,
     dfv <- data.frame(label = names(v_lines), value = as.numeric(v_lines))
     p <- p + geom_vline(data = dfv, mapping = aes(xintercept = value),
                         color = "darkgray", linetype = 2) +
-      geom_text(data = dfv, mapping = aes(x = value, y = max(density(IDXno0)$y),
+      geom_text(data = dfv, mapping = aes(x = value, y = max(density(idxno0)$y),
                                           label = label),
                 angle = 90, vjust = -0.4, colour = "#585858")
 
