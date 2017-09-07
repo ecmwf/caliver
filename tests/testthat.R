@@ -8,7 +8,7 @@ library(proto)
 ##  Load the visualTest library to get fingerprint of basic plots
 library(visualTest)
 
-# Testdata
+# Test data
 geff5tar <- system.file(file.path("testdata", "geff5.tar"), package = "caliver")
 s <- import_geff_data_from_tar(geff5tar)
 geff5nc <- stack_netcdf_files(input_dir = tempdir(),
