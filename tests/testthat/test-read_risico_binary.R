@@ -2,10 +2,6 @@ context("read_risico_binary")
 
 test_that("read_risico_binary works", {
 
-  skip_on_appveyor()
-
-  myTempDir <- tempdir() # works on all platforms with a platform-dependent result
-
   binary_file <- "RISICO_binary.bin"
   test_file <- "RISICO_raster.rds"
 

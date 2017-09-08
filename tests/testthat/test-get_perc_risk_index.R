@@ -3,7 +3,7 @@ context("get_perc_risk_index")
 test_that("get_perc_risk_index works", {
 
   raster <- readRDS(system.file("extdata", "RISICO", "RISICO_raster.rds",
-                                package="caliver"))
+                                package = "caliver"))
 
   shape <- rgdal::readOGR(dsn = system.file("extdata", "RISICO",
                                             package = "caliver"),
