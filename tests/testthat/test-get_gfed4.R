@@ -6,9 +6,9 @@ test_that("get_gfed4 works with basis regions", {
 
   expect_equal("SpatialPolygonsDataFrame" %in% class(gfed4_basis_regions), TRUE)
 
-  EURO <- get_gfed4(varname = "BasisRegions", region = "EURO")
+  euro <- get_gfed4(varname = "BasisRegions", region = "EURO")
 
-  expect_equal(dim(EURO), c(21860, 1))
+  expect_equal(dim(euro), c(21860, 1))
 
 })
 

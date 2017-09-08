@@ -7,7 +7,7 @@
 #' @param region string of characters describing the region.
 #' @param ... additional graphical parameters inherited from plot() in the
 #' raster package.
-#' 
+#'
 #' @export
 #'
 #' @examples
