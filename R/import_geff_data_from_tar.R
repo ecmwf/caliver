@@ -7,7 +7,7 @@
 #' @param archive file path to the tar file
 #' @param stack_ncfiles logical (TRUE by default) variable to decided wheteher
 #' decompressed nc files should be stacked or not.
-#' 
+#'
 #' @return If \code{stack_ncfiles} is TRUE, the function returns a RasterBrick.
 #' If \code{stack_ncfiles} is FALSE, it returns the list of uncompressed files.
 #'
