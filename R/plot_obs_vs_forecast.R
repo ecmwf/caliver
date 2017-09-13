@@ -51,6 +51,52 @@ plot_obs_vs_forecast <- function(input_dir,
 
   # For each starting date and forecast date, calculate the percentage of
   # pixels exceeding the high danger level
+  s <- stack()
+  for (i in 1:length(my_dates)) {
+
+    # transform dates to strings to build file name
+    start_d <- gsub("-", "", as.character(my_dates[i]))
+
+    for (j in 1:length(my_dates)) {
+
+      # transform dates to strings to build file name
+      end_d <- gsub("-", "", as.character(my_dates[j]))
+
+      file2read <- file.path(input_dir,
+                             paste0(start_d, "_", end_d, "_ecfire_",
+                                    forecast_type, "_",
+                                    origin, "_", index, ".nc"))
+
+      if (file.exists(file2read)) {
+        s <- stack(s, raster::raster(file2read))
+      }
+
+    }
+
+  }
+
+  if (round(s@extent@xmin, 0) == 0) {
+
+    s <- raster::rotate(s)
+
+  }
+
+  message("Masking layers")
+  s_masked <- raster::mask(s, p, progress = "text")
+
+  message("Cropping layers")
+  s_cropped <- raster::crop(s_masked, p, progress = "text")
+
+  # reclassify the values into two groups 
+  # all values < threshold become 0, the others are 1
+  m <- c(0, 100, 0,
+         100, 10000000000, 1)
+  rclmat <- matrix(m, ncol=3, byrow=TRUE)
+  s_reclassified <- raster::reclassify(s_cropped, rclmat)
+
+  n_total <- sum(as.vector(!is.na(s_cropped[[1]])))
+
+  layer_counter <- 1
   for (i in 1:length(my_dates)) {
 
     # transform dates to strings to build file name
@@ -68,23 +114,9 @@ plot_obs_vs_forecast <- function(input_dir,
 
       if (file.exists(file2read)) {
 
-        raster_map <- raster::raster(file2read)
-
-        if (round(raster_map@extent@xmin, 0) == 0) {
-
-          raster_map <- raster::rotate(raster_map)
-
-        }
-
-        raster_cropped <- raster::crop(raster_map, p)
-        n_total <- dim(raster_cropped)[1] * dim(raster_cropped)[2]
-        perc <- length(raster_cropped[raster_cropped >= threshold]) /
-          n_total
-        raster_mean_matrix[i, j] <- perc
-
-      } else {
-
-        raster_mean_matrix[i, j] <- NA
+        perc_layer <- cellStats(s_reclassified[[layer_counter]], sum)/n_total
+        raster_mean_matrix[i, j] <- round(perc_layer,2)*100
+        layer_counter <- layer_counter + 1
 
       }
 
@@ -99,15 +131,15 @@ plot_obs_vs_forecast <- function(input_dir,
   raster_mean_matrix <- raster_mean_matrix[,
                                            colSums(is.na(raster_mean_matrix)) !=
                                              dim(raster_mean_matrix)[1]]
+
   forecast_dates <- my_dates[1:dim(raster_mean_matrix)[1]]
   observation_dates <- my_dates[1:dim(raster_mean_matrix)[2]]
 
   # reshape the data.frame with forecast values
-  x <- reshape2::melt(raster_mean_matrix * 100)
+  x <- reshape2::melt(raster_mean_matrix)
 
   frp <- raster::brick(obs_file_path)
-  frp_cropped <- mask_crop_subset(r = frp, p = p,
-                            mask = TRUE, crop = FALSE)
+  frp_cropped <- mask_crop_subset(r = frp, p = p, mask = TRUE, crop = FALSE)
   frp_ts <- as.numeric(raster::cellStats(frp_cropped, sum))
   df_frp <- data.frame(date = forecast_dates[1:length(frp_ts)],
                       frp_original = frp_ts,
@@ -117,7 +149,7 @@ plot_obs_vs_forecast <- function(input_dir,
 
   my_name <- "% of pixels\nexceeding the\nhigh danger level"
   # Make the boxy forecast plot using ggplot2
-  p <- ggplot(x, aes_string("Var2", "Var1")) +
+  final_plot <- ggplot(x, aes_string("Var2", "Var1")) +
     geom_tile(aes_string(fill = "value"), colour = "white") +
     scale_fill_distiller(palette = "Spectral",
                          na.value = NA,
@@ -148,6 +180,6 @@ plot_obs_vs_forecast <- function(input_dir,
                                            labels = labels_obs)) +
     theme(plot.title = element_text(hjust = 0.5))
 
-  return(p)
+  return(final_plot)
 
 }
