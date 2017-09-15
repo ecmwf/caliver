@@ -49,7 +49,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
   }
 
   if (!is.null(idx)) {
-    
+
     r_subsetted <- raster::subset(r_cropped, idx)
 
   } else {
