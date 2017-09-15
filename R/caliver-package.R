@@ -10,7 +10,7 @@
 #' @import ncdf4
 #' @import ggplot2
 #' @importFrom raster raster stack mask crop rotate extent extract t plot
-#' @importFrom raster cellFromPolygon
+#' @importFrom raster cellFromPolygon cellStats
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines CRS
 #' @importFrom graphics plot

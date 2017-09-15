@@ -114,7 +114,8 @@ plot_obs_vs_forecast <- function(input_dir,
 
       if (file.exists(file2read)) {
 
-        perc_layer <- cellStats(s_reclassified[[layer_counter]], sum)/n_total
+        perc_layer <- raster::cellStats(s_reclassified[[layer_counter]],
+                                        sum)/n_total
         raster_mean_matrix[i, j] <- round(perc_layer,2)*100
         layer_counter <- layer_counter + 1
 
