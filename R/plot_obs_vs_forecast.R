@@ -87,11 +87,11 @@ plot_obs_vs_forecast <- function(input_dir,
   message("Cropping layers")
   s_cropped <- raster::crop(s_masked, p, progress = "text")
 
-  # reclassify the values into two groups 
+  # reclassify the values into two groups
   # all values < threshold become 0, the others are 1
   m <- c(0, 100, 0,
          100, 10000000000, 1)
-  rclmat <- matrix(m, ncol=3, byrow=TRUE)
+  rclmat <- matrix(m, ncol = 3, byrow = TRUE)
   s_reclassified <- raster::reclassify(s_cropped, rclmat)
 
   n_total <- sum(as.vector(!is.na(s_cropped[[1]])))

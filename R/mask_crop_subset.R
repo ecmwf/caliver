@@ -39,8 +39,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
   }
 
   if (crop == TRUE) {
-
-    # message("Cropping raster over polygon")
+    
     r_cropped <- raster::crop(r_masked, p, progress = "text")
 
   }else{
@@ -50,8 +49,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
   }
 
   if (!is.null(idx)) {
-
-    message("Subsetting over time indices")
+    
     r_subsetted <- raster::subset(r_cropped, idx)
 
   } else {
