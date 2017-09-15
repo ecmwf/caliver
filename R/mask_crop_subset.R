@@ -26,7 +26,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
 
   if (mask == TRUE) {
 
-    message("Masking raster over polygon")
+    # message("Masking raster over polygon")
     r_masked <- raster::mask(r, p, progress = "text")
 
     # identify cells covering italy and set all remaining pixels to NA
@@ -40,7 +40,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
 
   if (crop == TRUE) {
 
-    message("Cropping raster over polygon")
+    # message("Cropping raster over polygon")
     r_cropped <- raster::crop(r_masked, p, progress = "text")
 
   }else{
