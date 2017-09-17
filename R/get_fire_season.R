@@ -1,5 +1,5 @@
 #' @title get_fire_season
-#' 
+#'
 #' @description Get the season for each date in a vector
 #'
 #' @param dates vector of dates

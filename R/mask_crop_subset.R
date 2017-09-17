@@ -26,7 +26,6 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
 
   if (mask == TRUE) {
 
-    # message("Masking raster over polygon")
     r_masked <- raster::mask(r, p, progress = "text")
 
     # identify cells covering italy and set all remaining pixels to NA
@@ -39,7 +38,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
   }
 
   if (crop == TRUE) {
-    
+
     r_cropped <- raster::crop(r_masked, p, progress = "text")
 
   }else{
@@ -68,7 +67,6 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
 
   if ("RasterStack" %in% class(r_subsetted)) {
 
-    message("Convert stack of fire indices into a raster brick")
     r_output <- raster::brick(r_subsetted, progress = "text")
 
   }
