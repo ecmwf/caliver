@@ -42,8 +42,7 @@
 
 get_fire_danger_levels <- function(fire_index){
 
-  if (is.na(sum(as.vector(raster::calc(x = fire_index, fun = sum)),
-                na.rm = T))) {
+  if (all(is.na(as.vector(fire_index)))) {
 
     message("The raster brick only contains NAs")
     return(rep(NA, 6))
