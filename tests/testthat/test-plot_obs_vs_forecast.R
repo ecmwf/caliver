@@ -29,7 +29,7 @@ test_that("plot_obs_vs_forecast works", {
                       format="CDF", overwrite = TRUE)
 
   polyg <- as(raster::extent(-90, 90, -45, 45), "SpatialPolygons")
-  crs(polyg) <- crs(y)
+  raster::crs(polyg) <- raster::crs(y)
 
   my_plot <- plot_obs_vs_forecast(input_dir = geffdir,
                                   p = polyg,
