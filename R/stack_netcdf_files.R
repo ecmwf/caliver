@@ -47,30 +47,6 @@ stack_netcdf_files <- function(input_dir = NULL,
                              full.names = TRUE),
                   collapse = " ")
 
-  # if (is.null(pattern)) {
-  # 
-  #   if (recursive == TRUE) {
-  # 
-  #     ifiles <- paste(list.files(path = input_dir,
-  #                                recursive = recursive,
-  #                                full.names = TRUE),
-  #                     collapse = " ")
-  #   } else {
-  # 
-  #     ifiles <- file.path(input_dir, "*.nc")
-  # 
-  #   }
-  # 
-  # } else {
-  # 
-  #   ifiles <- paste(list.files(path = input_dir,
-  #                              pattern = pattern,
-  #                              recursive = recursive,
-  #                              full.names = TRUE),
-  #                   collapse = " ")
-  # 
-  # }
-
   if (is.null(output_file)) {
 
     output_file <- file.path(getwd(), "outfile.nc")
