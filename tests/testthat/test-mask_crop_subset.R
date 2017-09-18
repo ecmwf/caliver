@@ -10,7 +10,7 @@ test_that("mask_crop_subset works", {
   
   # Check whether the stack converts to brick
   x0b <- mask_crop_subset(raster::stack(s), p, mask = TRUE, crop = TRUE)
-  expect_equal(class(x0b), "try-error")
+  expect_equal("RasterBrick" %in% class(x0b), TRUE)
 
   # Check whether the result is correct in case of TRUE TRUE
   x1 <- mask_crop_subset(s, p, mask = TRUE, crop = TRUE)
