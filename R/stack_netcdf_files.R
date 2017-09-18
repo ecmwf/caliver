@@ -29,12 +29,6 @@ stack_netcdf_files <- function(input_dir = NULL,
                                recursive = FALSE,
                                output_file = NULL){
 
-  if (Sys.which("cdo")[[1]] == "") {
-
-    stop("cdo executable not found. Check PATH or install cdo.")
-
-  }
-
   if (is.null(input_dir)) {
 
     stop("Please specify data folder 'input_dir'!")
