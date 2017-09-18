@@ -24,6 +24,14 @@
 
 mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
 
+  if (!("RasterLayer" %in% class(r)) &
+      !("RasterBrick" %in% class(r)) &
+      !("RasterStack" %in% class(r))) {
+
+    stop("Error: r can only be a raster brick/stack")
+
+  }
+
   if (mask == TRUE) {
 
     r_masked <- raster::mask(r, p, progress = "text")
@@ -54,14 +62,6 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
   } else {
 
     r_subsetted <- r_cropped
-
-  }
-
-  if (!("RasterLayer" %in% class(r_subsetted)) &
-      !("RasterBrick" %in% class(r_subsetted)) &
-      !("RasterStack" %in% class(r_subsetted))) {
-
-    stop("Error: r can only be a raster brick/stack")
 
   }
 
