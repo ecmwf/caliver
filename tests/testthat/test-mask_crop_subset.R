@@ -3,11 +3,11 @@ context("mask_crop_subset")
 test_that("mask_crop_subset works", {
 
   p <- raster::getData(name = "GADM", country = "Italy", level = 0)
-  
+
   # Check whether the stopping option works correctly
   x0a <- try(mask_crop_subset("s", p, mask = TRUE, crop = TRUE), silent = TRUE)
   expect_equal(class(x0a), "try-error")
-  
+
   # Check whether the stack converts to brick
   x0b <- mask_crop_subset(raster::stack(s), p, mask = TRUE, crop = TRUE)
   expect_equal("RasterBrick" %in% class(x0b), TRUE)
