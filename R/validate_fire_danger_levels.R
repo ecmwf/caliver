@@ -94,14 +94,26 @@ validate_fire_danger_levels <- function(fire_index,
 
   }
 
-  # Aggregate/Resample observations to match the resolution of the fire index
-  fact <- round(dim(obs_brick)[1:2] / dim(fwi_brick)[1:2], 0)
-  message("Aggregate observations to match the resolution of the fire index")
-  burned_areas <- raster::aggregate(obs_brick, fact, fun = sum,
-                                    progress = "text")
-  message("Resample observations to match the resolution of the fire index")
-  burned_areas_resampled <- raster::resample(burned_areas, fwi_brick,
-                                  method = "bilinear", progress = "text")
+  if (all(raster::res(obs_brick) != raster::res(fwi_brick))) {
+
+    # Aggregate/Resample observations to match the resolution of the fire index
+    fact <- round(dim(obs_brick)[1:2] / dim(fwi_brick)[1:2], 0)
+    message("Aggregate observations to match the resolution of the fire index")
+    burned_areas <- raster::aggregate(obs_brick,
+                                      fact,
+                                      fun = sum,
+                                      progress = "text")
+    message("Resample observations to match the resolution of the fire index")
+    burned_areas_resampled <- raster::resample(burned_areas,
+                                               fwi_brick,
+                                               method = "bilinear",
+                                               progress = "text")
+
+  } else {
+
+    burned_areas_resampled <- obs_brick
+
+  }
 
   # Select only period in common
   fwi_index <- which(names(fwi_brick) %in% names(burned_areas_resampled))
@@ -109,7 +121,7 @@ validate_fire_danger_levels <- function(fire_index,
   seasonal_fwi <- raster::subset(fwi_brick, fwi_index)
   seasonal_obs <- raster::subset(burned_areas_resampled, obs_index)
 
-  message("Calculating contingency table")
+  # Calculating contingency table
   # Transform BurnedAreas to binary (is BurnedAreas > 50 hectares?)
   seasonal_obs_vector <- as.vector(seasonal_obs)
   seasonal_obs_vector_logical <- ifelse(test = (seasonal_obs_vector >=
