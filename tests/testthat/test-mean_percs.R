@@ -14,6 +14,6 @@ test_that("mean_percs works", {
   expect_equal(round(percs, 0), 15)
   percs <- try(caliver:::mean_percs(vals = test_data,
                                     perc_val = 50, mod = "mt"), silent = TRUE)
-  expect_equal(class(percs), "try_error")
+  expect_equal(class(percs), "try-error")
 
 })
