@@ -29,7 +29,7 @@
 #'
 
 plot_obs_vs_forecast <- function(input_dir,
-                                 p,
+                                 p = NULL,
                                  threshold,
                                  start_date,
                                  end_date,
@@ -42,16 +42,11 @@ plot_obs_vs_forecast <- function(input_dir,
                       to = as.Date(end_date),
                       by = "day")
 
-  # Initialise the matrix to hold the values
-  raster_mean_matrix <- matrix(NA,
-                               nrow = length(my_dates),
-                               ncol = length(my_dates))
-
   message("Collating forecast information")
 
   # For each starting date and forecast date, calculate the percentage of
   # pixels exceeding the high danger level
-  s <- stack()
+  s <- raster::stack()
   for (i in 1:length(my_dates)) {
 
     # transform dates to strings to build file name
@@ -68,7 +63,7 @@ plot_obs_vs_forecast <- function(input_dir,
                                     origin, "_", index, ".nc"))
 
       if (file.exists(file2read)) {
-        s <- stack(s, raster::raster(file2read))
+        s <- raster::stack(s, raster::raster(file2read))
       }
 
     }
@@ -81,21 +76,30 @@ plot_obs_vs_forecast <- function(input_dir,
 
   }
 
-  message("Masking layers")
-  s_masked <- raster::mask(s, p, progress = "text")
+  if (!is.null(p)) {
 
-  message("Cropping layers")
-  s_cropped <- raster::crop(s_masked, p, progress = "text")
+    s_cropped <- mask_crop_subset(s, p)
+
+  } else {
+
+    s_cropped <- s
+
+  }
 
   # reclassify the values into two groups
   # all values < threshold become 0, the others are 1
-  m <- c(0, 100, 0,
-         100, 10000000000, 1)
+  m <- c(0, threshold, 0,
+         threshold, 10000000000, 1)
   rclmat <- matrix(m, ncol = 3, byrow = TRUE)
   s_reclassified <- raster::reclassify(s_cropped, rclmat)
 
+  # Total number of non-NA cells
   n_total <- sum(as.vector(!is.na(s_cropped[[1]])))
 
+  # Initialise the matrix to hold the values
+  raster_mean_matrix <- matrix(NA,
+                               nrow = length(my_dates),
+                               ncol = length(my_dates))
   layer_counter <- 1
   for (i in 1:length(my_dates)) {
 
@@ -125,10 +129,10 @@ plot_obs_vs_forecast <- function(input_dir,
 
   }
 
-  # Check for empty rows
+  # Remove empty rows
   raster_mean_matrix <- raster_mean_matrix[rowSums(is.na(raster_mean_matrix)) !=
                                              length(my_dates), ]
-  # Check for empty columns
+  # Remove empty columns
   raster_mean_matrix <- raster_mean_matrix[,
                                            colSums(is.na(raster_mean_matrix)) !=
                                              dim(raster_mean_matrix)[1]]

@@ -4,7 +4,7 @@
 \alias{plot_obs_vs_forecast}
 \title{plot_obs_vs_forecast}
 \usage{
-plot_obs_vs_forecast(input_dir, p, threshold, start_date, end_date,
+plot_obs_vs_forecast(input_dir, p = NULL, threshold, start_date, end_date,
   obs_file_path, forecast_type = "fc", origin = "fwi", index = "fwi")
 }
 \arguments{
