@@ -46,14 +46,4 @@ test_that("plot_obs_vs_forecast works", {
   expect_identical(my_plot$labels$y, "Forecast date")
   expect_identical(my_plot$labels$x, "Observation date")
 
-  test <- file.path(tempdir(), "test.png")
-  png(filename = test)
-    my_plot
-  dev.off()
-
-  # This is to get the fingerprint: visualTest::getFingerprint(test)
-  visualTest::isSimilar(file = test,
-                        fingerprint = "82842AD771FAF0F1",
-                        threshold = 0.1)
-
 })
