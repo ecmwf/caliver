@@ -14,6 +14,6 @@ test_that("validate_fire_danger_levels works", {
                                             fire_threshold = 10,
                                             obs_threshold = 0.5)
 
-  expect_equal(as.vector(tableTest), c(0, 2, 2, 0))
+  expect_equal(as.vector(table_test), c(0, 2, 2, 0))
 
 })
