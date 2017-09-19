@@ -53,7 +53,7 @@ test_that("plot_obs_vs_forecast works", {
 
   # This is to get the fingerprint: visualTest::getFingerprint(test)
   visualTest::isSimilar(file = test,
-                        fingerprint = "CA8521CA35FAF1F0",
+                        fingerprint = "82842AD771FAF0F1",
                         threshold = 0.1)
 
 })
