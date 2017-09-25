@@ -171,7 +171,7 @@ get_gfed4 <- function(start_date = NULL,
 
       dir_url <- paste0(base_url, "/", "monthly", "/")
 
-      file_pattern <- "^GFED4.0_MQ_"
+      pattern0 <- "GFED4.0_MQ_"
 
     }
 
@@ -189,9 +189,11 @@ get_gfed4 <- function(start_date = NULL,
 
       dir_url <- paste0(base_url, "/", "daily", "/")
 
-      file_pattern <- "^GFED4.0_DQ_"
+      pattern0 <- "GFED4.0_DQ_"
 
     }
+
+    file_pattern <- paste0("^", pattern0)
 
     for (d in my_date) {
 
@@ -199,14 +201,14 @@ get_gfed4 <- function(start_date = NULL,
 
       if (temporal_resolution == "monthly") {
 
-        input_file <- paste0("GFED4.0_MQ_", d, "_BA.hdf")
+        input_file <- paste0(pattern0, d, "_BA.hdf")
         my_url <- paste0(dir_url, input_file)
 
       }
 
       if (temporal_resolution == "daily") {
 
-        input_file <- paste0("GFED4.0_DQ_", d, "_BA.hdf")
+        input_file <- paste0(pattern0, d, "_BA.hdf")
         my_url <- paste0(dir_url, just_year, "/", input_file)
 
       }
@@ -251,7 +253,9 @@ get_gfed4 <- function(start_date = NULL,
 
     output_file_name <- ifelse(is.null(varname), "GFED4.nc",
                                paste0(varname, ".nc"))
-    list_of_files <- list.files(my_temp_dir, pattern = file_pattern)
+    list_of_files <- list.files(my_temp_dir,
+                                pattern = file_pattern,
+                                full.names = TRUE)
 
     # my_temp_dir only contains Burned Area files!
     if (length(list.files(my_temp_dir)) == 0) {
@@ -262,45 +266,18 @@ get_gfed4 <- function(start_date = NULL,
 
     if (length(list_of_files) == 1) {
 
-      if (temporal_resolution == "daily" &
-          substr(list_of_files, 9, 9) == "D") {
-
-        output_file_name <- file.path(my_temp_dir, list_of_files)
-
-      }
-
-      if (temporal_resolution == "monthly" &
-          substr(list_of_files, 9, 9) == "M") {
-
-        output_file_name <- file.path(my_temp_dir, list_of_files)
-
-      }
-
-      merged_raster <- raster::raster(output_file_name)
+      merged_raster <- raster::raster(list_of_files)
 
     }
 
     if (length(list_of_files) > 1) {
 
-      if (temporal_resolution == "daily") {
-
-        output_file_path <- stack_netcdf_files(input_dir = my_temp_dir,
-                                          pattern = "^GFED4.0_DQ_",
-                                          output_file = file.path(my_temp_dir,
-                                                              output_file_name))
-
-      }
-
-      if (temporal_resolution == "monthly") {
-
-        output_file_path <- stack_netcdf_files(input_dir = my_temp_dir,
-                                          pattern = "^GFED4.0_MQ_",
-                                          output_file = output_file_name)
-
-      }
+      output_file_path <- stack_netcdf_files(input_dir = my_temp_dir,
+                                             pattern = file_pattern,
+                                             output_file = output_file_name)
 
       message("Generating RasterBrick")
-      merged_raster <- raster::brick(file.path(my_temp_dir, output_file_name))
+      merged_raster <- raster::brick(output_file_name)
 
     }
 
@@ -319,7 +296,7 @@ get_gfed4 <- function(start_date = NULL,
     regions_raster_t@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
 
     message("Removing temporary files")
-    unlink(file.path(my_temp_dir, list.files(path = my_temp_dir)))
+    unlink(list_of_files)
 
     return(regions_raster_t)
 

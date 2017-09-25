@@ -17,41 +17,17 @@ knitr::opts_chunk$set(echo = TRUE,
 
 The name caliver stands for **CALI**bration and **VER**ification of gridded model outputs. It is a package developed for the R programming language and available with an APACHE-2 license from a public repository. The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regard to outputs of the following forest fire models: GEFF and RISICO. Applicability to other model results will be investigated in future works. Complete documentation is available within the package. This vignette contains the code to run all the examples in [@vitolo:2017b], please refer to this paper for more information.
 
-## Package Info
+## Package installation and dependencies
 
-The caliver package is implemented in the R statistical language and depends on the following external libraries: the Climate Data Operators [@schulzweida2006cdo] a large tool set for working on climate and NWP model data), the NCAR Command Language [@brown2012ncar] an interpreted language for scientific data analysis, the Geospatial Data Abstraction Library [@warmerdam2008geospatial] a translator library for raster and vector geospatial data formats, and the NetCDF4 library [@rew1990netcdf]. Users must have the above libraries installed before attempting to install caliver.
+The caliver package is implemented in the R statistical language and depends on the following external libraries: the Climate Data Operators [@schulzweida2006cdo] a large tool set for working on climate and NWP model data), the NCAR Command Language [@brown2012ncar] an interpreted language for scientific data analysis, the Geospatial Data Abstraction Library [@warmerdam2008geospatial] a translator library for raster and vector geospatial data formats, and the NetCDF4 library [@rew1990netcdf].
+
+The caliver package also depends on additional R packages from both CRAN and Bioconductor. Users must have the above dependencies installed before attempting to install caliver. Installation instructions for different operating systems are available in the README file.
 
 ```{r, echo = FALSE, eval = FALSE}
-# Is CDO installed?
-Sys.which("cdo")[[1]]
-
-# Is GDAL installed?
-Sys.which("gdal")[[1]]
-
-# Is NetCDF installed?
-Sys.which("netcdf4")[[1]]
-
-# Is NCL installed?
-Sys.which("ncl")[[1]]
-
 setwd('/scratch/mo/moc0/fire/')
 ```
 
-Caliver does not require compilation but imports functions from several R packages. In order to reproduce the examples in this paper we suggest to sort out missing dependencies using the code below.
-
-```{r, eval=FALSE}
-packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "grDevices",
-           "RCurl", "rworldmap", "graphics", "httr", "stringr",
-           "lubridate", "rhdf5", "RColorBrewer", "dplyr", "ggmap",
-           "purrr", "viridis")
-new.packages <- packs[!(packs %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-
-# Install Bioconductor packages
-devtools::install_github("Bioconductor-mirror/rhdf5")
-```
-
-The package can be installed via [devtools](https://github.com/hadley/devtools):
+Once all the dependencies are available, the package can be installed via [devtools](https://github.com/hadley/devtools):
 ``` r
 devtools::install_github("ecmwf/caliver")
 ```
@@ -75,8 +51,8 @@ BurnedAreas <- get_gfed4(start_date = "2003-01-01",
                          region = "GLOB")
 ```
 
-The above can be saved and re-loaded as follows:
-``` r
+```{r, echo = FALSE, eval = FALSE}
+# The above can be saved and re-loaded as follows:
 raster::writeRaster(BurnedAreas,
                     filename="BurnedArea.grd",
                     bandorder='BIL', overwrite=TRUE, progress = 'text')

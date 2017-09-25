@@ -12,18 +12,36 @@ As the name suggests, the caliver package contains utility functions for the pos
 
 Complete documentation, including a vignette, is available within the package. Contributions are welcome!
 
-Dependencies and Installation
------------------------------
+External dependencies
+---------------------
 
 The installation of the caliver package depends on the Climate Data Operators ([cdo](https://code.zmaw.de/projects/cdo/wiki)), a large tool set for working on climate and NWP model data); the NCAR Command Language ([ncl](https://www.ncl.ucar.edu/)), an interpred language with built-in functionalities to convert hdf5 files to netcdf format; the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats) and the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)).
 
-To install these dependencies:
+Below are the instructions to install caliver's external dependencies on various operating systems.
 
-* On Windows, install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
-* On Mac, install [Xcode](https://developer.apple.com/xcode/) from the app store.
-* On Ubuntu-Linux, `sudo apt-get install libssl-dev libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo`.
+### Windows
 
-Caliver also depends on additional R packages from both CRAN and Bioconductor. Here is how to install all the necessary packages:
+On Windows, follow the steps below:
+
+* install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
+* launch an R console and run the following commands: 
+
+### MAC
+
+On MAC, follow the steps below:
+
+* install [Xcode](https://developer.apple.com/xcode/) from the app store.
+
+### Ubuntu-Linux
+On Ubuntu-Linux, follow the steps below:
+
+* install dependencies: `sudo apt-get install libssl-dev libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo`.
+
+
+R dependencies
+--------------
+
+The caliver package also depends on additional R packages from both CRAN and Bioconductor, here is how to install them from an R console:
 
 ``` r
 # Install packages from CRAN
@@ -34,13 +52,13 @@ install.packages(packs)
 source("https://bioconductor.org/biocLite.R")
 biocLite("rhdf5")
 
-# Install packages from GitHub
+# Install packages from GitHub (only needed if you intend to run unit tests)
 devtools::install_github("jimhester/covr")
 devtools::install_github("jimhester/lintr")
 devtools::install_github("MangoTheCat/visualTest")
 ```
 
-Get the development version from github using [devtools](https://github.com/hadley/devtools):
+Get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
 
 ``` r
 install.packages("devtools")
