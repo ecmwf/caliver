@@ -12,17 +12,3 @@
 ")
 
 }
-
-.onLoad <- function(libname, pkgname){
-
-  # Check whether CDO is installed
-  if (Sys.which("cdo")[[1]] == "") {
-    stop("cdo executable not found. Check PATH or install cdo.")
-  }
-
-  # Check whether NCL is installed
-  if (Sys.which("ncl")[[1]] == "") {
-    stop("ncl executable not found. Check PATH or install ncl.")
-  }
-
-}
