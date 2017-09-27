@@ -9,6 +9,7 @@
 #'
 #' @import ncdf4
 #' @import ggplot2
+#' @importFrom rgdal readOGR
 #' @importFrom raster raster stack mask crop rotate extent extract t plot
 #' @importFrom raster cellFromPolygon cellStats
 #' @importFrom rworldmap getMap
