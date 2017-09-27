@@ -17,7 +17,7 @@ External dependencies
 
 The installation of the caliver package depends on the Climate Data Operators ([cdo](https://code.zmaw.de/projects/cdo/wiki)), a large tool set for working on climate and NWP model data); the NCAR Command Language ([ncl](https://www.ncl.ucar.edu/)), an interpred language with built-in functionalities to convert hdf5 files to netcdf format; the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats) and the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)).
 
-Below are the instructions to install caliver's external dependencies on various operating systems.
+Assuming the user has already installed R, below are the instructions to install caliver's external dependencies on various operating systems.
 
 ### Windows
 
@@ -28,15 +28,27 @@ On Windows, follow the steps below:
 
 ### MAC
 
-On MAC, follow the steps below:
+Use homebrew and run the following in a terminal:
 
-* install [Xcode](https://developer.apple.com/xcode/) from the app store.
+* `brew install netcdf`
+* `brew install hdf5`
+* `brew install proj`
+* `brew install gdal`
+* `brew install ncl`
+* `brew install udunits`
+* `brew install cdo`
 
 ### Ubuntu-Linux
-On Ubuntu-Linux, follow the steps below:
 
-* install dependencies: `sudo apt-get install libssl-dev libproj-dev libgdal-dev libhdf5-dev libnetcdf-dev netcdf-bin ncl-ncarg cdo`.
+Run the following in a terminal:
 
+* `sudo apt-get install libssl-dev`
+* `sudo apt-get install libproj-dev`
+* `sudo apt-get install libgdal-dev`
+* `sudo apt-get install libhdf5-dev`
+* `sudo apt-get install libnetcdf-dev`
+* `sudo apt-get install netcdf-bin`
+* `sudo apt-get install ncl-ncarg cdo`
 
 R dependencies
 --------------

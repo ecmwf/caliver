@@ -213,17 +213,15 @@ get_gfed4 <- function(start_date = NULL,
 
       }
 
-      try(x <- httr::GET(url = my_url,
+      x <- try(httr::GET(url = my_url,
                          httr::authenticate(user = "fire", password = "burnt"),
                          httr::write_disk(file.path(my_temp_dir, input_file),
                                           overwrite = TRUE)), silent = FALSE)
 
-      # Check for unavailable data (HTTP 404 status)
-      if (x$status_code == 404) {
+      if (class(x) == "try-error") {
 
-        unlink(file.path(my_temp_dir, input_file))
-        message("Either the server or the data are temporarily unavailable.")
-        stop("Please try again later.")
+        message("Either the data or the server are unavailable.")
+        stop("Please check whether your dates are valid or try again later.")
 
       }else{
 
