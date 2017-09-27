@@ -4,14 +4,14 @@
 \alias{get_percentile_raster}
 \title{get_percentile_raster}
 \usage{
-get_percentile_raster(probs, input_raster = NULL, input_file_path = NULL,
+get_percentile_raster(probs, r = NULL, input_file_path = NULL,
   output_dir = tempdir())
 }
 \arguments{
 \item{probs}{numeric vector of probabilities with values in [0,100] listing
 which percentiles should be calculated.}
 
-\item{input_raster}{is the RasterStack or RasterBrick to use.}
+\item{r}{Raster* object (either RasterStack or RasterBrick).}
 
 \item{input_file_path}{is the name of the file(path) to read.}
 

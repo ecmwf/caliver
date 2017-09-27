@@ -7,7 +7,7 @@
 plot_percentile_raster(maps, rotate_map = FALSE, region = "GLOB", ...)
 }
 \arguments{
-\item{maps}{is the result of getGriddedCDF()}
+\item{maps}{is the result of get_percentile_raster()}
 
 \item{rotate_map}{logical, if TRUE it uses a background map}
 
