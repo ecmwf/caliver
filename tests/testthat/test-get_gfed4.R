@@ -48,18 +48,6 @@ test_that("get_gfed4 stops with null varname", {
 
 })
 
-test_that("get_gfed4 stops with unavailable dates", {
-  
-  x <- try(get_gfed4(start_date = "1900-01-01",
-                     end_date = "1900-01-02",
-                     temporal_resolution = "daily",
-                     varname = "BurnedArea"), silent = TRUE)
-  
-  expect_equal(class(x), "try-error")
-  rm(x)
-  
-})
-
 test_that("get_gfed4 works with monthly data (1 month)", {
 
   monthly_burned_areas <- get_gfed4(start_date = "2003-01-01",

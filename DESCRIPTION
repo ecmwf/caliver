@@ -15,7 +15,6 @@ Description: Utility functions for the post-processing, calibration and
 Depends:
     R (>= 3.1)
 Imports:
-    rgdal,
     ncdf4,
     ggplot2,
     raster,
