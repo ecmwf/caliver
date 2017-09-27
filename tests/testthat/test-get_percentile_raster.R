@@ -3,7 +3,7 @@ context("get_percentile_raster")
 test_that("get_percentile_raster works with null inputs", {
 
   probs_maps <- try(get_percentile_raster(probs = 50,
-                                         input_raster = NULL,
+                                         r = NULL,
                                          input_file_path = NULL), silent = TRUE)
 
   # Check whether the function exits correctly
@@ -14,7 +14,7 @@ test_that("get_percentile_raster works with null inputs", {
 test_that("get_percentile_raster works with all non-null inputs", {
 
   probs_maps <- try(get_percentile_raster(probs = 50,
-                                         input_raster = s,
+                                         r = s,
                                          input_file_path = "x.nc"),
                    silent = TRUE)
 
@@ -25,7 +25,7 @@ test_that("get_percentile_raster works with all non-null inputs", {
 
 test_that("get_percentile_raster works with single prob from raster file", {
 
-  probs_maps_1_b <- get_percentile_raster(probs = 50, input_raster = s)
+  probs_maps_1_b <- get_percentile_raster(probs = 50, r = s)
 
   # Check whether the class is correct
   expect_equal("RasterLayer" %in% class(probs_maps_1_b), TRUE)
@@ -40,7 +40,7 @@ test_that("get_percentile_raster works with single prob from raster file", {
 
 test_that("get_percentile_raster works with multiple probs from raster file", {
 
-  probs_maps_2_b <- get_percentile_raster(probs = c(50, 75), input_raster = s)
+  probs_maps_2_b <- get_percentile_raster(probs = c(50, 75), r = s)
 
   # Check whether the class is correct
   expect_equal("RasterBrick" %in% class(probs_maps_2_b), TRUE)

@@ -66,16 +66,15 @@ The fourth-generation global fire emissions database also provides as ancillary 
 BasisRegions <- get_gfed4(varname = "BasisRegions")
 
 # Europe
-Europe <- get_gfed4(varname = 'BasisRegions', region = 'EURO')
+Europe <- get_gfed4(varname = "BasisRegions", region = "EURO")
 ```
 
 Get administrative areas using getdata from the raster package
 ``` r
 # United Kingdom
-UnitedK <- raster::getData(name = "GADM", country = "United Kingdom", level = 0)
-
-# Portugal
-# PT <- raster::getData(name = "GADM", country = "Portugal", level = 0)
+UnitedK <- raster::getData(name = "GADM", 
+                           country = "United Kingdom", 
+                           level = 0)
 
 # Spain
 Spain <- raster::getData(name = "GADM", country = "Spain", level = 0)
@@ -83,25 +82,30 @@ Spain <- raster::getData(name = "GADM", country = "Spain", level = 0)
 # Italy
 Italy <- raster::getData(name = "GADM", country = "Italy", level = 0)
 
-# Liguria Region
+# Italian regions
 Italy1 <- raster::getData(name = "GADM", country = "Italy", level = 1)
+
+# Get polygons for Liguria, Calabria and Sicily
 Liguria <- Italy1[9,]
-
-# Calabria Region
 Calabria <- Italy1[4,]
-
-# Sicily
 Sicily <- Italy1[15,]
 
-# Province of Genoa
+# Get polygon for the Province of Genoa
 Italy2 <- raster::getData(name = "GADM", country = "Italy", level = 2)
 Genoa <- Italy2[42,]
-rm(Italy1, Italy2)
 ```
 
 ## Utilities
 
-Decompress archives using the function `decompress_gz()`.
+The function `import_GEFF_data_from_tar()` can be used to open the tar archive, decompress the gz files, merge the layers into a RasterStack and convert this to a RasterBrick object. A sample dataset (geff5.tar) is available in the testdata folder of the package.
+
+``` r
+geff5tar <- system.file(file.path("testdata", "geff5.tar"), 
+                        package = "caliver")
+b <- import_geff_data_from_tar(archive = geff5tar)
+```
+
+Decompress bulk gz archives using the function `decompress_gz()`.
 
 ``` r
 decompress_gz(input_dir = "./tmp")
@@ -110,21 +114,9 @@ decompress_gz(input_dir = "./tmp")
 Once all the files are decompressed they can be merged in a unique netCDF file using the function `stack_netcdf_files()`.
 ```r
 processingTime <- system.time({
-  stack_netcdf_files(input_dir = 'GEFF1.2/fwi_rotated/',
-                     output_file = 'FWIr_1980-2016.nc')
+  stack_netcdf_files(input_dir = "./tmp",
+                     output_file = "FWI.nc")
 })
-```
-
-A simple benchmark
-``` r
-library(microbenchmark)
-raster::writeRaster(s, filename='inst/testdata/GEFF.nc', format="CDF", overwrite=TRUE)
-
-microbenchmark(
-  sqrt(x),
-  x ^ 0.5
-)
-
 ```
 
 ## Analysis and visualisation
@@ -132,8 +124,10 @@ microbenchmark(
 A first understanding of how FWI value are distributed over time can be achieved by creating a map of percentiles. In the example below we generate two maps: 1 for the median and the othe for the 90th percentile. 
 
 ``` r
-maps <- makePercentileRaster(inFilePath = "FWIr_1980-2016.nc",
-                             probs = c(50, 90))
+maps <- get_percentile_raster(input_file_path = "FWI.nc", 
+                              probs = c(50, 90))
+maps2 <- get_percentile_raster(r = b, 
+                               probs = c(50, 90))
 ```
 
 ### Mask/crop/subset

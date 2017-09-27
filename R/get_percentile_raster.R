@@ -4,7 +4,7 @@
 #'
 #' @param probs numeric vector of probabilities with values in [0,100] listing
 #' which percentiles should be calculated.
-#' @param input_raster is the RasterStack or RasterBrick to use.
+#' @param r Raster* object (either RasterStack or RasterBrick).
 #' @param input_file_path is the name of the file(path) to read.
 #' @param output_dir is the directory where the output nc files are saved, by
 #' default this is a temporary directory.
@@ -23,24 +23,24 @@
 #'
 
 get_percentile_raster <- function(probs,
-                                  input_raster = NULL,
+                                  r = NULL,
                                   input_file_path = NULL,
                                   output_dir = tempdir()){
 
-  if (all(is.null(input_raster), is.null(input_file_path))) {
+  if (all(is.null(r), is.null(input_file_path))) {
 
-    stop("Please define either an input_raster or input_file_path")
+    stop("Please define either an r or input_file_path")
 
   }
 
-  if (all(!is.null(input_raster), !is.null(input_file_path))) {
+  if (all(!is.null(r), !is.null(input_file_path))) {
 
-    stop(paste("Please define either an input_raster or input_file_path,",
+    stop(paste("Please define either an r or input_file_path,",
                "the other must be NULL"))
 
   }
 
-  if (!is.null(input_raster)) {
+  if (!is.null(r)) {
 
     fun <- function(x) {
 
@@ -48,7 +48,7 @@ get_percentile_raster <- function(probs,
 
     }
 
-    stacked_maps <- raster::calc(input_raster, fun)
+    stacked_maps <- raster::calc(r, fun)
 
     names(stacked_maps) <- paste0("FWI", probs)
 

@@ -2,7 +2,7 @@
 #'
 #' @description This function plots the maps of percentiles
 #'
-#' @param maps is the result of getGriddedCDF()
+#' @param maps is the result of get_percentile_raster()
 #' @param rotate_map logical, if TRUE it uses a background map
 #' @param region string of characters describing the region.
 #' @param ... additional graphical parameters inherited from plot() in the
