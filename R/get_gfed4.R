@@ -270,9 +270,9 @@ get_gfed4 <- function(start_date = NULL,
 
     if (length(list_of_files) > 1) {
 
-      output_file_path <- stack_netcdf_files(input_dir = my_temp_dir,
-                                             pattern = file_pattern,
-                                             output_file = output_file_name)
+      stack_netcdf_files(input_dir = my_temp_dir,
+                         pattern = file_pattern,
+                         output_file = output_file_name)
 
       message("Generating RasterBrick")
       merged_raster <- raster::brick(output_file_name)
@@ -295,6 +295,7 @@ get_gfed4 <- function(start_date = NULL,
 
     message("Removing temporary files")
     unlink(list_of_files)
+    unlink(output_file_name)
 
     return(regions_raster_t)
 
