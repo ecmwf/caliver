@@ -275,7 +275,7 @@ countryPDF <- plot_fire_pdf(fire_index = IT, countryName = "Italy",
 In order to test whether the classes identified correspond to 
 
 ``` r
-BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")
+BurnedAreas <- raster::brick("BurnedArea.grd")
 
 # Mask and crop burned areas over Europe
 BA <- mask_crop_subset(r = BurnedAreas, p = Europe, mask = T, crop = T)
