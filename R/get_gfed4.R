@@ -251,6 +251,8 @@ get_gfed4 <- function(start_date = NULL,
 
     output_file_name <- ifelse(is.null(varname), "GFED4.nc",
                                paste0(varname, ".nc"))
+    output_file_path <- file.path(my_temp_dir, output_file_name)
+
     list_of_files <- list.files(my_temp_dir,
                                 pattern = file_pattern,
                                 full.names = TRUE)
@@ -272,10 +274,10 @@ get_gfed4 <- function(start_date = NULL,
 
       stack_netcdf_files(input_dir = my_temp_dir,
                          pattern = file_pattern,
-                         output_file = output_file_name)
+                         output_file = output_file_path)
 
       message("Generating RasterBrick")
-      merged_raster <- raster::brick(output_file_name)
+      merged_raster <- raster::brick(output_file_path)
 
     }
 
@@ -284,8 +286,9 @@ get_gfed4 <- function(start_date = NULL,
 
     # Transform the rasterBrick, flipping it on the y direction
     message("Flipping the raster on the y-direction")
-    regions_raster_t <- raster::flip(merged_raster, direction = "y",
-                                   progress = "text")
+    regions_raster_t <- raster::flip(merged_raster,
+                                     direction = "y",
+                                     progress = "text")
 
     message("Setting extent and assigning CRS")
     # Set extent
@@ -295,7 +298,7 @@ get_gfed4 <- function(start_date = NULL,
 
     message("Removing temporary files")
     unlink(list_of_files)
-    unlink(output_file_name)
+    unlink(output_file_path)
 
     return(regions_raster_t)
 
