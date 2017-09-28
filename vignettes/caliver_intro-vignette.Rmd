@@ -187,7 +187,20 @@ EURO <- mask_crop_subset(r = FWI, p = Europe, mask = T, crop = T,
 # Calculate levels
 EuropeThr <- get_fire_danger_levels(fire_index = EURO)
 
-# Individual country level: calculate levels for all the countries in the EU
+# Country level: Mask/Crop/Subset FWI and generate thresholds for Italy
+IT <- mask_crop_subset(r = FWI, p = Italy, mask = T, crop = T, 
+                       idx = fireSeasonIndex)
+ItalyThr <- get_fire_danger_levels(fire_index = IT)
+# Mask/Crop/Subset FWI and generate thresholds for United Kingdom
+UK <- mask_crop_subset(r = FWI, p = UnitedK, mask = T, crop = T, 
+                       idx = fireSeasonIndex)
+UnitedKThr <- get_fire_danger_levels(fire_index = UK)
+# Mask/Crop/Subset FWI and generate thresholds for Spain
+ES <- mask_crop_subset(r = FWI, p = Spain, mask = T, crop = T, 
+                       idx = fireSeasonIndex)
+SpainThr <- get_fire_danger_levels(fire_index = ES)
+
+# Alternatively, use a loop to calculate levels for all the countries in the EU:
 EUcountries <- c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus",
                  "Czech Republic", "Denmark", "Estonia", "Finland", "France",
                  "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia",
