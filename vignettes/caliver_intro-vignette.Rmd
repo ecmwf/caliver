@@ -146,13 +146,13 @@ The function `plotPercentiles()` provides a modified version of the `raster::plo
 # Use the raster plot method
 setEPS()
 postscript("~/raster.eps", width = 5.2, height = 2.7)
-raster::plot(maps, main = c("FWI 50th perc.", "FWI 90th perc."))
+raster::plot(maps, main = c("FWI 50th perc.", "FWI 90th perc.")) 
 dev.off()
 
 # Use the caliver plotPercentiles function
 setEPS()
 postscript("~/caliver.eps", width = 5.2, height = 3)
-plotPercentiles(maps, main = c("FWI 50th perc.", "FWI 90th perc."))
+plot_percentile_raster(maps, main = c("FWI 50th perc.", "FWI 90th perc."))
 dev.off()
 ```
 
@@ -162,18 +162,15 @@ In order to calculate the danger classes, the FWI brick should be loaded and the
 
 ``` r
 # Define period for Reanalysis
-dataDates <- seq.Date(from = as.Date('1980-01-01'),
-                      to = as.Date('2016-12-31'),
+dataDates <- seq.Date(from = as.Date("1980-01-01"),
+                      to = as.Date("2016-12-31"),
                       by = "day")
-
+                      
 # Define a function to extract fire seasons in Europe
-seasons <- get_fire_season(DATES = dataDates, zone = 'north')
+seasons <- get_fire_season(dates = dataDates, zone = "north")
 
-# Create an index of summer dates
+# Create an index of fire season dates
 fireSeasonIndex <- which(seasons == TRUE)
-
-# Load, mask and subset the FWI dataset obtained previously
-FWI <- raster::brick('FWIr_1980-2016.nc')
 ```
 
 ### Calculate danger levels
@@ -181,54 +178,83 @@ FWI <- raster::brick('FWIr_1980-2016.nc')
 Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe, regions and a province in Italy. The result shows that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level. 
 
 ``` r
+# Load FWI dataset obtained previously
+FWI <- raster::brick("FWI.nc")
+
 # Mask/Crop/Subset FWI and generate thresholds for Europe
 EURO <- mask_crop_subset(r = FWI, p = Europe, mask = T, crop = T, 
-                    idx = fireSeasonIndex)
-EuropeThr <- FireDangerLevels(fire_index = EURO)
+                         idx = fireSeasonIndex)
+# Calculate levels
+EuropeThr <- get_fire_danger_levels(fire_index = EURO)
 
-# Mask/Crop/Subset FWI and generate thresholds for United Kingdom
-UK <- mask_crop_subset(r = FWI, p = UnitedK, mask = T, crop = T, 
-                  idx = fireSeasonIndex)
-UnitedKThr <- FireDangerLevels(fire_index = UK)
+# Individual country level: calculate levels for all the countries in the EU
+EUcountries <- c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus",
+                 "Czech Republic", "Denmark", "Estonia", "Finland", "France",
+                 "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia",
+                 "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland",
+                 "Portugal", "Romania", "Slovakia", "Slovenia", "Spain",
+                 "Sweden", "United Kingdom")
+                 
+for (singleCountry in EUcountries){
 
-# Mask/Crop/Subset FWI and generate thresholds for Spain
-ES <- mask_crop_subset(r = FWI, p = Spain, mask = T, crop = T, 
-                  idx = fireSeasonIndex)
-SpainThr <- FireDangerLevels(fire_index = ES)
+  print(singleCountry)
 
-# Mask/Crop/Subset FWI and generate thresholds for Italy
-IT <- mask_crop_subset(r = FWI, p = Italy, mask = T, crop = T, 
-                    idx = fireSeasonIndex)
-ItalyThr <- FireDangerLevels(fire_index = IT)
+  # Mask/Crop/Subset FWI and generate thresholds for singleCountry
+  singleCountryFWI <- mask_crop_subset(r = FWI,
+                                       p = raster::getData(name = "GADM",
+                                                           country = singleCountry,
+                                                           level = 0),
+                                       mask = T,
+                                       crop = T,
+                                       idx = fireSeasonIndex)
+  singleCountryThr <- get_fire_danger_levels(fire_index = singleCountryFWI)
+  
+  # Append values to data.frame
+  if (singleCountry == "Austria") {
+    df <- data.frame(matrix(singleCountryThr, nrow = 1))
+  }else{
+    df <- rbind(df, singleCountryThr)
+  }
+  
+  print(df)
 
+}
+
+EuroCountriesThr <- data.frame(cbind(EUcountries, df))
+names(EuroCountriesThr) <- c("Country", "VeryLow", "Low", "Moderate", 
+                                        "High", "VeryHigh", "Extreme")
+
+# Regional level
+# Mask/Crop/Subset FWI and generate thresholds for Liguria
+LIG <- mask_crop_subset(r = FWI, p = Liguria, mask = T, crop = T, 
+                        idx = fireSeasonIndex)
+LIGThr <- get_fire_danger_levels(fire_index = LIG)
+                               
 # Mask/Crop/Subset FWI and generate thresholds for Calabria
 CAL <- mask_crop_subset(r = FWI, p = Calabria, mask = T, crop = T, 
-                  idx = fireSeasonIndex)
-CALThr <- FireDangerLevels(fire_index = CAL)
+                        idx = fireSeasonIndex)
+CALThr <- get_fire_danger_levels(fire_index = CAL)
 
 # Mask/Crop/Subset FWI and generate thresholds for Sicily
 SIC <- mask_crop_subset(r = FWI, p = Sicily, mask = T, crop = T, 
-                  idx = fireSeasonIndex)
-SICThr <- FireDangerLevels(fire_index = SIC)
+                        idx = fireSeasonIndex)
+SICThr <- get_fire_danger_levels(fire_index = SIC)
 
-# Mask/Crop/Subset FWI and generate thresholds for Liguria
-LIG <- mask_crop_subset(r = FWI, p = Liguria, mask = T, crop = T, 
-                  idx = fireSeasonIndex)
-LIGThr <- FireDangerLevels(fire_index = LIG)
-
+# Province level
 # Mask/Crop/Subset FWI and generate thresholds for Genoa
 GEN <- mask_crop_subset(r = FWI, p = Genoa, mask = T, crop = T, 
-                   idx = fireSeasonIndex)
-GENThr <- FireDangerLevels(fire_index = GEN)
+                        idx = fireSeasonIndex)
+ItalyThr <- get_fire_danger_levels(fire_index = GEN)
 ```
 
 ### Plot density with thresholds
 
-The thresholds are different fromt the percentiles, the PDF  below shows a comparison for Italy.
+The thresholds are different from the percentiles, the PDF  below shows a comparison for Italy.
 
 ``` r
-countryPDF <- plotPDF(fire_index = IT, countryName = "Italy", 
-                      ItalyThr, upperLimit = 75, vLines = c(0.50, 0.75, 0.90))
+countryPDF <- plot_fire_pdf(fire_index = IT, countryName = "Italy",
+                            ItalyThr, upperLimit = 75,
+                            vLines = c(0.50, 0.75, 0.90))
 ```
 
 ### Validate danger levels

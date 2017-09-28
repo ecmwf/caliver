@@ -55,9 +55,25 @@ stack_netcdf_files <- function(input_dir = NULL,
 
     system(paste0("cdo cat ", ifiles, " ", output_file))
 
+    # This can fail for large number of files
+    if (!file.exists(output_file)){
+
+      message("Pattern-based selection failed, using all files in input_dir")
+      system(paste0("cdo cat ", file.path(input_dir, "*"), " ", output_file))
+
+    }
+
   } else {
 
     system(paste0("cdo select,name=", varname, " ", ifiles, " ", output_file))
+
+    # This can fail for large number of files
+    if (!file.exists(output_file)){
+
+      message("Pattern-based selection failed, using all files in input_dir")
+      system(paste0("cdo cat ", file.path(input_dir, "*"), " ", output_file))
+
+    }
 
   }
 
