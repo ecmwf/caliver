@@ -125,13 +125,13 @@ validate_fire_danger_levels <- function(fire_index,
   # Transform BurnedAreas to binary (is BurnedAreas > 50 hectares?)
   seasonal_obs_vector <- as.vector(seasonal_obs)
   obs <- ifelse(test = (seasonal_obs_vector >= obs_threshold),
-                yes = TRUE, 
+                yes = TRUE,
                 no = FALSE)
 
   # Transform FWI to binary (Is FWI > high danger level?)
   seasonal_fwi_vector <- as.vector(seasonal_fwi)
   pred <- ifelse(test = (seasonal_fwi_vector >= fire_threshold),
-                 yes = TRUE, 
+                 yes = TRUE,
                  no = FALSE)
 
   return(table(pred, obs))
