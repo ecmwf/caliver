@@ -135,7 +135,7 @@ maps2 <- get_percentile_raster(r = b,
 FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `mask_crop_subset()` is used to extract the FWI for the first data of the reanalysis (setting argument `idx = 1`), masked and cropped over Europe.
 
 ``` r
-mapEurope <- mask_crop_subset(r = maps, p = Europe, mask = T, crop = T, idx = 1)
+mapEurope <- mask_crop_subset(r = maps, p = Europe, idx = 1)
 ```
 
 ### Plot
@@ -182,31 +182,18 @@ Threshold for every area of interest are calculate on the subset of the FWI bric
 FWI <- raster::brick("FWI.nc")
 
 # Mask/Crop/Subset FWI and generate thresholds for Europe
-EURO <- mask_crop_subset(r = FWI, p = Europe, mask = T, crop = T, 
-                         idx = fireSeasonIndex)
+FWIEURO0 <- mask_crop_subset(r = FWI, p = Europe, idx = fireSeasonIndex)
+
 # Calculate levels
-EuropeThr <- get_fire_danger_levels(fire_index = EURO)
+EuropeThr <- get_fire_danger_levels(fire_index = FWIEURO0)
 
-# Country level: Mask/Crop/Subset FWI and generate thresholds for Italy
-IT <- mask_crop_subset(r = FWI, p = Italy, mask = T, crop = T, 
-                       idx = fireSeasonIndex)
-ItalyThr <- get_fire_danger_levels(fire_index = IT)
-# Mask/Crop/Subset FWI and generate thresholds for United Kingdom
-UK <- mask_crop_subset(r = FWI, p = UnitedK, mask = T, crop = T, 
-                       idx = fireSeasonIndex)
-UnitedKThr <- get_fire_danger_levels(fire_index = UK)
-# Mask/Crop/Subset FWI and generate thresholds for Spain
-ES <- mask_crop_subset(r = FWI, p = Spain, mask = T, crop = T, 
-                       idx = fireSeasonIndex)
-SpainThr <- get_fire_danger_levels(fire_index = ES)
-
-# Alternatively, use a loop to calculate levels for all the countries in the EU:
-EUcountries <- c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus",
+# Country level: use a loop to calculate levels for all the countries in the EU:
+EUcountries <- c("Austria", "Belgium", "Bulgaria", "Croatia", #"Cyprus",
                  "Czech Republic", "Denmark", "Estonia", "Finland", "France",
                  "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia",
                  "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland",
                  "Portugal", "Romania", "Slovakia", "Slovenia", "Spain",
-                 "Sweden", "United Kingdom")
+                 "Sweden", "United Kingdom", "Greenland")
                  
 for (singleCountry in EUcountries){
 
@@ -217,8 +204,6 @@ for (singleCountry in EUcountries){
                                        p = raster::getData(name = "GADM",
                                                            country = singleCountry,
                                                            level = 0),
-                                       mask = T,
-                                       crop = T,
                                        idx = fireSeasonIndex)
   singleCountryThr <- get_fire_danger_levels(fire_index = singleCountryFWI)
   
@@ -233,31 +218,34 @@ for (singleCountry in EUcountries){
 
 }
 
-EuroCountriesThr <- data.frame(cbind(EUcountries, df))
-names(EuroCountriesThr) <- c("Country", "VeryLow", "Low", "Moderate", 
-                                        "High", "VeryHigh", "Extreme")
+EuroThr <- data.frame(cbind(EUcountries, df, stringsAsFactors=FALSE))
+names(EuroThr) <- c("Country", "Low", "Moderate", "High", "VeryHigh", "Extreme")
 
 # Regional level
 # Mask/Crop/Subset FWI and generate thresholds for Liguria
-LIG <- mask_crop_subset(r = FWI, p = Liguria, mask = T, crop = T, 
-                        idx = fireSeasonIndex)
-LIGThr <- get_fire_danger_levels(fire_index = LIG)
+LIG <- mask_crop_subset(r = FWI, p = Liguria, idx = fireSeasonIndex)
+EuroThr <- rbind(EuroThr, c("Liguria", get_fire_danger_levels(fire_index = LIG)))
                                
 # Mask/Crop/Subset FWI and generate thresholds for Calabria
-CAL <- mask_crop_subset(r = FWI, p = Calabria, mask = T, crop = T, 
-                        idx = fireSeasonIndex)
-CALThr <- get_fire_danger_levels(fire_index = CAL)
+CAL <- mask_crop_subset(r = FWI, p = Calabria, idx = fireSeasonIndex)
+EuroThr <- rbind(EuroThr, c("Calabria", get_fire_danger_levels(fire_index = CAL)))
 
 # Mask/Crop/Subset FWI and generate thresholds for Sicily
-SIC <- mask_crop_subset(r = FWI, p = Sicily, mask = T, crop = T, 
-                        idx = fireSeasonIndex)
-SICThr <- get_fire_danger_levels(fire_index = SIC)
+SIC <- mask_crop_subset(r = FWI, p = Sicily, idx = fireSeasonIndex)
+EuroThr <- rbind(EuroThr, c("Sicily", get_fire_danger_levels(fire_index = SIC)))
 
 # Province level
 # Mask/Crop/Subset FWI and generate thresholds for Genoa
-GEN <- mask_crop_subset(r = FWI, p = Genoa, mask = T, crop = T, 
-                        idx = fireSeasonIndex)
-ItalyThr <- get_fire_danger_levels(fire_index = GEN)
+GEN <- mask_crop_subset(r = FWI, p = Genoa, idx = fireSeasonIndex)
+EuroThr <- rbind(EuroThr, c("Genoa", get_fire_danger_levels(fire_index = GEN)))
+
+# Remove NAs, e.g. Luxembourg and Malta are too small compared to the ratser resolution
+EuroThr <- EuroThr[complete.cases(EuroThr),]
+
+EuroThr <- rbind(EuroThr, c("Europe", EuropeThr))
+
+# Save table with thresholds for future use
+saveRDS(EuroThr, "EuroThr.rds")
 ```
 
 ### Plot density with thresholds
@@ -265,91 +253,142 @@ ItalyThr <- get_fire_danger_levels(fire_index = GEN)
 The thresholds are different from the percentiles, the PDF  below shows a comparison for Italy.
 
 ``` r
-countryPDF <- plot_fire_pdf(fire_index = IT, countryName = "Italy",
-                            ItalyThr, upperLimit = 75,
-                            vLines = c(0.50, 0.75, 0.90))
+countryPDF <- plot_fire_pdf(fire_index = IT,
+                            thresholds = EuroThr["Italy", ], 
+                            upper_limit = 75,
+                            v_lines = c(0.50, 0.75, 0.90))
 ```
 
 ### Validate danger levels
 
-In order to test whether the classes identified correspond to 
+Test whether large fires correspond to FWI above high danger 
 
 ``` r
-BurnedAreas <- raster::brick("BurnedArea.grd")
+BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")
 
 # Mask and crop burned areas over Europe
-BA <- mask_crop_subset(r = BurnedAreas, p = Europe, mask = T, crop = T)
+BA <- mask_crop_subset(r = BurnedAreas, p = Europe)
 
 # If observations layers have no date, assign it!
-names(BA) <- seq.Date(from = as.Date("2003-01-01"),
+dataDates <- seq.Date(from = as.Date("2003-01-01"),
                       to = as.Date("2015-12-31"), by = "day")
+names(BA) <- dataDates
 
-# For the validation we do not want to subset over the fire season, subset to match days in BA
-EURO2 <- mask_crop_subset(r = FWI, p = Europe, mask = T, crop = T, 
-                    idx = which(names(FWI) %in% names(BA)))
+EuroThrHigh <- as.numeric(EuroThr[EuroThr$Country == "Europe", 4])
 
-# Generate the contingency table for Europe
-x <- ValidateFireDangerLevels(fire_index = EURO2, 
-                              observation = BA,
-                              fireThr = 10, obsThr = 50)
-                         
-# Contingency table
+# The above can be saved and re-loaded as follows:
+raster::writeRaster(BA, filename="BurnedAreaEurope.grd",
+                    bandorder='BIL', overwrite=TRUE, progress = 'text')
+BurnedAreaEurope <- raster::brick("BurnedAreaEurope.grd")
+
+# For the validation we do not want to subset over the fire season, subset to match days in BurnedAreaEurope
+FWIEURO <- mask_crop_subset(r = FWI, p = Europe, idx = which(names(FWI) %in% names(BurnedAreaEurope)))
+# The above can be saved and re-loaded as follows:
+raster::writeRaster(FWIEURO, filename="FWIEURO.grd", bandorder='BIL', overwrite=TRUE, progress = 'text')
+FWIEURO <- raster::brick("FWIEURO.grd")
+
+# Loop throught the countries
+for (singleCountry in EuroThr[1:26,"Country"]){
+
+  print(singleCountry)
+
+  if (!(singleCountry %in% c("Cyprus"))){
+
+    countryPoly <- raster::getData(name = "GADM", country = singleCountry, level = 0)
+    countryThr <- as.numeric(EuroThr[EuroThr$Country == singleCountry, 4])
+
+    # Crop RasterBricks over country of interest
+    BA_country <- mask_crop_subset(r = BurnedAreaEurope, p = countryPoly)
+    FWI_country <- mask_crop_subset(r = FWIEURO, p = countryPoly)
+
+    tab_JRC <- data.frame(validate_fire_danger_levels(fire_index = FWI_country, 
+                                                      observation = BA_country,
+                                                      fire_threshold = 21.3, 
+                                                      obs_threshold = 50))
+    tab_caliver1 <- data.frame(validate_fire_danger_levels(fire_index = FWI_country, 
+                                                           observation = BA_country,
+                                                           fire_threshold = EuroThrHigh, 
+                                                           obs_threshold = 50))
+    tab_caliver2 <- data.frame(validate_fire_danger_levels(fire_index = FWI_country, 
+                                                           observation = BA_country,
+                                                           fire_threshold = countryThr, 
+                                                           obs_threshold = 50))
+    
+    if (singleCountry == "Austria") {
+      df_caliver1 <- df_caliver2 <- df_effis <- data.frame("pred" = tab_caliver1$pred, "obs" = tab_caliver1$obs)
+      i <- 3
+    }
+
+    df_caliver1 <- cbind(df_caliver1, tab_caliver1$Freq)
+    names(df_caliver1)[i] <- singleCountry
+    df_caliver2 <- cbind(df_caliver2, tab_caliver2$Freq)
+    names(df_caliver2)[i] <- singleCountry
+    df_effis <- cbind(df_effis, tab_JRC$Freq)
+    names(df_effis)[i] <- singleCountry
+    i <- i + 1
+
+    rm(countryPoly, countryThr, BA_country, FWI_country)
+
+  }
+
+}
+
+# Save contingency tables
+saveRDS(df_caliver1, "df_caliver1.rds")
+saveRDS(df_caliver2, "df_caliver2.rds")
+saveRDS(df_effis, "df_effis.rds")
+
+# Europe (EFFIS danger levels)
+sum(df_effis[4,3:27]) # hits
+sum(df_effis[3,3:27]) # misses
+# Europe (averaged danger levels)
+sum(df_caliver1[4,3:27]) # hits
+sum(df_caliver1[3,3:27]) # misses
+# Europe (country-specific danger levels)
+sum(df_caliver2[4,3:27]) # hits
+sum(df_caliver2[3,3:27]) # misses
+
+# UK (EFFIS danger levels)
+df_effis[4, which(names(df_caliver2) == "United Kingdom")] # hits
+df_effis[3, which(names(df_caliver2) == "United Kingdom")] # misses
+# UK (EU averaged danger levels)
+df_caliver1[4, which(names(df_caliver2) == "United Kingdom")] # hits
+df_caliver1[3, which(names(df_caliver2) == "United Kingdom")] # misses
+# UK (country-specific danger levels)
+df_caliver2[4, which(names(df_caliver2) == "United Kingdom")] # hits
+df_caliver2[3, which(names(df_caliver2) == "United Kingdom")] # misses
+                                                   
+# Spain (EFFIS danger levels)
+df_effis[4, which(names(df_caliver2) == "Spain")] # hits
+df_effis[3, which(names(df_caliver2) == "Spain")] # misses
+# Spain (EU averaged danger levels)
+df_caliver1[4, which(names(df_caliver2) == "Spain")] # hits
+df_caliver1[3, which(names(df_caliver2) == "Spain")] # misses
+# Spain (country-specific danger levels)
+df_caliver2[4, which(names(df_caliver2) == "Spain")] # hits
+df_caliver2[3, which(names(df_caliver2) == "Spain")] # misses
+                                                   
+# Italy (EFFIS danger levels)
+df_effis[4, which(names(df_caliver2) == "Italy")] # hits
+df_effis[3, which(names(df_caliver2) == "Italy")] # misses
+# Italy (EU averaged danger levels)
+df_caliver1[4, which(names(df_caliver2) == "Italy")] # hits
+df_caliver1[3, which(names(df_caliver2) == "Italy")] # misses
+# Italy (country-specific danger levels)
+df_caliver2[4, which(names(df_caliver2) == "Italy")] # hits
+df_caliver2[3, which(names(df_caliver2) == "Italy")] # misses
+
+# Contingency table for caliver - Europe as a whole
+x <- validate_fire_danger_levels(fire_index = FWIEURO, observation = BurnedAreaEurope, 
+                                 fire_threshold = EuroThrHigh, obs_threshold = 50)
 y <- data.frame(round(prop.table(x),3))
 
+y <- data.frame(round(prop.table(x),3))
+hits <- y$Freq[which(y$pred == TRUE & y$obs == TRUE)]
+misses <- y$Freq[which(y$pred == FALSE & y$obs == TRUE)]
+falsealarms <- y$Freq[which(y$pred == TRUE & y$obs == FALSE)]
+correctneg <- y$Freq[which(y$pred == FALSE & y$obs == FALSE)]
 
-hits <- x$Freq[which(x$FWIlogic == TRUE & x$BAlogic == TRUE)]
-misses <- x$Freq[which(x$FWIlogic == FALSE & x$BAlogic == TRUE)]
-falsealarms <- x$Freq[which(x$FWIlogic == TRUE & x$BAlogic == FALSE)]
-correctneg <- x$Freq[which(x$FWIlogic == FALSE & x$BAlogic == FALSE)]
-
-POD <- hits/(hits+misses)               # 66%
-FAR <- falsealarms/(hits+falsealarms)   # 98%
-FBI <- (hits+falsealarms)/(hits+misses) # 38%
-TS <- hits/(hits+misses+falsealarms)    # 1.7%
-
-# Generate the contingency table for Europe using JRC's high level threshold
-xJRC <- ValidateFireDangerLevels(fire_index = EURO2, 
-                                 observation = BA,
-                                 fireThr = 21.3, obsThr = 50)
-# Contingency table
-yJRC <- data.frame(round(prop.table(xJRC),3))
-
-# Repeat the above for UK
-BA_UK <- mask_crop_subset(r = BurnedAreas, p = UnitedK, mask = T, crop = T)
-names(BA_UK) <- seq.Date(from = as.Date("2003-01-01"),
-                         to = as.Date("2015-12-31"), by = "day")
-UK2 <- mask_crop_subset(r = FWI, p = UnitedK, mask = T, crop = T, 
-                   idx = which(names(FWI) %in% names(BA_UK)))
-xUK_caliver <- data.frame(ValidateFireDangerLevels(fire_index = UK2, 
-                                                   observation = BA_UK,
-                                                   fireThr = 10, obsThr = 50))
-xUK_JRC <- data.frame(ValidateFireDangerLevels(fire_index = UK2, 
-                                               observation = BA_UK,
-                                               fireThr = 21.3, obsThr = 50))
-                                                   
-# Repeat the above for Spain
-BA_ES <- mask_crop_subset(r = BurnedAreas, p = Spain, mask = T, crop = T)
-names(BA_ES) <- seq.Date(from = as.Date("2003-01-01"),
-                         to = as.Date("2015-12-31"), by = "day")
-ES2 <- mask_crop_subset(r = FWI, p = Spain, mask = T, crop = T, 
-                   idx = which(names(FWI) %in% names(BA_ES)))
-xES_caliver <- data.frame(ValidateFireDangerLevels(fire_index = ES2, 
-                                                   observation = BA_ES,
-                                                   fireThr = 10, obsThr = 50))
-xES_JRC <- data.frame(ValidateFireDangerLevels(fire_index = ES2, 
-                                               observation = BA_ES,
-                                               fireThr = 21.3, obsThr = 50))
-                                                   
-# Repeat the above for Italy
-BA_IT <- mask_crop_subset(r = BurnedAreas, p = Italy, mask = T, crop = T)
-names(BA_IT) <- seq.Date(from = as.Date("2003-01-01"),
-                         to = as.Date("2015-12-31"), by = "day")
-IT2 <- mask_crop_subset(r = FWI, p = Italy, mask = T, crop = T, 
-                   idx = which(names(FWI) %in% names(BA_IT)))
-xIT_caliver <- data.frame(ValidateFireDangerLevels(fire_index = IT2, 
-                                                   observation = BA_IT,
-                                                   fireThr = 10, obsThr = 50))
-xIT_JRC <- data.frame(ValidateFireDangerLevels(fire_index = IT2, 
-                                               observation = BA_IT,
-                                               fireThr = 21.3, obsThr = 50))
+POD <- hits/(hits+misses)               # 0.667
+FAR <- falsealarms/(hits+falsealarms)   # 0.989
 ```
