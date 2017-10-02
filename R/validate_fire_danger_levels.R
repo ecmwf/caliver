@@ -26,8 +26,9 @@
 #'
 #'   # Generate the contingency table
 #'   ct <- validate_fire_danger_levels(fire_index = FWI,
-#'                                  observation = BurnedAreas,
-#'                                  fire_threshold = 10, obs_threshold = 50)
+#'                                     observation = BurnedAreas,
+#'                                     fire_threshold = 10,
+#'                                     obs_threshold = 50)
 #'
 #' }
 #'
@@ -134,6 +135,6 @@ validate_fire_danger_levels <- function(fire_index,
                  yes = TRUE,
                  no = FALSE)
 
-  return(table(pred, obs))
+  return(list("pred" = pred, "obs" = obs))
 
 }

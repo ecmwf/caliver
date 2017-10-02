@@ -287,6 +287,17 @@ FWIEURO <- mask_crop_subset(r = FWI, p = Europe, idx = which(names(FWI) %in% nam
 raster::writeRaster(FWIEURO, filename="FWIEURO.grd", bandorder='BIL', overwrite=TRUE, progress = 'text')
 FWIEURO <- raster::brick("FWIEURO.grd")
 
+# Contingency table for caliver - Europe as a whole
+x <- validate_fire_danger_levels(fire_index = FWIEURO, observation = BurnedAreaEurope, 
+                                 fire_threshold = EuroThrHigh, obs_threshold = 50)
+y <- data.frame(round(prop.table(x),3))
+hits <- y$Freq[which(y$pred == TRUE & y$obs == TRUE)]
+misses <- y$Freq[which(y$pred == FALSE & y$obs == TRUE)]
+falsealarms <- y$Freq[which(y$pred == TRUE & y$obs == FALSE)]
+correctneg <- y$Freq[which(y$pred == FALSE & y$obs == FALSE)]
+POD <- hits/(hits+misses)               
+FAR <- falsealarms/(hits+falsealarms)  
+
 # Loop throught the countries
 for (singleCountry in EuroThr[1:26,"Country"]){
 
@@ -377,18 +388,4 @@ df_caliver1[3, which(names(df_caliver2) == "Italy")] # misses
 # Italy (country-specific danger levels)
 df_caliver2[4, which(names(df_caliver2) == "Italy")] # hits
 df_caliver2[3, which(names(df_caliver2) == "Italy")] # misses
-
-# Contingency table for caliver - Europe as a whole
-x <- validate_fire_danger_levels(fire_index = FWIEURO, observation = BurnedAreaEurope, 
-                                 fire_threshold = EuroThrHigh, obs_threshold = 50)
-y <- data.frame(round(prop.table(x),3))
-
-y <- data.frame(round(prop.table(x),3))
-hits <- y$Freq[which(y$pred == TRUE & y$obs == TRUE)]
-misses <- y$Freq[which(y$pred == FALSE & y$obs == TRUE)]
-falsealarms <- y$Freq[which(y$pred == TRUE & y$obs == FALSE)]
-correctneg <- y$Freq[which(y$pred == FALSE & y$obs == FALSE)]
-
-POD <- hits/(hits+misses)               # 0.667
-FAR <- falsealarms/(hits+falsealarms)   # 0.989
 ```
