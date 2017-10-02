@@ -106,7 +106,7 @@ validate_fire_danger_levels <- function(fire_index,
     message("Resample observations to match the resolution of the fire index")
     burned_areas_resampled <- raster::resample(burned_areas,
                                                fwi_brick,
-                                               method = "bilinear",
+                                               method = "ngb",
                                                progress = "text")
 
   } else {
