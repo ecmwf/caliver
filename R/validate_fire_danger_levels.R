@@ -10,7 +10,7 @@
 #' @param fire_threshold threshold to use to select relevant fire indices
 #' @param obs_threshold threshold to use to select relevant observations
 #'
-#' @return A contingency table
+#' @return A list of two binary vectors: obs (observations) and pred (predictions).
 #'
 #' @export
 #'
@@ -24,8 +24,8 @@
 #'                                  to = as.Date("2015-12-31"), by = "day")
 #'   FWI <- raster::brick('GEFF/reanalysis/FWI_1980-2016.nc')
 #'
-#'   # Generate the contingency table
-#'   ct <- validate_fire_danger_levels(fire_index = FWI,
+#'   # Generate obs and pred binary vectors
+#'   op <- validate_fire_danger_levels(fire_index = FWI,
 #'                                     observation = BurnedAreas,
 #'                                     fire_threshold = 10,
 #'                                     obs_threshold = 50)
@@ -99,11 +99,13 @@ validate_fire_danger_levels <- function(fire_index,
 
     # Aggregate/Resample observations to match the resolution of the fire index
     fact <- round(dim(obs_brick)[1:2] / dim(fwi_brick)[1:2], 0)
+
     message("Aggregate observations to match the resolution of the fire index")
     burned_areas <- raster::aggregate(obs_brick,
                                       fact,
                                       fun = sum,
                                       progress = "text")
+
     message("Resample observations to match the resolution of the fire index")
     burned_areas_resampled <- raster::resample(burned_areas,
                                                fwi_brick,
@@ -126,15 +128,15 @@ validate_fire_danger_levels <- function(fire_index,
   # Transform BurnedAreas to binary (is BurnedAreas > 50 hectares?)
   seasonal_obs_vector <- as.vector(seasonal_obs)
   obs <- ifelse(test = (seasonal_obs_vector >= obs_threshold),
-                yes = TRUE,
-                no = FALSE)
+                yes = 1,
+                no = 0)
 
   # Transform FWI to binary (Is FWI > high danger level?)
   seasonal_fwi_vector <- as.vector(seasonal_fwi)
   pred <- ifelse(test = (seasonal_fwi_vector >= fire_threshold),
-                 yes = TRUE,
-                 no = FALSE)
+                 yes = 1,
+                 no = 0)
 
-  return(list("pred" = pred, "obs" = obs))
+  return(list("obs" = obs, "pred" = pred))
 
 }
