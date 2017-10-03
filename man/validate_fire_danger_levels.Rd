@@ -17,7 +17,8 @@ validate_fire_danger_levels(fire_index, observation, fire_threshold,
 \item{obs_threshold}{threshold to use to select relevant observations}
 }
 \value{
-A contingency table
+A list of two binary vectors: obs (observations) and
+pred (predictions).
 }
 \description{
 This function compares observed and modelled fire data and
@@ -35,8 +36,8 @@ and input data.
                                  to = as.Date("2015-12-31"), by = "day")
   FWI <- raster::brick('GEFF/reanalysis/FWI_1980-2016.nc')
 
-  # Generate the contingency table
-  ct <- validate_fire_danger_levels(fire_index = FWI,
+  # Generate obs and pred binary vectors
+  op <- validate_fire_danger_levels(fire_index = FWI,
                                     observation = BurnedAreas,
                                     fire_threshold = 10,
                                     obs_threshold = 50)

@@ -4,7 +4,7 @@
 \alias{get_percentile_raster}
 \title{get_percentile_raster}
 \usage{
-get_percentile_raster(probs, r = NULL, input_file_path = NULL,
+get_percentile_raster(probs, r = NULL, input_file = NULL,
   output_dir = tempdir())
 }
 \arguments{
@@ -13,7 +13,7 @@ which percentiles should be calculated.}
 
 \item{r}{Raster* object (either RasterStack or RasterBrick).}
 
-\item{input_file_path}{is the name of the file(path) to read.}
+\item{input_file}{is the name of the file(path) to read.}
 
 \item{output_dir}{is the directory where the output nc files are saved, by
 default this is a temporary directory.}
@@ -28,7 +28,7 @@ This function calculates percentile(s) at each grid point.
 \dontrun{
 
   x <- get_percentile_raster(probs = c(50, 75, 90, 99),
-                             input_file_path = "./outfile.nc",
+                             input_file = "./outfile.nc",
                              output_dir = getwd())
 }
 
