@@ -124,7 +124,7 @@ processingTime <- system.time({
 A first understanding of how FWI value are distributed over time can be achieved by creating a map of percentiles. In the example below we generate two maps: 1 for the median and the othe for the 90th percentile. 
 
 ``` r
-maps <- get_percentile_raster(input_file_path = "FWI.nc", 
+maps <- get_percentile_raster(input_file = "FWI.nc", 
                               probs = c(50, 90))
 maps2 <- get_percentile_raster(r = b, 
                                probs = c(50, 90))
@@ -265,6 +265,8 @@ countryPDF <- plot_fire_pdf(fire_index = IT,
 Test whether large fires correspond to FWI above high danger 
 
 ``` r
+library("pROC")
+
 BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")
 
 # Mask and crop burned areas over Europe

@@ -5,6 +5,8 @@
 #'
 #' @param fire_index RasterBrick containing the fire index to calculate the
 #' thresholds for. Please note that names(fire_index) should contain dates.
+#' @param ndays Number of days per year in which a fire is expected to occur.
+#' By default this is 4 days.
 #'
 #' @return A numeric vector listing the thresholds.
 #'
@@ -40,7 +42,7 @@
 #' }
 #'
 
-get_fire_danger_levels <- function(fire_index){
+get_fire_danger_levels <- function(fire_index, ndays = 4){
 
   if (all(is.na(as.vector(fire_index)))) {
 
@@ -52,9 +54,6 @@ get_fire_danger_levels <- function(fire_index){
     message("Calculating thresholds of danger levels")
     # Calculate extreme yearly danger
     years <- substr(x = names(fire_index), start = 2, stop = 5)
-
-    # Number of days per year = extreme yearly danger (assumption)
-    ndays <- 4
 
     # Calculate percentile related to the above assumption
     extreme_percentile <- floor(x = (1 - ndays / 365) * 100) / 100
