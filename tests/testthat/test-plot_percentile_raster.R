@@ -1,6 +1,6 @@
 context("plot_percentile_raster")
 
-probs_maps <- get_percentile_raster(input_file_path = geff5nc,
+probs_maps <- get_percentile_raster(input_file = geff5nc,
                                    probs = 50,
                                    output_dir = tempdir())
 
@@ -49,7 +49,7 @@ test_that("plot_percentile_raster works with region = EURO", {
 
 test_that("plot_percentile_raster works with multi probs", {
 
-  probs_maps <- get_percentile_raster(input_file_path = geff5nc,
+  probs_maps <- get_percentile_raster(input_file = geff5nc,
                                      probs = c(50, 90),
                                      output_dir = tempdir())
 

@@ -294,9 +294,12 @@ x1 <- validate_fire_danger_levels(fire_index = FWIEURO, observation = BurnedArea
 tab_x <- table(pred = x1$pred, obs = x1$obs)
 hits <- tab_x[2,2]
 misses <- tab_x[1,2]
+correct_negatives <- tab_x[1,1]
+false_alarms <- tab_x[2,1]
 # POD 47%
 round(hits/(hits+misses),2)*100
-pROC::plot.roc(pROC::roc(response = x1$obs, predictor = x1$pred))
+roc1 <- pROC::roc(response = x1$obs, predictor = x1$pred)
+pROC::plot.roc(roc1, print.auc = pROC::auc(roc1), print.auc.x = 0, print.auc.y = 0.9)
 
 # Contingency table for caliver - Europe as a whole
 x2 <- validate_fire_danger_levels(fire_index = FWIEURO, observation = BurnedAreaEurope,
@@ -306,7 +309,11 @@ hits <- tab_x[2,2]
 misses <- tab_x[1,2]
 # POD 65%
 round(hits/(hits+misses),2)*100
-pROC::plot.roc(pROC::roc(response = x2$obs, predictor = x2$pred), add = TRUE)
+roc2 <- pROC::roc(response = x2$obs, predictor = x2$pred)
+pROC::plot.roc(roc2, col = "red", add = TRUE,
+               print.auc = pROC::auc(roc2), print.auc.x = 0, print.auc.y = 0.95,
+               print.auc.col = "red")
+
 
 # Loop throught the countries
 for (singleCountry in EuroThr[1:26,"Country"]){

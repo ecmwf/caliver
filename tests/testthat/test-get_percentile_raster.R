@@ -4,7 +4,7 @@ test_that("get_percentile_raster works with null inputs", {
 
   probs_maps <- try(get_percentile_raster(probs = 50,
                                          r = NULL,
-                                         input_file_path = NULL), silent = TRUE)
+                                         input_file = NULL), silent = TRUE)
 
   # Check whether the function exits correctly
   expect_equal(class(probs_maps), "try-error")
@@ -15,7 +15,7 @@ test_that("get_percentile_raster works with all non-null inputs", {
 
   probs_maps <- try(get_percentile_raster(probs = 50,
                                          r = s,
-                                         input_file_path = "x.nc"),
+                                         input_file = "x.nc"),
                    silent = TRUE)
 
   # Check whether the function exits correctly
@@ -60,7 +60,7 @@ test_that("get_percentile_raster works with single prob from nc file", {
   skip("skip temporarily for testing")
 
   probs_maps_1_a <- get_percentile_raster(probs = 50,
-                                       input_file_path = geff5nc)
+                                       input_file = geff5nc)
 
   # Check whether the class is correct
   expect_equal("RasterLayer" %in% class(probs_maps_1_a), TRUE)
@@ -78,7 +78,7 @@ test_that("get_percentile_raster works with multiple probs from nc file", {
   skip("skip temporarily for testing")
 
   probs_maps_2_a <- get_percentile_raster(probs = c(50, 75),
-                                       input_file_path = geff5nc)
+                                       input_file = geff5nc)
 
   # Check whether the class is correct
   expect_equal("RasterBrick" %in% class(probs_maps_2_a), TRUE)
