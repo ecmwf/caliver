@@ -4,11 +4,14 @@
 \alias{get_fire_danger_levels}
 \title{get_fire_danger_levels}
 \usage{
-get_fire_danger_levels(fire_index)
+get_fire_danger_levels(fire_index, ndays = 4)
 }
 \arguments{
 \item{fire_index}{RasterBrick containing the fire index to calculate the
 thresholds for. Please note that names(fire_index) should contain dates.}
+
+\item{ndays}{Number of days per year in which a fire is expected to occur.
+By default this is 4 days.}
 }
 \value{
 A numeric vector listing the thresholds.
