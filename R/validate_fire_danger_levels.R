@@ -10,7 +10,8 @@
 #' @param fire_threshold threshold to use to select relevant fire indices
 #' @param obs_threshold threshold to use to select relevant observations
 #'
-#' @return A list of two binary vectors: obs (observations) and pred (predictions).
+#' @return A list of two binary vectors: obs (observations) and
+#' pred (predictions).
 #'
 #' @export
 #'
