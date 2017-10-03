@@ -1,8 +1,8 @@
 context("plot_percentile_raster")
 
 probs_maps <- get_percentile_raster(input_file = geff5nc,
-                                   probs = 50,
-                                   output_dir = tempdir())
+                                    probs = 50,
+                                    output_dir = tempdir())
 
 test_that("plot_percentile_raster works with rotate_map = TRUE", {
 
@@ -42,7 +42,7 @@ test_that("plot_percentile_raster works with region = EURO", {
   dev.off()
 
   visualTest::isSimilar(file = test3,
-                        fingerprint = "AF0F786FF890C0D0",
+                        fingerprint = "AF0F786FF090C4D0",
                         threshold = 0.1)
 
 })
@@ -50,8 +50,8 @@ test_that("plot_percentile_raster works with region = EURO", {
 test_that("plot_percentile_raster works with multi probs", {
 
   probs_maps <- get_percentile_raster(input_file = geff5nc,
-                                     probs = c(50, 90),
-                                     output_dir = tempdir())
+                                      probs = c(50, 90),
+                                      output_dir = tempdir())
 
   test4 <- file.path(tempdir(), "test4.png")
 

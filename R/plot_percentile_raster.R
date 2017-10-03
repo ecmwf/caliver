@@ -59,16 +59,13 @@ plot_percentile_raster <- function(maps,
   raster_min <- min(raster::cellStats(cropped_map, stat = "min", na.rm = TRUE))
   raster_max <- max(raster::cellStats(cropped_map, stat = "max", na.rm = TRUE))
 
-  # Define palette (from: rev(grDevices::heat.colors(n = 10)))
-  heatcolors <- c("#FFFFBFFF", "#FFFF40FF", "#FFFF00FF", "#FFDB00FF",
-                  "#FFB600FF", "#FF9200FF", "#FF6D00FF", "#FF4900FF",
-                  "#FF2400FF", "#FF0000FF")
+  breaks <- round(seq(from = raster_min, to = raster_max, length.out = 10), 0)
+  breaks <- unique(breaks)
 
-  raster::plot(cropped_map,
-               addfun = fun,
-               col = heatcolors,
-               breaks = round(seq(from = raster_min,
-                                  to = raster_max,
-                                  length.out = 10), 0))
+  # Define palette
+  heatcolors <- rev(grDevices::heat.colors(n = length(breaks)))
+
+  raster::plot(cropped_map, addfun = fun,
+               col = heatcolors, breaks = breaks, ...)
 
 }
