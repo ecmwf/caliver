@@ -35,13 +35,11 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
   if (mask == TRUE) {
 
     r_masked <- raster::mask(r, p, progress = "text")
-
-    # identify cells covering italy and set all remaining pixels to NA
+    # To keep cells along the border:
+    # identify cells covering the polygon and set all remaining pixels to NA
     # https://goo.gl/22LwJt
-
-  } else {
-
-    r_masked <- r
+    # much slower: cls <- cellFromPolygon(r, p, weights = TRUE)[[1]][, "cell"]
+    # much slower: r[][-cls] <- NA
 
   }
 
