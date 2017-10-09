@@ -2,9 +2,9 @@ context("mask_crop_subset")
 
 test_that("mask_crop_subset works", {
 
-  p <- raster::raster(system.file(file.path("testdata",
-                                            "GADM_2.8_ITA_adm0.rds"),
-                                  package = "caliver"))
+  p <- readRDS(system.file(file.path("testdata",
+                                     "GADM_2.8_ITA_adm0.rds"),
+                           package = "caliver"))
 
   # Check whether the stopping option works correctly
   x0a <- try(mask_crop_subset("s", p, mask = TRUE, crop = TRUE), silent = TRUE)
