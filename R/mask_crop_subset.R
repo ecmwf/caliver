@@ -41,6 +41,10 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
     # much slower: cls <- cellFromPolygon(r, p, weights = TRUE)[[1]][, "cell"]
     # much slower: r[][-cls] <- NA
 
+  }else{
+
+    r_masked <- r
+
   }
 
   if (crop == TRUE) {

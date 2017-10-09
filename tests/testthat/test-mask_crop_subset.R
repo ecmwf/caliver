@@ -2,7 +2,7 @@ context("mask_crop_subset")
 
 test_that("mask_crop_subset works", {
 
-  p <- readRDS(system.file(file.path("testdata",
+  p <- readRDS(system.file(file.path("extdata",
                                      "GADM_2.8_ITA_adm0.rds"),
                            package = "caliver"))
 
