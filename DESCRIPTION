@@ -3,7 +3,11 @@ Type: Package
 Title: CALIbration and VERification of gridded model outputs
 Version: 1.0
 Date: 2017-03-10
-Authors@R: c(person("Claudia", "Vitolo", email = "claudia.vitolo@ecmwf.int", role = c("aut", "cre")),
+Authors@R: c(person(given = "Claudia",
+                    family = "Vitolo",
+                    email = "claudia.vitolo@ecmwf.int",
+                    role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0002-4252-1176")),
              person("Francesca", "Di Giuseppe", role = c("ctb")),
              person("Mirko", "D'Andrea", role = c("aut", "ctb")))
 Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
