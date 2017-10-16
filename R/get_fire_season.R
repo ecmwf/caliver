@@ -23,7 +23,7 @@ get_fire_season <- function(dates, fss = NULL, fse = NULL, zone = "north"){
   # Convert dates from any year to 2012 dates
   d <- as.Date(strftime(dates, format = "2012-%m-%d"))
 
-  if (is.null(fss) & zone == "north"){
+  if (zone == "north"){
 
     # Fire Season Start
     fss <- as.Date("2012-04-01",  format = "%Y-%m-%d")
@@ -32,7 +32,7 @@ get_fire_season <- function(dates, fss = NULL, fse = NULL, zone = "north"){
 
   }
 
-  if (is.null(fss) & zone == "south"){
+  if (zone == "south"){
 
     # Fire Season Start
     fss <- as.Date("2012-10-01", format = "%Y-%m-%d")
@@ -41,12 +41,12 @@ get_fire_season <- function(dates, fss = NULL, fse = NULL, zone = "north"){
 
   }
 
-  if (is.null(fse) & zone == "tropics"){
+  if (zone == "tropics"){
 
     # Fire Season Start
-    fss <- as.Date("2012-07-01", format = "%Y-%m-%d")
+    fss <- as.Date("2012-06-01", format = "%Y-%m-%d")
     # Fire Season End
-    fse <- as.Date("2012-10-31", format = "%Y-%m-%d")
+    fse <- as.Date("2012-11-30", format = "%Y-%m-%d")
 
   }
 
