@@ -32,7 +32,7 @@ test_that("get_fire_season works for tropics", {
   seasons <- get_fire_season(dates = data_dates, zone = "tropics")
 
   # Check whether the proportion of days is correct
-  expect_equal(table(seasons)[[1]], 8964)
-  expect_equal(table(seasons)[[2]], 4551)
+  expect_equal(table(seasons)[[1]], 6744)
+  expect_equal(table(seasons)[[2]], 6771)
 
 })
