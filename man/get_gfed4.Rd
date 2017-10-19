@@ -5,7 +5,8 @@
 \title{get_gfed4}
 \usage{
 get_gfed4(start_date = NULL, end_date = NULL,
-  temporal_resolution = "daily", varname = NULL, region = "GLOB")
+  temporal_resolution = "daily", varname = NULL, region = "GLOB",
+  verbose = FALSE)
 }
 \arguments{
 \item{start_date}{first date to download (string)}
@@ -47,6 +48,8 @@ It can only assume the 15 values listed below:
   \item{"Equatorial Asia"}{or EQAS}
   \item{"Australia and New Zealand"}{or AUST}
 }}
+
+\item{verbose}{If TRUE, messages are printed on the screen}
 }
 \value{
 A RasterBrick (if downloading observations) or spatial polygons
