@@ -38,6 +38,7 @@
 #'   \item{"Equatorial Asia"}{or EQAS}
 #'   \item{"Australia and New Zealand"}{or AUST}
 #' }
+#' @param verbose If TRUE, messages are printed on the screen
 #'
 #' @note The conversion from hdf5 to netcdf gets stuck in RStudio
 #' (see \url{https://goo.gl/Rcvp9x}), please use the console.
@@ -75,11 +76,13 @@ get_gfed4 <- function(start_date = NULL,
                       end_date = NULL,
                       temporal_resolution = "daily",
                       varname = NULL,
-                      region = "GLOB"){
+                      region = "GLOB",
+                      verbose = FALSE){
 
   # Create a tmp directory
   my_temp_dir <- tempdir()
-  message(paste0("Downloading temporary files in: ", my_temp_dir))
+
+  if (verbose) message(paste0("Downloading temporary files in: ", my_temp_dir))
 
   if (is.null(varname)) stop("Please enter valid varname")
 
@@ -142,7 +145,7 @@ get_gfed4 <- function(start_date = NULL,
 
       regions_polygons <- raster::rasterToPolygons(x = regions_raster_t_no_na)
 
-      message("Removing temporary files")
+      if (verbose) message("Removing temporary files")
       unlink(file.path(my_temp_dir, fname))
 
       return(regions_polygons)
@@ -276,7 +279,7 @@ get_gfed4 <- function(start_date = NULL,
                          pattern = file_pattern,
                          output_file = output_file_path)
 
-      message("Generating RasterBrick")
+      if (verbose) message("Generating RasterBrick")
       merged_raster <- raster::brick(output_file_path)
 
     }
@@ -285,18 +288,18 @@ get_gfed4 <- function(start_date = NULL,
     # extent and the coordinate system should be set manually
 
     # Transform the rasterBrick, flipping it on the y direction
-    message("Flipping the raster on the y-direction")
+    if (verbose) message("Flipping the raster on the y-direction")
     regions_raster_t <- raster::flip(merged_raster,
                                      direction = "y",
                                      progress = "text")
 
-    message("Setting extent and assigning CRS")
+    if (verbose) message("Setting extent and assigning CRS")
     # Set extent
     raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
     # Assign CRS (WGS84)
     regions_raster_t@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
 
-    message("Removing temporary files")
+    if (verbose) message("Removing temporary files")
     unlink(list_of_files)
     unlink(output_file_path)
 

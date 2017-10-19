@@ -11,8 +11,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
 The name caliver stands for **CALI**bration and **VER**ification of gridded model outputs. It is a package developed for the R programming language and available with an APACHE-2 license from a public repository. The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regard to outputs of the following forest fire models: GEFF and RISICO. Applicability to other model results will be investigated in future works. Complete documentation is available within the package. This vignette contains the code to run all the examples in [@vitolo:2017b], please refer to this paper for more information.
@@ -23,18 +22,15 @@ The caliver package is implemented in the R statistical language and depends on 
 
 The caliver package also depends on additional R packages from both CRAN and Bioconductor. Users must have the above dependencies installed before attempting to install caliver. Installation instructions for different operating systems are available in the README file.
 
-```{r, echo = FALSE, eval = FALSE}
-setwd("/scratch/mo/moc0/fire/")
-```
-
 Once all the dependencies are available, the package can be installed via [devtools](https://github.com/hadley/devtools):
-``` r
+
+```{r}
 devtools::install_github("ecmwf/caliver")
 ```
 
 Load the caliver package:
 
-``` r
+```{r, eval = TRUE}
 library("caliver")
 ```
 
@@ -42,45 +38,54 @@ library("caliver")
 
 Observed burned areas around the world are collected by the GFED4 in hdf format \citep{giglio2013analysis}. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability.
 
-``` r
+```{r}
 # Get daily burned area maps from 2003 to 2015 (to be run in the console!)
 BurnedAreas <- get_gfed4(start_date = "2003-01-01",
                          end_date = "2015-12-31",
                          temporal_resolution = "daily",
                          varname = "BurnedArea",
                          region = "GLOB")
-```
 
-```{r, echo = FALSE, eval = FALSE}
-# The above can be saved and re-loaded as follows:
+# The above can be saved as follows:
 raster::writeRaster(BurnedAreas,
                     filename="BurnedArea.grd",
                     bandorder='BIL', overwrite=TRUE, progress = 'text')
+```
+
+```{r, echo = FALSE}
+# The above can be re-loaded as follows:
 BurnedAreas <- raster::brick("BurnedArea.grd")
 ```
 
 The fourth-generation global fire emissions database also provides as ancillary data a map of 14 basis regions used to evaluate regional annual emission estimates. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the sp package) setting `varname = "BasisRegions"'.
 
-``` r
+```{r}
 # Get all the BasisRegions
 BasisRegions <- get_gfed4(varname = "BasisRegions")
+```
 
+```{r, eval = TRUE}
 # Europe
 Europe <- get_gfed4(varname = "BasisRegions", region = "EURO")
 ```
 
 Get administrative areas using getdata from the raster package
-``` r
+
+```{r}
 # United Kingdom
 UnitedK <- raster::getData(name = "GADM", country = "United Kingdom", 
                            level = 0)
 
 # Spain
 Spain <- raster::getData(name = "GADM", country = "Spain", level = 0)
+```
 
+```{r, eval = TRUE}
 # Italy
 Italy <- raster::getData(name = "GADM", country = "Italy", level = 0)
+```
 
+```{r}
 # Italian regions
 Italy1 <- raster::getData(name = "GADM", country = "Italy", level = 1)
 
@@ -98,7 +103,7 @@ Genoa <- Italy2[42,]
 
 The function `import_GEFF_data_from_tar()` can be used to open the tar archive, decompress the gz files, merge the layers into a RasterStack and convert this to a RasterBrick object. A sample dataset (geff5.tar) is available in the testdata folder of the package.
 
-``` r
+```{r, eval = TRUE}
 geff5tar <- system.file(file.path("testdata", "geff5.tar"), 
                         package = "caliver")
 b <- import_geff_data_from_tar(archive = geff5tar)
@@ -106,12 +111,13 @@ b <- import_geff_data_from_tar(archive = geff5tar)
 
 Decompress bulk gz archives using the function `decompress_gz()`.
 
-``` r
+```{r}
 decompress_gz(input_dir = "./tmp")
 ```
 
 Once all the files are decompressed they can be merged in a unique netCDF file using the function `stack_netcdf_files()`.
-```r
+
+```{r}
 processingTime <- system.time({
   stack_netcdf_files(input_dir = "./tmp", output_file = "FWI.nc")
 })
@@ -121,8 +127,11 @@ processingTime <- system.time({
 
 A first understanding of how FWI value are distributed over time can be achieved by creating a map of percentiles. In the example below we generate two maps: 1 for the median and the othe for the 90th percentile. 
 
-``` r
+```{r}
 map <- get_percentile_raster(input_file = "FWI.nc", probs = 50)
+```
+
+```{r, eval = TRUE}
 maps <- get_percentile_raster(r = b, probs = c(50, 75, 90))
 ```
 
@@ -130,7 +139,7 @@ maps <- get_percentile_raster(r = b, probs = c(50, 75, 90))
 
 FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `mask_crop_subset()` is used to extract the FWI for the first data of the reanalysis (setting argument `idx = 1`), masked and cropped over Europe.
 
-``` r
+```{r, eval = TRUE}
 mapItaly <- mask_crop_subset(r = maps, p = Italy, idx = c(1, 3))
 ```
 
@@ -138,25 +147,19 @@ mapItaly <- mask_crop_subset(r = maps, p = Italy, idx = c(1, 3))
 
 The function `plotPercentiles()` provides a modified version of the `raster::plot()` function. Below is a comparison.
 
-``` r
+```{r, eval = TRUE, fig.width = 7}
 # Use the raster plot method
-setEPS()
-postscript("raster.eps", width = 5.2, height = 3)
 raster::plot(mapItaly, main = c("FWI 50th perc.", "FWI 90th perc."))
-dev.off()
 
 # Use the caliver plotPercentiles function
-setEPS()
-postscript("caliver.eps", width = 5.2, height = 3)
 plot_percentile_raster(maps = mapItaly, main = c("FWI 50th perc.", "FWI 90th perc."))
-dev.off()
 ```
 
-### Assemble the FWI dataset
+### Define fire season
 
 In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe, starting in April and ending in October each year.
 
-``` r
+```{r, eval = TRUE}
 dataDates <- seq.Date(from = as.Date("1980-01-01"),
                       to = as.Date("2016-12-31"),
                       by = "day")
@@ -172,7 +175,7 @@ fireSeasonIndex <- which(seasons == TRUE)
 
 Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe, regions and a province in Italy. The result shows that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level. 
 
-``` r
+```{r}
 # Load FWI dataset obtained previously
 FWI <- raster::brick("FWI.nc")
 
@@ -248,7 +251,7 @@ saveRDS(EuroThr, "EuroThr.rds")
 
 The thresholds are different from the percentiles, the PDF  below shows a comparison for Italy.
 
-``` r
+```{r}
 countryPDF <- plot_fire_pdf(fire_index = IT,
                             thresholds = EuroThr["Italy", ], 
                             upper_limit = 75,
@@ -259,7 +262,7 @@ countryPDF <- plot_fire_pdf(fire_index = IT,
 
 Test whether large fires correspond to FWI above high danger 
 
-``` r
+```{r}
 library("pROC")
 
 BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")
