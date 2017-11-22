@@ -139,7 +139,7 @@ maps <- get_percentile_raster(r = b, probs = c(50, 75, 90))
 
 ### Mask/crop/subset
 
-FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `mask_crop_subset()` is used to extract the FWI for the first data of the reanalysis (setting argument `idx = 1`), masked and cropped over Europe.
+FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `mask_crop_subset()` is used to extract the 50th and 90th percentiles (setting argument `idx = c(1, 3)`), masked and cropped over Europe.
 
 ```{r, eval = TRUE}
 mapItaly <- mask_crop_subset(r = maps, p = Italy, idx = c(1, 3))

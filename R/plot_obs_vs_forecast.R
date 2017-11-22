@@ -106,6 +106,11 @@ plot_obs_vs_forecast <- function(input_dir,
     # transform dates to strings to build file name
     start_d <- gsub("-", "", as.character(my_dates[i]))
 
+    file2read <- file.path(input_dir,
+                           paste0(start_d, "_", end_d, "_ecfire_",
+                                  forecast_type, "_",
+                                  origin, "_", index, ".nc"))
+
     for (j in 1:length(my_dates)) {
 
       # transform dates to strings to build file name
