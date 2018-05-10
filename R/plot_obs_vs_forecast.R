@@ -34,9 +34,9 @@ plot_obs_vs_forecast <- function(input_dir,
                                  start_date,
                                  end_date,
                                  obs_file_path,
-                                 forecast_type = "fc",
-                                 origin = "fwi",
-                                 index = "fwi"){
+                                 forecast_type = "hr",
+                                 origin = "cfwis",
+                                 index = "ffwi"){
 
   my_dates <- seq.Date(from = as.Date(start_date),
                       to = as.Date(end_date),
@@ -52,20 +52,13 @@ plot_obs_vs_forecast <- function(input_dir,
     # transform dates to strings to build file name
     start_d <- gsub("-", "", as.character(my_dates[i]))
 
-    for (j in 1:length(my_dates)) {
+    file2read <- file.path(input_dir,
+                           paste0(origin, "_", index, "_",
+                                  start_d, "_1200_",
+                                  forecast_type, ".nc"))
 
-      # transform dates to strings to build file name
-      end_d <- gsub("-", "", as.character(my_dates[j]))
-
-      file2read <- file.path(input_dir,
-                             paste0(start_d, "_", end_d, "_ecfire_",
-                                    forecast_type, "_",
-                                    origin, "_", index, ".nc"))
-
-      if (file.exists(file2read)) {
-        s <- raster::stack(s, raster::raster(file2read))
-      }
-
+    if (file.exists(file2read)) {
+      s <- raster::stack(s, raster::brick(file2read))
     }
 
   }
@@ -96,42 +89,23 @@ plot_obs_vs_forecast <- function(input_dir,
   # Total number of non-NA cells
   n_total <- sum(as.vector(!is.na(s_cropped[[1]])))
 
+  x <- round(raster::cellStats(s_reclassified, sum) / n_total, 2) * 100
+  xmat <- matrix(x, ncol = 10, byrow = TRUE)
+
   # Initialise the matrix to hold the values
   raster_mean_matrix <- matrix(NA,
                                nrow = length(my_dates),
                                ncol = length(my_dates))
-  layer_counter <- 1
-  for (i in 1:length(my_dates)) {
 
-    # transform dates to strings to build file name
-    start_d <- gsub("-", "", as.character(my_dates[i]))
-
-    file2read <- file.path(input_dir,
-                           paste0(start_d, "_", end_d, "_ecfire_",
-                                  forecast_type, "_",
-                                  origin, "_", index, ".nc"))
-
-    for (j in 1:length(my_dates)) {
-
-      # transform dates to strings to build file name
-      end_d <- gsub("-", "", as.character(my_dates[j]))
-
-      file2read <- file.path(input_dir,
-                             paste0(start_d, "_", end_d, "_ecfire_",
-                                    forecast_type, "_",
-                                    origin, "_", index, ".nc"))
-
-      if (file.exists(file2read)) {
-
-        perc_layer <- raster::cellStats(s_reclassified[[layer_counter]],
-                                        sum) / n_total
-        raster_mean_matrix[i, j] <- round(perc_layer, 2) * 100
-        layer_counter <- layer_counter + 1
-
-      }
-
+  j <- 1
+  for (i in seq_along(my_dates)){
+    if (j+9 <= length(my_dates)){
+      w <- 10
+    }else{
+      w <- length(my_dates) - min(length(my_dates), j) + 1
     }
-
+    raster_mean_matrix[i, j:(j+w-1)] <- xmat[i, 1:w]
+    j <- j + 1
   }
 
   # Remove empty rows
