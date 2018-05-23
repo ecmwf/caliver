@@ -9,10 +9,10 @@
 #' @param start_date date when observations start
 #' @param end_date date when observations end
 #' @param obs_file_path file path to observations (3D raster)
-#' @param forecast_type type of forecast: fc (high resolution/deterministic),
-#' cf (control forecast), pf (perturbed forecast/probabilistic)
+#' @param forecast_type type of forecast: hr (high resolution/deterministic),
+#' ens (control and perturbed forecast/probabilistic)
 #' @param origin This is the rating system of interest:
-#' fwi (default), mark5, nfdrs.
+#' fwi (default, currently called cfwis), mark5, nfdrs.
 #' @param index This is the index to analyse
 #' (default is fwi, belonging to fwi origin).
 #'
@@ -34,9 +34,9 @@ plot_obs_vs_forecast <- function(input_dir,
                                  start_date,
                                  end_date,
                                  obs_file_path,
-                                 forecast_type = "hr",
-                                 origin = "cfwis",
-                                 index = "ffwi"){
+                                 forecast_type = "fc",
+                                 origin = "fwi",
+                                 index = "fwi"){
 
   my_dates <- seq.Date(from = as.Date(start_date),
                       to = as.Date(end_date),
