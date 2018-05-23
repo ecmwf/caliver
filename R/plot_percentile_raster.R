@@ -56,10 +56,9 @@ plot_percentile_raster <- function(maps,
 
   }
 
-  raster_min <- min(raster::cellStats(cropped_map, stat = "min", na.rm = TRUE))
   raster_max <- max(raster::cellStats(cropped_map, stat = "max", na.rm = TRUE))
 
-  breaks <- round(seq(from = raster_min, to = raster_max, length.out = 10), 0)
+  breaks <- round(seq(from = 0, to = raster_max, length.out = 10), 0)
   breaks <- unique(breaks)
 
   # Define palette
