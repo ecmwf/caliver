@@ -17,6 +17,7 @@ addons:
     packages:
     - libhdf5-dev
     - libnetcdf-dev
+    - libgeos-c1v5
     - libspatialite5
     - libgdal1h
     - libncarg0
