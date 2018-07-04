@@ -12,7 +12,9 @@ addons:
     packages:
     - libssl-dev
     - libproj-dev
+    - libspatialite5
     - libspatialite-dev
+    - libgeos-c1v5
     - libgdal20
     - libgdal-dev
     - libhdf5-dev
