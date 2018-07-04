@@ -4,7 +4,7 @@ language: r
 sudo: required
 dist: trusty
 r: bioc-devel
-bioc_required: true 
+bioc_required: true
 bioc_use_devel: true
 
 addons:
@@ -12,13 +12,17 @@ addons:
     packages:
     - libssl-dev
     - libproj-dev
+    - libspatialite-dev
+    - libgdal20
     - libgdal-dev
     - libhdf5-dev
     - libnetcdf-dev
     - netcdf-bin
+    - libgdal1h
+    - libncarg0
     - ncl-ncarg
     - cdo
-  
+
 r_packages:
   - covr
 
