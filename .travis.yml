@@ -24,6 +24,13 @@ before_install:
   - ./configure --prefix=/usr
   - make
   - sudo make install
+  - cd
+  - wget https://www.earthsystemgrid.org/dataset/ncl.640.src/file/ncl_ncarg-6.4.0.tar.gz
+  - tar zxvf ncl_ncarg-6.4.0.tar.gz
+  - cd ncl_ncarg-6.4.0
+  - ./configure --prefix=/usr
+  - make
+  - sudo make install
   - cd /home/travis/build/ecmwf/caliver
   - Rscript -e 'update.packages(ask = FALSE)'
 
@@ -36,7 +43,6 @@ addons:
       - libhdf5-dev
       - libnetcdf-dev
       - netcdf-bin
-      - ncl-ncarg
       - cdo
 
 r_github_packages:
