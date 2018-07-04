@@ -8,16 +8,17 @@ bioc_required: true
 bioc_use_devel: true
 
 before_install:
-    - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
-    - sudo apt-get --yes --force-yes update -qq
-    - sudo apt-get install --yes udunits-bin libproj-dev libgeos-dev libgdal-dev libgdal1-dev libudunits2-dev
+  - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
+  - sudo apt-get --yes --force-yes update -qq
+  - sudo apt-get install -y libudunits2-dev libproj-dev libgeos-dev libgdal-dev netcdf-bin
 
 addons:
   apt:
     packages:
     - libhdf5-dev
     - libnetcdf-dev
-    - netcdf-bin
+    - libgdal1h
+    - libncarg0
     - ncl-ncarg
     - cdo
 
@@ -28,3 +29,8 @@ r_github_packages:
 
 after_success:
   - Rscript -e 'covr::codecov()'
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
