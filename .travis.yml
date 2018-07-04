@@ -20,6 +20,7 @@ addons:
     - libhdf5-dev
     - libnetcdf-dev
     - netcdf-bin
+    - libgeos-c1
     - libgdal1h
     - libncarg0
     - ncl-ncarg
