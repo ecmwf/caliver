@@ -1,6 +1,6 @@
 # caliver R package
 
-> CALIbration and VERification of gridded (fire risk) models
+> CALIbration and VERification of gridded (wildfire danger) models
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.376613.svg)](https://doi.org/10.5281/zenodo.376613)
 [![Travis-CI Build Status](https://travis-ci.org/ecmwf/caliver.svg?branch=master)](https://travis-ci.org/ecmwf/caliver)
