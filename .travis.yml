@@ -2,7 +2,6 @@
 
 language: r
 sudo: required
-dist: trusty
 r: bioc-devel
 bioc_required: true
 bioc_use_devel: true
@@ -12,13 +11,12 @@ addons:
     sources:
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
+      - libssl-dev
+      - libproj-dev
+      - libgdal-dev
       - libhdf5-dev
       - libnetcdf-dev
-      - libudunits2-dev
-      - libproj-dev
-      - libgeos-dev
-      - libspatialite-dev
-      - libgdal-dev
+      - netcdf-bin
       - ncl-ncarg
       - cdo
 
