@@ -103,12 +103,12 @@ plot_obs_vs_forecast <- function(input_dir,
 
   j <- 1
   for (i in seq_along(my_dates)){
-    if (j+9 <= length(my_dates)){
+    if (j + 9 <= length(my_dates)){
       w <- 10
     }else{
       w <- length(my_dates) - min(length(my_dates), j) + 1
     }
-    raster_mean_matrix[i, j:(j+w-1)] <- xmat[i, 1:w]
+    raster_mean_matrix[i, j:(j + w - 1)] <- xmat[i, 1:w]
     j <- j + 1
   }
 

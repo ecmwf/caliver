@@ -1,6 +1,7 @@
 #' @title ranking
 #'
-#' @description This function calculates the percentile ranking of a forecast layer
+#' @description This function calculates the percentile ranking of a forecast
+#' layer
 #'
 #' @param fc is the forecast layer, a Raster* object.
 #' @param clima RasterBrick containing the climatological information
@@ -17,65 +18,49 @@
 
 ranking <- function(fc, clima){
 
-  # Default probs
-  probs <- c(0.50, 0.75, 0.85, 0.90, 0.95, 0.98)
-
   # Set up default layer for comparison
-  pMaps <- raster::calc(x = clima,
-                        fun = function(x) {quantile(x,
-                                                    probs = probs,
-                                                    na.rm=TRUE)},
-                        progress = "text")
+  prob_maps <- raster::calc(x = clima, fun = quant_function, progress = "text")
 
-  pMaps <- raster::resample(pMaps, fc, progress = "text")
+  prob_maps <- raster::resample(prob_maps, fc, progress = "text")
 
-  pbelow50 <- fc <= pMaps[[1]]
-  p50to75 <- (fc > pMaps[[1]] & fc <= pMaps[[2]])
-  p75to85 <- (fc > pMaps[[2]] & fc <= pMaps[[3]])
-  p85to90 <- (fc > pMaps[[3]] & fc <= pMaps[[4]])
-  p90to95 <- (fc > pMaps[[4]] & fc <= pMaps[[5]])
-  p95to98 <- (fc > pMaps[[5]] & fc <= pMaps[[6]])
-  pabove98 <- fc > pMaps[[6]]
+  pbelow50 <- fc <= prob_maps[[1]]
+  p50to75 <- (fc > prob_maps[[1]] & fc <= prob_maps[[2]])
+  p75to85 <- (fc > prob_maps[[2]] & fc <= prob_maps[[3]])
+  p85to90 <- (fc > prob_maps[[3]] & fc <= prob_maps[[4]])
+  p90to95 <- (fc > prob_maps[[4]] & fc <= prob_maps[[5]])
+  p95to98 <- (fc > prob_maps[[5]] & fc <= prob_maps[[6]])
+  pabove98 <- fc > prob_maps[[6]]
 
-  rankingMap <- fc
-  rankingMap[] <- 0
-  rankingMap[pbelow50] <- 1
-  rankingMap[p50to75] <- 2
-  rankingMap[p75to85] <- 3
-  rankingMap[p85to90] <- 4
-  rankingMap[p90to95] <- 5
-  rankingMap[p95to98] <- 6
-  rankingMap[pabove98] <- 7
+  ranking_map <- fc
+  ranking_map[] <- 0
+  ranking_map[pbelow50] <- 1
+  ranking_map[p50to75] <- 2
+  ranking_map[p75to85] <- 3
+  ranking_map[p85to90] <- 4
+  ranking_map[p90to95] <- 5
+  ranking_map[p95to98] <- 6
+  ranking_map[pabove98] <- 7
 
-  return(rankingMap)
+  return(ranking_map)
 
 }
 
 plot_ranking <- function(r){
 
-  # Define a background map
-  background_map <- rworldmap::getMap(resolution = "low")
-  # We want to plot the background map on each layers of the stack, so we need
-  # to create a function and pass it to the addfun argument
-  # (see ?plot in the raster package)
-  fun <- function() {
-
-    plot(background_map, add = TRUE, border = "lightgray")
-
-  }
-
   breaks <- 1:7
 
   # Define palette
-  heatcolors <- c("beige", "orange1", "orange2", "orange3", "orangered", "red", "brown")
+  heatcolors <- c("beige", "orange1", "orange2", "orange3", "orangered", "red",
+                  "brown")
 
   # to place the legend outside the map
   par(xpd = FALSE)
-  raster::plot(r, addfun = fun, col = heatcolors, breaks = breaks,
-                    legend = FALSE)
+  raster::plot(r, addfun = background_map_fun, col = heatcolors,
+               breaks = breaks, legend = FALSE)
   par(xpd = TRUE)
-  legend(x = 182, y = 25, legend = c("<=50", "50..75", "75..85",
-                               "85..90", "90..95", "95..98", "98..100"),
-         fill = heatcolors, bty="n")
+  legend(x = 182, y = 25,
+         legend = c("<=50", "50..75", "75..85",
+                    "85..90", "90..95", "95..98", "98..100"),
+         fill = heatcolors, bty = "n")
 
 }

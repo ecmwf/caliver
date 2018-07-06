@@ -1,6 +1,7 @@
 #' @title anomaly
 #'
-#' @description This function calculates the anomaly (standardised deviation from the mean climatology) of a forecast layer
+#' @description This function calculates the anomaly (standardised deviation
+#' from the mean climatology) of a forecast layer
 #'
 #' @param fc is the forecast layer, a Raster* object.
 #' @param clima RasterBrick containing the climatological information
@@ -26,15 +27,15 @@ anomaly <- function(fc, clima){
   clima_idx <- which(clima_dates == forecast_date)
 
   # Mean from clima
-  meanClima <- raster::calc(x = clima[[clima_idx]],
+  mean_clima <- raster::calc(x = clima[[clima_idx]],
                             fun = mean, progress = "text")
-  meanClima <- raster::resample(x = meanClima, y = fc)
+  mean_clima <- raster::resample(x = mean_clima, y = fc)
   # Standard deviation from clima
-  sdClima <- raster::calc(x = clima[[clima_idx]], fun = sd, progress = "text")
-  sdClima <- raster::resample(x = sdClima, y = fc)
+  sd_clima <- raster::calc(x = clima[[clima_idx]], fun = sd, progress = "text")
+  sd_clima <- raster::resample(x = sd_clima, y = fc)
 
   # Generate anomaly map
-  anomalyMap <- (fc - meanClima) / sdClima
+  anomaly_map <- (fc - mean_clima) / sd_clima
 
   a1 <- fc <= -3
   a2 <- (fc > -3 & fc <= -2)
@@ -49,37 +50,26 @@ anomaly <- function(fc, clima){
   a11 <- (fc > +2.5 & fc <= +3)
   a12 <- fc > 3
 
-  anomalyMap <- fc
-  anomalyMap[] <- 0
-  anomalyMap[a1] <- 1
-  anomalyMap[a2] <- 2
-  anomalyMap[a3] <- 3
-  anomalyMap[a4] <- 4
-  anomalyMap[a5] <- 5
-  anomalyMap[a6] <- 6
-  anomalyMap[a7] <- 7
-  anomalyMap[a8] <- 8
-  anomalyMap[a9] <- 9
-  anomalyMap[a10] <- 10
-  anomalyMap[a11] <- 11
-  anomalyMap[a12] <- 12
+  anomaly_map <- fc
+  anomaly_map[] <- 0
+  anomaly_map[a1] <- 1
+  anomaly_map[a2] <- 2
+  anomaly_map[a3] <- 3
+  anomaly_map[a4] <- 4
+  anomaly_map[a5] <- 5
+  anomaly_map[a6] <- 6
+  anomaly_map[a7] <- 7
+  anomaly_map[a8] <- 8
+  anomaly_map[a9] <- 9
+  anomaly_map[a10] <- 10
+  anomaly_map[a11] <- 11
+  anomaly_map[a12] <- 12
 
-  return(anomalyMap)
+  return(anomaly_map)
 
 }
 
 plot_anomaly <- function(r){
-
-  # Define a background map
-  background_map <- rworldmap::getMap(resolution = "low")
-  # We want to plot the background map on each layers of the stack, so we need
-  # to create a function and pass it to the addfun argument
-  # (see ?plot in the raster package)
-  fun <- function() {
-
-    plot(background_map, add = TRUE, border = "lightgray")
-
-  }
 
   breaks <- 1:13
 
@@ -90,14 +80,14 @@ plot_anomaly <- function(r){
 
   # to place the legend outside the map
   par(xpd = FALSE)
-  raster::plot(r, addfun = fun, col = heatcolors, breaks = breaks,
-                    legend = FALSE)
+  raster::plot(r, addfun = background_map_fun, col = heatcolors,
+               breaks = breaks, legend = FALSE)
   par(xpd = TRUE)
   legend(x = 182, y = 25, legend = c("<=-3.0", "-3.0..-2.0", "-2.0..-1.5",
                                      "-1.5..-1.0", "-1.0..-0.5",
                                      "-0.5..0.5", "0.5..1.0", "1.0..1.5",
                                      "1.5..2.0", "2.0..2.5", "2.5..3.0",
                                      ">3.0"),
-         fill = heatcolors, bty="n")
+         fill = heatcolors, bty = "n")
 
 }

@@ -45,17 +45,6 @@ plot_percentile_raster <- function(maps,
 
   }
 
-  # Define a background map
-  background_map <- rworldmap::getMap(resolution = "low")
-  # We want to plot the background map on each layers of the stack, so we need
-  # to create a function and pass it to the addfun argument
-  # (see ?plot in the raster package)
-  fun <- function() {
-
-    plot(background_map, add = TRUE, border = "lightgray")
-
-  }
-
   raster_max <- max(raster::cellStats(cropped_map, stat = "max", na.rm = TRUE))
 
   breaks <- round(seq(from = 0, to = raster_max, length.out = 10), 0)
@@ -64,7 +53,7 @@ plot_percentile_raster <- function(maps,
   # Define palette
   heatcolors <- rev(grDevices::heat.colors(n = length(breaks)))
 
-  raster::plot(cropped_map, addfun = fun,
+  raster::plot(cropped_map, addfun = background_map_fun,
                col = heatcolors, breaks = breaks, ...)
 
 }
