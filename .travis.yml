@@ -6,38 +6,17 @@ r: bioc-devel
 bioc_required: true
 bioc_use_devel: true
 
-before_install:
-  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
-  - chmod 755 pkg-build.sh
-  - ./pkg-build.sh bootstrap
-  - cd
-  - wget http://download.osgeo.org/gdal/2.3.1/gdal-2.3.1.tar.gz
-  - tar zxf gdal-2.3.1.tar.gz
-  - cd gdal-2.3.1
-  - ./configure --prefix=/usr
-  - make
-  - sudo make install
-  - cd
-  - wget http://download.osgeo.org/proj/proj-5.0.1.tar.gz
-  - tar zxvf proj-5.0.1.tar.gz
-  - cd proj-5.0.1
-  - ./configure --prefix=/usr
-  - make
-  - sudo make install
-  - cd /home/travis/build/ecmwf/caliver
-  - Rscript -e 'update.packages(ask = FALSE)'
-
 addons:
   apt:
     sources:
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
-      - libssl-dev
-      - libhdf5-dev
       - libnetcdf-dev
-      - netcdf-bin
-      - cdo
+      - libhdf5-dev
+      - libproj-dev
+      - libgdal-dev
       - ncl-ncarg
+      - cdo
 
 r_github_packages:
   - MangoTheCat/visualTest
