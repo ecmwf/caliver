@@ -12,10 +12,12 @@ addons:
   apt:
     packages:
     - libnetcdf-dev
+    - netcdf-bin
     - libhdf5-dev
     - libproj-dev
     - libgdal-dev
     - cdo
+    - ncl-ncarg
 
 r_github_packages:
   - MangoTheCat/visualTest
