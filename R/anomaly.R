@@ -9,8 +9,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   fc <- brick("/hugetmp/fire/geff/forecast/fwi2017/ffwi_rotated/cfwis_ffwi_20170101_1200_00.nc")[[1]]
-#'   clima <- brick("/hugetmp/fire/geff/reanalysis/fwi.nc")
+#'   fc <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
+#'   clima <- brick("fwi.nc")
 #'   x <- anomaly(fc, clima)
 #' }
 #'
@@ -26,11 +26,12 @@ anomaly <- function(fc, clima){
   clima_idx <- which(clima_dates == forecast_date)
 
   # Mean from clima
-  meanClima <- calc(x = clima[[clima_idx]], fun = mean, progress = "text")
-  meanClima <- resample(x = meanClima, y = fc)
+  meanClima <- raster::calc(x = clima[[clima_idx]],
+                            fun = mean, progress = "text")
+  meanClima <- raster::resample(x = meanClima, y = fc)
   # Standard deviation from clima
-  sdClima <- calc(x = clima[[clima_idx]], fun = sd, progress = "text")
-  sdClima <- resample(x = sdClima, y = fc)
+  sdClima <- raster::calc(x = clima[[clima_idx]], fun = sd, progress = "text")
+  sdClima <- raster::resample(x = sdClima, y = fc)
 
   # Generate anomaly map
   anomalyMap <- (fc - meanClima) / sdClima
@@ -63,7 +64,7 @@ anomaly <- function(fc, clima){
   anomalyMap[a11] <- 11
   anomalyMap[a12] <- 12
 
-  return(rankingMap)
+  return(anomalyMap)
 
 }
 
@@ -82,8 +83,10 @@ plot_anomaly <- function(r){
 
   breaks <- 1:13
 
-  # Define palette
-  heatcolors <- colorRamps::matlab.like(n = length(breaks))
+  # Define palette: colorRamps::matlab.like(n = length(breaks))
+  heatcolors <- c("#000099", "#0040CC", "#0080FF", "#00BFFF", "#33FFFF",
+                  "#66FFCC", "#99FF99", "#CCFF66", "#FFFF33", "#FFBF00",
+                  "#FF8000", "#CC4000", "#990000")
 
   # to place the legend outside the map
   par(xpd = FALSE)

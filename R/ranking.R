@@ -9,8 +9,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   fc <- brick("/hugetmp/fire/geff/forecast/fwi2017/ffwi_rotated/cfwis_ffwi_20170101_1200_00.nc")[[1]]
-#'   clima <- brick("/hugetmp/fire/geff/reanalysis/fwi.nc")
+#'   fc <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
+#'   clima <- brick("fwi.nc")
 #'   x <- ranking(fc, clima)
 #' }
 #'
@@ -21,13 +21,13 @@ ranking <- function(fc, clima){
   probs <- c(0.50, 0.75, 0.85, 0.90, 0.95, 0.98)
 
   # Set up default layer for comparison
-  pMaps <- calc(x = clima,
-                fun = function(x) {quantile(x,
-                                            probs = probs,
-                                            na.rm=TRUE)} ,
-                progress = "text")
+  pMaps <- raster::calc(x = clima,
+                        fun = function(x) {quantile(x,
+                                                    probs = probs,
+                                                    na.rm=TRUE)},
+                        progress = "text")
 
-  pMaps <- resample(pMaps, fc, progress = "text")
+  pMaps <- raster::resample(pMaps, fc, progress = "text")
 
   pbelow50 <- fc <= pMaps[[1]]
   p50to75 <- (fc > pMaps[[1]] & fc <= pMaps[[2]])
@@ -68,8 +68,6 @@ plot_ranking <- function(r){
 
   # Define palette
   heatcolors <- c("beige", "orange1", "orange2", "orange3", "orangered", "red", "brown")
-    # c("beige", "lightblue", "green", "yellow", "red", "purple")
-    # rev(grDevices::heat.colors(n = length(breaks)))
 
   # to place the legend outside the map
   par(xpd = FALSE)

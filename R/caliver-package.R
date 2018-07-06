@@ -25,5 +25,6 @@
 #' @importFrom plotrix rescale
 #' @importFrom reshape2 melt
 #' @importFrom R.utils gunzip
+#' @importFrom graphics legend par
 #'
 NULL

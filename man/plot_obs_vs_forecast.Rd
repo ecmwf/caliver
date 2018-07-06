@@ -4,11 +4,14 @@
 \alias{plot_obs_vs_forecast}
 \title{plot_obs_vs_forecast}
 \usage{
-plot_obs_vs_forecast(input_dir, p = NULL, threshold, start_date, end_date,
-  obs_file_path, forecast_type = "fc", origin = "fwi", index = "fwi")
+plot_obs_vs_forecast(input_dir, s = NULL, p = NULL, threshold, start_date,
+  end_date, obs_file_path, forecast_type = "hr", origin = "cfwis",
+  index = "ffwi")
 }
 \arguments{
 \item{input_dir}{folder containing forecast files}
+
+\item{s}{Raster* object containing the forecasts}
 
 \item{p}{SpatialPolygon* identifying the area affected by fires.}
 
@@ -21,11 +24,11 @@ plot_obs_vs_forecast(input_dir, p = NULL, threshold, start_date, end_date,
 
 \item{obs_file_path}{file path to observations (3D raster)}
 
-\item{forecast_type}{type of forecast: fc (high resolution/deterministic),
-cf (control forecast), pf (perturbed forecast/probabilistic)}
+\item{forecast_type}{type of forecast: hr (high resolution/deterministic),
+ens (control and perturbed forecast/probabilistic)}
 
 \item{origin}{This is the rating system of interest:
-fwi (default), mark5, nfdrs.}
+fwi (default, currently called cfwis), mark5, nfdrs.}
 
 \item{index}{This is the index to analyse
 (default is fwi, belonging to fwi origin).}

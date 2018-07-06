@@ -3,6 +3,7 @@
 #' @description Plot observations versus forecast
 #'
 #' @param input_dir folder containing forecast files
+#' @param s Raster* object containing the forecasts
 #' @param p SpatialPolygon* identifying the area affected by fires.
 #' @param threshold danger threshold calculated using the function
 #' \code{DangerLevels()}, usually the high danger level.
@@ -29,14 +30,15 @@
 #'
 
 plot_obs_vs_forecast <- function(input_dir,
+                                 s = NULL,
                                  p = NULL,
                                  threshold,
                                  start_date,
                                  end_date,
                                  obs_file_path,
-                                 forecast_type = "fc",
-                                 origin = "fwi",
-                                 index = "fwi"){
+                                 forecast_type = "hr",
+                                 origin = "cfwis",
+                                 index = "ffwi"){
 
   my_dates <- seq.Date(from = as.Date(start_date),
                       to = as.Date(end_date),
@@ -44,23 +46,25 @@ plot_obs_vs_forecast <- function(input_dir,
 
   message("Collating forecast information")
 
-  # For each starting date and forecast date, calculate the percentage of
-  # pixels exceeding the high danger level
-  s <- raster::stack()
-  for (i in 1:length(my_dates)) {
+  if (is.null(s)){
+    # For each starting date and forecast date, calculate the percentage of
+    # pixels exceeding the high danger level
+    s <- raster::stack()
+    for (i in 1:length(my_dates)) {
 
-    # transform dates to strings to build file name
-    start_d <- gsub("-", "", as.character(my_dates[i]))
+      # transform dates to strings to build file name
+      start_d <- gsub("-", "", as.character(my_dates[i]))
 
-    file2read <- file.path(input_dir,
-                           paste0(origin, "_", index, "_",
-                                  start_d, "_1200_",
-                                  forecast_type, ".nc"))
+      file2read <- file.path(input_dir,
+                             paste0(origin, "_", index, "_",
+                                    start_d, "_1200_",
+                                    forecast_type, ".nc"))
 
-    if (file.exists(file2read)) {
-      s <- raster::stack(s, raster::brick(file2read))
+      if (file.exists(file2read)) {
+        s <- raster::stack(s, raster::brick(file2read))
+      }
+
     }
-
   }
 
   if (round(s@extent@xmin, 0) == 0) {
