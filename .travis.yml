@@ -8,6 +8,19 @@ r: bioc-devel
 bioc_required: true
 bioc_use_devel: true
 
+before_install:
+  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
+  - chmod 755 pkg-build.sh
+  - ./pkg-build.sh bootstrap
+  - cd
+  - wget http://download.osgeo.org/gdal/2.3.1/gdal-2.3.1.tar.gz
+  - tar zxf gdal-2.3.1.tar.gz
+  - cd gdal-2.3.1
+  - make
+  - sudo make install
+  - cd /home/travis/build/ecmwf/caliver
+  - Rscript -e 'update.packages(ask = FALSE)'
+
 addons:
   apt:
     source: 
@@ -18,7 +31,6 @@ addons:
     - netcdf-bin
     - libhdf5-dev
     - libproj-dev
-    - libgdal-dev
     - cdo
     - ncl-ncarg
 
