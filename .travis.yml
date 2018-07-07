@@ -2,7 +2,7 @@
 
 language: r
 sudo: required
-dist: trusty
+dist: bionic
 
 r: bioc-devel
 bioc_required: true
