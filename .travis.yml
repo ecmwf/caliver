@@ -10,8 +10,9 @@ bioc_use_devel: true
 
 addons:
   apt:
-    sourceline: 'deb https://qgis.org/debian trusty main\'
-    key_url: 'https://qgis.org/downloads/qgis-2017.gpg.key'
+    source: 
+        - sourceline: 'deb https://qgis.org/debian trusty main\'
+          key_url: 'https://qgis.org/downloads/qgis-2017.gpg.key'
     packages:
     - libnetcdf-dev
     - netcdf-bin
