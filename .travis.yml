@@ -17,6 +17,7 @@ addons:
     - libproj-dev
     - libgdal-dev
     - cdo
+    - ncl-ncarg
 
 r_github_packages:
   - MangoTheCat/visualTest
