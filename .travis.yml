@@ -18,6 +18,14 @@ before_install:
   - cd gdal-2.3.1
   - make
   - sudo make install
+  - cd
+  - wget https://www.earthsystemgrid.org/dataset/ncl.640.src/file/ncl_ncarg-6.4.0.tar.gz
+  - tar zxf ncl_ncl_ncarg-6.4.0.tar.gz
+  - NCARG=ncl_ncarg-6.4.0
+  - export NCARG
+  - cd ncl_ncarg-6.4.0
+  - ./Configure  -v
+  - mmake Everything  >&  make-output  &
   - cd /home/travis/build/ecmwf/caliver
   - Rscript -e 'update.packages(ask = FALSE)'
 
@@ -32,6 +40,7 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - cdo
+    - x11-dev
 
 r_github_packages:
   - MangoTheCat/visualTest
