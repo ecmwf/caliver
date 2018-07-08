@@ -9,6 +9,10 @@ bioc_required: true
 bioc_use_devel: true
 
 before_install:
+  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
+  - chmod 755 pkg-build.sh
+  - ./pkg-build.sh bootstrap
+  - cd
   - wget http://download.osgeo.org/gdal/2.3.1/gdal-2.3.1.tar.gz
   - tar zxf gdal-2.3.1.tar.gz
   - cd gdal-2.3.1
