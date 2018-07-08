@@ -28,7 +28,6 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - cdo
-    - ncl-ncarg
 
 r_github_packages:
   - MangoTheCat/visualTest
