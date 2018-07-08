@@ -40,7 +40,6 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - cdo
-    - x11-dev
 
 r_github_packages:
   - MangoTheCat/visualTest
