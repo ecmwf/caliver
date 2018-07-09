@@ -8,38 +8,15 @@ r: bioc-devel
 bioc_required: true
 bioc_use_devel: true
 
-before_install:
-  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
-  - chmod 755 pkg-build.sh
-  - ./pkg-build.sh bootstrap
-  - cd
-  - wget http://download.osgeo.org/gdal/2.3.1/gdal-2.3.1.tar.gz
-  - tar zxf gdal-2.3.1.tar.gz
-  - cd gdal-2.3.1
-  - ./configure --prefix=/usr
-  - make
-  - sudo make install
-  - cd /home/travis/build/ecmwf/caliver
-  - Rscript -e 'update.packages(ask = FALSE)'
-
 addons:
   apt:
-    source: 
-        - sourceline: 'deb https://qgis.org/debian trusty main\'
-          key_url: 'https://qgis.org/downloads/qgis-2017.gpg.key'
     packages:
     - libnetcdf-dev
     - netcdf-bin
     - libhdf5-dev
     - libproj-dev
+    - libgdal-dev
     - cdo
-    - 3.4.2-4ubuntu1
-    - libgeos-c1v5
-    - libspatialite5
-    - libgeos-c1
-    - libgdal1h
-    - libncarg0
-    - ncl-ncarg
 
 r_github_packages:
   - MangoTheCat/visualTest
