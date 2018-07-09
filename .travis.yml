@@ -33,6 +33,8 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - cdo
+    - libgdal1h
+    - libncarg0
     - ncl-ncarg
 
 r_github_packages:
