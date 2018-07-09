@@ -33,6 +33,7 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - cdo
+    - libspatialite5
     - libgdal1h
     - libncarg0
     - ncl-ncarg
