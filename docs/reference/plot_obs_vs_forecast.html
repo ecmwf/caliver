@@ -52,7 +52,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
+  <a href="..//index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -99,8 +99,9 @@
     <p>Plot observations versus forecast</p>
     
 
-    <pre class="usage"><span class='fu'>plot_obs_vs_forecast</span>(<span class='no'>input_dir</span>, <span class='kw'>p</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>threshold</span>, <span class='no'>start_date</span>, <span class='no'>end_date</span>,
-  <span class='no'>obs_file_path</span>, <span class='kw'>forecast_type</span> <span class='kw'>=</span> <span class='st'>"fc"</span>, <span class='kw'>origin</span> <span class='kw'>=</span> <span class='st'>"fwi"</span>, <span class='kw'>index</span> <span class='kw'>=</span> <span class='st'>"fwi"</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_obs_vs_forecast</span>(<span class='no'>input_dir</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>p</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>threshold</span>, <span class='no'>start_date</span>,
+  <span class='no'>end_date</span>, <span class='no'>obs_file_path</span>, <span class='kw'>forecast_type</span> <span class='kw'>=</span> <span class='st'>"hr"</span>, <span class='kw'>origin</span> <span class='kw'>=</span> <span class='st'>"cfwis"</span>,
+  <span class='kw'>index</span> <span class='kw'>=</span> <span class='st'>"ffwi"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -108,6 +109,10 @@
     <tr>
       <th>input_dir</th>
       <td><p>folder containing forecast files</p></td>
+    </tr>
+    <tr>
+      <th>s</th>
+      <td><p>Raster* object containing the forecasts</p></td>
     </tr>
     <tr>
       <th>p</th>
@@ -132,13 +137,13 @@
     </tr>
     <tr>
       <th>forecast_type</th>
-      <td><p>type of forecast: fc (high resolution/deterministic),
-cf (control forecast), pf (perturbed forecast/probabilistic)</p></td>
+      <td><p>type of forecast: hr (high resolution/deterministic),
+ens (control and perturbed forecast/probabilistic)</p></td>
     </tr>
     <tr>
       <th>origin</th>
       <td><p>This is the rating system of interest:
-fwi (default), mark5, nfdrs.</p></td>
+fwi (default, currently called cfwis), mark5, nfdrs.</p></td>
     </tr>
     <tr>
       <th>index</th>

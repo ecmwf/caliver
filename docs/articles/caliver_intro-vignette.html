@@ -29,7 +29,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
+  <a href="..//index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -72,13 +72,13 @@
       <h1>An introduction to the caliver package</h1>
                         <h4 class="author">Claudia Vitolo</h4>
             
-            <h4 class="date">2017-11-22</h4>
+            <h4 class="date">2018-07-09</h4>
           </div>
 
     
     
 <div class="contents">
-<p>The name caliver stands for <strong>CALI</strong>bration and <strong>VER</strong>ification of gridded model outputs. It is a package developed for the R programming language and available with an APACHE-2 license from a public repository. The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regard to outputs of the following forest fire models: GEFF and RISICO. Applicability to other model results will be investigated in future works. Complete documentation is available within the package. This vignette contains the code to run all the examples in <span class="citation">(Vitolo, Giuseppe, and D’Andrea 2017)</span>, please refer to this paper for more information.</p>
+<p>The name caliver stands for <strong>CALI</strong>bration and <strong>VER</strong>ification of gridded model outputs. It is a package developed for the R programming language and available with an APACHE-2 license from a public repository. The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regard to outputs of the following forest fire models: GEFF and RISICO. Applicability to other model results will be investigated in future works. Complete documentation is available within the package. This vignette contains the code to run all the examples in <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span>, please refer to this paper for more information.</p>
 <div id="package-installation-and-dependencies" class="section level2">
 <h2 class="hasAnchor">
 <a href="#package-installation-and-dependencies" class="anchor"></a>Package installation and dependencies</h2>
@@ -314,8 +314,8 @@ correct_negatives &lt;-<span class="st"> </span>tab_x[<span class="dv">1</span>,
 false_alarms &lt;-<span class="st"> </span>tab_x[<span class="dv">2</span>,<span class="dv">1</span>]
 <span class="co"># POD 47%</span>
 <span class="kw">round</span>(hits/(hits+misses),<span class="dv">2</span>)*<span class="dv">100</span>
-roc1 &lt;-<span class="st"> </span>pROC::<span class="kw">roc</span>(<span class="dt">response =</span> x1$obs, <span class="dt">predictor =</span> x1$pred)
-pROC::<span class="kw">plot.roc</span>(roc1, <span class="dt">print.auc =</span> pROC::<span class="kw">auc</span>(roc1), <span class="dt">print.auc.x =</span> <span class="dv">0</span>, <span class="dt">print.auc.y =</span> <span class="fl">0.9</span>)
+roc1 &lt;-<span class="st"> </span>pROC::<span class="kw"><a href="http://www.rdocumentation.org/packages/pROC/topics/roc">roc</a></span>(<span class="dt">response =</span> x1$obs, <span class="dt">predictor =</span> x1$pred)
+pROC::<span class="kw"><a href="http://www.rdocumentation.org/packages/pROC/topics/plot.roc">plot.roc</a></span>(roc1, <span class="dt">print.auc =</span> pROC::<span class="kw"><a href="http://www.rdocumentation.org/packages/pROC/topics/auc">auc</a></span>(roc1), <span class="dt">print.auc.x =</span> <span class="dv">0</span>, <span class="dt">print.auc.y =</span> <span class="fl">0.9</span>)
 
 <span class="co"># Contingency table for caliver - Europe as a whole</span>
 x2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/validate_fire_danger_levels.html">validate_fire_danger_levels</a></span>(<span class="dt">fire_index =</span> FWIEURO, <span class="dt">observation =</span> BurnedAreaEurope,
@@ -325,9 +325,9 @@ hits &lt;-<span class="st"> </span>tab_x[<span class="dv">2</span>,<span class="
 misses &lt;-<span class="st"> </span>tab_x[<span class="dv">1</span>,<span class="dv">2</span>]
 <span class="co"># POD 65%</span>
 <span class="kw">round</span>(hits/(hits+misses),<span class="dv">2</span>)*<span class="dv">100</span>
-roc2 &lt;-<span class="st"> </span>pROC::<span class="kw">roc</span>(<span class="dt">response =</span> x2$obs, <span class="dt">predictor =</span> x2$pred)
-pROC::<span class="kw">plot.roc</span>(roc2, <span class="dt">col =</span> <span class="st">"red"</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>,
-               <span class="dt">print.auc =</span> pROC::<span class="kw">auc</span>(roc2), <span class="dt">print.auc.x =</span> <span class="dv">0</span>, <span class="dt">print.auc.y =</span> <span class="fl">0.95</span>,
+roc2 &lt;-<span class="st"> </span>pROC::<span class="kw"><a href="http://www.rdocumentation.org/packages/pROC/topics/roc">roc</a></span>(<span class="dt">response =</span> x2$obs, <span class="dt">predictor =</span> x2$pred)
+pROC::<span class="kw"><a href="http://www.rdocumentation.org/packages/pROC/topics/plot.roc">plot.roc</a></span>(roc2, <span class="dt">col =</span> <span class="st">"red"</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>,
+               <span class="dt">print.auc =</span> pROC::<span class="kw"><a href="http://www.rdocumentation.org/packages/pROC/topics/auc">auc</a></span>(roc2), <span class="dt">print.auc.x =</span> <span class="dv">0</span>, <span class="dt">print.auc.y =</span> <span class="fl">0.95</span>,
                <span class="dt">print.auc.col =</span> <span class="st">"red"</span>)
 
 
@@ -434,8 +434,8 @@ df_caliver2[<span class="dv">3</span>, <span class="kw">which</span>(<span class
 <div id="ref-schulzweida2006cdo">
 <p>Schulzweida, U, L Kornblueh, and R Quast. 2006. “CDO User’s Guide: Climate Data Operators Version 1.6. 1.”</p>
 </div>
-<div id="ref-vitolo:2017b">
-<p>Vitolo, Claudia, Francesca Di Giuseppe, and Mirko D’Andrea. 2017. “Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs.”</p>
+<div id="ref-vitolo:2018">
+<p>Vitolo, Claudia, Francesca Di Giuseppe, and Mirko D’Andrea. 2018. “Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs.” <em>PLOS ONE</em> 13 (1). Public Library of Science: 1–18. doi:<a href="https://doi.org/10.1371/journal.pone.0189419">10.1371/journal.pone.0189419</a>.</p>
 </div>
 <div id="ref-warmerdam2008geospatial">
 <p>Warmerdam, Frank. 2008. “The Geospatial Data Abstraction Library.” In <em>Open Source Approaches in Spatial Data Handling</em>, 87–104. Springer.</p>

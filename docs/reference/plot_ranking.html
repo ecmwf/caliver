@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>caliver: CALIbration and VERification of gridded model outputs — caliver • caliver</title>
+<title>plot_ranking — plot_ranking • caliver</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -92,22 +92,41 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>caliver: CALIbration and VERification of gridded model outputs</h1>
+    <h1>plot_ranking</h1>
     </div>
 
     
-    <p>Utility functions for the post-processing, calibration and validation of
-gridded model outputs. Initial test cases include the outputs of the
-following forest fire models: GEFF and RISICO.</p>
+    <p>Plot ranking map as shown in GWIS (<a href='https://bit.ly/2BbBfsm'>https://bit.ly/2BbBfsm</a>)</p>
     
 
-        
+    <pre class="usage"><span class='fu'>plot_ranking</span>(<span class='no'>ranking_map</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>ranking_map</th>
+      <td><p>is the Raster layer, result of <code><a href='ranking.html'>ranking()</a></code>.</p></td>
+    </tr>
+    </table>
+    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+  <span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'>brick</span>(<span class='st'>"cfwis_ffwi_20170101_1200_00.nc"</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
+  <span class='no'>clima</span> <span class='kw'>&lt;-</span> <span class='fu'>brick</span>(<span class='st'>"fwi.nc"</span>)
+  <span class='no'>ranking_map</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='ranking.html'>ranking</a></span>(<span class='no'>r</span>, <span class='no'>clima</span>)
+  <span class='fu'>plot_ranking</span>(<span class='no'>ranking_map</span>)
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-                </ul>
+      <li><a href="#arguments">Arguments</a></li>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
