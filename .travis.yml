@@ -33,6 +33,7 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - cdo
+    - libgeos-c1v5
     - libspatialite5
     - libgdal1h
     - libncarg0
