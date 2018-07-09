@@ -35,6 +35,7 @@ addons:
     - cdo
     - libgeos-c1v5
     - libspatialite5
+    - libgeos-c1
     - libgdal1h
     - libncarg0
     - ncl-ncarg
