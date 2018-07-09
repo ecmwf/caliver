@@ -33,6 +33,7 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - cdo
+    - 3.4.2-4ubuntu1
     - libgeos-c1v5
     - libspatialite5
     - libgeos-c1
