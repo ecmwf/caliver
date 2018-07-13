@@ -15,7 +15,7 @@ s <- import_geff_data_from_tar(geff5tar)
 geff_pattern <- "^geff_reanalysis_an_fwis_fwi_1980010.*_0000_00.nc$"
 geff5nc <- stack_netcdf_files(input_dir = tempdir(),
                               pattern = geff_pattern,
-                              output_file = file.path(getwd(), "geff5.nc"))
+                              output_file = file.path(tempdir(), "geff5.nc"))
 
 test_check("caliver")
 

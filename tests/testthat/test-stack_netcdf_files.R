@@ -16,6 +16,7 @@ test_that("stack_netcdf_files works", {
                                 varname = "fwi",
                                 output_file = NULL)
   expect_equal(basename(geff5vr), "outfile.nc")
+  unlink(geff5vr)
 
   # Test whether the function generates the correct result
   x <- raster::brick(geff5nc)

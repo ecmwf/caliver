@@ -57,7 +57,7 @@ test_that("get_percentile_raster works with multiple probs from raster file", {
 
 test_that("get_percentile_raster works with single prob from nc file", {
 
-  skip("skip temporarily for testing")
+  #skip("skip temporarily for testing")
 
   probs_maps_1_a <- get_percentile_raster(probs = 50,
                                        input_file = geff5nc)
@@ -75,7 +75,7 @@ test_that("get_percentile_raster works with single prob from nc file", {
 
 test_that("get_percentile_raster works with multiple probs from nc file", {
 
-  skip("skip temporarily for testing")
+  #skip("skip temporarily for testing")
 
   probs_maps_2_a <- get_percentile_raster(probs = c(50, 75),
                                        input_file = geff5nc)
