@@ -100,7 +100,7 @@ plot_anomaly <- function(anomaly_map){
   raster::plot(anomaly_map, addfun = background_map_fun, col = heatcolors,
                breaks = breaks, legend = FALSE)
   par(xpd = TRUE)
-  legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1])/90, 0),
+  legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1]) / 90, 0),
          y = round(mean(c(par("usr")[3], par("usr")[4])), 0),
          legend = c("<=-3.0", "-3.0..-2.0", "-2.0..-1.5", "-1.5..-1.0",
                     "-1.0..-0.5", "-0.5..0.5", "0.5..1.0", "1.0..1.5",

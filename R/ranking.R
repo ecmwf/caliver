@@ -75,7 +75,7 @@ plot_ranking <- function(ranking_map){
   raster::plot(ranking_map, addfun = background_map_fun, col = heatcolors,
                breaks = breaks, legend = FALSE)
   par(xpd = TRUE)
-  legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1])/90, 0),
+  legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1]) / 90, 0),
          y = round(mean(c(par("usr")[3], par("usr")[4])), 0),
          legend = c("<=50", "50..75", "75..85",
                     "85..90", "90..95", "95..98", "98..100"),
