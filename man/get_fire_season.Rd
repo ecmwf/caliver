@@ -4,7 +4,7 @@
 \alias{get_fire_season}
 \title{get_fire_season}
 \usage{
-get_fire_season(dates, fss = NULL, fse = NULL, zone = "north")
+get_fire_season(dates, fss = NULL, fse = NULL, zone = NULL)
 }
 \arguments{
 \item{dates}{vector of dates}
