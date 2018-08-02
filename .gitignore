@@ -3,7 +3,7 @@
 .Rapp.history
 
 #Remove docs folder
-docs
+docs/*
 
 # Session Data files
 .RData
