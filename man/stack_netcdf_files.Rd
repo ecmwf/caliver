@@ -30,7 +30,7 @@ over the time dimension. It saves the merged file in the working directory.
                      varname = NULL,
                      pattern = "geff_reanalysis_an_fwis_fwi_",
                      recursive = TRUE,
-                     output_file = "~/outfile.nc")
+                     output_file = "outfile.nc")
 }
 
 }

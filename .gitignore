@@ -2,6 +2,9 @@
 .Rhistory
 .Rapp.history
 
+#Remove docs folder
+docs/*
+
 # Session Data files
 .RData
 # Example code in package build process

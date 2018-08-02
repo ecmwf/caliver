@@ -4,21 +4,22 @@
 \alias{anomaly}
 \title{anomaly}
 \usage{
-anomaly(fc, clima)
+anomaly(r, clima)
 }
 \arguments{
-\item{fc}{is the forecast layer, a Raster* object.}
+\item{r}{is the Raster layer to compare to the climatology.}
 
-\item{clima}{RasterBrick containing the climatological information}
+\item{clima}{RasterBrick containing the climatological information.}
 }
 \description{
-This function calculates the anomaly (standardised deviation from the mean climatology) of a forecast layer
+This function calculates the anomaly (standardised deviation
+from the mean climatology) of a forecast layer
 }
 \examples{
 \dontrun{
-  fc <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
+  r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
   clima <- brick("fwi.nc")
-  x <- anomaly(fc, clima)
+  x <- anomaly(r, clima)
 }
 
 }
