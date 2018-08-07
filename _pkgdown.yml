@@ -1,0 +1,22 @@
+navbar:
+  title: ~
+  type: default
+  left:
+  - text: Reference
+    href: reference/index.html
+  - text: Articles
+    menu:
+    - text: PLOS ONE paper
+      href: https://doi.org/10.1371/journal.pone.0189419
+    - text: Vignette
+      href: articles/index.html
+  - text: News
+    href: news/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/cvitolo/fuse/
+
+articles:
+- title: All articles
+  desc: ~
+  contents: caliver_intro-vignette

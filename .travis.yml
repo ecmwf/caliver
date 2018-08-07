@@ -26,7 +26,6 @@ r_github_packages:
 
 after_success:
   - Rscript -e 'covr::codecov()'
-  - mkdir -p /home/travis/build/ecmwf/caliver/docs
   - Rscript -e 'pkgdown::build_site()'
 
 deploy:
