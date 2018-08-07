@@ -1,0 +1,15 @@
+citHeader("To cite package caliver in publications use:")
+
+citEntry(entry="Article",
+  author       = "Claudia Vitolo and Francesca Di Giuseppe and Mirko D’Andrea",
+  title        = "caliver: an {R} Package for Calibration and Verification of Forest Fire Gridded Model Outputs",
+  journal      = "PLOS ONE",
+  year         = 2018,
+  volume       = 13,
+  number       = 1,
+  pages        = "1--18",
+  month        = "January",
+  url          = "https://doi.org/10.1371/journal.pone.0189419",
+  textVersion = 
+  paste("Vitolo C, Di Giuseppe F, D’Andrea M (2018) Caliver: An R package for CALIbration and VERification of forest fire gridded model outputs. PLOS ONE 13(1): e0189419. https://doi.org/10.1371/journal.pone.0189419.")
+)

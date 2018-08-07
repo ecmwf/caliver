@@ -10,3 +10,4 @@
 ^README\.html$
 ^NOTICE$
 ^docs$
+^_pkgdown\.yml$
