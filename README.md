@@ -6,11 +6,12 @@
 [![Travis-CI Build Status](https://travis-ci.org/ecmwf/caliver.svg?branch=master)](https://travis-ci.org/ecmwf/caliver)
 [![Coverage Status](https://codecov.io/gh/ecmwf/caliver/master.svg)](https://codecov.io/github/ecmwf/caliver?branch=master)
 
-The name '[caliver](https://github.com/ecmwf/caliver)' stands for CALIbration and VERification of gridded model outputs. It is an extension package developed for the R programming language and available with a APACHE-2 license from a public repository.
+**caliver** is a package developed for the R programming language. The name stands for **cal**Ibration and **ver**ification of gridded models. Although caliver was initially designed for wildfire danger models such as GEFF (developed by ECMWF) and RISICO (developed by CIMA Research Foundation), the algorithms can be applied to any gridded model output. Caliver is available with an APACHE-2 license.
 
-As the name suggests, the caliver package contains utility functions for the post-processing, calibration and validation/verification of gridded model outputs. Initial test cases include the outputs of the following forest fire models: GEFF and RISICO. However, the algorithms can be applied to any gridded model output.
+For more details, please see the following paper:
 
-Complete documentation, including a vignette, is available within the package. Contributions are welcome!
+> Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **“Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs”**. PLOS ONE 13 (1). Public Library of Science: 1–18. [doi:10.1371/journal.pone.0189419](doi:10.1371/journal.pone.0189419)
+
 
 External dependencies
 ---------------------
@@ -23,8 +24,9 @@ Assuming the user has already installed R, below are the instructions to install
 
 On Windows, follow the steps below:
 
-* install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
-* launch an R console and run the following commands: 
+  * install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
+  * launch an R console and run the following commands:
+    - ToDo
 
 ### MAC
 
@@ -87,8 +89,8 @@ library("caliver")
 Meta
 ----
 
--   This package and functions herein are part of an experimental open-source project. They are provided as is, without any guarantee.
--   Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
--   Please [report any issues or bugs](https://github.com/ecmwf/caliver/issues).
--   License: [APACHE-2](LICENSE)
--   Get citation information for `caliver` in R doing `citation(package = "caliver")`
+- This package and functions herein are part of an experimental open-source project. They are provided as is, without any guarantee.
+- Contributions are welcome! Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+- Please [report any issues or bugs](https://github.com/ecmwf/caliver/issues).
+- License: [APACHE-2](LICENSE)
+- Get citation information for `caliver` in R doing `citation(package = "caliver")`
