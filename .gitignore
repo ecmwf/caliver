@@ -2,9 +2,6 @@
 .Rhistory
 .Rapp.history
 
-#Remove docs folder
-docs/*
-
 # Session Data files
 .RData
 # Example code in package build process
@@ -40,3 +37,6 @@ inst/doc
 inst/blog/*
 inst/PLOSONEpaper/*
 inst/tmp/*
+
+#Remove docs folder (auto deployment using pkgdown and travis)
+docs/*

@@ -14,7 +14,7 @@ navbar:
     href: news/index.html
   right:
   - icon: fa-github fa-lg
-    href: https://github.com/cvitolo/fuse/
+    href: https://github.com/ecmwf/caliver/
 
 articles:
 - title: All articles
