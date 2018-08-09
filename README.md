@@ -60,12 +60,11 @@ The caliver package also depends on additional R packages from both CRAN and Bio
 
 ``` r
 # Install packages from CRAN
-packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "rworldmap", "httr", "stringr", "lubridate", "RCurl", "plotrix", "reshape2", "R.utils", "devtools", "proto", "roxygen2", "png", "rmarkdown", "pkgdown")
+packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "rworldmap", "httr", "stringr", "lubridate", "RCurl", "plotrix", "reshape2", "R.utils", "devtools", "proto", "roxygen2", "png", "rmarkdown", "pkgdown", "BiocManager")
 install.packages(packs)
 
 # Install package from BIOCONDUCTOR 
-source("https://bioconductor.org/biocLite.R")
-biocLite("rhdf5")
+BiocManager::install("rhdf5")
 
 # Install packages from GitHub (only needed if you intend to run unit tests)
 devtools::install_github("jimhester/covr")

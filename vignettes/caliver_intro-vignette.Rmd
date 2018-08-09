@@ -24,7 +24,7 @@ The caliver package also depends on additional R packages from both CRAN and Bio
 
 Once all the dependencies are available, the package can be installed via [devtools](https://github.com/hadley/devtools):
 
-```{r}
+```{r, eval = TRUE}
 # Install caliver from GitHub via devtools
 install.packages("devtools")
 devtools::install_github("ecmwf/caliver")
