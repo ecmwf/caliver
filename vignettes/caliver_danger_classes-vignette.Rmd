@@ -369,7 +369,7 @@ fireBBOX_CL <- as(raster::extent(-74, -70, -37, -33), "SpatialPolygons")
 # raster::plot(fireBBOX_CL, lwd = 2, border = "red", add = TRUE)
 ```
 
-<img src="figures/ChileMap.png" width="700" />
+<img src="figures/Chile_boxy_map.png" width="700" />
 
 In the figure above Chile is shaded in gray while the areas in green show the most important fire activities(fireBBOX), which we compare below with the high danger level calculated previously for Chile.
 
@@ -388,8 +388,6 @@ ChileFRP
 ggsave(file = "/scratch/mo/moc0/fire/ChileFRP.png",
        plot = ChileFRP, width=unit(1050, "px"), height=unit(750, "px"))
 ```
-
-<img src="figures/ChileFRP.png" width="700" />
 
 #### Portugal
 
@@ -433,7 +431,7 @@ fireBBOX_CL <- as(raster::extent(-8.5, -7.6, 39.6, 40.3), "SpatialPolygons")
 # raster::plot(fireBBOX_CL, lwd = 2, border = "red", add = TRUE)
 ```
 
-<img src="figures/PortugalMap.png" width="700" />
+<img src="figures/Portugal_boxy_map.png" width="700" />
 
 In the figure above Portugal is shaded in gray while the areas in green show the most important fire activities(fireBBOX), which we compare below with the high danger level calculated previously for Portugal.
 
@@ -455,8 +453,6 @@ ggsave(file = "/scratch/mo/moc0/fire/PortugalFRP.eps",
 ggsave(file = "/scratch/mo/moc0/fire/PortugalFRP.png",
        plot = PortugalFRP, width=unit(10, "in"), height=unit(8, "in"))
 ```
-
-<img src="figures/PortugalFRP.png" width="700" />
 
 #### California
 
@@ -501,7 +497,7 @@ fireBBOX_CL <- as(raster::extent(-123.4, -117.6, 33.7, 42), "SpatialPolygons")
 # raster::plot(fireBBOX_CL, lwd = 2, border = "red", add = TRUE)
 ```
 
-<img src="figures/CaliforniaMap.png" width="700" />
+<img src="figures/California_boxy_map.png" width="700" />
 
 In the figure above California is shaded in gray while the areas in green show the most important fire activities(fireBBOX), which we compare below with the high danger level calculated previously for California.
 
@@ -523,8 +519,6 @@ ggsave(file = "/scratch/mo/moc0/fire/CaliforniaFRP.eps",
 ggsave(file = "/scratch/mo/moc0/fire/CaliforniaFRP.png",
        plot = CaliforniaFRP, width=unit(10, "in"), height=unit(8, "in"))
 ```
-
-<img src="figures/CaliforniaFRP.png" width="700" />
 
 ## Scores
 
