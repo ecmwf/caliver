@@ -1,10 +1,15 @@
 #' @title ranking
 #'
-#' @description This function calculates the percentile ranking of a forecast
-#' layer
+#' @description The ranking is applied to a forecast map \code{r} and provides
+#' percentiles of occurrence of the values based on a given
+#' climatology \code{clima}.
 #'
 #' @param r is the Raster layer to compare to the climatology.
 #' @param clima RasterBrick containing the climatological information.
+#'
+#' @details More information on ranking is available here:
+#' https://bit.ly/2Qvekz4. You can find fire climatology data for the FWI
+#' indices in Zenodo: https://zenodo.org/communities/wildfire.
 #'
 #' @export
 #'

@@ -12,8 +12,14 @@ ranking(r, clima)
 \item{clima}{RasterBrick containing the climatological information.}
 }
 \description{
-This function calculates the percentile ranking of a forecast
-layer
+The ranking is applied to a forecast map \code{r} and provides
+percentiles of occurrence of the values based on a given
+climatology \code{clima}.
+}
+\details{
+More information on ranking is available here:
+https://bit.ly/2Qvekz4. You can find fire climatology data for the FWI
+indices in Zenodo: https://zenodo.org/communities/wildfire.
 }
 \examples{
 \dontrun{
