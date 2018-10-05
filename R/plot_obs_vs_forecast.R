@@ -134,7 +134,8 @@ plot_obs_vs_forecast <- function(input_dir,
                          frp_original = frp_ts,
                          frp = plotrix::rescale(frp_ts, c(0, length(frp_ts))))
     labels_obs <- round(plotrix::rescale(1:length(frp_ts),
-                                         c(1, max(frp_ts))), 0)[1:length(frp_ts)]
+                                         c(1, max(frp_ts))),
+                        0)[1:length(frp_ts)]
   }
 
   # Make the boxy forecast plot using ggplot2
@@ -157,6 +158,8 @@ plot_obs_vs_forecast <- function(input_dir,
     theme(plot.title = element_text(hjust = 0.5))
 
   if (!is.null(obs_file_path)){
+    mylist <- list(shape = "A")
+    myname <- "Fire radiative power [Wm-2]"
     final_plot <- final_plot +
       geom_line(data = df_frp,
                 aes(x = 1:dim(df_frp)[1], y = frp),
@@ -167,9 +170,9 @@ plot_obs_vs_forecast <- function(input_dir,
                          labels = "Fire radiative power",
                          guide = guide_legend(direction = "vertical",
                                               title.position = "top",
-                                              override.aes = list(shape = "A"))) +
+                                              override.aes = mylist)) +
       scale_y_continuous(sec.axis = sec_axis(~.,
-                                             name = "Fire radiative power [Wm-2]",
+                                             name = myname,
                                              breaks = 1:length(labels_obs),
                                              labels = labels_obs))
   }
@@ -177,4 +180,3 @@ plot_obs_vs_forecast <- function(input_dir,
   return(final_plot)
 
 }
-

@@ -4,9 +4,9 @@
 \alias{plot_obs_vs_forecast}
 \title{plot_obs_vs_forecast}
 \usage{
-plot_obs_vs_forecast(input_dir, s = NULL, p = NULL, threshold,
-  start_date, end_date, obs_file_path, forecast_type = "hr",
-  origin = "cfwis", index = "ffwi")
+plot_obs_vs_forecast(input_dir, s = NULL, p = NULL, threshold, start_date,
+  end_date, obs_file_path = NULL, forecast_type = "hr", origin = "cfwis",
+  index = "ffwi")
 }
 \arguments{
 \item{input_dir}{folder containing forecast files}

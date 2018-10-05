@@ -10,12 +10,21 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!--
+# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
+# This software is licensed under the terms of the Apache Licence Version 2.0 
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
+# In applying this licence, ECMWF does not waive the privileges and immunities 
+# granted to it by virtue of its status as an intergovernmental organisation nor
+# does it submit to any jurisdiction.
+-->
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       eval = FALSE)
 ```
 
-The package caliver contains functions for the calibration and verification of gridded model outputs. The package was designed with a fire risk model in mind (GEFF) but, in the near future, this is going to develop in a model agnostic tool. The introductory vignette "An introduction to the caliver package" and [@vitolo:2018] contain a detailed description of the main functionalities of this package. The goal of this vignette, instead, is to describe how to use caliver to calculate and verify fire danger classes based on user-defined areas. This vignette contains the code to run all the analyses in [@digiuseppe:2018], please refer to this paper for more information on the methodology.
+The package caliver contains functions for the calibration and verification of gridded model outputs. The package was designed with a fire risk model in mind (GEFF) but, in the near future, this is going to develop in a model agnostic tool. The introductory vignette "An introduction to the caliver package" [@vitolo:2018] contain a detailed description of the main functionalities of this package. The goal of this vignette, instead, is to describe how to use caliver to calculate and verify fire danger classes based on user-defined areas. This vignette contains the code to run all the analyses in [@digiuseppe:2018], please refer to this paper for more information on the methodology.
 
 ## R package caliver
 
@@ -23,6 +32,7 @@ For information on how to install and load caliver, please refer to the vignette
 
 ```{r}
 # Install caliver from GitHub
+# install.packages("devtools", repos = "http://cran.rstudio.com")
 devtools::install_github("ecmwf/caliver")
 ```
 
@@ -36,6 +46,10 @@ library("dplyr")
 library("rgeos")
 library("maptools")
 library("RColorBrewer")
+
+# setwd("/hugetmp/fire/JAMCpaper/")
+# rasterOptions(tmpdir="/hugetmp/tmp")
+# Check path dirname(rasterTmpFile()) 
 ```
 
 ## Get data
@@ -1004,7 +1018,7 @@ FWI$mod <- cut(x = FWI$mod,
                breaks = c(0, 6, 14, 28, 52, Inf),
                labels = c("Low", "Moderate", "High", "Very high", "Extreme"))
 # Correspondence Analysis
-library(ca)
+library("ca")
 mytable <- with(FWI, table(obs, mod)) # create a 2 way table
 prop.table(mytable, 1) # row percentages
 prop.table(mytable, 2) # column percentages
