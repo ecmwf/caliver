@@ -10,7 +10,7 @@ test_that("Testing the file utils.R - quant_function", {
                                                 "fwi.4", "fwi.5"),
                                               c("50%", "75%", "85%", "90%",
                                                 "95%", "98%")))
-  expect_equal(x, round(quant_function(s),1))
+  expect_equal(x, round(quant_function(s), 1))
 
 })
 
@@ -18,7 +18,10 @@ test_that("Testing the file utils.R - background_map_fun", {
 
   # Check whether the result is correct
   example_box <- as(raster::extent(-180, +180, -90, +90), "SpatialPolygons")
-  p <- {plot(example_box); background_map_fun()}
+  p <- {
+    plot(example_box);
+    background_map_fun()
+    }
   expect_equal(length(p$layers), 0)
 
 })
