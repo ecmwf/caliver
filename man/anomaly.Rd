@@ -12,8 +12,13 @@ anomaly(r, clima)
 \item{clima}{RasterBrick containing the climatological information.}
 }
 \description{
-This function calculates the anomaly (standardised deviation
+This function calculates the anomaly (a standard deviation
 from the mean climatology) of a forecast layer
+}
+\details{
+More information on anomaly is available here:
+https://bit.ly/2Qvekz4. You can find fire climatology data for the FWI
+indices in Zenodo: https://zenodo.org/communities/wildfire.
 }
 \examples{
 \dontrun{

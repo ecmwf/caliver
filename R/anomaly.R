@@ -1,10 +1,14 @@
 #' @title anomaly
 #'
-#' @description This function calculates the anomaly (standardised deviation
+#' @description This function calculates the anomaly (a standard deviation
 #' from the mean climatology) of a forecast layer
 #'
 #' @param r is the Raster layer to compare to the climatology.
 #' @param clima RasterBrick containing the climatological information.
+#'
+#' @details More information on anomaly is available here:
+#' https://bit.ly/2Qvekz4. You can find fire climatology data for the FWI
+#' indices in Zenodo: https://zenodo.org/communities/wildfire.
 #'
 #' @export
 #'
@@ -37,35 +41,36 @@ anomaly <- function(r, clima){
   # Generate anomaly map
   anomaly_map <- (r - mean_clima) / sd_clima
 
-  a1 <- r <= -3
-  a2 <- (r > -3 & r <= -2)
-  a3 <- (r > -2 & r <= -1.5)
-  a4 <- (r > -1.5 & r <= -1)
-  a5 <- (r > -1 & r <= -0.5)
-  a6 <- (r > -0.5 & r <= +0.5)
-  a7 <- (r > +0.5 & r <= +1)
-  a8 <- (r > +1 & r <= +1.5)
-  a9 <- (r > +1.5 & r <= +2)
-  a10 <- (r > +2 & r <= +2.5)
-  a11 <- (r > +2.5 & r <= +3)
-  a12 <- r > 3
+  # Categorize the anomaly
+  a1 <- anomaly_map <= -3
+  a2 <- (anomaly_map > -3 & anomaly_map <= -2)
+  a3 <- (anomaly_map > -2 & anomaly_map <= -1.5)
+  a4 <- (anomaly_map > -1.5 & anomaly_map <= -1)
+  a5 <- (anomaly_map > -1 & anomaly_map <= -0.5)
+  a6 <- (anomaly_map > -0.5 & anomaly_map <= +0.5)
+  a7 <- (anomaly_map > +0.5 & anomaly_map <= +1)
+  a8 <- (anomaly_map > +1 & anomaly_map <= +1.5)
+  a9 <- (anomaly_map > +1.5 & anomaly_map <= +2)
+  a10 <- (anomaly_map > +2 & anomaly_map <= +2.5)
+  a11 <- (anomaly_map > +2.5 & anomaly_map <= +3)
+  a12 <- anomaly_map > 3
 
-  anomaly_map <- r
-  anomaly_map[] <- 0
-  anomaly_map[a1] <- 1
-  anomaly_map[a2] <- 2
-  anomaly_map[a3] <- 3
-  anomaly_map[a4] <- 4
-  anomaly_map[a5] <- 5
-  anomaly_map[a6] <- 6
-  anomaly_map[a7] <- 7
-  anomaly_map[a8] <- 8
-  anomaly_map[a9] <- 9
-  anomaly_map[a10] <- 10
-  anomaly_map[a11] <- 11
-  anomaly_map[a12] <- 12
+  anomaly_map_cat <- anomaly_map
+  anomaly_map_cat[] <- 0
+  anomaly_map_cat[a1] <- 1
+  anomaly_map_cat[a2] <- 2
+  anomaly_map_cat[a3] <- 3
+  anomaly_map_cat[a4] <- 4
+  anomaly_map_cat[a5] <- 5
+  anomaly_map_cat[a6] <- 6
+  anomaly_map_cat[a7] <- 7
+  anomaly_map_cat[a8] <- 8
+  anomaly_map_cat[a9] <- 9
+  anomaly_map_cat[a10] <- 10
+  anomaly_map_cat[a11] <- 11
+  anomaly_map_cat[a12] <- 12
 
-  return(anomaly_map)
+  return(anomaly_map_cat)
 
 }
 
