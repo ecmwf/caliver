@@ -53,7 +53,7 @@ plot_percentile_raster <- function(maps,
   # Define palette
   heatcolors <- rev(grDevices::heat.colors(n = length(breaks)))
 
-  raster::plot(cropped_map, addfun = background_map_fun,
+  raster::plot(cropped_map, addfun = .background_map_fun,
                col = heatcolors, breaks = breaks, ...)
 
 }

@@ -102,7 +102,7 @@ plot_anomaly <- function(anomaly_map){
 
   # to place the legend outside the map
   par(xpd = FALSE)
-  raster::plot(anomaly_map, addfun = background_map_fun, col = heatcolors,
+  raster::plot(anomaly_map, addfun = .background_map_fun, col = heatcolors,
                breaks = breaks, legend = FALSE)
   par(xpd = TRUE)
   legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1]) / 90, 0),

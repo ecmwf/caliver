@@ -8,7 +8,7 @@ navbar:
     menu:
     - text: PLOS ONE paper
       href: https://doi.org/10.1371/journal.pone.0189419
-    - text: Vignette
+    - text: Vignettes
       href: articles/index.html
   - text: News
     href: news/index.html
@@ -17,6 +17,8 @@ navbar:
     href: https://github.com/ecmwf/caliver/
 
 articles:
-- title: All articles
+- title: Vignettes
   desc: ~
-  contents: caliver_intro-vignette
+  contents:
+    - caliver_intro-vignette
+    - caliver_danger_classes-vignette

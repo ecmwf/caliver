@@ -24,7 +24,7 @@
 ranking <- function(r, clima){
 
   # Set up default layer for comparison
-  prob_maps <- raster::calc(x = clima, fun = quant_function, progress = "text")
+  prob_maps <- raster::calc(x = clima, fun = .quant_function, progress = "text")
 
   prob_maps <- raster::resample(prob_maps, r, progress = "text")
 
@@ -77,7 +77,7 @@ plot_ranking <- function(ranking_map){
 
   # to place the legend outside the map
   par(xpd = FALSE)
-  raster::plot(ranking_map, addfun = background_map_fun, col = heatcolors,
+  raster::plot(ranking_map, addfun = .background_map_fun, col = heatcolors,
                breaks = breaks, legend = FALSE)
   par(xpd = TRUE)
   legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1]) / 90, 0),
