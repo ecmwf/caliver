@@ -20,11 +20,10 @@
 
 }
 
-### Utility functions for multi-hazard assessments #############################
+# Utility functions for multi-hazard assessments
 
 # Classify the danger level of an hazard
-.classify_hazard <- function(x, y1, y2, y3, y4, y5)
-{
+.classify_hazard <- function(x, y1, y2, y3, y4, y5){
   ifelse(x <= y1, 1,
          ifelse(x <= y2, 2,
                 ifelse(x <= y3, 3,
