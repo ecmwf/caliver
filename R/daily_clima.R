@@ -33,7 +33,7 @@ daily_clima <- function(r, dates, probs){
 
       # which indices correspond to day j?
       idx <- which(substr(names(r), 7, 11) ==
-                     gsub("-", ".", substr(as.character(dates[j]),6, 10)))
+                     gsub("-", ".", substr(as.character(dates[j]), 6, 10)))
 
       # Do not take the single day but the period spanning 4 days before and
       # 4 days after the given date
@@ -50,19 +50,19 @@ daily_clima <- function(r, dates, probs){
         idx_vector <- idx_vector[-elements2remove]
       }
 
-      if(length(idx_vector) < length(idx)*9){
+      if (length(idx_vector) < length(idx) * 9){
         message(paste0("Caution: climatology for the ", dates[j],
                        " is calculated using ", length(idx_vector),
-                       " days rather then ", length(idx)*9, "!"))
+                       " days rather then ", length(idx) * 9, "!"))
       }
 
       # Collection of layers spanning the date of interest +/- 4 days & 37 years
       r_sub <- r[[idx_vector]]
 
       temp_map <- raster::calc(x = r_sub,
-                       fun = function(x){raster::quantile(x,
-                                                          probs[i],
-                                                          na.rm = TRUE)})
+                               fun = function(x){
+                                 raster::quantile(x, probs[i], na.rm = TRUE)
+                                 })
       clima_maps[[i]] <- raster::stack(clima_maps[[i]], temp_map)
 
       rm(j, k, idx, idx_vector, r_sub)
