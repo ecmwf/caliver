@@ -4,7 +4,7 @@ test_that("Testing the file subset_datacube.R", {
 
   # Generate dummy raster and stack
   set.seed(150)
-  r1 <- r2 <- r3 <- r4 <- r5 <- r6 <- raster(ncol = 100, nrow = 50)
+  r1 <- r2 <- r3 <- r4 <- r5 <- r6 <- raster::raster(ncol = 100, nrow = 50)
   raster::values(r1) <- round(runif(raster::ncell(r1), 1, 25))
   raster::values(r2) <- round(runif(raster::ncell(r1), 1, 25))
   raster::values(r3) <- round(runif(raster::ncell(r1), 1, 25))

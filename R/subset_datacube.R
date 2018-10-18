@@ -23,7 +23,8 @@
 
 subset_datacube <- function(r, from, to){
 
-  # Get the dates in the datacube
+  # Get the dates of layers in the datacube
+  # This could be done by r_date <- r@z[[1]], but it won't work with random
   r_date <- substr(x = names(r), start = 2, stop = nchar(names(r)))
   r_date <- gsub(pattern = "\\.", replacement = "-", x = r_date)
 
