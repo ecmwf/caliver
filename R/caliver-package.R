@@ -11,7 +11,7 @@
 #' @import ggplot2
 #' @importFrom rgdal readOGR
 #' @importFrom raster raster stack mask crop rotate extent extract t plot
-#' @importFrom raster cellFromPolygon cellStats
+#' @importFrom raster cellFromPolygon cellStats nlayers
 #' @importFrom rworldmap getMap
 #' @importFrom sp sp.lines CRS
 #' @importFrom graphics plot
