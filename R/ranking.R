@@ -1,8 +1,8 @@
 #' @title ranking
 #'
 #' @description The ranking is applied to a forecast map \code{r} and provides
-#' percentiles of occurrence of the values based on a given
-#' climatology \code{clima}.
+#' percentiles of occurrence of the values based on a given climatology
+#' (see \code{clima}).
 #'
 #' @param r is the Raster layer to compare to the climatology.
 #' @param clima RasterBrick containing the climatological information.
