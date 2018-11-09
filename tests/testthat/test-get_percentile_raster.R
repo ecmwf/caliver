@@ -54,37 +54,3 @@ test_that("get_percentile_raster works with multiple probs from raster file", {
   expect_equal(mean75, 17)
 
 })
-
-# test_that("get_percentile_raster works with single prob from nc file", {
-#
-#   probs_maps_1_a <- get_percentile_raster(probs = 50,
-#                                           input_file = geff5nc)
-#
-#   # Check whether the class is correct
-#   expect_equal("RasterLayer" %in% class(probs_maps_1_a), TRUE)
-#
-#   # Check whether layers are named correctly
-#   expect_equal(names(probs_maps_1_a), "FWI50")
-#
-#   mean50 <- round(raster::cellStats(probs_maps_1_a, stat = "mean"), 0)
-#   expect_equal(mean50, 26)
-#
-# })
-#
-# test_that("get_percentile_raster works with multiple probs from nc file", {
-#
-#   probs_maps_2_a <- get_percentile_raster(probs = c(50, 75),
-#                                        input_file = geff5nc)
-#
-#   # Check whether the class is correct
-#   expect_equal("RasterBrick" %in% class(probs_maps_2_a), TRUE)
-#
-#   # Check whether layers are named correctly
-#   expect_equal(names(probs_maps_2_a), c("FWI50", "FWI75"))
-#
-#   mean50 <- round(raster::cellStats(probs_maps_2_a[[1]], stat = "mean"), 0)
-#   mean75 <- round(raster::cellStats(probs_maps_2_a[[2]], stat = "mean"), 0)
-#   expect_equal(mean50, 26)
-#   expect_equal(mean75, 30)
-#
-# })
