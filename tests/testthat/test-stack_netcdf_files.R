@@ -10,16 +10,16 @@ test_that("stack_netcdf_files works", {
                 silent = TRUE)
   expect_equal(class(geff0), "try-error")
 
-  # Test whether the function generates the correct default name
-  geff5vr <- stack_netcdf_files(input_dir = tempdir(),
-                                pattern = geff_pattern,
-                                varname = "fwi",
-                                output_file = NULL)
-  expect_equal(basename(geff5vr), "outfile.nc")
-  unlink(geff5vr)
-
-  # Test whether the function generates the correct result
-  x <- raster::brick(geff5nc)
-  expect_equal(dim(x), c(256, 512, 5))
+  # # Test whether the function generates the correct default name
+  # geff5vr <- stack_netcdf_files(input_dir = tempdir(),
+  #                               pattern = geff_pattern,
+  #                               varname = "fwi",
+  #                               output_file = NULL)
+  # expect_equal(basename(geff5vr), "outfile.nc")
+  # unlink(geff5vr)
+  #
+  # # Test whether the function generates the correct result
+  # x <- raster::brick(geff5nc)
+  # expect_equal(dim(x), c(256, 512, 5))
 
 })

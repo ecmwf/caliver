@@ -13,8 +13,8 @@ ranking(r, clima)
 }
 \description{
 The ranking is applied to a forecast map \code{r} and provides
-percentiles of occurrence of the values based on a given
-climatology \code{clima}.
+percentiles of occurrence of the values based on a given climatology
+(see \code{clima}).
 }
 \details{
 More information on ranking is available here:

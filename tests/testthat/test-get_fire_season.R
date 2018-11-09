@@ -1,10 +1,5 @@
 context("get_fire_season")
 
-# Define period for Reanalysis
-data_dates <- seq.Date(from = as.Date("1980-01-01"),
-                      to = as.Date("2016-12-31"),
-                      by = "day")
-
 test_that("get_fire_season works for north hemisphere", {
 
   # Define a function to extract fire seasons in the north hemisphere

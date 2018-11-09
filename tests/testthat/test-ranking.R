@@ -2,12 +2,10 @@ context("ranking")
 
 test_that("Testing the file ranking.R", {
 
-  # Check whether the result is correct
-  x <- ranking(s[[1]], s)
+  x <- ranking(r = r1, clima = rstack1)
   expect_equal(raster::cellStats(x, max), 7)
 
-  p <- plot_ranking(x)
-  expect_equal(round(p$rect$w, 0), 76)
-  expect_equal(round(p$rect$h, 0), 115)
+  # The plotting function cannot be tested
+  # because it returns different values in different environments.
 
 })

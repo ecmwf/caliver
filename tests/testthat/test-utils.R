@@ -3,14 +3,15 @@ context("utils")
 test_that("Testing the file utils.R - quant_function", {
 
   # Check whether the result is correct
-  x <- structure(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16.2, 17, 16.4, 17.3,
-                   16.6, 32.9, 32.5, 32.9, 33.9, 35.1, 53.2, 52.8, 55.7,
-                   55.2, 55.6, 72.1, 69.9, 73, 73.1, 74.5),
-                 .Dim = 5:6, .Dimnames = list(c("fwi.1", "fwi.2", "fwi.3",
-                                                "fwi.4", "fwi.5"),
-                                              c("50%", "75%", "85%", "90%",
-                                                "95%", "98%")))
-  expect_equal(x, round(.quant_function(s), 1))
+  x <- structure(c(13, 13, 13, 13, 15, 19, 19, 19, 19, 20, 22, 21, 21,
+                   22, 22, 23, 22, 22, 23, 23, 24, 24, 24, 24, 24, 25,
+                   24, 24, 25, 25),
+                 .Dim = 5:6,
+                 .Dimnames = list(c("X2017.01.01", "X2016.01.01", "X2015.01.01",
+                                    "X2014.01.01", "X2013.02.01"),
+                                  c("50%", "75%", "85%", "90%", "95%", "98%")))
+
+  expect_equal(x, round(.quant_function(rstack1), 1))
 
 })
 
@@ -21,7 +22,9 @@ test_that("Testing the file utils.R - background_map_fun", {
   p <- {
     plot(example_box);
     .background_map_fun()
-    }
+  }
+
+  # Check the function does not generate a dummy layer
   expect_equal(length(p$layers), 0)
 
 })
