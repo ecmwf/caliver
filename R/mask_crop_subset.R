@@ -74,9 +74,9 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
     }
 
   }else{
-    
+
     r_cropped <- r
-    
+
   }
 
   if (!is.null(idx)) {
