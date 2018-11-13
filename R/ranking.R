@@ -67,7 +67,7 @@ ranking <- function(r, clima){
 #' }
 #'
 
-plot_ranking <- function(ranking_map){
+plot_ranking <- function(ranking_map, ...){
 
   breaks <- 1:7
 
@@ -78,7 +78,7 @@ plot_ranking <- function(ranking_map){
   # to place the legend outside the map
   par(xpd = FALSE)
   raster::plot(ranking_map, addfun = .background_map_fun, col = heatcolors,
-               breaks = breaks, legend = FALSE)
+               breaks = breaks, legend = FALSE, ...)
   par(xpd = TRUE)
   legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1]) / 90, 0),
          y = round(mean(c(par("usr")[3], par("usr")[4])), 0),
