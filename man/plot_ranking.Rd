@@ -4,10 +4,12 @@
 \alias{plot_ranking}
 \title{plot_ranking}
 \usage{
-plot_ranking(ranking_map)
+plot_ranking(ranking_map, ...)
 }
 \arguments{
 \item{ranking_map}{is the Raster layer, result of \code{ranking()}.}
+
+\item{...}{other plotting arguments, see \code{?raster::plot} function.}
 }
 \description{
 Plot ranking map as shown in GWIS (\url{https://bit.ly/2BbBfsm})

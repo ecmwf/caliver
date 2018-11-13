@@ -32,29 +32,51 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
 
   }
 
-  if (mask == TRUE) {
+  if (mask == TRUE | crop == TRUE) {
 
-    r_masked <- raster::mask(r, p, progress = "text")
-    # To keep cells along the border:
-    # identify cells covering the polygon and set all remaining pixels to NA
-    # https://goo.gl/22LwJt
-    # much slower: cls <- cellFromPolygon(r, p, weights = TRUE)[[1]][, "cell"]
-    # much slower: r[][-cls] <- NA
+    # To keep cells along the border cannot use mask(r, p) because only cells
+    # with center falling in the polygon will be returned.
+    # The solution is to identify cells covering the polygon and set all
+    # remaining pixels to NA, see https://goo.gl/22LwJt
+    if (class(r) == "RasterLayer") {
+      temp_mask <- r
+    }else{
+      temp_mask <- r[[1]]
+    }
+    cls <- raster::cellFromPolygon(temp_mask, p, weights = TRUE)[[1]][, "cell"]
+    temp_mask[][-cls] <- NA
+
+    if (mask == TRUE) {
+
+      r_masked <- raster::mask(r, temp_mask)
+
+    }else{
+
+      r_masked <- r
+
+    }
+
+    if (crop == TRUE) {
+
+      new_extent <- extent(trim(temp_mask))
+      r_cropped <- raster::crop(r_masked, new_extent, progress = "text")
+
+    }else{
+
+      r_cropped <- r_masked
+
+    }
+
+    if (mask == TRUE & crop == TRUE) {
+
+      r_cropped <- raster::trim(r_cropped)
+
+    }
 
   }else{
-
-    r_masked <- r
-
-  }
-
-  if (crop == TRUE) {
-
-    r_cropped <- raster::crop(r_masked, p, progress = "text")
-
-  }else{
-
-    r_cropped <- r_masked
-
+    
+    r_cropped <- r
+    
   }
 
   if (!is.null(idx)) {

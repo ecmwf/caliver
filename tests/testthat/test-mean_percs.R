@@ -3,7 +3,6 @@ context("mean_percs")
 test_that("mean_percs works", {
 
   test_data <- readRDS(system.file("extdata",
-                                   "RISICO",
                                    "RISICO_raster.rds",
                                    package = "caliver"))
 

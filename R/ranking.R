@@ -55,6 +55,7 @@ ranking <- function(r, clima){
 #' @description Plot ranking map as shown in GWIS (\url{https://bit.ly/2BbBfsm})
 #'
 #' @param ranking_map is the Raster layer, result of \code{ranking()}.
+#' @param ... other plotting arguments, see \code{?raster::plot} function.
 #'
 #' @export
 #'

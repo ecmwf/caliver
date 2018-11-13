@@ -2,12 +2,10 @@ context("get_perc_risk_index")
 
 test_that("get_perc_risk_index works", {
 
-  raster <- readRDS(system.file("extdata", "RISICO", "RISICO_raster.rds",
+  raster <- readRDS(system.file("extdata", "RISICO_raster.rds",
                                 package = "caliver"))
 
-  shape <- rgdal::readOGR(dsn = system.file("extdata", "RISICO",
-                                            package = "caliver"),
-                          layer = "italy_provinces")
+  shape <- raster::getData(name = "GADM", country = "Italy", level = 1)
 
   output_gt_75 <- get_perc_risk_index(raster, shape,
                                       perc_val = 75,
