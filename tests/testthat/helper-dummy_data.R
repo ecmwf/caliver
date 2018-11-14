@@ -25,3 +25,14 @@ raster::extent(rstack1) <- raster::extent(rstack2) <- rextent
 data_dates <- seq.Date(from = as.Date("1980-01-01"),
                        to = as.Date("2016-12-31"),
                        by = "day")
+
+# Generate dummy nc files to test stak_netcdf_files()
+temporary_dir <- tempdir()
+raster::writeRaster(r1, filename = file.path(temporary_dir, "r1.nc"),
+                    format = "CDF", overwrite = TRUE)
+raster::writeRaster(r2, filename = file.path(temporary_dir, "r2.nc"),
+                    format = "CDF", overwrite = TRUE)
+raster::writeRaster(r3, filename = file.path(temporary_dir, "r3.nc"),
+                    format = "CDF", overwrite = TRUE)
+
+
