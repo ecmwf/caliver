@@ -4,8 +4,6 @@
 #'
 #' @param input_dir directory path where all the files to read have been stored
 #'
-#' @export
-#'
 #' @examples
 #' \dontrun{
 #'   decompress_gz(input_dir = "/var/tmp/moc0/forestfire/")

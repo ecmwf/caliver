@@ -11,8 +11,6 @@
 #' @return If \code{stack_ncfiles} is TRUE, the function returns a RasterBrick.
 #' If \code{stack_ncfiles} is FALSE, it returns the list of uncompressed files.
 #'
-#' @export
-#'
 #' @examples
 #' \dontrun{
 #'   s <- import_geff_data_from_tar(archive = "test.tar")

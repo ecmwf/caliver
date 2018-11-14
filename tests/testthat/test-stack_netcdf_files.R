@@ -2,6 +2,15 @@ context("stack_netcdf_files")
 
 test_that("stack_netcdf_files works", {
 
+  # Generate dummy nc files to test stak_netcdf_files()
+  temporary_dir <- tempdir()
+  raster::writeRaster(r1, filename = file.path(temporary_dir, "r1.nc"),
+                      format = "CDF", overwrite = TRUE)
+  raster::writeRaster(r2, filename = file.path(temporary_dir, "r2.nc"),
+                      format = "CDF", overwrite = TRUE)
+  raster::writeRaster(r3, filename = file.path(temporary_dir, "r3.nc"),
+                      format = "CDF", overwrite = TRUE)
+
   # Test whether stop options work correctly
   geff0 <- try(stack_netcdf_files(input_dir = NULL,
                                   pattern = NULL,
@@ -22,5 +31,8 @@ test_that("stack_netcdf_files works", {
   expect_equal(dim(x), c(50, 100, 3))
 
   unlink(geff5vr)
+  unlink(file.path(temporary_dir, "r1.nc"))
+  unlink(file.path(temporary_dir, "r2.nc"))
+  unlink(file.path(temporary_dir, "r3.nc"))
 
 })

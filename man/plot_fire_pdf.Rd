@@ -4,8 +4,7 @@
 \alias{plot_fire_pdf}
 \title{plot_fire_pdf}
 \usage{
-plot_fire_pdf(fire_index, thresholds, upper_limit = NULL,
-  v_lines = NULL)
+plot_fire_pdf(fire_index, thresholds, upper_limit = NULL, v_lines = NULL)
 }
 \arguments{
 \item{fire_index}{RasterBrick containing the fire index}

@@ -1,3 +1,12 @@
+# caliver 1.5
+
+* In the new GEFF release, the archival system and naming convention have changed. As a result the following functions have been deprecated:
+
+  - import_geff_data_from_tar()
+  - decompress_gz()
+
+* The function plot_obs_vs_forecast() is renamed to forecast_summary()
+
 # caliver 1.4
 
 * New addition: anomaly and ranking functions.

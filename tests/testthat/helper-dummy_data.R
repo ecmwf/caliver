@@ -16,23 +16,13 @@ names(r4) <- "X2015.01.01"
 names(r5) <- "X2014.01.01"
 names(r6) <- "X2013.02.01"
 
-# Create two stacks of layers
-rstack1 <- rstack2 <- raster::stack(r2, r3, r4, r5, r6)
+# Create a stack of layers
+rstack1 <- raster::stack(r2, r3, r4, r5, r6)
 rextent <- raster::extent(0, 360, -90, 90)
-raster::extent(rstack1) <- raster::extent(rstack2) <- rextent
+raster::extent(rstack1) <- rextent
 
 # Define period for Reanalysis
 data_dates <- seq.Date(from = as.Date("1980-01-01"),
                        to = as.Date("2016-12-31"),
                        by = "day")
-
-# Generate dummy nc files to test stak_netcdf_files()
-temporary_dir <- tempdir()
-raster::writeRaster(r1, filename = file.path(temporary_dir, "r1.nc"),
-                    format = "CDF", overwrite = TRUE)
-raster::writeRaster(r2, filename = file.path(temporary_dir, "r2.nc"),
-                    format = "CDF", overwrite = TRUE)
-raster::writeRaster(r3, filename = file.path(temporary_dir, "r3.nc"),
-                    format = "CDF", overwrite = TRUE)
-
 

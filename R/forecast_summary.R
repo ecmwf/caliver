@@ -1,16 +1,15 @@
-#' @title plot_obs_vs_forecast
+#' @title forecast_summary
 #'
 #' @description Plot observations versus forecast
 #'
 #' @param input_dir folder containing forecast files
-#' @param s Raster* object containing the forecasts
+#' @param r Raster* object containing the forecasts
 #' @param p SpatialPolygon* identifying the area affected by fires.
 #' @param threshold danger threshold calculated using the function
 #' \code{DangerLevels()}, usually the high danger level.
 #' @param start_date date when observations start
 #' @param end_date date when observations end
 #' @param obs_file_path file path to observations (3D raster)
-#' @param forecast_type type of forecast: hr (high resolution/deterministic),
 #' ens (control and perturbed forecast/probabilistic)
 #' @param origin This is the rating system of interest:
 #' fwi (default, currently called cfwis), mark5, nfdrs.
@@ -21,7 +20,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   plot_obs_vs_forecast(input_dir = "/scratch/mo/moc0/fire/GEFF1.2/forecast",
+#'   forecast_summary(input_dir = "forecast",
 #'                     p = fireBBOX,
 #'                     threshold = 14,
 #'                     start_date = "2017-06-01", end_date = "2017-06-30",
@@ -29,16 +28,15 @@
 #' }
 #'
 
-plot_obs_vs_forecast <- function(input_dir,
-                                 s = NULL,
-                                 p = NULL,
-                                 threshold,
-                                 start_date,
-                                 end_date,
-                                 obs_file_path =NULL,
-                                 forecast_type = "hr",
-                                 origin = "cfwis",
-                                 index = "ffwi"){
+forecast_summary <- function(input_dir,
+                             r = NULL,
+                             p = NULL,
+                             threshold,
+                             start_date,
+                             end_date,
+                             obs_file_path =NULL,
+                             origin = "FWI",
+                             index = "fwi"){
 
   my_dates <- seq.Date(from = as.Date(start_date),
                       to = as.Date(end_date),
@@ -46,10 +44,10 @@ plot_obs_vs_forecast <- function(input_dir,
 
   message("Collating forecast information")
 
-  if (is.null(s)){
+  if (is.null(r)){
     # For each starting date and forecast date, calculate the percentage of
     # pixels exceeding the high danger level
-    s <- raster::stack()
+    r <- raster::stack()
     for (i in 1:length(my_dates)) {
 
       # transform dates to strings to build file name
@@ -57,29 +55,28 @@ plot_obs_vs_forecast <- function(input_dir,
 
       file2read <- file.path(input_dir,
                              paste0("ECMWF_", origin,
-                                    "_", start_d, "_1200_",
-                                    forecast_type, "_", index, ".nc"))
+                                    "_", start_d, "_1200_hr_", index, ".nc"))
 
       if (file.exists(file2read)) {
-        s <- raster::stack(s, raster::brick(file2read))
+        r <- raster::stack(r, raster::brick(file2read))
       }
 
     }
   }
 
-  if (round(s@extent@xmin, 0) == 0) {
+  if (round(r@extent@xmin, 0) == 0) {
 
-    s <- raster::rotate(s)
+    r <- raster::rotate(r)
 
   }
 
   if (!is.null(p)) {
 
-    s_cropped <- mask_crop_subset(s, p)
+    s_cropped <- mask_crop_subset(r, p)
 
   } else {
 
-    s_cropped <- s
+    s_cropped <- r
 
   }
 
