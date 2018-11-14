@@ -26,3 +26,8 @@ data_dates <- seq.Date(from = as.Date("1980-01-01"),
                        to = as.Date("2016-12-31"),
                        by = "day")
 
+# Define temporary folder
+temporary_dir <- tempdir()
+
+# Define generic polygon
+shape <- raster::getData(name = "GADM", country = "Italy", level = 1)

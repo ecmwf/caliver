@@ -22,6 +22,7 @@ test_that("the forecast_summary functions behaves as expected", {
                                            "ECMWF_FWI_20180103_1200_hr_fwi.nc"),
                       format = "CDF", overwrite = TRUE)
 
+  # Get forecasts from files
   x <- forecast_summary(input_dir = temporary_dir,
                         r = NULL,
                         p = NULL,
@@ -31,15 +32,23 @@ test_that("the forecast_summary functions behaves as expected", {
                         obs_file_path = NULL,
                         origin = "FWI",
                         index = "fwi")
+  expect_equal(x$labels, structure(list(x = "Observation date",
+                                        y = "Forecast date",
+                                        fill = "value"),
+                                   .Names = c("x", "y", "fill")))
+  expect_equal(x$data$value, c(82, NA, NA, 82, 81, NA, 82, 81, 81))
+  
+  # Get forecasts from RasterStack
+  y <- forecast_summary(input_dir = NULL,
+                        r = raster::stack(s1*2, s2*3, s3*4),
+                        p = shape,
+                        threshold = 35,
+                        start_date = "2018-01-01",
+                        end_date= "2018-01-03",
+                        obs_file_path = NULL,
+                        origin = "FWI",
+                        index = "fwi")
 
-  expect_equal(final_plot$labels, structure(list(x = "Observation date",
-                                                 y = "Forecast date",
-                                                 fill = "value"),
-                                            .Names = c("x", "y", "fill")))
-  expect_equal(final_plot$data$value, c(82, NA, NA, 82, 81, NA, 82, 81, 81))
-
-  unlink(file.path(temporary_dir, "ECMWF_FWI_20180101_1200_hr_fwi.nc"))
-  unlink(file.path(temporary_dir, "ECMWF_FWI_20180102_1200_hr_fwi.nc"))
-  unlink(file.path(temporary_dir, "ECMWF_FWI_20180103_1200_hr_fwi.nc"))
+  expect_equal(y$data$value, c(0, NA, NA, 0, 100, NA, 0, 100, 0))
 
 })
