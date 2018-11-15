@@ -21,6 +21,9 @@ rstack1 <- raster::stack(r2, r3, r4, r5, r6)
 rextent <- raster::extent(0, 360, -90, 90)
 raster::extent(rstack1) <- rextent
 
+# Shift a raster to test rotation
+r1_shifted<- raster::shift(raster::rotate(raster::shift(r1, 180)), 180)
+
 # Define period for Reanalysis
 data_dates <- seq.Date(from = as.Date("1980-01-01"),
                        to = as.Date("2016-12-31"),

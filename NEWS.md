@@ -6,6 +6,7 @@
   - decompress_gz()
 
 * The function plot_obs_vs_forecast() is renamed to forecast_summary()
+* argument rotate_map is deprecated as the function automatically detect extent
 
 # caliver 1.4
 

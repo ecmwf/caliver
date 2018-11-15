@@ -22,6 +22,26 @@
 
 anomaly <- function(r, clima){
 
+  if (round(r@extent@xmin, 0) == 0) {
+
+    # Rotate a Raster* object that has x coordinates (longitude) from 0 to 360,
+    # to standard coordinates between -180 and 180 degrees.
+    # Longitude between 0 and 360 is frequently used in data
+    # from global climate models.
+    r <- raster::rotate(r)
+
+  }
+
+  if (round(clima@extent@xmin, 0) == 0) {
+
+    # Rotate a Raster* object that has x coordinates (longitude) from 0 to 360,
+    # to standard coordinates between -180 and 180 degrees.
+    # Longitude between 0 and 360 is frequently used in data
+    # from global climate models.
+    clima <- raster::rotate(clima)
+
+  }
+
   # Get the forecast date
   forecast_date <- substr(x = names(r), start = 7, stop = nchar(names(r)))
 

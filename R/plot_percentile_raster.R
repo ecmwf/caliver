@@ -3,7 +3,6 @@
 #' @description This function plots the maps of percentiles
 #'
 #' @param maps is the result of get_percentile_raster()
-#' @param rotate_map logical, if TRUE it uses a background map
 #' @param region string of characters describing the region.
 #' @param ... additional graphical parameters inherited from plot() in the
 #' raster package.
@@ -17,10 +16,9 @@
 #'
 
 plot_percentile_raster <- function(maps,
-                                   rotate_map = FALSE,
                                    region = "GLOB", ...){
 
-  if (rotate_map == TRUE) {
+  if (round(maps@extent@xmin, 0) == 0) {
 
     # Rotate a Raster* object that has x coordinates (longitude) from 0 to 360,
     # to standard coordinates between -180 and 180 degrees.
