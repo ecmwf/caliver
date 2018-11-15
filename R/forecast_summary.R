@@ -9,8 +9,7 @@
 #' \code{DangerLevels()}, usually the high danger level.
 #' @param start_date date when observations start
 #' @param end_date date when observations end
-#' @param obs_file_path file path to observations (3D raster)
-#' ens (control and perturbed forecast/probabilistic)
+#' @param obs observations, it can either be a file path or a RasterStack/Brick
 #' @param origin This is the rating system of interest:
 #' fwi (default, currently called cfwis), mark5, nfdrs.
 #' @param index This is the index to analyse
@@ -24,7 +23,7 @@
 #'                     p = fireBBOX,
 #'                     threshold = 14,
 #'                     start_date = "2017-06-01", end_date = "2017-06-30",
-#'                     obs_file_path = "CAMS_2017-06-01_2017-06-19_frpfire.nc")
+#'                     obs = "CAMS_2017-06-01_2017-06-19_frpfire.nc")
 #' }
 #'
 
@@ -34,7 +33,7 @@ forecast_summary <- function(input_dir,
                              threshold,
                              start_date,
                              end_date,
-                             obs_file_path =NULL,
+                             obs =NULL,
                              origin = "FWI",
                              index = "fwi"){
 
@@ -123,8 +122,12 @@ forecast_summary <- function(input_dir,
   # reshape the data.frame with forecast values
   x <- reshape2::melt(raster_mean_matrix)
 
-  if (!is.null(obs_file_path)){
-    frp <- raster::brick(obs_file_path)
+  if (!is.null(obs)){
+    if ("RasterBrick" %in% class(obs)) {
+      frp <- obs
+    }else{
+      frp <- raster::brick(obs)
+    }
     frp_cropped <- mask_crop_subset(r = frp, p = p, mask = TRUE, crop = FALSE)
     frp_ts <- as.numeric(raster::cellStats(frp_cropped, sum))
     df_frp <- data.frame(date = forecast_dates[1:length(frp_ts)],
@@ -154,7 +157,7 @@ forecast_summary <- function(input_dir,
           panel.grid.major = element_blank(), legend.position = c(.08, .85)) +
     theme(plot.title = element_text(hjust = 0.5))
 
-  if (!is.null(obs_file_path)){
+  if (!is.null(obs)){
     mylist <- list(shape = "A")
     myname <- "Fire radiative power [Wm-2]"
     final_plot <- final_plot +

@@ -45,7 +45,7 @@ test_that("the forecast_summary functions behaves as expected", {
                         threshold = 35,
                         start_date = "2018-01-01",
                         end_date = "2018-01-03",
-                        obs_file_path = NULL,
+                        obs_file_path = raster::stack(s1 * 10),
                         origin = "FWI",
                         index = "fwi")
 
