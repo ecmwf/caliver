@@ -5,7 +5,7 @@
 \title{forecast_summary}
 \usage{
 forecast_summary(input_dir, r = NULL, p = NULL, threshold, start_date,
-  end_date, obs_file_path = NULL, origin = "FWI", index = "fwi")
+  end_date, obs = NULL, origin = "FWI", index = "fwi")
 }
 \arguments{
 \item{input_dir}{folder containing forecast files}
@@ -21,8 +21,7 @@ forecast_summary(input_dir, r = NULL, p = NULL, threshold, start_date,
 
 \item{end_date}{date when observations end}
 
-\item{obs_file_path}{file path to observations (3D raster)
-ens (control and perturbed forecast/probabilistic)}
+\item{obs}{observations, it can either be a file path or a RasterStack/Brick}
 
 \item{origin}{This is the rating system of interest:
 fwi (default, currently called cfwis), mark5, nfdrs.}
@@ -39,7 +38,7 @@ Plot observations versus forecast
                     p = fireBBOX,
                     threshold = 14,
                     start_date = "2017-06-01", end_date = "2017-06-30",
-                    obs_file_path = "CAMS_2017-06-01_2017-06-19_frpfire.nc")
+                    obs = "CAMS_2017-06-01_2017-06-19_frpfire.nc")
 }
 
 }

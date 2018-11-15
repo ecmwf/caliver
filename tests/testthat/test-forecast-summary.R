@@ -29,7 +29,7 @@ test_that("the forecast_summary functions behaves as expected", {
                         threshold = 5,
                         start_date = "2018-01-01",
                         end_date = "2018-01-03",
-                        obs_file_path = NULL,
+                        obs = NULL,
                         origin = "FWI",
                         index = "fwi")
   expect_equal(x$labels, structure(list(x = "Observation date",
@@ -45,7 +45,7 @@ test_that("the forecast_summary functions behaves as expected", {
                         threshold = 35,
                         start_date = "2018-01-01",
                         end_date = "2018-01-03",
-                        obs_file_path = raster::stack(s1 * 10),
+                        obs = raster::brick(s1 * 10),
                         origin = "FWI",
                         index = "fwi")
 
