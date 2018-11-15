@@ -22,7 +22,7 @@ rextent <- raster::extent(0, 360, -90, 90)
 raster::extent(rstack1) <- rextent
 
 # Shift a raster to test rotation
-r1_shifted<- raster::shift(raster::rotate(raster::shift(r1, 180)), 180)
+r1_shifted <- raster::shift(raster::rotate(raster::shift(r1, 180)), 180)
 
 # Define period for Reanalysis
 data_dates <- seq.Date(from = as.Date("1980-01-01"),
