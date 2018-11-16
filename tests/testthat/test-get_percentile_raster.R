@@ -23,7 +23,7 @@ test_that("get_percentile_raster works with all non-null inputs", {
 
 })
 
-test_that("get_percentile_raster works with single prob from raster file", {
+test_that("get_percentile_raster works with single prob from raster", {
 
   probs_maps_1_b <- get_percentile_raster(probs = 50, r = rstack1)
 
@@ -38,7 +38,7 @@ test_that("get_percentile_raster works with single prob from raster file", {
 
 })
 
-test_that("get_percentile_raster works with multiple probs from raster file", {
+test_that("get_percentile_raster works with multiple probs from raster", {
 
   probs_maps_2_b <- get_percentile_raster(probs = c(50, 75), r = rstack1)
 
@@ -52,5 +52,21 @@ test_that("get_percentile_raster works with multiple probs from raster file", {
   mean75 <- round(raster::cellStats(probs_maps_2_b$FWI75, stat = "mean"), 0)
   expect_equal(mean50, 13)
   expect_equal(mean75, 17)
+
+})
+
+test_that("get_percentile_raster works with input file", {
+
+  raster::writeRaster(rstack1,
+                      filename = file.path(temporary_dir,
+                                           "rstack1.nc"),
+                      format = "CDF", overwrite = TRUE)
+
+  probs_maps_3_b <- get_percentile_raster(probs = 50,
+                                          input_file = file.path(temporary_dir,
+                                                                 "rstack1.nc"))
+
+  mean50 <- round(raster::cellStats(probs_maps_3_b, stat = "mean"), 0)
+  expect_equal(mean50, 13)
 
 })
