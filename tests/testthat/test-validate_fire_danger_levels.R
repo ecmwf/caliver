@@ -1,20 +1,29 @@
 context("validate_fire_danger_levels")
 
-x <- raster::raster(ncols = 2, nrows = 2)
-x[] <- c(180, 8, 1, 10)
-
-y <- raster::raster(ncols = 2, nrows = 2)
-y[] <- c(0, 0.8, 1, 0.3)
-
 test_that("validate_fire_danger_levels works", {
 
   # Check whether the result is correct in case of GLOB
-  test <- validate_fire_danger_levels(fire_index = x,
-                                      observation = y,
+  test <- validate_fire_danger_levels(fire_index = r1,
+                                      observation = r2,
                                       fire_threshold = 10,
                                       obs_threshold = 0.5)
 
   table_test <- table(test$pred, test$obs)
-  expect_equal(as.vector(table_test), c(0, 2, 2, 0))
+  expect_equal(as.vector(table_test), c(1705, 3295))
+
+})
+
+test_that("validate_fire_danger_levels works with different resolutions", {
+
+  r1_resampled <- raster::aggregate(r1, fact = 2)
+
+  # Check whether the result is correct in case of GLOB
+  test <- validate_fire_danger_levels(fire_index = r1_resampled,
+                                      observation = r2,
+                                      fire_threshold = 10,
+                                      obs_threshold = 0.5)
+
+  table_test <- table(test$pred, test$obs)
+  expect_equal(as.vector(table_test), c(213, 1037))
 
 })
