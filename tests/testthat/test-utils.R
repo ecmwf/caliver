@@ -28,3 +28,24 @@ test_that("Testing the file utils.R - background_map_fun", {
   expect_equal(length(p$layers), 0)
 
 })
+
+test_that("Testing the file utils.R - .classify_hazard", {
+
+
+  # Check whether the result is correct
+  x <- .classify_hazard(r1[], r2[], r3[], r4[], r5[], r6[])
+
+  # Check the function does not generate a dummy layer
+  expect_equal(sum(x), 11761)
+
+})
+
+test_that("Testing the file utils.R - .utci_classification", {
+
+  # Check whether the result is correct
+  x <- .utci_classification(r1)
+
+  # Check the function does not generate a dummy layer
+  expect_equal(raster::cellStats(x, sum)[[1]], 65792)
+
+})

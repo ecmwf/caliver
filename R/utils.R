@@ -34,7 +34,7 @@
 # Styling the UTCI layer
 .utci_classification <- function(rtp){
 
-  rtp$colour <- base::cut(x = rtp$layer,
+  rtp$colour <- base::cut(x = raster::getValues(rtp),
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
                           labels = c("#000080",
@@ -48,7 +48,7 @@
                                      "#910000", # original was #CC0000
                                      "#4c0000")) # original was #800000
 
-  rtp$label <- base::cut(x = rtp$layer,
+  rtp$label <- base::cut(x = raster::getValues(rtp),
                          breaks = c(-Inf, -40, -27, -13, 0,
                                     9, 26, 32, 38, 46, +Inf),
                          labels = c("< -40",
@@ -62,7 +62,7 @@
                                     "38 - 46",
                                     "> 46"))
 
-  rtp$label2 <- base::cut(x = rtp$layer,
+  rtp$label2 <- base::cut(x = raster::getValues(rtp),
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
                           labels = c("Extreme cold stress",
