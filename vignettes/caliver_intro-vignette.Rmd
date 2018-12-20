@@ -101,7 +101,12 @@ Italy2 <- raster::getData(name = "GADM", country = "Italy", level = 2)
 Genoa <- Italy2[42,]
 ```
 
-## Utilities
+## Utilities (deprecated)
+
+The following functions are used to handle data as downloaded from the ECMWF web app. 
+
+**20-12-2018 update:
+Since summer 2018, the web app is no longer available because data is more easily accessible from the Zenodo archives (https://zenodo.org/communities/wildfire). For this reason, all the functions in this section are deprecated. This section will be removed in the next release.**
 
 The function `import_GEFF_data_from_tar()` can be used to open the tar archive, decompress the gz files, merge the layers into a RasterStack and convert this to a RasterBrick object. A sample dataset (geff5.tar) is available in the testdata folder of the package.
 
