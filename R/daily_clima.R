@@ -63,6 +63,7 @@ daily_clima <- function(r, dates, probs){
                                fun = function(x){
                                  raster::quantile(x, probs[i], na.rm = TRUE)
                                  })
+      names(temp_map) <- paste0("X", dates[j], "_", probs[i])
       clima_maps[[i]] <- raster::stack(clima_maps[[i]], temp_map)
 
       rm(j, k, idx, idx_vector, r_sub)

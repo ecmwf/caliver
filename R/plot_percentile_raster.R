@@ -4,6 +4,7 @@
 #'
 #' @param maps is the result of get_percentile_raster()
 #' @param region string of characters describing the region.
+#' @param custom_palette palette to use (default is \code{viridis::inferno})
 #' @param ... additional graphical parameters inherited from plot() in the
 #' raster package.
 #'
@@ -15,8 +16,8 @@
 #' }
 #'
 
-plot_percentile_raster <- function(maps,
-                                   region = "GLOB", ...){
+plot_percentile_raster <- function(maps, region = "GLOB", custom_palette = NULL,
+                                   ...){
 
   if (round(maps@extent@xmin, 0) == 0) {
 
@@ -48,10 +49,12 @@ plot_percentile_raster <- function(maps,
   breaks <- round(seq(from = 0, to = raster_max, length.out = 10), 0)
   breaks <- unique(breaks)
 
-  # Define palette
-  heatcolors <- rev(grDevices::heat.colors(n = length(breaks)))
+  if (is.null(custom_palette)){
+    # Define palette
+    custom_palette <- rev(viridis::inferno(n = length(breaks)))
+  }
 
   raster::plot(cropped_map, addfun = .background_map_fun,
-               col = heatcolors, breaks = breaks, ...)
+               col = custom_palette, breaks = breaks, ...)
 
 }
