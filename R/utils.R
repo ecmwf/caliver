@@ -14,7 +14,7 @@
 .quant_function <- function(x){
 
   # Default probs
-  default_probs <- c(0.50, 0.75, 0.85, 0.90, 0.95, 0.98)
+  default_probs <- c(0.75, 0.85, 0.90, 0.95, 0.98)
 
   raster::quantile(x, probs = default_probs, na.rm = TRUE)
 

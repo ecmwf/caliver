@@ -33,7 +33,8 @@ Imports:
     RCurl,
     plotrix,
     reshape2,
-    R.utils
+    R.utils,
+    viridis
 Suggests:
     testthat,
     png,

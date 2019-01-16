@@ -48,23 +48,21 @@ ranking <- function(r, clima){
 
   prob_maps <- raster::resample(prob_maps, r, progress = "text")
 
-  pbelow50 <- r <= prob_maps[[1]]
-  p50to75 <- (r > prob_maps[[1]] & r <= prob_maps[[2]])
-  p75to85 <- (r > prob_maps[[2]] & r <= prob_maps[[3]])
-  p85to90 <- (r > prob_maps[[3]] & r <= prob_maps[[4]])
-  p90to95 <- (r > prob_maps[[4]] & r <= prob_maps[[5]])
-  p95to98 <- (r > prob_maps[[5]] & r <= prob_maps[[6]])
-  pabove98 <- r > prob_maps[[6]]
+  pbelow75 <- r <= prob_maps[[1]]
+  p75to85 <- (r > prob_maps[[1]] & r <= prob_maps[[2]])
+  p85to90 <- (r > prob_maps[[2]] & r <= prob_maps[[3]])
+  p90to95 <- (r > prob_maps[[3]] & r <= prob_maps[[4]])
+  p95to98 <- (r > prob_maps[[4]] & r <= prob_maps[[5]])
+  pabove98 <- r > prob_maps[[5]]
 
   ranking_map <- r
-  ranking_map[] <- 0
-  ranking_map[pbelow50] <- 1
-  ranking_map[p50to75] <- 2
-  ranking_map[p75to85] <- 3
-  ranking_map[p85to90] <- 4
-  ranking_map[p90to95] <- 5
-  ranking_map[p95to98] <- 6
-  ranking_map[pabove98] <- 7
+  ranking_map[] <- NA
+  ranking_map[pbelow75] <- 1
+  ranking_map[p75to85] <- 2
+  ranking_map[p85to90] <- 3
+  ranking_map[p90to95] <- 4
+  ranking_map[p95to98] <- 5
+  ranking_map[pabove98] <- 6
 
   return(ranking_map)
 
@@ -75,6 +73,7 @@ ranking <- function(r, clima){
 #' @description Plot ranking map as shown in GWIS (\url{https://bit.ly/2BbBfsm})
 #'
 #' @param ranking_map is the Raster layer, result of \code{ranking()}.
+#' @param custom_palette palette to use (default is \code{viridis::viridis})
 #' @param ... other plotting arguments, see \code{?raster::plot} function.
 #'
 #' @export
@@ -84,27 +83,46 @@ ranking <- function(r, clima){
 #'   r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
 #'   clima <- brick("fwi.nc")
 #'   ranking_map <- ranking(r, clima)
-#'   plot_ranking(ranking_map)
+#'   # As shown in GWIS
+#'   plot_ranking(ranking_map,
+#'                custom_palette = c("green", "yellow", "salmon", "orange",
+#'                                   "red", "black"))
 #' }
 #'
 
-plot_ranking <- function(ranking_map, ...){
+plot_ranking <- function(ranking_map, custom_palette = NULL, ...){
 
-  breaks <- 1:7
+  breaks <- 1:6
 
-  # Define palette
-  heatcolors <- c("beige", "orange1", "orange2", "orange3", "orangered", "red",
-                  "brown")
+  if (is.null(custom_palette)){
+    # Define palette
+    custom_palette <- rev(viridis::viridis(n = length(breaks)))
+  }
 
-  # to place the legend outside the map
-  par(xpd = FALSE)
-  raster::plot(ranking_map, addfun = .background_map_fun, col = heatcolors,
-               breaks = breaks, legend = FALSE, ...)
-  par(xpd = TRUE)
-  legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1]) / 90, 0),
-         y = round(mean(c(par("usr")[3], par("usr")[4])), 0),
-         legend = c("<=50", "50..75", "75..85",
-                    "85..90", "90..95", "95..98", "98..100"),
-         fill = heatcolors, bty = "n")
+  if (raster::nlayers(ranking_map) == 1){
+    # place the legend outside the map
+    par(xpd = FALSE)
+    raster::plot(ranking_map,
+                 addfun = .background_map_fun,
+                 col = custom_palette,
+                 breaks = breaks,
+                 legend = FALSE,
+                 ...)
+    par(xpd = TRUE)
+    legend(x = round(par("usr")[2] + (par("usr")[2] - par("usr")[1]) / 90, 0),
+           y = round(mean(c(par("usr")[3], par("usr")[4])), 0),
+           legend = c("<=75", "75..85", "85..90",
+                      "90..95", "95..98", "98..100"),
+           fill = custom_palette, bty = "n")
+  }else{
+    # place the legend beside each map
+    raster::plot(ranking_map,
+                 addfun = .background_map_fun,
+                 col = custom_palette,
+                 breaks = breaks,
+                 lab.breaks = c("<=75", "75..85", "85..90",
+                                "90..95", "95..98", "98..100"),
+                 ...)
+  }
 
 }

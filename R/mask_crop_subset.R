@@ -7,6 +7,8 @@
 #' @param mask logical, TRUE to apply mask (default) using p, FALSE otherwise
 #' @param crop logical, TRUE to crop (default) using p, FALSE otherwise
 #' @param idx vector of strings indicating the layer indices to subset
+#' @param accurate logical, TRUE to apply more accurate cropping/masking,
+#' FALSE otherwise
 #'
 #' @return A Raster* object
 #'
@@ -22,7 +24,8 @@
 #' }
 #'
 
-mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
+mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
+                             accurate = FALSE){
 
   if (!("RasterLayer" %in% class(r)) &
       !("RasterBrick" %in% class(r)) &
@@ -34,42 +37,68 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL){
 
   if (mask == TRUE | crop == TRUE) {
 
-    # To keep cells along the border cannot use mask(r, p) because only cells
-    # with center falling in the polygon will be returned.
-    # The solution is to identify cells covering the polygon and set all
-    # remaining pixels to NA, see https://goo.gl/22LwJt
-    if (class(r) == "RasterLayer") {
-      temp_mask <- r
+    if (accurate == TRUE){
+
+      # To keep cells along the border cannot use mask(r, p) because only cells
+      # with center falling in the polygon will be returned.
+      # The solution is to identify cells covering the polygon and set all
+      # remaining pixels to NA, see https://goo.gl/22LwJt
+      if (class(r) == "RasterLayer") {
+        temp_mask <- r
+      }else{
+        temp_mask <- r[[1]]
+      }
+      cls <- raster::cellFromPolygon(temp_mask, p, weights = TRUE)[[1]][, "cell"]
+      temp_mask[][-cls] <- NA
+
+      if (mask == TRUE) {
+
+        r_masked <- raster::mask(r, temp_mask)
+
+      }else{
+
+        r_masked <- r
+
+      }
+
+      if (crop == TRUE) {
+
+        new_extent <- extent(raster::trim(temp_mask))
+        r_cropped <- raster::crop(r_masked, new_extent, progress = "text")
+
+      }else{
+
+        r_cropped <- r_masked
+
+      }
+
+      if (mask == TRUE & crop == TRUE) {
+
+        r_cropped <- raster::trim(r_cropped)
+
+      }
+
     }else{
-      temp_mask <- r[[1]]
-    }
-    cls <- raster::cellFromPolygon(temp_mask, p, weights = TRUE)[[1]][, "cell"]
-    temp_mask[][-cls] <- NA
 
-    if (mask == TRUE) {
+      if (mask == TRUE) {
 
-      r_masked <- raster::mask(r, temp_mask)
+        r_masked <- raster::mask(r, p, progress = "text")
 
-    }else{
+      }else{
 
-      r_masked <- r
+        r_masked <- r
 
-    }
+      }
 
-    if (crop == TRUE) {
+      if (crop == TRUE) {
 
-      new_extent <- extent(trim(temp_mask))
-      r_cropped <- raster::crop(r_masked, new_extent, progress = "text")
+        r_cropped <- raster::crop(r_masked, p, progress = "text")
 
-    }else{
+      }else{
 
-      r_cropped <- r_masked
+        r_cropped <- r_masked
 
-    }
-
-    if (mask == TRUE & crop == TRUE) {
-
-      r_cropped <- raster::trim(r_cropped)
+      }
 
     }
 
