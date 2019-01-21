@@ -4,7 +4,8 @@
 \alias{mask_crop_subset}
 \title{mask_crop_subset}
 \usage{
-mask_crop_subset(r, p, mask = TRUE, crop = TRUE, idx = NULL)
+mask_crop_subset(r, p, mask = TRUE, crop = TRUE, idx = NULL,
+  accurate = FALSE)
 }
 \arguments{
 \item{r}{Raster* object}
@@ -16,6 +17,9 @@ mask_crop_subset(r, p, mask = TRUE, crop = TRUE, idx = NULL)
 \item{crop}{logical, TRUE to crop (default) using p, FALSE otherwise}
 
 \item{idx}{vector of strings indicating the layer indices to subset}
+
+\item{accurate}{logical, TRUE to apply more accurate cropping/masking,
+FALSE otherwise}
 }
 \value{
 A Raster* object

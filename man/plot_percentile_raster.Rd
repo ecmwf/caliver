@@ -4,12 +4,15 @@
 \alias{plot_percentile_raster}
 \title{plot_percentile_raster}
 \usage{
-plot_percentile_raster(maps, region = "GLOB", ...)
+plot_percentile_raster(maps, region = "GLOB", custom_palette = NULL,
+  ...)
 }
 \arguments{
 \item{maps}{is the result of get_percentile_raster()}
 
 \item{region}{string of characters describing the region.}
+
+\item{custom_palette}{palette to use (default is \code{viridis::inferno})}
 
 \item{...}{additional graphical parameters inherited from plot() in the
 raster package.}

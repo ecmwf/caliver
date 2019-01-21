@@ -43,7 +43,7 @@ forecast_summary_clima <- function(input_dir,
                        to = as.Date(end_date),
                        by = "day")
 
-  fire_clima <- daily_clima(r = re,
+  fire_clima <- daily_clima(r = clima,
                             dates = seq.Date(from = as.Date(start_date),
                                              to = as.Date(end_date) + 10,
                                              by = "day"),

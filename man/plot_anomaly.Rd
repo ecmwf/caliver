@@ -4,10 +4,14 @@
 \alias{plot_anomaly}
 \title{plot_anomaly}
 \usage{
-plot_anomaly(anomaly_map)
+plot_anomaly(anomaly_map, custom_palette = NULL, ...)
 }
 \arguments{
 \item{anomaly_map}{is the Raster layer, result of \code{anomaly()}.}
+
+\item{custom_palette}{palette to use (default is \code{viridis::plasma})}
+
+\item{...}{other plotting arguments, see \code{?raster::plot} function.}
 }
 \description{
 Plot anomaly map as shown in GWIS (\url{https://bit.ly/2BbBfsm})
@@ -17,7 +21,8 @@ Plot anomaly map as shown in GWIS (\url{https://bit.ly/2BbBfsm})
   r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
   clima <- brick("fwi.nc")
   anomaly_map <- anomaly(r, clima)
-  plot_ranking(anomaly_map)
+  plot_anomaly(anomaly_map,
+               custom_palette = colorRamps::matlab.like(n = length(breaks)))
 }
 
 }
