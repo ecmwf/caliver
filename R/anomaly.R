@@ -46,6 +46,7 @@ anomaly <- function(r, clima){
 
   anomaly_map_cat <- r
   for (i in 1:raster::nlayers(r)){
+    print(i)
     rx <- r[[i]]
     # Get the forecast dates
     forecast_date <- substr(x = names(rx), start = 7, stop = nchar(names(rx)))
@@ -78,19 +79,35 @@ anomaly <- function(r, clima){
     a10 <- (anomaly_map > +2 & anomaly_map <= +3)
     a11 <- anomaly_map > 3
 
-    # anomaly_map_cat <- anomaly_map
-    anomaly_map_cat[[i]][] <- NA
-    anomaly_map_cat[[i]][a1] <- 1
-    anomaly_map_cat[[i]][a2] <- 2
-    anomaly_map_cat[[i]][a3] <- 3
-    anomaly_map_cat[[i]][a4] <- 4
-    anomaly_map_cat[[i]][a5] <- 5
-    anomaly_map_cat[[i]][a6] <- 6
-    anomaly_map_cat[[i]][a7] <- 7
-    anomaly_map_cat[[i]][a8] <- 8
-    anomaly_map_cat[[i]][a9] <- 9
-    anomaly_map_cat[[i]][a10] <- 10
-    anomaly_map_cat[[i]][a11] <- 11
+    if (raster::nlayers(r) > 1){
+      # anomaly_map_cat <- anomaly_map
+      anomaly_map_cat[[i]][] <- NA
+      anomaly_map_cat[[i]][a1] <- 1
+      anomaly_map_cat[[i]][a2] <- 2
+      anomaly_map_cat[[i]][a3] <- 3
+      anomaly_map_cat[[i]][a4] <- 4
+      anomaly_map_cat[[i]][a5] <- 5
+      anomaly_map_cat[[i]][a6] <- 6
+      anomaly_map_cat[[i]][a7] <- 7
+      anomaly_map_cat[[i]][a8] <- 8
+      anomaly_map_cat[[i]][a9] <- 9
+      anomaly_map_cat[[i]][a10] <- 10
+      anomaly_map_cat[[i]][a11] <- 11
+    }else{
+      # anomaly_map_cat <- anomaly_map
+      anomaly_map_cat[] <- NA
+      anomaly_map_cat[a1] <- 1
+      anomaly_map_cat[a2] <- 2
+      anomaly_map_cat[a3] <- 3
+      anomaly_map_cat[a4] <- 4
+      anomaly_map_cat[a5] <- 5
+      anomaly_map_cat[a6] <- 6
+      anomaly_map_cat[a7] <- 7
+      anomaly_map_cat[a8] <- 8
+      anomaly_map_cat[a9] <- 9
+      anomaly_map_cat[a10] <- 10
+      anomaly_map_cat[a11] <- 11
+    }
   }
 
   return(anomaly_map_cat)

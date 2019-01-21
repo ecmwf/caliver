@@ -49,6 +49,6 @@ test_that("the forecast_summary functions behaves as expected", {
                         origin = "FWI",
                         index = "fwi")
 
-  expect_equal(y$data$value, c(0, NA, NA, 0, 100, NA, 0, 100, 0))
+  expect_equal(y$data$value, c(33, NA, NA, 33, 78, NA, 33, 78, 56))
 
 })

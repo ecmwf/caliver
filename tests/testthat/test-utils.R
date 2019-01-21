@@ -3,13 +3,12 @@ context("utils")
 test_that("Testing the file utils.R - quant_function", {
 
   # Check whether the result is correct
-  x <- structure(c(13, 13, 13, 13, 15, 19, 19, 19, 19, 20, 22, 21, 21,
-                   22, 22, 23, 22, 22, 23, 23, 24, 24, 24, 24, 24, 25,
-                   24, 24, 25, 25),
-                 .Dim = 5:6,
+  x <- structure(c(19, 19, 19, 19, 20, 22, 21, 21, 22, 22, 23, 22, 22, 
+                   23, 23, 24, 24, 24, 24, 24, 25, 24, 24, 25, 25),
+                 .Dim = c(5L, 5L),
                  .Dimnames = list(c("X2017.01.01", "X2016.01.01", "X2015.01.01",
                                     "X2014.01.01", "X2013.02.01"),
-                                  c("50%", "75%", "85%", "90%", "95%", "98%")))
+                                  c("75%", "85%", "90%", "95%", "98%")))
 
   expect_equal(x, round(.quant_function(rstack1), 1))
 

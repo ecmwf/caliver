@@ -33,4 +33,4 @@ data_dates <- seq.Date(from = as.Date("1980-01-01"),
 temporary_dir <- tempdir()
 
 # Define generic polygon
-shape <- raster::getData(name = "GADM", country = "Italy", level = 1)
+shape <- as(raster::extent(6, 18, 35, 47), "SpatialPolygons")
