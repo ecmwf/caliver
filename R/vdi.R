@@ -9,11 +9,23 @@
 #'
 #' @return The function returns a categorical Raster* object.
 #' Values and their descriptions are listed below:
-#' 1. No fire vulnerability, consireding an important superficial humidification.
-#' 2. Very limited drying. Small fires possible.
-#' 3. The zone is considered vulnerable, due to strong wind and low humidity.
-#' 4. Important drying; the zone is considered vulnerable. Fires can occur in any considtions, excepts by high air moisture. Very severe Fire Weather Danger by moderate wond, even low wind with foehn effect or very hot and very dry air. Strong drougth rules are applied, the FWI is no longer appropriate.
-#' 5. Extreme drying, the zone is considered extremely vulnerable. Very big fire conditions are gathered. Permanent risk of very big fires on slope zones. Catastrophic fires are possible in any zones, by moderate or string wind. Strong drought rules are applied, the FWI is no longer appropriate. The IPse works well and models very fast fire propagation apeeds (sometimes underestimated).
+#' \enumerate{
+#' \item No fire vulnerability, consireding an important superficial
+#' humidification.
+#' \item Very limited drying. Small fires possible.
+#' \item The zone is considered vulnerable, due to strong wind and low humidity.
+#' \item Important drying; the zone is considered vulnerable. Fires can occur in
+#' any considtions, excepts by high air moisture. Very severe Fire Weather
+#' Danger by moderate wond, even low wind with foehn effect or very hot and
+#' very dry air. Strong drougth rules are applied, the FWI is no longer
+#' appropriate.
+#' \item Extreme drying, the zone is considered extremely vulnerable. Very big
+#' fire conditions are gathered. Permanent risk of very big fires on slope
+#' zones. Catastrophic fires are possible in any zones, by moderate or string
+#' wind. Strong drought rules are applied, the FWI is no longer appropriate.
+#' The IPse works well and models very fast fire propagation apeeds (sometimes
+#' underestimated).
+#' }
 #'
 #' @export
 #'
@@ -27,7 +39,7 @@
 
 vdi <- function(dc, dmc){
 
-  dc_dmc_classes <- function(dcx, dmcx){
+  dc_dmc_class <- function(dcx, dmcx){
     # Blue zone
     ifelse(dcx <= 400 & dmcx <= 20, 1,
            # Green zone
@@ -47,10 +59,10 @@ vdi <- function(dc, dmc){
                          ifelse(dcx <= 1000 & dmcx <= 170, 4,
                          ifelse(dcx <= 750 & dmcx <= 200, 4,
                          ifelse(dcx <= 650 & dmcx <= 250, 4,
-                         ifelse(dcx <= 600 & dmcx >250, 4, 5))))))))))))))))
+                         ifelse(dcx <= 600 & dmcx > 250, 4, 5))))))))))))))))
   }
 
-  veg_drought <- overlay(dc, dmc, fun = dc_dmc_classes, progress = "text")
+  veg_drought <- raster::overlay(dc, dmc, fun = dc_dmc_class, progress = "text")
 
   return(veg_drought)
 }
