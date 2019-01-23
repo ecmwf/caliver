@@ -48,7 +48,8 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
       }else{
         temp_mask <- r[[1]]
       }
-      cls <- raster::cellFromPolygon(temp_mask, p, weights = TRUE)[[1]][, "cell"]
+      cls <- raster::cellFromPolygon(temp_mask,
+                                     p, weights = TRUE)[[1]][, "cell"]
       temp_mask[][-cls] <- NA
 
       if (mask == TRUE) {

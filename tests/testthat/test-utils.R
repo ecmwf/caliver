@@ -3,7 +3,7 @@ context("utils")
 test_that("Testing the file utils.R - quant_function", {
 
   # Check whether the result is correct
-  x <- structure(c(19, 19, 19, 19, 20, 22, 21, 21, 22, 22, 23, 22, 22, 
+  x <- structure(c(19, 19, 19, 19, 20, 22, 21, 21, 22, 22, 23, 22, 22,
                    23, 23, 24, 24, 24, 24, 24, 25, 24, 24, 25, 25),
                  .Dim = c(5L, 5L),
                  .Dimnames = list(c("X2017.01.01", "X2016.01.01", "X2015.01.01",

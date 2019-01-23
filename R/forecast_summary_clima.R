@@ -86,7 +86,7 @@ forecast_summary_clima <- function(input_dir,
       }
 
       s_res <- raster::resample(x = s_cropped, y = fire_clima)
-      for(j in 1:nlayers(s_res)){
+      for (j in 1:nlayers(s_res)){
         idx <- which(substr(names(fire_clima), 1, 11) == names(s_res[[j]]))
         s_res[[j]] <- s_res[[j]] > fire_clima[[idx]]
       }

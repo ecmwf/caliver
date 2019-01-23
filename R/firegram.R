@@ -51,8 +51,8 @@ firegram <- function(thresholds, hres, ens, max_index = 25){
     geom_rect(data = re_df,
               mapping = aes(ymin = fwi1, ymax = fwi2, xmin = 0, xmax = 11,
                             fill = danger), alpha = 0.3) +
-    geom_boxplot(data = ens_df, aes(x = day, y= fwi, group = day)) +
-    geom_point(data = hres_df, aes(x = day, y= fwi, group = day),
+    geom_boxplot(data = ens_df, aes(x = day, y = fwi, group = day)) +
+    geom_point(data = hres_df, aes(x = day, y = fwi, group = day),
                size = 3, color = "coral") +
     xlab("Day") + ylab("FWI") +
     theme(plot.title = element_text(hjust = 0.5)) +

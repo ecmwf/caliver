@@ -22,7 +22,7 @@
 
 anomaly <- function(r, clima){
 
-  options(warn=-1)
+  options(warn = -1)
 
   if (round(r@extent@xmin, 0) == 0) {
 
@@ -80,7 +80,6 @@ anomaly <- function(r, clima){
     a11 <- anomaly_map > 3
 
     if (raster::nlayers(r) > 1){
-      # anomaly_map_cat <- anomaly_map
       anomaly_map_cat[[i]][] <- NA
       anomaly_map_cat[[i]][a1] <- 1
       anomaly_map_cat[[i]][a2] <- 2
@@ -94,7 +93,6 @@ anomaly <- function(r, clima){
       anomaly_map_cat[[i]][a10] <- 10
       anomaly_map_cat[[i]][a11] <- 11
     }else{
-      # anomaly_map_cat <- anomaly_map
       anomaly_map_cat[] <- NA
       anomaly_map_cat[a1] <- 1
       anomaly_map_cat[a2] <- 2
