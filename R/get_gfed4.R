@@ -20,7 +20,7 @@
 #'   \item{"PeatFraction"}{}
 #' }
 #' @param region string of characters describing the region.
-#' It can only assume the 15 values listed below:
+#' It can only be one of the 15 values listed below:
 #' \itemize{
 #'   \item{"Global"}{or GLOB}
 #'   \item{"Boreal North America"}{or BONA}
@@ -82,9 +82,12 @@ get_gfed4 <- function(start_date = NULL,
   # Create a tmp directory
   my_temp_dir <- tempdir()
 
-  if (verbose) message(paste0("Downloading temporary files in: ", my_temp_dir))
-
+  if (is.null(start_date)) stop("Please enter valid start_date")
+  if (is.null(end_date)) stop("Please enter valid end_date")
   if (is.null(varname)) stop("Please enter valid varname")
+  if (is.null(region)) stop("Please enter valid region")
+
+  if (verbose) message(paste0("Downloading temporary files in: ", my_temp_dir))
 
   if (varname == "BasisRegions") {
 
@@ -154,156 +157,164 @@ get_gfed4 <- function(start_date = NULL,
 
   }else{
 
-    if (is.null(start_date) | is.null(end_date)) {
-      stop("Please enter valid dates")
-    }
+    if (varname %in% c("BurnedArea", "BurnedAreaUncertainty",
+                       "MeanBurnDateUncertainty", "source", "TreeCoverDist",
+                       "LandCoverDist", "PeatFraction")){
 
-    if (is.null(temporal_resolution)) {
-      stop("Please enter valid temporal_resolution")
-    }
+      if (is.null(start_date) | is.null(end_date)) {
+        stop("Please enter valid dates")
+      }
 
-    base_url <- "ftp://fuoco.geog.umd.edu/gfed4"
+      if (is.null(temporal_resolution)) {
+        stop("Please enter valid temporal_resolution")
+      }
 
-    if (temporal_resolution == "monthly"){
+      base_url <- "ftp://fuoco.geog.umd.edu/gfed4"
 
-      tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                           by = "month")
+      if (temporal_resolution == "monthly"){
 
-      my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
-                       start = 1, stop = 6)
+        tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
+                             by = "month")
 
-      dir_url <- paste0(base_url, "/", "monthly", "/")
+        my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
+                          start = 1, stop = 6)
 
-      pattern0 <- "GFED4.0_MQ_"
+        dir_url <- paste0(base_url, "/", "monthly", "/")
 
-    }
-
-    if (temporal_resolution == "daily") {
-
-      tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                           by = "day")
-
-      day_of_year <- lubridate::yday(tmp_date)
-      day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
-      just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
-                         start = 1, stop = 4)
-
-      my_date <- paste0(just_year, day_of_year_3_chr)
-
-      dir_url <- paste0(base_url, "/", "daily", "/")
-
-      pattern0 <- "GFED4.0_DQ_"
-
-    }
-
-    file_pattern <- paste0("^", pattern0)
-
-    for (d in my_date) {
-
-      just_year <- substr(d, start = 1, stop = 4)
-
-      if (temporal_resolution == "monthly") {
-
-        input_file <- paste0(pattern0, d, "_BA.hdf")
-        my_url <- paste0(dir_url, input_file)
+        pattern0 <- "GFED4.0_MQ_"
 
       }
 
       if (temporal_resolution == "daily") {
 
-        input_file <- paste0(pattern0, d, "_BA.hdf")
-        my_url <- paste0(dir_url, just_year, "/", input_file)
+        tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
+                             by = "day")
+
+        day_of_year <- lubridate::yday(tmp_date)
+        day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
+        just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
+                            start = 1, stop = 4)
+
+        my_date <- paste0(just_year, day_of_year_3_chr)
+
+        dir_url <- paste0(base_url, "/", "daily", "/")
+
+        pattern0 <- "GFED4.0_DQ_"
 
       }
 
-      x <- try(httr::GET(url = my_url,
-                         httr::authenticate(user = "fire", password = "burnt"),
-                         httr::write_disk(file.path(my_temp_dir, input_file),
-                                          overwrite = TRUE)), silent = FALSE)
+      file_pattern <- paste0("^", pattern0)
 
-      if (class(x) == "try-error") {
+      for (d in my_date) {
 
-        message("Either the data or the server are unavailable.")
-        stop("Please check whether your dates are valid or try again later.")
+        just_year <- substr(d, start = 1, stop = 4)
 
-      }else{
+        if (temporal_resolution == "monthly") {
 
-        # Check whether we need to save all the variables or only some of them
-        if (is.null(varname)){
-
-          var_option <- ""
-
-        }else{
-
-          var_option <- paste0(" -v ", varname)
+          input_file <- paste0(pattern0, d, "_BA.hdf")
+          my_url <- paste0(dir_url, input_file)
 
         }
 
-        # This approach uses ncl (dependency) and can give problems in RStudio,
-        # but works fine in the console
-        string2call <- paste0("ncl_convert2nc ", file.path(my_temp_dir,
-                                                           input_file),
-                              var_option, " -o ", my_temp_dir, "/")
-        system(string2call)
+        if (temporal_resolution == "daily") {
 
-        unlink(file.path(my_temp_dir, input_file))
+          input_file <- paste0(pattern0, d, "_BA.hdf")
+          my_url <- paste0(dir_url, just_year, "/", input_file)
+
+        }
+
+        x <- try(httr::GET(url = my_url,
+                           httr::authenticate(user = "fire", password = "burnt"),
+                           httr::write_disk(file.path(my_temp_dir, input_file),
+                                            overwrite = TRUE)), silent = FALSE)
+
+        if (class(x) == "try-error") {
+
+          message("Either the data or the server are unavailable.")
+          stop("Please check whether your dates are valid or try again later.")
+
+        }else{
+
+          # Check whether we need to save all the variables or only some of them
+          if (is.null(varname)){
+
+            var_option <- ""
+
+          }else{
+
+            var_option <- paste0(" -v ", varname)
+
+          }
+
+          # This approach uses ncl (dependency) and can give problems in RStudio,
+          # but works fine in the console
+          string2call <- paste0("ncl_convert2nc ", file.path(my_temp_dir,
+                                                             input_file),
+                                var_option, " -o ", my_temp_dir, "/")
+          system(string2call)
+
+          unlink(file.path(my_temp_dir, input_file))
+
+        }
 
       }
 
+      output_file_name <- ifelse(is.null(varname), "GFED4.nc",
+                                 paste0(varname, ".nc"))
+      output_file_path <- file.path(my_temp_dir, output_file_name)
+
+      list_of_files <- list.files(my_temp_dir,
+                                  pattern = file_pattern,
+                                  full.names = TRUE)
+
+      # my_temp_dir only contains Burned Area files!
+      if (length(list.files(my_temp_dir)) == 0) {
+
+        stop("No files have been downloaded, please check your connection.")
+
+      }
+
+      if (length(list_of_files) == 1) {
+
+        merged_raster <- raster::raster(list_of_files)
+
+      }
+
+      if (length(list_of_files) > 1) {
+
+        stack_netcdf_files(input_dir = my_temp_dir,
+                           pattern = file_pattern,
+                           output_file = output_file_path)
+
+        if (verbose) message("Generating RasterBrick")
+        merged_raster <- raster::brick(output_file_path)
+
+      }
+
+      # The resulting raster layer/brick is in a quater degree resolution but the
+      # extent and the coordinate system should be set manually
+
+      # Transform the rasterBrick, flipping it on the y direction
+      if (verbose) message("Flipping the raster on the y-direction")
+      regions_raster_t <- raster::flip(merged_raster,
+                                       direction = "y",
+                                       progress = "text")
+
+      if (verbose) message("Setting extent and assigning CRS")
+      # Set extent
+      raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
+      # Assign CRS (WGS84)
+      regions_raster_t@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
+
+      if (verbose) message("Removing temporary files")
+      unlink(list_of_files)
+      unlink(output_file_path)
+
+      return(regions_raster_t)
+
+    }else{
+      stop("The varname provided is not valid, please enter valid varname")
     }
-
-    output_file_name <- ifelse(is.null(varname), "GFED4.nc",
-                               paste0(varname, ".nc"))
-    output_file_path <- file.path(my_temp_dir, output_file_name)
-
-    list_of_files <- list.files(my_temp_dir,
-                                pattern = file_pattern,
-                                full.names = TRUE)
-
-    # my_temp_dir only contains Burned Area files!
-    if (length(list.files(my_temp_dir)) == 0) {
-
-      stop("No files have been downloaded, please check your connection.")
-
-    }
-
-    if (length(list_of_files) == 1) {
-
-      merged_raster <- raster::raster(list_of_files)
-
-    }
-
-    if (length(list_of_files) > 1) {
-
-      stack_netcdf_files(input_dir = my_temp_dir,
-                         pattern = file_pattern,
-                         output_file = output_file_path)
-
-      if (verbose) message("Generating RasterBrick")
-      merged_raster <- raster::brick(output_file_path)
-
-    }
-
-    # The resulting raster layer/brick is in a quater degree resolution but the
-    # extent and the coordinate system should be set manually
-
-    # Transform the rasterBrick, flipping it on the y direction
-    if (verbose) message("Flipping the raster on the y-direction")
-    regions_raster_t <- raster::flip(merged_raster,
-                                     direction = "y",
-                                     progress = "text")
-
-    if (verbose) message("Setting extent and assigning CRS")
-    # Set extent
-    raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
-    # Assign CRS (WGS84)
-    regions_raster_t@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
-
-    if (verbose) message("Removing temporary files")
-    unlink(list_of_files)
-    unlink(output_file_path)
-
-    return(regions_raster_t)
 
   }
 

@@ -30,7 +30,7 @@ This can be one of the following:
 }}
 
 \item{region}{string of characters describing the region.
-It can only assume the 15 values listed below:
+It can only be one of the 15 values listed below:
 \itemize{
   \item{"Global"}{or GLOB}
   \item{"Boreal North America"}{or BONA}
