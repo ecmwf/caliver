@@ -32,14 +32,15 @@ classify_index <- function(r, thresholds = NULL){
   index_class <- raster::cut(r, breaks = c(-Inf, thresholds, Inf))
 
   # Define a Raster Attribute Table (RAT)
-  rat <- data.frame(ID = 1:6,
-                    Danger = c("Very low", "Low", "Moderate",
+  rat <- data.frame(id = 1:6,
+                    danger = c("Very low", "Low", "Moderate",
                                "High", "Very high", "Extreme"),
                     stringsAsFactors = FALSE)
-  rat$ID <- factor(x = rat$ID, levels = 1:6)
-  rat$Danger <- factor(x = rat$Danger,
+  rat$id <- factor(x = rat$id, levels = 1:6)
+  rat$danger <- factor(x = rat$danger,
                        levels = c("Very low", "Low", "Moderate",
                                   "High", "Very high", "Extreme"))
+  names(rat) <- c("ID", "Danger")
 
   # Transform the brick into a categorical stack of layers
   index_stack <- raster::stack()
@@ -81,6 +82,6 @@ plot_classified_index <- function(r, custom_palette = NULL, ...){
     custom_palette <- rev(viridis::viridis(n = length(levels(r)[[1]][, "ID"])))
   }
 
-  levelplot(r, att = "Danger", col.regions = custom_palette)
+  rasterVis::levelplot(r, att = "Danger", col.regions = custom_palette)
 
 }

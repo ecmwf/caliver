@@ -34,7 +34,8 @@ Imports:
     plotrix,
     reshape2,
     R.utils,
-    viridis
+    viridis,
+    rasterVis
 Suggests:
     testthat,
     png,

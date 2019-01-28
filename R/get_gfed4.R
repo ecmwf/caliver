@@ -82,8 +82,6 @@ get_gfed4 <- function(start_date = NULL,
   # Create a tmp directory
   my_temp_dir <- tempdir()
 
-  if (is.null(start_date)) stop("Please enter valid start_date")
-  if (is.null(end_date)) stop("Please enter valid end_date")
   if (is.null(varname)) stop("Please enter valid varname")
   if (is.null(region)) stop("Please enter valid region")
 
@@ -157,6 +155,9 @@ get_gfed4 <- function(start_date = NULL,
 
   }else{
 
+    if (is.null(start_date)) stop("Please enter valid start_date")
+    if (is.null(end_date)) stop("Please enter valid end_date")
+
     if (varname %in% c("BurnedArea", "BurnedAreaUncertainty",
                        "MeanBurnDateUncertainty", "source", "TreeCoverDist",
                        "LandCoverDist", "PeatFraction")){
@@ -224,7 +225,8 @@ get_gfed4 <- function(start_date = NULL,
         }
 
         x <- try(httr::GET(url = my_url,
-                           httr::authenticate(user = "fire", password = "burnt"),
+                           httr::authenticate(user = "fire",
+                                              password = "burnt"),
                            httr::write_disk(file.path(my_temp_dir, input_file),
                                             overwrite = TRUE)), silent = FALSE)
 
@@ -246,7 +248,7 @@ get_gfed4 <- function(start_date = NULL,
 
           }
 
-          # This approach uses ncl (dependency) and can give problems in RStudio,
+          # This approach uses ncl (dependency) and can give problems in RStudio
           # but works fine in the console
           string2call <- paste0("ncl_convert2nc ", file.path(my_temp_dir,
                                                              input_file),
@@ -291,8 +293,8 @@ get_gfed4 <- function(start_date = NULL,
 
       }
 
-      # The resulting raster layer/brick is in a quater degree resolution but the
-      # extent and the coordinate system should be set manually
+      # The resulting raster layer/brick is in a quater degree resolution but
+      # the extent and the coordinate system should be set manually
 
       # Transform the rasterBrick, flipping it on the y direction
       if (verbose) message("Flipping the raster on the y-direction")
