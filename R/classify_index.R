@@ -10,7 +10,8 @@
 #' @param thresholds numeric vector containing 5 thresholds.
 #'
 #' @return The function returns a Raster* object of the same dimensions of
-#' \code{r} but the values are categorical from 1 to 6.
+#' \code{r} but the values are categorical from 1 to 6 (corresponding to
+#' very low, low, moderate, high, very high and extreme danger, respectively).
 #' Some cells may contain NAs, this happens typically over the sea.
 #'
 #' @export
@@ -28,24 +29,27 @@ classify_index <- function(r, thresholds = NULL){
     thresholds <- c(5.2, 11.2, 21.3, 38, 50)
   }
 
-  fwi_class <- r
-  # Categorize the Raster* object
-  a1 <- r <= thresholds[1]                       # Very low danger
-  a2 <- (r > thresholds[1] & r <= thresholds[2]) # Low danger
-  a3 <- (r > thresholds[2] & r <= thresholds[3]) # Moderate danger
-  a4 <- (r > thresholds[3] & r <= thresholds[4]) # High danger
-  a5 <- (r > thresholds[4] & r <= thresholds[5]) # Very high danger
-  a6 <- r > thresholds[5]                        # Extreme danger
+  index_class <- raster::cut(r, breaks = c(-Inf, thresholds, Inf))
 
-  fwi_class[] <- NA
-  fwi_class[a1] <- 1
-  fwi_class[a2] <- 2
-  fwi_class[a3] <- 3
-  fwi_class[a4] <- 4
-  fwi_class[a5] <- 5
-  fwi_class[a6] <- 6
+  # Define a Raster Attribute Table (RAT)
+  rat <- data.frame(ID = 1:6,
+                    Danger = c("Very low", "Low", "Moderate",
+                               "High", "Very high", "Extreme"),
+                    stringsAsFactors = FALSE)
+  rat$ID <- factor(x = rat$ID, levels = 1:6)
+  rat$Danger <- factor(x = rat$Danger,
+                       levels = c("Very low", "Low", "Moderate",
+                                  "High", "Very high", "Extreme"))
 
-  return(fwi_class)
+  # Transform the brick into a categorical stack of layers
+  index_stack <- raster::stack()
+  for (layerx in 1:nlayers(index_class)){
+    tmp <- raster::ratify(index_class[[layerx]])
+    levels(tmp) <- rat
+    index_stack <- raster::stack(index_stack, tmp)
+  }
+
+  return(index_stack)
 
 }
 
@@ -72,20 +76,11 @@ classify_index <- function(r, thresholds = NULL){
 
 plot_classified_index <- function(r, custom_palette = NULL, ...){
 
-  breaks <- 1:6
-
   if (is.null(custom_palette)){
     # Define palette
-    custom_palette <- rev(viridis::viridis(n = length(breaks)))
+    custom_palette <- rev(viridis::viridis(n = length(levels(r)[[1]][, "ID"])))
   }
 
-  # place the legend beside each map
-  raster::plot(r,
-               addfun = .background_map_fun,
-               col = custom_palette,
-               breaks = breaks,
-               legend = c("Very low", "Low", "Moderate",
-                          "High", "Very high", "Extreme"),
-               ...)
+  levelplot(r, att = "Danger", col.regions = custom_palette)
 
 }

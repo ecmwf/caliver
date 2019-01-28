@@ -13,7 +13,8 @@ classify_index(r, thresholds = NULL)
 }
 \value{
 The function returns a Raster* object of the same dimensions of
-\code{r} but the values are categorical from 1 to 6.
+\code{r} but the values are categorical from 1 to 6 (corresponding to
+very low, low, moderate, high, very high and extreme danger, respectively).
 Some cells may contain NAs, this happens typically over the sea.
 }
 \description{
