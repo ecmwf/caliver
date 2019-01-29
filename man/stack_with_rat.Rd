@@ -4,8 +4,7 @@
 \alias{stack_with_rat}
 \title{stack_with_rat}
 \usage{
-stack_with_rat(r, ids = 1:6, classes = c("Very low", "Low", "Moderate",
-  "High", "Very high", "Extreme"))
+stack_with_rat(r, ids, classes)
 }
 \arguments{
 \item{r}{is the categorical Raster* object.}

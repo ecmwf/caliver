@@ -31,24 +31,11 @@ classify_index <- function(r, thresholds = NULL){
 
   index_class <- raster::cut(r, breaks = c(-Inf, thresholds, Inf))
 
-  # Define a Raster Attribute Table (RAT)
-  rat <- data.frame(id = 1:6,
-                    danger = c("Very low", "Low", "Moderate",
-                               "High", "Very high", "Extreme"),
-                    stringsAsFactors = FALSE)
-  rat$id <- factor(x = rat$id, levels = 1:6)
-  rat$danger <- factor(x = rat$danger,
-                       levels = c("Very low", "Low", "Moderate",
-                                  "High", "Very high", "Extreme"))
-  names(rat) <- c("ID", "Danger")
-
-  # Transform the brick into a categorical stack of layers
-  index_stack <- raster::stack()
-  for (layerx in 1:nlayers(index_class)){
-    tmp <- raster::ratify(index_class[[layerx]])
-    levels(tmp) <- rat
-    index_stack <- raster::stack(index_stack, tmp)
-  }
+  # Convert to Stack and associate a Raster Attribute Table (RAT)
+  index_stack <- stack_with_rat(r = r,
+                                ids = 1:6,
+                                classes = c("Very low", "Low", "Moderate",
+                                            "High", "Very high", "Extreme"))
 
   return(index_stack)
 

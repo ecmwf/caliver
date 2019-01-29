@@ -19,10 +19,7 @@
 #' }
 #'
 
-stack_with_rat <- function(r,
-                           ids = 1:6,
-                           classes = c("Very low", "Low", "Moderate",
-                                       "High", "Very high", "Extreme")){
+stack_with_rat <- function(r, ids, classes){
 
   # Define a Raster Attribute Table (RAT)
   rat <- data.frame(id = ids, danger = classes, stringsAsFactors = FALSE)
