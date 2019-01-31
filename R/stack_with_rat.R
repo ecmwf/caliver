@@ -30,7 +30,13 @@ stack_with_rat <- function(r, ids, classes){
   # Transform the brick into a categorical stack of layers
   index_stack <- raster::stack()
   for (i in 1:nlayers(r)){
-    tmp <- raster::ratify(r[[i]])
+    # there is a problem with the ID = 0, they are resetted to start from 1
+    if (cellStats(r[[i]], min) == 0){
+      ri <- r[[i]] + 1
+      tmp <- raster::ratify(ri)
+    }else{
+      tmp <- raster::ratify(r[[i]])
+    }
     levels(tmp) <- rat
     index_stack <- raster::stack(index_stack, tmp)
   }
