@@ -35,6 +35,8 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
   }
 
+  if ("RasterBrick" %in% class(r)) r <- raster::stack(r)
+
   if (mask == TRUE | crop == TRUE) {
 
     if (accurate == TRUE){
