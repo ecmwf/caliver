@@ -32,7 +32,7 @@ classify_index <- function(r, thresholds = NULL){
   index_class <- raster::cut(r, breaks = c(-Inf, thresholds, Inf))
 
   # Convert to Stack and associate a Raster Attribute Table (RAT)
-  index_stack <- stack_with_rat(r = r,
+  index_stack <- stack_with_rat(r = index_class,
                                 ids = 1:6,
                                 classes = c("Very low", "Low", "Moderate",
                                             "High", "Very high", "Extreme"))
