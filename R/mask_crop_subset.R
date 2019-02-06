@@ -35,8 +35,6 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
   }
 
-  if ("RasterBrick" %in% class(r)) r <- raster::stack(r)
-
   if (mask == TRUE | crop == TRUE) {
 
     if (accurate == TRUE){
@@ -65,6 +63,12 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
       }
 
       if (crop == TRUE) {
+
+        if ("RasterBrick" %in% class(r_masked)){
+
+          r_masked <- raster::stack(r_masked)
+
+        }
 
         new_extent <- extent(raster::trim(temp_mask))
         r_cropped <- raster::crop(r_masked, new_extent, progress = "text")
