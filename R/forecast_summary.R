@@ -33,7 +33,7 @@ forecast_summary <- function(input_dir,
                              threshold,
                              start_date,
                              end_date,
-                             obs =NULL,
+                             obs = NULL,
                              origin = "FWI",
                              index = "fwi"){
 
@@ -123,12 +123,21 @@ forecast_summary <- function(input_dir,
   x <- reshape2::melt(raster_mean_matrix)
 
   if (!is.null(obs)){
+
+    # Check whether obs is a string or a brick
     if ("RasterBrick" %in% class(obs)) {
       frp <- obs
     }else{
       frp <- raster::brick(obs)
     }
-    frp_cropped <- mask_crop_subset(r = frp, p = p, mask = TRUE, crop = FALSE)
+
+    # Check whether I need to crop the observation
+    if (!is.null(p)) {
+      frp_cropped <- mask_crop_subset(r = frp, p = p, mask = TRUE, crop = FALSE)
+    }else{
+      frp_cropped <- frp
+    }
+
     frp_ts <- as.numeric(raster::cellStats(frp_cropped, sum))
     df_frp <- data.frame(date = forecast_dates[1:length(frp_ts)],
                          frp_original = frp_ts,
@@ -144,9 +153,10 @@ forecast_summary <- function(input_dir,
     scale_fill_distiller(palette = "Spectral",
                          na.value = NA,
                          limits = c(0, 100),
-                         name = paste0("% of pixels\nexceeding FWI = ",
+                         name = paste0("% of pixels\nexceeding\nFWI = ",
                                        threshold)) +
-    theme_bw() + labs(x = "Observation date", y = "Forecast date") +
+    theme_bw() +
+    labs(x = "Observation date", y = "Forecast date") +
     scale_x_continuous(expand = c(0, 0),
                        breaks = 1:length(observation_dates),
                        labels = as.character(observation_dates)) +
@@ -154,8 +164,14 @@ forecast_summary <- function(input_dir,
                        breaks = 1:length(forecast_dates),
                        labels = as.character(forecast_dates)) +
     theme(axis.text.x = element_text(angle = 90),
-          panel.grid.major = element_blank(), legend.position = c(.08, .85)) +
-    theme(plot.title = element_text(hjust = 0.5))
+          panel.grid.major = element_blank(),
+          plot.title = element_text(hjust = 0.5),
+          legend.position = c(1, 0),
+          legend.justification = c(1,0),
+          legend.direction = "vertical",
+          legend.box = "horizontal",
+          legend.box.just = c("top"),
+          legend.background = element_rect(fill=NA))
 
   if (!is.null(obs)){
     mylist <- list(shape = "A")

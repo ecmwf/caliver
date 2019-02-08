@@ -49,7 +49,7 @@ anomaly <- function(r, clima){
     print(i)
     rx <- r[[i]]
     # Get the forecast dates
-    forecast_date <- substr(x = names(rx), start = 7, stop = nchar(names(rx)))
+    forecast_date <- substr(x = names(rx), start = 7, stop = 11)
 
     # Get the climatology dates
     clima_dates <- substr(x = names(clima), start = 7, stop = 11)
