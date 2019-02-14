@@ -28,6 +28,5 @@
 #' @importFrom graphics legend par
 #' @importFrom viridis viridis plasma inferno
 #' @importFrom rasterVis levelplot
-#' 
 #'
 NULL
