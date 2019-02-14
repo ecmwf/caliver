@@ -120,9 +120,9 @@ get_gfed4 <- function(start_date = NULL,
       regions_raster_t <- raster::t(regions_raster)
       # set extent
       raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
-      # Define zeros as NAs
+      # define zeros as NAs
       regions_raster_t[regions_raster_t == 0] <- NA
-      # Assign CRS (WGS84)
+      # assign CRS (WGS84)
       regions_raster_t@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
 
       if (!is.null(region)) {
@@ -142,8 +142,10 @@ get_gfed4 <- function(start_date = NULL,
         if (region == "AUST") regions_raster_t[regions_raster_t != 14] <- NA
       }
 
+      # Trim outer NAs
       regions_raster_t_no_na <- raster::trim(regions_raster_t)
 
+      # Convert to polygons
       regions_polygons <- raster::rasterToPolygons(x = regions_raster_t_no_na)
 
       if (verbose) message("Removing temporary files")
@@ -176,7 +178,6 @@ get_gfed4 <- function(start_date = NULL,
 
         tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
                              by = "month")
-
         my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
                           start = 1, stop = 6)
 
@@ -190,21 +191,15 @@ get_gfed4 <- function(start_date = NULL,
 
         tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
                              by = "day")
-
         day_of_year <- lubridate::yday(tmp_date)
         day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
         just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
                             start = 1, stop = 4)
-
         my_date <- paste0(just_year, day_of_year_3_chr)
-
         dir_url <- paste0(base_url, "/", "daily", "/")
-
         pattern0 <- "GFED4.0_DQ_"
 
       }
-
-      file_pattern <- paste0("^", pattern0)
 
       for (d in my_date) {
 
@@ -224,11 +219,10 @@ get_gfed4 <- function(start_date = NULL,
 
         }
 
-        x <- try(httr::GET(url = my_url,
-                           httr::authenticate(user = "fire",
-                                              password = "burnt"),
-                           httr::write_disk(file.path(my_temp_dir, input_file),
-                                            overwrite = TRUE)), silent = FALSE)
+        x <- try(RCurl::getBinaryURL(my_url,
+                                     userpwd = "fire:burnt",
+                                     ftp.use.epsv = FALSE),
+                 silent = FALSE)
 
         if (class(x) == "try-error") {
 
@@ -236,6 +230,8 @@ get_gfed4 <- function(start_date = NULL,
           stop("Please check whether your dates are valid or try again later.")
 
         }else{
+
+          writeBin(x, con = file.path(my_temp_dir, input_file))
 
           # Check whether we need to save all the variables or only some of them
           if (is.null(varname)){
@@ -266,7 +262,7 @@ get_gfed4 <- function(start_date = NULL,
       output_file_path <- file.path(my_temp_dir, output_file_name)
 
       list_of_files <- list.files(my_temp_dir,
-                                  pattern = file_pattern,
+                                  pattern = paste0("^", pattern0),
                                   full.names = TRUE)
 
       # my_temp_dir only contains Burned Area files!
@@ -284,12 +280,8 @@ get_gfed4 <- function(start_date = NULL,
 
       if (length(list_of_files) > 1) {
 
-        stack_netcdf_files(input_dir = my_temp_dir,
-                           pattern = file_pattern,
-                           output_file = output_file_path)
-
-        if (verbose) message("Generating RasterBrick")
-        merged_raster <- raster::brick(output_file_path)
+        output_ncfile <- raster::stack(list_of_files)
+        merged_raster <- raster::brick(output_ncfile)
 
       }
 

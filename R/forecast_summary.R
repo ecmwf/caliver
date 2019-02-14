@@ -167,11 +167,11 @@ forecast_summary <- function(input_dir,
           panel.grid.major = element_blank(),
           plot.title = element_text(hjust = 0.5),
           legend.position = c(1, 0),
-          legend.justification = c(1,0),
+          legend.justification = c(1, 0),
           legend.direction = "vertical",
           legend.box = "horizontal",
           legend.box.just = c("top"),
-          legend.background = element_rect(fill=NA))
+          legend.background = element_rect(fill = NA))
 
   if (!is.null(obs)){
     mylist <- list(shape = "A")

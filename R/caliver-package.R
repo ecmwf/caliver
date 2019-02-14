@@ -21,7 +21,7 @@
 #' @importFrom rhdf5 h5read
 #' @importFrom utils download.file untar
 #' @importFrom stats median na.omit sd uniroot density quantile
-#' @importFrom RCurl getURL
+#' @importFrom RCurl getURL getBinaryURL
 #' @importFrom plotrix rescale
 #' @importFrom reshape2 melt
 #' @importFrom R.utils gunzip
