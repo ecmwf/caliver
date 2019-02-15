@@ -8,6 +8,7 @@
 * The function plot_obs_vs_forecast() is renamed to forecast_summary()
 * Argument rotate_map is deprecated as the function automatically detect extent
 * Removed dependency from visualTest as it is not in mainstream repositories
+* Removed LICENSE file, linking directly to Apache License 2.0 in DESCRIPTION
 
 # caliver 1.4
 

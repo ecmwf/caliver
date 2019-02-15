@@ -1,7 +1,7 @@
 Package: caliver
 Type: Package
-Title: CALIbration and VERification of Gridded Model Outputs
-Version: 1.4
+Title: Calibration and Verification of Grid Model Outputs
+Version: 1.5
 Authors@R: c(person(given = "Claudia",
                     family = "Vitolo",
                     email = "claudia.vitolo@ecmwf.int",
@@ -13,8 +13,8 @@ Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
 URL: https://ecmwf.github.io/caliver, https://github.com/ecmwf/caliver
 BugReports: https://github.com/ecmwf/caliver/issues
 Description: Utility functions for the post-processing, calibration and
-    validation of gridded model outputs. Initial test cases include the outputs of
-    the following forest fire models: GEFF and RISICO.
+    validation of grid model outputs. Initial test cases include the outputs of
+    the following forest fire models: 'GEFF' and 'RISICO'.
 Depends:
     R (>= 3.1)
 Imports:
@@ -47,5 +47,5 @@ biocViews:
 VignetteBuilder: knitr
 Encoding: UTF-8
 SystemRequirements: GDAL, PROJ.4, cdo, ncl, netcdf4, hdf5
-License: file LICENSE
+License:  Apache License 2.0
 RoxygenNote: 6.1.1

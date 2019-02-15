@@ -82,5 +82,5 @@ Meta
 - This package and functions herein are part of an experimental open-source project. They are provided as is, without any guarantee.
 - Contributions are welcome! Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
 - Please [report any issues or bugs](https://github.com/ecmwf/caliver/issues).
-- License: [APACHE-2](LICENSE)
+- License: Apache License 2.0
 - Get citation information for `caliver` in R doing `citation(package = "caliver")`
