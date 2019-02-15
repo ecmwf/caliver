@@ -4,10 +4,6 @@ language: r
 sudo: required
 dist: trusty
 
-r: bioc-devel
-bioc_required: true
-bioc_use_devel: true
-
 addons:
   apt:
     packages:
