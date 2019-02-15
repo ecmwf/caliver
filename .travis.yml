@@ -19,7 +19,6 @@ addons:
     - cdo
 
 r_github_packages:
-  - MangoTheCat/visualTest
   - jimhester/lintr
   - jimhester/covr
   - r-lib/pkgdown

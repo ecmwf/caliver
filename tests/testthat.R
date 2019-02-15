@@ -6,9 +6,6 @@ library(raster)
 library(ggplot2)
 library(proto)
 
-##  Load the visualTest library to get fingerprint of basic plots
-library(visualTest)
-
 test_check("caliver")
 
 # Static code analysis

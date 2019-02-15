@@ -56,20 +56,11 @@ Run the following in a terminal:
 R dependencies
 --------------
 
-The caliver package also depends on additional R packages from both CRAN and Bioconductor, here is how to install them from an R console:
+The caliver package also depends on a Bioconductor R packages (rhdf5), here is how to install it from an R console:
 
 ``` r
-# Install packages from CRAN
-packs <- c("rgdal", "ncdf4", "ggplot2", "raster", "sp", "rworldmap", "httr", "stringr", "lubridate", "RCurl", "plotrix", "reshape2", "R.utils", "devtools", "proto", "roxygen2", "png", "rmarkdown", "pkgdown", "BiocManager")
-install.packages(packs)
-
 # Install package from BIOCONDUCTOR 
 BiocManager::install("rhdf5")
-
-# Install packages from GitHub (only needed if you intend to run unit tests)
-devtools::install_github("jimhester/covr")
-devtools::install_github("jimhester/lintr")
-devtools::install_github("MangoTheCat/visualTest")
 ```
 
 Get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
