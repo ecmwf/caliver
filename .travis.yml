@@ -2,17 +2,19 @@
 
 language: r
 sudo: required
-dist: trusty
+dist: xenial
 
 addons:
   apt:
     packages:
+    - libssl-dev
     - libnetcdf-dev
     - netcdf-bin
     - libhdf5-dev
     - libproj-dev
     - libgdal-dev
     - cdo
+    - ncl-ncarg
 
 r_github_packages:
   - jimhester/lintr
