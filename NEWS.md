@@ -9,6 +9,8 @@
 * Argument rotate_map is deprecated as the function automatically detect extent
 * Removed dependency from visualTest as it is not in mainstream repositories
 * Removed LICENSE file, linking directly to Apache License 2.0 in DESCRIPTION
+* Removed dependency from bioconductor package rhdf5, now using hdf5r from cran
+* Removed obsolete/deprecated dependencies
 
 # caliver 1.4
 

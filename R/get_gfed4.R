@@ -94,8 +94,7 @@ get_gfed4 <- function(start_date = NULL,
     base_url <- "http://www.geo.vu.nl/~gwerf/GFED/GFED4/"
     fname <- "GFED4.1s_2015.hdf5"
     the_url <- paste0(base_url, fname)
-
-    x <- try(httr::http_error(the_url), silent = TRUE)
+    x <- try(RCurl::getURL(the_url), silent = TRUE)
 
     if (class(x) == "try-error") {
 
@@ -105,15 +104,16 @@ get_gfed4 <- function(start_date = NULL,
 
       # Download the file
       download.file(url = the_url, destfile = file.path(my_temp_dir, fname),
-                    quiet = TRUE, cacheOK = TRUE)
+                    quiet = verbose, cacheOK = TRUE)
 
       # Extract dataset with basis regions
-      all_regions <- rhdf5::h5read(file = file.path(my_temp_dir, fname),
-                                   name = paste0("/", "ancill",
-                                                 "/", "basis_regions"))
+      file_h5 <- hdf5r::h5file(file.path(my_temp_dir, fname))
+      # lets look at the content: file.h5$ls(recursive=TRUE)
+      # Extract dataset
+      br <- file_h5[["ancill/basis_regions"]]
 
       # Convert hdf5 to raster
-      regions_raster <- raster::raster(all_regions)
+      regions_raster <- raster::raster(br[, ])
 
       # Transform the raster
       # transpose
@@ -123,7 +123,7 @@ get_gfed4 <- function(start_date = NULL,
       # define zeros as NAs
       regions_raster_t[regions_raster_t == 0] <- NA
       # assign CRS (WGS84)
-      regions_raster_t@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
+      raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
 
       if (!is.null(region)) {
         if (region == "BONA") regions_raster_t[regions_raster_t != 1] <- NA
@@ -298,7 +298,7 @@ get_gfed4 <- function(start_date = NULL,
       # Set extent
       raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
       # Assign CRS (WGS84)
-      regions_raster_t@crs <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs")
+      raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
 
       if (verbose) message("Removing temporary files")
       unlink(list_of_files)

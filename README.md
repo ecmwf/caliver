@@ -53,16 +53,6 @@ Run the following in a terminal:
 * `sudo apt-get install cdo`
 * `sudo apt-get install ncl-ncarg`
 
-R dependencies
---------------
-
-The caliver package also depends on a Bioconductor R packages (rhdf5), here is how to install it from an R console:
-
-``` r
-# Install package from BIOCONDUCTOR 
-BiocManager::install("rhdf5")
-```
-
 Get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
 
 ``` r

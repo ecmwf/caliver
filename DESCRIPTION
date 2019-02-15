@@ -18,17 +18,14 @@ Description: Utility functions for the post-processing, calibration and
 Depends:
     R (>= 3.1)
 Imports:
-    rgdal,
     ncdf4,
-    ggplot2,
     raster,
-    sp,
+    ggplot2,
     rworldmap,
     graphics,
-    httr,
     stringr,
     lubridate,
-    rhdf5,
+    hdf5r,
     RCurl,
     plotrix,
     reshape2,
@@ -43,7 +40,6 @@ Suggests:
     rmarkdown,
     covr,
     lintr
-biocViews:
 VignetteBuilder: knitr
 Encoding: UTF-8
 SystemRequirements: GDAL, PROJ.4, cdo, ncl, netcdf4, hdf5
