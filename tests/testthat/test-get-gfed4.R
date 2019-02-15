@@ -10,7 +10,7 @@ test_that("Check get_gfed4 behaves as expected", {
   expect_true(bona@bbox[[3]] == -52.5)
   expect_true(bona@bbox[[4]] == 80)
 
-  # skip_on_travis()
+  skip_on_travis()
   # This should be skipped because I did not manage to install ncl on travis
   # Daily burned areas
   daily_burned_areas <- get_gfed4(start_date = "2003-01-01",
