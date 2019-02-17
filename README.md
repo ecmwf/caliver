@@ -10,39 +10,15 @@
 
 For more details, please see the following paper:
 
-> Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **“Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs”**. PLOS ONE 13 (1). Public Library of Science: 1–18. [doi:10.1371/journal.pone.0189419](doi:10.1371/journal.pone.0189419)
+*Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **“Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs”**. PLOS ONE 13 (1). Public Library of Science: 1–18. [doi:10.1371/journal.pone.0189419](doi:10.1371/journal.pone.0189419)*
 
 
-External dependencies
----------------------
-
+## External dependencies
 The installation of the caliver package depends on the Climate Data Operators ([cdo](https://code.zmaw.de/projects/cdo/wiki)), a large tool set for working on climate and NWP model data); the NCAR Command Language ([ncl](https://www.ncl.ucar.edu/)), an interpred language with built-in functionalities to convert hdf5 files to netcdf format; the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats) and the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)).
 
 Assuming the user has already installed R, below are the instructions to install caliver's external dependencies on various operating systems.
 
-### Windows
-
-On Windows, follow the steps below:
-
-  * install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
-  * launch an R console and run the following commands:
-    - ToDo
-
-### MAC
-
-Use homebrew and run the following in a terminal:
-
-* `brew install netcdf`
-* `brew install hdf5`
-* `brew install proj`
-* `brew install gdal`
-* `brew install ncl`
-* `brew install udunits`
-* `brew install cdo`
-
-### Ubuntu-Linux
-
-Run the following in a terminal:
+On **Ubuntu-Linux**, run the following in a terminal:
 
 * `sudo apt-get install libssl-dev`
 * `sudo apt-get install libproj-dev`
@@ -52,6 +28,23 @@ Run the following in a terminal:
 * `sudo apt-get install netcdf-bin`
 * `sudo apt-get install cdo`
 * `sudo apt-get install ncl-ncarg`
+
+On **MAC**, use homebrew and run the following in a terminal:
+
+* `brew install netcdf`
+* `brew install hdf5`
+* `brew install proj`
+* `brew install gdal`
+* `brew install ncl`
+* `brew install cdo`
+
+On **Windows**, follow the steps below:
+
+  * install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
+  * launch an R console and run the following commands:
+    - ToDo
+
+## Install and load caliver
 
 Get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
 
