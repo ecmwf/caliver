@@ -38,7 +38,6 @@
 #'   \item{"Equatorial Asia"}{or EQAS}
 #'   \item{"Australia and New Zealand"}{or AUST}
 #' }
-#' @param verbose If TRUE, messages are printed on the screen
 #'
 #' @note The conversion from hdf5 to netcdf gets stuck in RStudio
 #' (see \url{https://goo.gl/Rcvp9x}), please use the console.
@@ -76,16 +75,13 @@ get_gfed4 <- function(start_date = NULL,
                       end_date = NULL,
                       temporal_resolution = "daily",
                       varname = NULL,
-                      region = "GLOB",
-                      verbose = FALSE){
+                      region = "GLOB"){
 
   # Create a tmp directory
   my_temp_dir <- tempdir()
 
   if (is.null(varname)) stop("Please enter valid varname")
   if (is.null(region)) stop("Please enter valid region")
-
-  if (verbose) message(paste0("Downloading temporary files in: ", my_temp_dir))
 
   if (varname == "BasisRegions") {
 
@@ -104,7 +100,7 @@ get_gfed4 <- function(start_date = NULL,
 
       # Download the file
       download.file(url = the_url, destfile = file.path(my_temp_dir, fname),
-                    quiet = verbose, cacheOK = TRUE, mode= "wb")
+                    quiet = TRUE, cacheOK = TRUE, mode= "wb")
 
       # Extract dataset with basis regions
       file_h5 <- hdf5r::h5file(file.path(my_temp_dir, fname))
@@ -147,9 +143,6 @@ get_gfed4 <- function(start_date = NULL,
 
       # Convert to polygons
       regions_polygons <- raster::rasterToPolygons(x = regions_raster_t_no_na)
-
-      if (verbose) message("Removing temporary files")
-      unlink(file.path(my_temp_dir, fname))
 
       return(regions_polygons)
 
@@ -248,18 +241,12 @@ get_gfed4 <- function(start_date = NULL,
           # but works fine in the console
           string2call <- paste0("ncl_convert2nc ", file.path(my_temp_dir,
                                                              input_file),
-                                var_option, " -o ", my_temp_dir, "/")
+                                var_option, " -o ", my_temp_dir)
           system(string2call)
-
-          unlink(file.path(my_temp_dir, input_file))
 
         }
 
       }
-
-      output_file_name <- ifelse(is.null(varname), "GFED4.nc",
-                                 paste0(varname, ".nc"))
-      output_file_path <- file.path(my_temp_dir, output_file_name)
 
       list_of_files <- list.files(my_temp_dir,
                                   pattern = paste0("^", pattern0),
@@ -272,37 +259,22 @@ get_gfed4 <- function(start_date = NULL,
 
       }
 
-      if (length(list_of_files) == 1) {
+      merged <- raster::stack(list_of_files)
 
-        merged_raster <- raster::raster(list_of_files)
-
-      }
-
-      if (length(list_of_files) > 1) {
-
-        output_ncfile <- raster::stack(list_of_files)
-        merged_raster <- raster::brick(output_ncfile)
-
-      }
-
-      # The resulting raster layer/brick is in a quater degree resolution but
+      # The resulting raster object is in a quater degree resolution but
       # the extent and the coordinate system should be set manually
 
       # Transform the rasterBrick, flipping it on the y direction
-      if (verbose) message("Flipping the raster on the y-direction")
-      regions_raster_t <- raster::flip(merged_raster,
-                                       direction = "y",
-                                       progress = "text")
+      regions_raster_t <- raster::flip(merged, direction = "y")
 
-      if (verbose) message("Setting extent and assigning CRS")
       # Set extent
       raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
       # Assign CRS (WGS84)
       raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
-
-      if (verbose) message("Removing temporary files")
-      unlink(list_of_files)
-      unlink(output_file_path)
+      
+      if (raster::nlayers(regions_raster_t) == 1){
+        regions_raster_t <- regions_raster_t[[1]]
+      }
 
       return(regions_raster_t)
 

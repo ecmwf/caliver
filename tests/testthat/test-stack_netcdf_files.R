@@ -22,11 +22,12 @@ test_that("stack_netcdf_files works", {
   geff5vr <- stack_netcdf_files(input_dir = tempdir(),
                                 pattern = "r[0-9]*.nc",
                                 varname = NULL,
-                                output_file = NULL)
+                                output_file = file.path(tempdir(),
+                                                        "outfile.nc"))
   expect_equal(basename(geff5vr), "outfile.nc")
 
   # Test whether the function generates the correct result
-  x <- raster::brick("outfile.nc")
+  x <- raster::brick(geff5vr)
   expect_equal(dim(x), c(50, 100, 3))
 
 })
