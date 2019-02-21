@@ -79,3 +79,22 @@
   return(rtp)
 
 }
+
+# Transform the raster
+.transform_raster <- function(raster_in, variable_name){
+
+  if (variable_name == "BasisRegions"){
+    # Transform the rasterBrick, transposing it
+    raster_out <- raster::t(raster_in)
+  }else{
+    # Transform the rasterBrick, flipping it on the y direction
+    raster_out <- raster::flip(raster_in, direction = "y")
+  }
+  # Set extent
+  raster::extent(raster_out) <- raster::extent(-180, 180, -90, 90)
+  # Assign CRS (WGS84)
+  raster::crs(raster_out) <- "+proj=longlat +datum=WGS84 +no_defs"
+  
+  return(raster_out)
+
+}

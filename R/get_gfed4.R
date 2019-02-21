@@ -112,14 +112,10 @@ get_gfed4 <- function(start_date = NULL,
       regions_raster <- raster::raster(br[, ])
 
       # Transform the raster
-      # transpose
-      regions_raster_t <- raster::t(regions_raster)
-      # set extent
-      raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
-      # define zeros as NAs
+      regions_raster_t <- .transform_raster(regions_raster, varname)
+      
+      # Define zeros as NAs
       regions_raster_t[regions_raster_t == 0] <- NA
-      # assign CRS (WGS84)
-      raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
 
       if (!is.null(region)) {
         if (region == "BONA") regions_raster_t[regions_raster_t != 1] <- NA
@@ -249,29 +245,19 @@ get_gfed4 <- function(start_date = NULL,
       }
 
       list_of_files <- list.files(my_temp_dir,
-                                  pattern = paste0("^", pattern0),
+                                  pattern = paste0("^", pattern0, ".*.nc$"),
                                   full.names = TRUE)
 
       # my_temp_dir only contains Burned Area files!
-      if (length(list.files(my_temp_dir)) == 0) {
-
+      if (length(list_of_files) == 0) {
         stop("No files have been downloaded, please check your connection.")
-
       }
 
       merged <- raster::stack(list_of_files)
 
-      # The resulting raster object is in a quater degree resolution but
-      # the extent and the coordinate system should be set manually
+      # Transform the raster
+      regions_raster_t <- .transform_raster(merged, varname)
 
-      # Transform the rasterBrick, flipping it on the y direction
-      regions_raster_t <- raster::flip(merged, direction = "y")
-
-      # Set extent
-      raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
-      # Assign CRS (WGS84)
-      raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
-      
       if (raster::nlayers(regions_raster_t) == 1){
         regions_raster_t <- regions_raster_t[[1]]
       }
