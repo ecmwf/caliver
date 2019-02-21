@@ -104,7 +104,7 @@ get_gfed4 <- function(start_date = NULL,
 
       # Download the file
       download.file(url = the_url, destfile = file.path(my_temp_dir, fname),
-                    quiet = verbose, cacheOK = TRUE)
+                    quiet = verbose, cacheOK = TRUE, mode= "wb")
 
       # Extract dataset with basis regions
       file_h5 <- hdf5r::h5file(file.path(my_temp_dir, fname))
