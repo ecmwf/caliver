@@ -13,7 +13,6 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - libgdal-dev
-    - cdo
 
 r_github_packages:
   - jimhester/lintr
