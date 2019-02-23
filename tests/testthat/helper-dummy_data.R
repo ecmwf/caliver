@@ -34,4 +34,3 @@ temporary_dir <- tempdir()
 
 # Define generic polygon
 shape <- as(raster::extent(6, 18, 35, 47), "SpatialPolygons")
-

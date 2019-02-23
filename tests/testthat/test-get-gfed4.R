@@ -15,7 +15,7 @@ test_that("Check get_gfed4 behaves as expected", {
                                   end_date = "2003-01-02",
                                   temporal_resolution = "daily",
                                   varname = "BurnedArea")
-  expect_equal(round(max(daily_burned_areas[]), 0), 14384)
+  expect_equal(round(max(daily_burned_areas[]), 0), 7931)
 
   # Monthly burned areas
   monthly_burned_areas <- get_gfed4(start_date = "2003-01-01",

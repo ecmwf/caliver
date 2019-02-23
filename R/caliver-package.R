@@ -10,6 +10,7 @@
 #' @import ncdf4
 #' @import hdf5r
 #' @import ggplot2
+#' @importFrom gdalUtils get_subdatasets gdal_translate
 #' @importFrom raster raster stack mask crop rotate extent extract t plot crs
 #' @importFrom raster cellFromPolygon cellStats nlayers getData trim overlay
 #' @importFrom rworldmap getMap

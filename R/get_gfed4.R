@@ -100,7 +100,7 @@ get_gfed4 <- function(start_date = NULL,
 
       # Download the file
       download.file(url = the_url, destfile = file.path(my_temp_dir, fname),
-                    quiet = TRUE, cacheOK = TRUE, mode= "wb")
+                    quiet = TRUE, cacheOK = TRUE, mode = "wb")
 
       # Extract dataset with basis regions
       file_h5 <- hdf5r::h5file(file.path(my_temp_dir, fname))
@@ -113,7 +113,7 @@ get_gfed4 <- function(start_date = NULL,
 
       # Transform the raster
       regions_raster_t <- .transform_raster(regions_raster, varname)
-      
+
       # Define zeros as NAs
       regions_raster_t[regions_raster_t == 0] <- NA
 
@@ -146,51 +146,67 @@ get_gfed4 <- function(start_date = NULL,
 
   }else{
 
-    if (is.null(start_date)) stop("Please enter valid start_date")
-    if (is.null(end_date)) stop("Please enter valid end_date")
+    if (is.null(start_date)) stop("Invalid start_date")
+    if (is.null(end_date)) stop("Invalid valid end_date")
+    if (is.null(temporal_resolution)) stop("Invalid temporal_resolution")
 
-    if (varname %in% c("BurnedArea", "BurnedAreaUncertainty",
-                       "MeanBurnDateUncertainty", "source", "TreeCoverDist",
-                       "LandCoverDist", "PeatFraction")){
+    base_url <- "ftp://fuoco.geog.umd.edu/gfed4"
 
-      if (is.null(start_date) | is.null(end_date)) {
-        stop("Please enter valid dates")
-      }
+    if (temporal_resolution == "monthly"){
 
-      if (is.null(temporal_resolution)) {
-        stop("Please enter valid temporal_resolution")
-      }
+      lookuptable <- data.frame(id = 1:7,
+                                varnames = c("BurnedArea",
+                                             "BurnedAreaUncertainty",
+                                             "source",
+                                             "TreeCoverDist",
+                                             "LandCoverDist",
+                                             "FirePersistence",
+                                             "PeatFraction"),
+                                factor = c(0.01, 0.01, 1, 1, 1, 0.01, 1))
 
-      base_url <- "ftp://fuoco.geog.umd.edu/gfed4"
+      tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
+                           by = "month")
+      my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
+                        start = 1, stop = 6)
 
-      if (temporal_resolution == "monthly"){
+      dir_url <- paste0(base_url, "/", "monthly", "/")
 
-        tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                             by = "month")
-        my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
-                          start = 1, stop = 6)
+      pattern0 <- "GFED4.0_MQ_"
 
-        dir_url <- paste0(base_url, "/", "monthly", "/")
+    }
 
-        pattern0 <- "GFED4.0_MQ_"
+    if (temporal_resolution == "daily") {
 
-      }
+      lookuptable <- data.frame(id = 1:7,
+                                varnames = c("BurnedArea",
+                                             "BurnedAreaUncertainty",
+                                             "MeanBurnDateUncertainty",
+                                             "source",
+                                             "TreeCoverDist",
+                                             "LandCoverDist",
+                                             "PeatFraction"),
+                                factor = c(0.01, 0.01, 1, 1, 1, 1, 1))
 
-      if (temporal_resolution == "daily") {
+      tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
+                           by = "day")
+      day_of_year <- lubridate::yday(tmp_date)
+      day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
+      just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
+                          start = 1, stop = 4)
+      my_date <- paste0(just_year, day_of_year_3_chr)
+      dir_url <- paste0(base_url, "/", "daily", "/")
+      pattern0 <- "GFED4.0_DQ_"
 
-        tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                             by = "day")
-        day_of_year <- lubridate::yday(tmp_date)
-        day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
-        just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
-                            start = 1, stop = 4)
-        my_date <- paste0(just_year, day_of_year_3_chr)
-        dir_url <- paste0(base_url, "/", "daily", "/")
-        pattern0 <- "GFED4.0_DQ_"
+    }
 
-      }
+    if (varname %in% lookuptable$varnames){
 
+      # Initialise empty stack
+      s <- raster::stack()
+      # Loop through dates to populate the stack
       for (d in my_date) {
+
+        print(d)
 
         just_year <- substr(d, start = 1, stop = 4)
 
@@ -221,42 +237,27 @@ get_gfed4 <- function(start_date = NULL,
         }else{
 
           writeBin(x, con = file.path(my_temp_dir, input_file))
-
-          # Check whether we need to save all the variables or only some of them
-          if (is.null(varname)){
-
-            var_option <- ""
-
-          }else{
-
-            var_option <- paste0(" -v ", varname)
-
-          }
-
-          # This approach uses ncl (dependency) and can give problems in RStudio
-          # but works fine in the console
-          string2call <- paste0("ncl_convert2nc ", file.path(my_temp_dir,
-                                                             input_file),
-                                var_option, " -o ", my_temp_dir)
-          system(string2call)
+          # Get subdataset names
+          sds <- gdalUtils::get_subdatasets(file.path(my_temp_dir, input_file))
+          # Get subdataset index corresponding to my variable
+          idx <- lookuptable$id[lookuptable$varname == varname]
+          factorx <- lookuptable$factor[lookuptable$varname == varname]
+          # Translate subdataset from hdf file to tiff
+          # this is needed because no direct translation to nc is available
+          temp_tif_file <- file.path(my_temp_dir, "temp_out.tif")
+          gdalUtils::gdal_translate(src_dataset = sds[idx],
+                                    dst_dataset = temp_tif_file)
+          s <- raster::stack(s, temp_tif_file)
 
         }
 
       }
 
-      list_of_files <- list.files(my_temp_dir,
-                                  pattern = paste0("^", pattern0, ".*.nc$"),
-                                  full.names = TRUE)
-
-      # my_temp_dir only contains Burned Area files!
-      if (length(list_of_files) == 0) {
-        stop("No files have been downloaded, please check your connection.")
-      }
-
-      merged <- raster::stack(list_of_files)
+      # Apply scaling factor
+      if (factorx != 1) s <- s * factorx
 
       # Transform the raster
-      regions_raster_t <- .transform_raster(merged, varname)
+      regions_raster_t <- .transform_raster(s, varname)
 
       if (raster::nlayers(regions_raster_t) == 1){
         regions_raster_t <- regions_raster_t[[1]]

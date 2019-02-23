@@ -20,6 +20,7 @@ Depends:
 Imports:
     ncdf4,
     raster,
+    gdalUtils,
     ggplot2,
     rworldmap,
     graphics,
@@ -42,6 +43,6 @@ Suggests:
     lintr
 VignetteBuilder: knitr
 Encoding: UTF-8
-SystemRequirements: GDAL, PROJ.4, cdo, ncl, netcdf4, hdf5
+SystemRequirements: GDAL, PROJ.4, cdo, netcdf4, hdf5
 License:  Apache License 2.0
 RoxygenNote: 6.1.1
