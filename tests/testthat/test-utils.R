@@ -48,4 +48,3 @@ test_that("Testing the file utils.R - .utci_classification", {
   expect_equal(raster::cellStats(x, sum)[[1]], 65792)
 
 })
-
