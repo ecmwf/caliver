@@ -40,11 +40,6 @@ stack_netcdf_files <- function(input_dir = NULL,
 
   if (is.null(output_file)) output_file <- tempfile(fileext = ".nc")
 
-  # This function no longer use cdo
-  # Mergetime opens all the file to order them over time, while
-  # Cat is computational lighter than mergetime because it opens 1 file at the
-  # time and assumes they are already ordered (e.g. due to naming convention)
-  # old: system(paste0("cdo cat ", ifiles, " ", output_file))
   if (is.null(varname)) varname <- ""
   s <- raster::stack(x = ifiles, varname = varname)
 
