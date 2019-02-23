@@ -235,16 +235,17 @@ get_gfed4 <- function(start_date = NULL,
           stop("Please check whether your dates are valid or try again later.")
 
         }else{
-
-          writeBin(x, con = file.path(my_temp_dir, input_file))
+          
+          input_file_path <- file.path(my_temp_dir, input_file)
+          writeBin(x, con = input_file_path)
           # Get subdataset names
-          sds <- gdalUtils::get_subdatasets(file.path(my_temp_dir, input_file))
+          sds <- gdalUtils::get_subdatasets(input_file_path)
           # Get subdataset index corresponding to my variable
           idx <- lookuptable$id[lookuptable$varname == varname]
           factorx <- lookuptable$factor[lookuptable$varname == varname]
           # Translate subdataset from hdf file to tiff
           # this is needed because no direct translation to nc is available
-          temp_tif_file <- file.path(my_temp_dir, "temp_out.tif")
+          temp_tif_file <- tempfile(fileext = ".tif")
           gdalUtils::gdal_translate(src_dataset = sds[idx],
                                     dst_dataset = temp_tif_file)
           s <- raster::stack(s, temp_tif_file)
