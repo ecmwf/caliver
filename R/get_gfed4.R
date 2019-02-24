@@ -199,6 +199,7 @@ get_gfed4 <- function(start_date = NULL,
       # Assemble file names
       fnms <- paste0(base_url, "/", temporal_resolution, "/", just_year, "/",
                      "GFED4.0_DQ_", just_year, day_of_year_3_chr, "_BA.hdf")
+
     }
     
     # Initialise empty stack
@@ -208,24 +209,33 @@ get_gfed4 <- function(start_date = NULL,
       
       print(fnms[i])
       
+      # Download the file
+      input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
       x <- try(RCurl::getBinaryURL(fnms[i],
                                    userpwd = "fire:burnt",
-                                   ftp.use.epsv = FALSE),
+                                   ftp.use.epsv = FALSE,
+                                   connecttimeout = 60),
                silent = FALSE)
-      
+      print(class(x))
+
       if (class(x) == "try-error") {
         
         stop("Server currently unavailable, please try again later.")
         
       } else {
         
-        input_file_path <- file.path(my_temp_dir, basename(fnms[1]))
+        # Download the file
+        input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
+        print(input_file_path)
         writeBin(x, con = input_file_path)
         # Get subdataset names
         sds <- gdalUtils::get_subdatasets(input_file_path)
+        print(sds)
         # Get subdataset index corresponding to my variable
         idx <- lookuptable$id[lookuptable$varname == varname]
+        print(idx)
         factorx <- lookuptable$factor[lookuptable$varname == varname]
+        print(factorx)
         # Translate subdataset from hdf file to tiff
         # this is needed because no direct translation to nc is available
         temp_tif_file <- tempfile(fileext = ".tif")
@@ -233,6 +243,7 @@ get_gfed4 <- function(start_date = NULL,
         gdalUtils::gdal_translate(src_dataset = sds[idx],
                                   dst_dataset = temp_tif_file)
         s <- raster::stack(s, temp_tif_file)
+        print(s)
         
       }
       
