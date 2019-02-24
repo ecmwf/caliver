@@ -206,8 +206,6 @@ get_gfed4 <- function(start_date = NULL,
     for (i in seq_along(fnms)) {
 
       print(fnms[i])
-      print(RCurl::getCurlOptionsConstants()[["connecttimeout"]])
-
       # Download the file
       input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
       x <- try(RCurl::getBinaryURL(fnms[i],
@@ -215,7 +213,7 @@ get_gfed4 <- function(start_date = NULL,
                                    ftp.use.epsv = FALSE,
                                    connecttimeout = 1000),
                silent = FALSE)
-      print(class(x))
+      print(x)
 
       if (class(x) == "try-error") {
 
