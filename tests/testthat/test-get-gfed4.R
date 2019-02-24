@@ -13,14 +13,14 @@ test_that("Check get_gfed4 behaves as expected with BasisRegions", {
 })
 
 test_that("Check get_gfed4 behaves as expected with daily burned areas", {
-  
+
   # Daily burned areas
   daily_burned_areas <- get_gfed4(start_date = "2003-01-01",
                                   end_date = "2003-01-02",
                                   temporal_resolution = "daily",
                                   varname = "BurnedArea")
   expect_equal(round(max(daily_burned_areas[]), 0), 14384)
-  
+
 })
 
 test_that("Check get_gfed4 behaves as expected with monthly burned areas", {

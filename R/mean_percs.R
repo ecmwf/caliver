@@ -10,7 +10,7 @@
 
 mean_percs <- function(vals, perc_val, mod){
 
-  p_val <- stats::quantile(vals, perc_val / 100, na.rm = T)
+  p_val <- stats::quantile(vals, perc_val / 100, na.rm = TRUE)
 
   if (mod == "gt") {
 
@@ -26,6 +26,6 @@ mean_percs <- function(vals, perc_val, mod){
 
   }
 
-  return(mean(v_perc, na.rm = T))
+  return(mean(v_perc, na.rm = TRUE))
 
 }

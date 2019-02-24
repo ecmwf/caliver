@@ -76,47 +76,45 @@ get_gfed4 <- function(start_date = NULL,
                       temporal_resolution = "daily",
                       varname = NULL,
                       region = "GLOB"){
-  
+
   # Create a tmp directory
   my_temp_dir <- tempdir()
-  
   if (is.null(varname)) stop("Please enter valid varname")
   if (is.null(region)) stop("Please enter valid region")
-  
   if (varname == "BasisRegions") {
-    
+
     if (is.null(region)) stop("Please enter valid region")
-    
+
     base_url <- "http://www.geo.vu.nl/~gwerf/GFED/GFED4/"
     fname <- "GFED4.1s_2015.hdf5"
     the_url <- paste0(base_url, fname)
     x <- try(RCurl::getURL(the_url), silent = TRUE)
-    
+
     if (class(x) == "try-error") {
-      
+
       stop("Server currently unavailable, please try again later.")
-      
+
     } else {
-      
+
       # Download the file
       download.file(url = the_url, destfile = file.path(my_temp_dir, fname),
                     quiet = TRUE, cacheOK = TRUE, mode = "wb")
-      
+
       # Extract dataset with basis regions
       file_h5 <- hdf5r::h5file(file.path(my_temp_dir, fname))
       # lets look at the content: file.h5$ls(recursive=TRUE)
       # Extract dataset
       br <- file_h5[["ancill/basis_regions"]]
-      
+
       # Convert hdf5 to raster
       regions_raster <- raster::raster(br[, ])
-      
+
       # Transform the raster
       regions_raster_t <- .transform_raster(regions_raster, varname)
-      
+
       # Define zeros as NAs
       regions_raster_t[regions_raster_t == 0] <- NA
-      
+
       if (!is.null(region)) {
         if (region == "BONA") regions_raster_t[regions_raster_t != 1] <- NA
         if (region == "TENA") regions_raster_t[regions_raster_t != 2] <- NA
@@ -133,27 +131,27 @@ get_gfed4 <- function(start_date = NULL,
         if (region == "EQAS") regions_raster_t[regions_raster_t != 13] <- NA
         if (region == "AUST") regions_raster_t[regions_raster_t != 14] <- NA
       }
-      
+
       # Trim outer NAs
       regions_raster_t_no_na <- raster::trim(regions_raster_t)
-      
+
       # Convert to polygons
       regions_polygons <- raster::rasterToPolygons(x = regions_raster_t_no_na)
-      
+
       return(regions_polygons)
-      
+
     }
-    
+
   } else {
-    
+
     if (is.null(start_date)) stop("Invalid start_date")
     if (is.null(end_date)) stop("Invalid valid end_date")
     if (is.null(temporal_resolution)) stop("Invalid temporal_resolution")
-    
+
     base_url <- "ftp://fuoco.geog.umd.edu/gfed4"
-    
+
     if (temporal_resolution == "monthly"){
-      
+
       lookuptable <- data.frame(id = 1:7,
                                 varnames = c("BurnedArea",
                                              "BurnedAreaUncertainty",
@@ -164,7 +162,7 @@ get_gfed4 <- function(start_date = NULL,
                                              "PeatFraction"),
                                 factor = c(0.01, 0.01, 1, 1, 1, 0.01, 1),
                                 stringsAsFactors = FALSE)
-      
+
       seq_of_dates <- seq.Date(from = as.Date(start_date),
                                to = as.Date(end_date),
                                by = "month")
@@ -173,11 +171,11 @@ get_gfed4 <- function(start_date = NULL,
       # Assemble file names
       fnms <- paste0(base_url, "/", temporal_resolution, "/",
                      "GFED4.0_MQ_", my_dates, "_BA.hdf")
-      
+
     }
-    
+
     if (temporal_resolution == "daily") {
-      
+
       lookuptable <- data.frame(id = 1:7,
                                 varnames = c("BurnedArea",
                                              "BurnedAreaUncertainty",
@@ -188,7 +186,7 @@ get_gfed4 <- function(start_date = NULL,
                                              "PeatFraction"),
                                 factor = c(0.01, 0.01, 1, 1, 1, 1, 1),
                                 stringsAsFactors = FALSE)
-      
+
       seq_of_dates <- seq.Date(from = as.Date(start_date),
                                to = as.Date(end_date),
                                by = "day")
@@ -201,29 +199,29 @@ get_gfed4 <- function(start_date = NULL,
                      "GFED4.0_DQ_", just_year, day_of_year_3_chr, "_BA.hdf")
 
     }
-    
+
     # Initialise empty stack
     s <- raster::stack()
     # Loop through dates to populate the stack
     for (i in seq_along(fnms)) {
-      
+
       print(fnms[i])
-      
+
       # Download the file
       input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
       x <- try(RCurl::getBinaryURL(fnms[i],
                                    userpwd = "fire:burnt",
                                    ftp.use.epsv = FALSE,
-                                   connecttimeout = 60),
+                                   connecttimeout = 1000),
                silent = FALSE)
       print(class(x))
 
       if (class(x) == "try-error") {
-        
+
         stop("Server currently unavailable, please try again later.")
-        
+
       } else {
-        
+
         # Download the file
         input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
         print(input_file_path)
@@ -244,25 +242,25 @@ get_gfed4 <- function(start_date = NULL,
                                   dst_dataset = temp_tif_file)
         s <- raster::stack(s, temp_tif_file)
         print(s)
-        
+
       }
-      
+
     }
-    
+
     raster::crs(s) <- "+proj=longlat +datum=WGS84 +no_defs"
-    
+
     # Apply scaling factor
     if (factorx != 1) s <- s * factorx
-    
+
     # Transform the raster
     regions_raster_t <- .transform_raster(s, varname)
-    
+
     if (raster::nlayers(regions_raster_t) == 1){
       regions_raster_t <- regions_raster_t[[1]]
     }
-    
+
     return(regions_raster_t)
-  
+
   }
-  
+
 }
