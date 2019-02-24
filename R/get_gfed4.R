@@ -222,7 +222,7 @@ get_gfed4 <- function(start_date = NULL,
       } else {
 
         # Download the file
-        input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
+        input_file_path <- tempfile(fileext = ".hdf")
         print(input_file_path)
         writeBin(x, con = input_file_path)
         # Get subdataset names
