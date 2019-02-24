@@ -165,12 +165,14 @@ get_gfed4 <- function(start_date = NULL,
                                 factor = c(0.01, 0.01, 1, 1, 1, 0.01, 1),
                                 stringsAsFactors = FALSE)
       
-      tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                           by = "month")
-      my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
+      seq_of_dates <- seq.Date(from = as.Date(start_date),
+                               to = as.Date(end_date),
+                               by = "month")
+      my_dates <- substr(x = gsub("-", "", as.character(seq_of_dates)),
                         start = 1, stop = 6)
-      dir_url <- paste0(base_url, "/", temporal_resolution, "/")
-      pattern0 <- "GFED4.0_MQ_"
+      # Assemble file names
+      fnms <- paste0(base_url, "/", temporal_resolution, "/",
+                     "GFED4.0_MQ_", my_dates, "_BA.hdf")
       
     }
     
@@ -187,54 +189,37 @@ get_gfed4 <- function(start_date = NULL,
                                 factor = c(0.01, 0.01, 1, 1, 1, 1, 1),
                                 stringsAsFactors = FALSE)
       
-      tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                           by = "day")
-      day_of_year <- lubridate::yday(tmp_date)
+      seq_of_dates <- seq.Date(from = as.Date(start_date),
+                               to = as.Date(end_date),
+                               by = "day")
+      day_of_year <- lubridate::yday(seq_of_dates)
       day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
-      just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
+      just_year <- substr(x = gsub("-", "", as.character(seq_of_dates)),
                           start = 1, stop = 4)
-      my_date <- paste0(just_year, day_of_year_3_chr)
-      dir_url <- paste0(base_url, "/", temporal_resolution, "/")
-      pattern0 <- "GFED4.0_DQ_"
-      
+      # Assemble file names
+      fnms <- paste0(base_url, "/", temporal_resolution, "/", just_year, "/",
+                     "GFED4.0_DQ_", just_year, day_of_year_3_chr, "_BA.hdf")
     }
     
     # Initialise empty stack
     s <- raster::stack()
     # Loop through dates to populate the stack
-    for (d in my_date) {
+    for (i in seq_along(fnms)) {
       
-      print(d)
+      print(fnms[i])
       
-      just_year <- substr(d, start = 1, stop = 4)
-      
-      if (temporal_resolution == "monthly") {
-        
-        input_file <- paste0(pattern0, d, "_BA.hdf")
-        my_url <- paste0(dir_url, input_file)
-        
-      }
-      
-      if (temporal_resolution == "daily") {
-        
-        input_file <- paste0(pattern0, d, "_BA.hdf")
-        my_url <- paste0(dir_url, just_year, "/", input_file)
-        
-      }
-      
-      x <- try(RCurl::getBinaryURL(my_url,
+      x <- try(RCurl::getBinaryURL(fnms[i],
                                    userpwd = "fire:burnt",
                                    ftp.use.epsv = FALSE),
                silent = FALSE)
       
       if (class(x) == "try-error") {
         
-        message("Either the data or the server are unavailable.")
-        stop("Please check whether your dates are valid or try again later.")
+        stop("Server currently unavailable, please try again later.")
         
-      }else{
+      } else {
         
-        input_file_path <- file.path(my_temp_dir, input_file)
+        input_file_path <- file.path(my_temp_dir, basename(fnms[1]))
         writeBin(x, con = input_file_path)
         # Get subdataset names
         sds <- gdalUtils::get_subdatasets(input_file_path)
@@ -244,6 +229,7 @@ get_gfed4 <- function(start_date = NULL,
         # Translate subdataset from hdf file to tiff
         # this is needed because no direct translation to nc is available
         temp_tif_file <- tempfile(fileext = ".tif")
+        print(temp_tif_file)
         gdalUtils::gdal_translate(src_dataset = sds[idx],
                                   dst_dataset = temp_tif_file)
         s <- raster::stack(s, temp_tif_file)
