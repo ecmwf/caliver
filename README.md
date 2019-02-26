@@ -22,6 +22,7 @@ On **Ubuntu-Linux**, run the following in a terminal:
 * `sudo apt-get install libssl-dev`
 * `sudo apt-get install libproj-dev`
 * `sudo apt-get install libgdal-dev`
+* `sudo apt-get install gdal-bin`
 * `sudo apt-get install libhdf5-dev`
 * `sudo apt-get install libnetcdf-dev`
 * `sudo apt-get install netcdf-bin`

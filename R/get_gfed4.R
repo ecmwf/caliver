@@ -222,7 +222,6 @@ get_gfed4 <- function(start_date = NULL,
 
         # Download the file
         input_file_path <- tempfile(fileext = ".hdf")
-        print(input_file_path)
         writeBin(x, con = input_file_path)
         # Get subdataset names
         sds <- gdalUtils::get_subdatasets(input_file_path)
@@ -233,11 +232,9 @@ get_gfed4 <- function(start_date = NULL,
         # Translate subdataset from hdf file to tiff
         # this is needed because no direct translation to nc is available
         temp_tif_file <- tempfile(fileext = ".tif")
-        print(temp_tif_file)
         gdalUtils::gdal_translate(src_dataset = sds[idx],
                                   dst_dataset = temp_tif_file)
         s <- raster::stack(s, temp_tif_file)
-        print(s)
 
       }
 
