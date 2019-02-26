@@ -211,7 +211,7 @@ get_gfed4 <- function(start_date = NULL,
       x <- try(RCurl::getBinaryURL(fnms[i],
                                    userpwd = "fire:burnt",
                                    ftp.use.epsv = FALSE,
-                                   connecttimeout = 1000),
+                                   connecttimeout = 10000),
                silent = FALSE)
 
       if (class(x) == "try-error") {
