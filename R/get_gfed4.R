@@ -213,7 +213,6 @@ get_gfed4 <- function(start_date = NULL,
                                    ftp.use.epsv = FALSE,
                                    connecttimeout = 1000),
                silent = FALSE)
-      print(x)
 
       if (class(x) == "try-error") {
 
@@ -230,9 +229,7 @@ get_gfed4 <- function(start_date = NULL,
         print(sds)
         # Get subdataset index corresponding to my variable
         idx <- lookuptable$id[lookuptable$varname == varname]
-        print(idx)
         factorx <- lookuptable$factor[lookuptable$varname == varname]
-        print(factorx)
         # Translate subdataset from hdf file to tiff
         # this is needed because no direct translation to nc is available
         temp_tif_file <- tempfile(fileext = ".tif")
