@@ -13,7 +13,7 @@ test_that("Check get_gfed4 behaves as expected with BasisRegions", {
 })
 
 test_that("Check get_gfed4 behaves as expected with daily burned areas", {
-  
+
   skip("Skip")
   # Daily burned areas
   daily_burned_areas <- get_gfed4(start_date = "2003-01-01",
