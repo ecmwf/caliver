@@ -35,69 +35,21 @@ get_percentile_raster <- function(probs,
 
   if (all(!is.null(r), !is.null(input_file))) {
 
-    stop(paste("Please define either an r or input_file,",
-               "the other must be NULL"))
+    input_file <- NULL
+    message("You have defined r and input_file, ignoring input_file!")
 
   }
 
+  if (is.null(r) & !is.null(input_file)) r <- raster::brick(input_file)
+
   if (!is.null(r)) {
 
-    fun <- function(x) {
+    if (all(probs > 1)) probs <- probs / 100
+    quant_fun <- function(x) quantile(x, probs = probs, na.rm = TRUE)
 
-      quantile(x, probs = probs / 100, na.rm = TRUE)
+    perc_maps <- raster::calc(r, fun = quant_fun, progress = "text")
 
-    }
-
-    stacked_maps <- raster::calc(r, fun)
-
-    names(stacked_maps) <- paste0("FWI", probs)
-
-    return(stacked_maps)
-
-  } else if (!is.null(input_file)) {
-
-    # Use cdo to stack rasters
-
-    stacked_maps <- raster::stack()
-
-    for (i in 1:length(probs)) {
-
-      prob <- probs[i]
-
-      file_name <- tools::file_path_sans_ext(basename(input_file))
-
-      output_file <- file.path(output_dir, paste0(file_name, "_", prob, ".nc"))
-
-      system(paste0("cdo timpctl,", prob, " ", input_file,
-                    " -timmin ", input_file,
-                    " -timmax ", input_file, " ", output_file))
-
-      probability_raster <- raster::raster(output_file)
-
-      varname <- names(ncdf4::nc_open(input_file)$var)
-      names(probability_raster) <- paste0(toupper(varname), prob)
-
-      if (length(probs) > 1) {
-
-        stacked_maps <- raster::stack(stacked_maps, probability_raster)
-
-      } else {
-
-        stacked_maps <- probability_raster
-
-      }
-
-    }
-
-    if (length(probs) > 1) {
-
-      return(raster::brick(stacked_maps))
-
-    } else {
-
-      return(stacked_maps)
-
-    }
+    return(perc_maps)
 
   }
 

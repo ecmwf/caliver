@@ -55,7 +55,7 @@ forecast_summary_clima <- function(input_dir,
     # For each starting date and forecast date, calculate the percentage of
     # pixels exceeding the high danger level
     w <- raster::stack()
-    for (i in 1:length(my_dates)) {
+    for (i in seq_along(my_dates)) {
       print(my_dates[i])
 
       # transform dates to strings to build file name
@@ -140,12 +140,13 @@ forecast_summary_clima <- function(input_dir,
     }
     frp_cropped <- mask_crop_subset(r = frp, p = p, mask = TRUE, crop = FALSE)
     frp_ts <- as.numeric(raster::cellStats(frp_cropped, sum))
-    df_frp <- data.frame(date = forecast_dates[1:length(frp_ts)],
+    frp_ts_length <- length(frp_ts)
+    df_frp <- data.frame(date = forecast_dates[1:frp_ts_length],
                          frp_original = frp_ts,
-                         frp = plotrix::rescale(frp_ts, c(0, length(frp_ts))))
-    labels_obs <- round(plotrix::rescale(1:length(frp_ts),
+                         frp = plotrix::rescale(frp_ts, c(0, frp_ts_length)))
+    labels_obs <- round(plotrix::rescale(1:frp_ts_length,
                                          c(1, max(frp_ts))),
-                        0)[1:length(frp_ts)]
+                        0)[1:frp_ts_length]
   }
 
   # Make the boxy forecast plot using ggplot2
@@ -158,10 +159,10 @@ forecast_summary_clima <- function(input_dir,
                                        "\npercentile = ", threshold)) +
     theme_bw() + labs(x = "Observation date", y = "Forecast date") +
     scale_x_continuous(expand = c(0, 0),
-                       breaks = 1:length(observation_dates),
+                       breaks = seq_along(observation_dates),
                        labels = as.character(observation_dates)) +
     scale_y_continuous(expand = c(0, 0),
-                       breaks = 1:length(forecast_dates),
+                       breaks = seq_along(forecast_dates),
                        labels = as.character(forecast_dates)) +
     theme(axis.text.x = element_text(angle = 90),
           panel.grid.major = element_blank(), legend.position = c(.08, .82)) +
@@ -183,7 +184,7 @@ forecast_summary_clima <- function(input_dir,
                                               override.aes = mylist)) +
       scale_y_continuous(sec.axis = sec_axis(~.,
                                              name = myname,
-                                             breaks = 1:length(labels_obs),
+                                             breaks = seq_along(labels_obs),
                                              labels = labels_obs))
   }
 

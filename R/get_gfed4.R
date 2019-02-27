@@ -38,7 +38,6 @@
 #'   \item{"Equatorial Asia"}{or EQAS}
 #'   \item{"Australia and New Zealand"}{or AUST}
 #' }
-#' @param verbose If TRUE, messages are printed on the screen
 #'
 #' @note The conversion from hdf5 to netcdf gets stuck in RStudio
 #' (see \url{https://goo.gl/Rcvp9x}), please use the console.
@@ -76,17 +75,12 @@ get_gfed4 <- function(start_date = NULL,
                       end_date = NULL,
                       temporal_resolution = "daily",
                       varname = NULL,
-                      region = "GLOB",
-                      verbose = FALSE){
+                      region = "GLOB"){
 
   # Create a tmp directory
   my_temp_dir <- tempdir()
-
   if (is.null(varname)) stop("Please enter valid varname")
   if (is.null(region)) stop("Please enter valid region")
-
-  if (verbose) message(paste0("Downloading temporary files in: ", my_temp_dir))
-
   if (varname == "BasisRegions") {
 
     if (is.null(region)) stop("Please enter valid region")
@@ -104,7 +98,7 @@ get_gfed4 <- function(start_date = NULL,
 
       # Download the file
       download.file(url = the_url, destfile = file.path(my_temp_dir, fname),
-                    quiet = verbose, cacheOK = TRUE)
+                    quiet = TRUE, cacheOK = TRUE, mode = "wb")
 
       # Extract dataset with basis regions
       file_h5 <- hdf5r::h5file(file.path(my_temp_dir, fname))
@@ -116,14 +110,10 @@ get_gfed4 <- function(start_date = NULL,
       regions_raster <- raster::raster(br[, ])
 
       # Transform the raster
-      # transpose
-      regions_raster_t <- raster::t(regions_raster)
-      # set extent
-      raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
-      # define zeros as NAs
+      regions_raster_t <- .transform_raster(regions_raster, varname)
+
+      # Define zeros as NAs
       regions_raster_t[regions_raster_t == 0] <- NA
-      # assign CRS (WGS84)
-      raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
 
       if (!is.null(region)) {
         if (region == "BONA") regions_raster_t[regions_raster_t != 1] <- NA
@@ -148,167 +138,123 @@ get_gfed4 <- function(start_date = NULL,
       # Convert to polygons
       regions_polygons <- raster::rasterToPolygons(x = regions_raster_t_no_na)
 
-      if (verbose) message("Removing temporary files")
-      unlink(file.path(my_temp_dir, fname))
-
       return(regions_polygons)
 
     }
 
-  }else{
+  } else {
 
-    if (is.null(start_date)) stop("Please enter valid start_date")
-    if (is.null(end_date)) stop("Please enter valid end_date")
+    if (is.null(start_date)) stop("Invalid start_date")
+    if (is.null(end_date)) stop("Invalid valid end_date")
+    if (is.null(temporal_resolution)) stop("Invalid temporal_resolution")
 
-    if (varname %in% c("BurnedArea", "BurnedAreaUncertainty",
-                       "MeanBurnDateUncertainty", "source", "TreeCoverDist",
-                       "LandCoverDist", "PeatFraction")){
+    base_url <- "ftp://fuoco.geog.umd.edu/gfed4"
 
-      if (is.null(start_date) | is.null(end_date)) {
-        stop("Please enter valid dates")
-      }
+    if (temporal_resolution == "monthly"){
 
-      if (is.null(temporal_resolution)) {
-        stop("Please enter valid temporal_resolution")
-      }
+      lookuptable <- data.frame(id = 1:7,
+                                varnames = c("BurnedArea",
+                                             "BurnedAreaUncertainty",
+                                             "source",
+                                             "TreeCoverDist",
+                                             "LandCoverDist",
+                                             "FirePersistence",
+                                             "PeatFraction"),
+                                factor = c(0.01, 0.01, 1, 1, 1, 0.01, 1),
+                                stringsAsFactors = FALSE)
 
-      base_url <- "ftp://fuoco.geog.umd.edu/gfed4"
+      seq_of_dates <- seq.Date(from = as.Date(start_date),
+                               to = as.Date(end_date),
+                               by = "month")
+      my_dates <- substr(x = gsub("-", "", as.character(seq_of_dates)),
+                        start = 1, stop = 6)
+      # Assemble file names
+      fnms <- paste0(base_url, "/", temporal_resolution, "/",
+                     "GFED4.0_MQ_", my_dates, "_BA.hdf")
 
-      if (temporal_resolution == "monthly"){
-
-        tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                             by = "month")
-        my_date <- substr(x = gsub("-", "", as.character(tmp_date)),
-                          start = 1, stop = 6)
-
-        dir_url <- paste0(base_url, "/", "monthly", "/")
-
-        pattern0 <- "GFED4.0_MQ_"
-
-      }
-
-      if (temporal_resolution == "daily") {
-
-        tmp_date <- seq.Date(from = as.Date(start_date), to = as.Date(end_date),
-                             by = "day")
-        day_of_year <- lubridate::yday(tmp_date)
-        day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
-        just_year <- substr(x = gsub("-", "", as.character(tmp_date)),
-                            start = 1, stop = 4)
-        my_date <- paste0(just_year, day_of_year_3_chr)
-        dir_url <- paste0(base_url, "/", "daily", "/")
-        pattern0 <- "GFED4.0_DQ_"
-
-      }
-
-      for (d in my_date) {
-
-        just_year <- substr(d, start = 1, stop = 4)
-
-        if (temporal_resolution == "monthly") {
-
-          input_file <- paste0(pattern0, d, "_BA.hdf")
-          my_url <- paste0(dir_url, input_file)
-
-        }
-
-        if (temporal_resolution == "daily") {
-
-          input_file <- paste0(pattern0, d, "_BA.hdf")
-          my_url <- paste0(dir_url, just_year, "/", input_file)
-
-        }
-
-        x <- try(RCurl::getBinaryURL(my_url,
-                                     userpwd = "fire:burnt",
-                                     ftp.use.epsv = FALSE),
-                 silent = FALSE)
-
-        if (class(x) == "try-error") {
-
-          message("Either the data or the server are unavailable.")
-          stop("Please check whether your dates are valid or try again later.")
-
-        }else{
-
-          writeBin(x, con = file.path(my_temp_dir, input_file))
-
-          # Check whether we need to save all the variables or only some of them
-          if (is.null(varname)){
-
-            var_option <- ""
-
-          }else{
-
-            var_option <- paste0(" -v ", varname)
-
-          }
-
-          # This approach uses ncl (dependency) and can give problems in RStudio
-          # but works fine in the console
-          string2call <- paste0("ncl_convert2nc ", file.path(my_temp_dir,
-                                                             input_file),
-                                var_option, " -o ", my_temp_dir, "/")
-          system(string2call)
-
-          unlink(file.path(my_temp_dir, input_file))
-
-        }
-
-      }
-
-      output_file_name <- ifelse(is.null(varname), "GFED4.nc",
-                                 paste0(varname, ".nc"))
-      output_file_path <- file.path(my_temp_dir, output_file_name)
-
-      list_of_files <- list.files(my_temp_dir,
-                                  pattern = paste0("^", pattern0),
-                                  full.names = TRUE)
-
-      # my_temp_dir only contains Burned Area files!
-      if (length(list.files(my_temp_dir)) == 0) {
-
-        stop("No files have been downloaded, please check your connection.")
-
-      }
-
-      if (length(list_of_files) == 1) {
-
-        merged_raster <- raster::raster(list_of_files)
-
-      }
-
-      if (length(list_of_files) > 1) {
-
-        output_ncfile <- raster::stack(list_of_files)
-        merged_raster <- raster::brick(output_ncfile)
-
-      }
-
-      # The resulting raster layer/brick is in a quater degree resolution but
-      # the extent and the coordinate system should be set manually
-
-      # Transform the rasterBrick, flipping it on the y direction
-      if (verbose) message("Flipping the raster on the y-direction")
-      regions_raster_t <- raster::flip(merged_raster,
-                                       direction = "y",
-                                       progress = "text")
-
-      if (verbose) message("Setting extent and assigning CRS")
-      # Set extent
-      raster::extent(regions_raster_t) <- raster::extent(-180, 180, -90, 90)
-      # Assign CRS (WGS84)
-      raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
-
-      if (verbose) message("Removing temporary files")
-      unlink(list_of_files)
-      unlink(output_file_path)
-
-      return(regions_raster_t)
-
-    }else{
-      stop("The varname provided is not valid, please enter valid varname")
     }
+
+    if (temporal_resolution == "daily") {
+
+      lookuptable <- data.frame(id = 1:7,
+                                varnames = c("BurnedArea",
+                                             "BurnedAreaUncertainty",
+                                             "MeanBurnDateUncertainty",
+                                             "source",
+                                             "TreeCoverDist",
+                                             "LandCoverDist",
+                                             "PeatFraction"),
+                                factor = c(0.01, 0.01, 1, 1, 1, 1, 1),
+                                stringsAsFactors = FALSE)
+
+      seq_of_dates <- seq.Date(from = as.Date(start_date),
+                               to = as.Date(end_date),
+                               by = "day")
+      day_of_year <- lubridate::yday(seq_of_dates)
+      day_of_year_3_chr <- stringr::str_pad(day_of_year, 3, pad = "0")
+      just_year <- substr(x = gsub("-", "", as.character(seq_of_dates)),
+                          start = 1, stop = 4)
+      # Assemble file names
+      fnms <- paste0(base_url, "/", temporal_resolution, "/", just_year, "/",
+                     "GFED4.0_DQ_", just_year, day_of_year_3_chr, "_BA.hdf")
+
+    }
+
+    # Initialise empty stack
+    s <- raster::stack()
+    # Loop through dates to populate the stack
+    for (i in seq_along(fnms)) {
+
+      print(fnms[i])
+      # Download the file
+      x <- try(RCurl::getBinaryURL(fnms[i],
+                                   userpwd = "fire:burnt",
+                                   ftp.use.epsv = FALSE,
+                                   .opts = list(timeout = 1000,
+                                                connecttimeout = 1000,
+                                                maxredirs = 20,
+                                                verbose = TRUE)),
+               silent = FALSE)
+
+      if (class(x) == "try-error") {
+
+        stop("Server currently unavailable, please try again later.")
+
+      } else {
+
+        # Download the file
+        input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
+        writeBin(x, con = input_file_path)
+        # Get subdataset names
+        sds <- gdalUtils::get_subdatasets(input_file_path)
+        print(sds)
+        # Get subdataset index corresponding to my variable
+        idx <- lookuptable$id[lookuptable$varname == varname]
+        factorx <- lookuptable$factor[lookuptable$varname == varname]
+        # Translate subdataset from hdf file to tiff
+        # this is needed because no direct translation to nc is available
+        temp_tif_file <- tempfile(fileext = ".tif")
+        gdalUtils::gdal_translate(src_dataset = sds[idx],
+                                  dst_dataset = temp_tif_file)
+        s <- raster::stack(s, temp_tif_file)
+
+      }
+
+    }
+
+    raster::crs(s) <- "+proj=longlat +datum=WGS84 +no_defs"
+
+    # Apply scaling factor
+    if (factorx != 1) s <- s * factorx
+
+    # Transform the raster
+    regions_raster_t <- .transform_raster(s, varname)
+
+    if (raster::nlayers(regions_raster_t) == 1){
+      regions_raster_t <- regions_raster_t[[1]]
+    }
+
+    return(regions_raster_t)
 
   }
 

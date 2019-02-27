@@ -29,54 +29,25 @@ stack_netcdf_files <- function(input_dir = NULL,
                                recursive = FALSE,
                                output_file = NULL){
 
-  if (is.null(input_dir)) {
+  .Deprecated(msg = "This function is deprecated, use raster::stack() instead.")
 
-    stop("Please specify data folder 'input_dir'!")
+  if (is.null(input_dir)) stop("Please specify data folder 'input_dir'!")
 
+  ifiles <- list.files(path = input_dir,
+                       pattern = pattern,
+                       recursive = recursive,
+                       full.names = TRUE)
+
+  if (is.null(output_file)) output_file <- tempfile(fileext = ".nc")
+
+  if (is.null(varname)) varname <- ""
+  s <- raster::stack(x = ifiles, varname = varname)
+
+  if (!is.null(output_file)) {
+    raster::writeRaster(s, filename = output_file,
+                        format = "CDF", overwrite = TRUE)
   }
 
-  ifiles <- paste(list.files(path = input_dir,
-                             pattern = pattern,
-                             recursive = recursive,
-                             full.names = TRUE),
-                  collapse = " ")
-
-  if (is.null(output_file)) {
-
-    output_file <- file.path(getwd(), "outfile.nc")
-
-  }
-
-  if (is.null(varname)) {
-
-    # Mergetime opens all the file to order them over time, while
-    # Cat is computational lighter than mergetime because it opens 1 file at the
-    # time and assumes they are already ordered (e.g. due to naming convention)
-
-    system(paste0("cdo cat ", ifiles, " ", output_file))
-
-    # This can fail for large number of files
-    if (!file.exists(output_file)){
-
-      message("Pattern-based selection failed, using all files in input_dir")
-      system(paste0("cdo cat ", file.path(input_dir, "*"), " ", output_file))
-
-    }
-
-  } else {
-
-    system(paste0("cdo select,name=", varname, " ", ifiles, " ", output_file))
-
-    # This can fail for large number of files
-    if (!file.exists(output_file)){
-
-      message("Pattern-based selection failed, using all files in input_dir")
-      system(paste0("cdo cat ", file.path(input_dir, "*"), " ", output_file))
-
-    }
-
-  }
-
-  return(output_file)
+  return(s)
 
 }

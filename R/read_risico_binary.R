@@ -29,7 +29,7 @@ read_risico_binary <- function(filename){
     values_vect <- readBin(my_file, "double", n_values, size = 4)
     values_vect[values_vect == -9999] <- NA
 
-    vals <- matrix(values_vect, nrow = grid_size[1], byrow = T)
+    vals <- matrix(values_vect, nrow = grid_size[1], byrow = TRUE)
     vals <- vals[nrow(vals):1, 1:ncol(vals)]
 
     r_values <- raster::raster(vals, xmn = lons[1], xmx = lons[2],

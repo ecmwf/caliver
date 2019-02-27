@@ -1,10 +1,5 @@
 library(testthat)
 library(caliver)
-library(raster)
-
-##  Load the proto library for accessing sub-components of the ggplot2
-library(ggplot2)
-library(proto)
 
 test_check("caliver")
 

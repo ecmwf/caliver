@@ -13,8 +13,7 @@ addons:
     - libhdf5-dev
     - libproj-dev
     - libgdal-dev
-    - cdo
-    - ncl-ncarg
+    - gdal-bin
 
 r_github_packages:
   - jimhester/lintr
