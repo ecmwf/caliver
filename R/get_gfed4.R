@@ -207,7 +207,6 @@ get_gfed4 <- function(start_date = NULL,
 
       print(fnms[i])
       # Download the file
-      input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
       x <- try(RCurl::getBinaryURL(fnms[i],
                                    userpwd = "fire:burnt",
                                    ftp.use.epsv = FALSE,
@@ -224,7 +223,7 @@ get_gfed4 <- function(start_date = NULL,
       } else {
 
         # Download the file
-        input_file_path <- tempfile(fileext = ".hdf")
+        input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
         writeBin(x, con = input_file_path)
         # Get subdataset names
         sds <- gdalUtils::get_subdatasets(input_file_path)
