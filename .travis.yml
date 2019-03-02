@@ -6,14 +6,16 @@ dist: xenial
 
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
-    - libssl-dev
-    - libnetcdf-dev
-    - netcdf-bin
-    - libhdf5-dev
-    - libproj-dev
-    - libgdal-dev
-    - gdal-bin
+      - libssl-dev
+      - libnetcdf-dev
+      - netcdf-bin
+      - libhdf5-dev
+      - libproj-dev
+      - libgdal-dev
+      - gdal-bin
 
 r_github_packages:
   - jimhester/lintr
