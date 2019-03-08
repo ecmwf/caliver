@@ -77,8 +77,6 @@ get_gfed4 <- function(start_date = NULL,
                       varname = NULL,
                       region = "GLOB"){
 
-  # Create a tmp directory
-  my_temp_dir <- tempdir()
   if (is.null(varname)) stop("Please enter valid varname")
   if (is.null(region)) stop("Please enter valid region")
   if (varname == "BasisRegions") {
@@ -97,11 +95,12 @@ get_gfed4 <- function(start_date = NULL,
     } else {
 
       # Download the file
-      download.file(url = the_url, destfile = file.path(my_temp_dir, fname),
+      out_filename <- tempfile()
+      download.file(url = the_url, destfile = out_filename,
                     quiet = TRUE, cacheOK = TRUE, mode = "wb")
 
       # Extract dataset with basis regions
-      file_h5 <- hdf5r::h5file(file.path(my_temp_dir, fname))
+      file_h5 <- hdf5r::h5file(out_filename)
       # lets look at the content: file.h5$ls(recursive=TRUE)
       # Extract dataset
       br <- file_h5[["ancill/basis_regions"]]
@@ -200,20 +199,17 @@ get_gfed4 <- function(start_date = NULL,
 
     }
 
-    # Initialise empty stack
-    s <- raster::stack()
     # Loop through dates to populate the stack
     for (i in seq_along(fnms)) {
 
-      print(fnms[i])
+      message(paste("Downloading", fnms[i]))
       # Download the file
       x <- try(RCurl::getBinaryURL(fnms[i],
                                    userpwd = "fire:burnt",
                                    ftp.use.epsv = FALSE,
                                    .opts = list(timeout = 1000,
                                                 connecttimeout = 1000,
-                                                maxredirs = 20,
-                                                verbose = TRUE)),
+                                                maxredirs = 20)),
                silent = FALSE)
 
       if (class(x) == "try-error") {
@@ -222,27 +218,33 @@ get_gfed4 <- function(start_date = NULL,
 
       } else {
 
-        # Download the file
-        input_file_path <- file.path(my_temp_dir, basename(fnms[i]))
-        writeBin(x, con = input_file_path)
-        # Get subdataset names
-        sds <- gdalUtils::get_subdatasets(input_file_path)
-        print(sds)
         # Get subdataset index corresponding to my variable
         idx <- lookuptable$id[lookuptable$varname == varname]
         factorx <- lookuptable$factor[lookuptable$varname == varname]
-        # Translate subdataset from hdf file to tiff
-        # this is needed because no direct translation to nc is available
+
+        # Download the file
+        hdf_file_path <- tempfile(fileext = ".hdf")
+        writeBin(x, con = hdf_file_path)
+
+        # Get subdataset names
+        sds <- gdalUtils::get_subdatasets(hdf_file_path)[idx]
+        message(paste("Importing subdataset:", sds, collapse = "\n"))
+        
+        # Translate subdataset from hdf file to tiff, this is needed because no
+        # cross-platform direct translation to nc is available
         temp_tif_file <- tempfile(fileext = ".tif")
         gdalUtils::gdal_translate(src_dataset = sds[idx],
                                   dst_dataset = temp_tif_file)
-        s <- raster::stack(s, temp_tif_file)
+
+        if (i == 1){
+          s <- raster::raster(temp_tif_file)
+        }else{
+          s <- raster::stack(s, raster::raster(temp_tif_file))
+        }
 
       }
 
     }
-
-    raster::crs(s) <- "+proj=longlat +datum=WGS84 +no_defs"
 
     # Apply scaling factor
     if (factorx != 1) s <- s * factorx
@@ -253,6 +255,9 @@ get_gfed4 <- function(start_date = NULL,
     if (raster::nlayers(regions_raster_t) == 1){
       regions_raster_t <- regions_raster_t[[1]]
     }
+    
+    # Set missing crs
+    raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
 
     return(regions_raster_t)
 

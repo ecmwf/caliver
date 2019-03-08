@@ -43,6 +43,6 @@ Suggests:
     lintr
 VignetteBuilder: knitr
 Encoding: UTF-8
-SystemRequirements: GDAL binaries, PROJ.4, netcdf4, hdf5, openssl
+SystemRequirements: GDAL with HDF4&5 support, PROJ.4, netcdf4, hdf5, openssl
 License:  Apache License 2.0
 RoxygenNote: 6.1.1

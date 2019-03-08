@@ -42,7 +42,7 @@ test_that("Testing the file utils.R - .classify_hazard", {
 test_that("Testing the file utils.R - .utci_classification", {
 
   # Check whether the result is correct
-  x <- .utci_classification(r1)
+  x <- .utci_classification(rtp = r1)
 
   # Check the function does not generate a dummy layer
   expect_equal(raster::cellStats(x, sum)[[1]], 65792)

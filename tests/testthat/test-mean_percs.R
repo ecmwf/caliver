@@ -2,6 +2,8 @@ context("mean_percs")
 
 test_that("mean_percs works", {
 
+  skip("Skip - deprecated function")
+
   test_data <- readRDS(system.file("extdata",
                                    "RISICO_raster.rds",
                                    package = "caliver"))
