@@ -55,6 +55,14 @@ Load the caliver package:
 library("caliver")
 ```
 
+## Docker
+If you use docker, in this repository you find a Dockerfile that contains all the necessary dependencies and the caliver package already installed.
+
+```
+docker build -t ecmwf/caliver:latest -f Dockerfile .
+docker run -it --rm ecmwf/caliver:latest bash
+```
+
 Meta
 ----
 
