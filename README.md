@@ -13,7 +13,7 @@ For more details, please see the following paper:
 *Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **“Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs”**. PLOS ONE 13 (1). Public Library of Science: 1–18. [doi:10.1371/journal.pone.0189419](doi:10.1371/journal.pone.0189419)*
 
 ## External dependencies
-The installation of the caliver package depends on the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats), the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)) and the HDF5 library([hdf5](https://www.hdfgroup.org/solutions/hdf5/)).
+The installation of the caliver package depends on the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats, with HDF4 and HDF5 support), the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)) and the HDF5 library([hdf5](https://www.hdfgroup.org/solutions/hdf5/)).
 
 Assuming the user has already installed R, below are the instructions to install caliver's external dependencies on various operating systems.
 
@@ -60,6 +60,10 @@ If you use docker, in this repository you find a Dockerfile that contains all th
 
 ```
 docker build -t ecmwf/caliver:latest -f Dockerfile .
+```
+
+Alternatively, you can use the image we host on docker hub:
+```
 docker run -it --rm ecmwf/caliver:latest bash
 ```
 

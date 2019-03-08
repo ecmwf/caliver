@@ -4,6 +4,8 @@
 #'
 #' @param input_dir directory path where all the files to read have been stored
 #'
+#' @export
+#'
 #' @examples
 #' \dontrun{
 #'   decompress_gz(input_dir = "/var/tmp/moc0/forestfire/")
@@ -12,8 +14,10 @@
 
 decompress_gz <- function(input_dir = getwd()){
 
-  .Deprecated("decompress_gz()")
-  message("NOTE: This function will be removed in the next release.")
+  .Deprecated()
+  message(paste("NOTE: Since GEFF v2.2 this function is no longer needed.",
+                "It is now deprecated and",
+                "will be removed in the next release."))
 
   list_of_gzfiles <- list.files(path = input_dir,
                                 pattern = "*.gz", full.names = TRUE)
@@ -38,6 +42,8 @@ decompress_gz <- function(input_dir = getwd()){
 #' @param stack_ncfiles logical (TRUE by default) variable to decided wheteher
 #' decompressed nc files should be stacked or not.
 #'
+#' @export
+#'
 #' @return If \code{stack_ncfiles} is TRUE, the function returns a RasterBrick.
 #' If \code{stack_ncfiles} is FALSE, it returns the list of uncompressed files.
 #'
@@ -49,8 +55,10 @@ decompress_gz <- function(input_dir = getwd()){
 
 import_geff_data_from_tar <- function(archive, stack_ncfiles = TRUE){
 
-  .Deprecated("import_geff_data_from_tar()")
-  message("NOTE: This function will be removed in the next release.")
+  .Deprecated()
+  message(paste("NOTE: Since GEFF v2.2 this function is no longer needed.",
+                "It is now deprecated and",
+                "will be removed in the next release."))
 
   # From .tar to .gz, and finally to .nc
   my_temp_dir <- tempdir()
@@ -92,11 +100,15 @@ import_geff_data_from_tar <- function(archive, stack_ncfiles = TRUE){
 #' @param mod defines if the values considered for the mean are above ("gt") or
 #' below ("lt") the threshold
 #'
+#' @export
+#'
 
 mean_percs <- function(vals, perc_val, mod){
 
-  .Deprecated("mean_percs()")
-  message("NOTE: This function will be removed in the next release.")
+  .Deprecated()
+  message(paste("NOTE: Since GEFF v2.2 this function is no longer needed.",
+                "It is now deprecated and",
+                "will be removed in the next release."))
 
   .Deprecated(msg = "This function is deprecated.")
 
@@ -152,8 +164,10 @@ stack_netcdf_files <- function(input_dir = NULL,
                                recursive = FALSE,
                                output_file = NULL){
 
-  .Deprecated("mean_percs()")
-  message("NOTE: This function will be removed in the next release.")
+  .Deprecated("raster::stack()")
+  message(paste("NOTE: Since GEFF v2.2 this function is no longer needed.",
+                "It is now deprecated and",
+                "will be removed in the next release."))
 
   if (is.null(input_dir)) stop("Please specify data folder 'input_dir'!")
 
