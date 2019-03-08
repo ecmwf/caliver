@@ -24,7 +24,7 @@ get_perc_risk_index <- function(r_stack, p_shape, perc_val = 75, mod = "gt"){
   r_vals <- mask_crop_subset(r_stack, p_shape)
 
   # Percentile per layer
-  ppl <- raster::quantile(x = r_vals, probs = perc_val/100, na.rm = TRUE)
+  ppl <- raster::quantile(x = r_vals, probs = perc_val / 100, na.rm = TRUE)
 
   for (i in 1:raster::nlayers(r_vals)){
 

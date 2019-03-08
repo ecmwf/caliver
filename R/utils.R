@@ -33,7 +33,7 @@
 
 # Styling the UTCI layer
 .utci_classification <- function(rtp){
-  
+
   x <- raster::getValues(rtp)
 
   rtp$colour <- base::cut(x,

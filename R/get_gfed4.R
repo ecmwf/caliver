@@ -229,7 +229,7 @@ get_gfed4 <- function(start_date = NULL,
         # Get subdataset names
         sds <- gdalUtils::get_subdatasets(hdf_file_path)[idx]
         message(paste("Importing subdataset:", sds, collapse = "\n"))
-        
+
         # Translate subdataset from hdf file to tiff, this is needed because no
         # cross-platform direct translation to nc is available
         temp_tif_file <- tempfile(fileext = ".tif")
@@ -255,7 +255,7 @@ get_gfed4 <- function(start_date = NULL,
     if (raster::nlayers(regions_raster_t) == 1){
       regions_raster_t <- regions_raster_t[[1]]
     }
-    
+
     # Set missing crs
     raster::crs(regions_raster_t) <- "+proj=longlat +datum=WGS84 +no_defs"
 

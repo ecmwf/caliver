@@ -11,20 +11,20 @@
 #'
 
 decompress_gz <- function(input_dir = getwd()){
-  
+
   .Deprecated("decompress_gz()")
   message("NOTE: This function will be removed in the next release.")
-  
+
   list_of_gzfiles <- list.files(path = input_dir,
                                 pattern = "*.gz", full.names = TRUE)
-  
+
   # Decompress any gz files
   for (i in seq_along(list_of_gzfiles)){
-    
+
     R.utils::gunzip(list_of_gzfiles[i], overwrite = TRUE)
-    
+
   }
-  
+
 }
 
 
@@ -48,38 +48,38 @@ decompress_gz <- function(input_dir = getwd()){
 #'
 
 import_geff_data_from_tar <- function(archive, stack_ncfiles = TRUE){
-  
+
   .Deprecated("import_geff_data_from_tar()")
   message("NOTE: This function will be removed in the next release.")
-  
+
   # From .tar to .gz, and finally to .nc
   my_temp_dir <- tempdir()
   list_of_gzfiles <- file.path(my_temp_dir, utils::untar(tarfile = archive,
                                                          exdir = my_temp_dir,
                                                          list = TRUE))
-  
+
   # Untar files
   utils::untar(tarfile = archive, exdir = my_temp_dir)
-  
+
   # Decompress any gz files
   for (i in seq_along(list_of_gzfiles)){
-    
+
     R.utils::gunzip(list_of_gzfiles[i])
-    
+
   }
-  
+
   if (stack_ncfiles == TRUE){
-    
+
     s <- raster::stack(tools::file_path_sans_ext(list_of_gzfiles))
-    
+
     return(raster::brick(s))
-    
+
   } else {
-    
+
     return(tools::file_path_sans_ext(list_of_gzfiles))
-    
+
   }
-  
+
 }
 
 
@@ -94,30 +94,30 @@ import_geff_data_from_tar <- function(archive, stack_ncfiles = TRUE){
 #'
 
 mean_percs <- function(vals, perc_val, mod){
-  
+
   .Deprecated("mean_percs()")
   message("NOTE: This function will be removed in the next release.")
-  
+
   .Deprecated(msg = "This function is deprecated.")
-  
+
   p_val <- stats::quantile(vals, perc_val / 100, na.rm = TRUE)
-  
+
   if (mod == "gt") {
-    
+
     v_perc <- vals[vals >= p_val]
-    
+
   } else if (mod == "lt") {
-    
+
     v_perc <- vals[vals <= p_val]
-    
+
   } else {
-    
+
     stop("mod should be 'lt' or 'gt'")
-    
+
   }
-  
+
   return(mean(v_perc, na.rm = TRUE))
-  
+
 }
 
 
@@ -151,27 +151,27 @@ stack_netcdf_files <- function(input_dir = NULL,
                                pattern = NULL,
                                recursive = FALSE,
                                output_file = NULL){
-  
+
   .Deprecated("mean_percs()")
   message("NOTE: This function will be removed in the next release.")
-  
+
   if (is.null(input_dir)) stop("Please specify data folder 'input_dir'!")
-  
+
   ifiles <- list.files(path = input_dir,
                        pattern = pattern,
                        recursive = recursive,
                        full.names = TRUE)
-  
+
   if (is.null(output_file)) output_file <- tempfile(fileext = ".nc")
-  
+
   if (is.null(varname)) varname <- ""
   s <- raster::stack(x = ifiles, varname = varname)
-  
+
   if (!is.null(output_file)) {
     raster::writeRaster(s, filename = output_file,
                         format = "CDF", overwrite = TRUE)
   }
-  
+
   return(s)
-  
+
 }

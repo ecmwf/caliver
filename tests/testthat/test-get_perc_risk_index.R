@@ -13,7 +13,7 @@ test_that("get_perc_risk_index works", {
                                       mod = "gt")
   # Check if the output table has the same dimension as the shapefile
   expect_equal(round(output_gt_75, 0), 98)
-  
+
   output_lt_50 <- get_perc_risk_index(r_stack = rstack1,
                                       p_shape = shape,
                                       perc_val = 50,
