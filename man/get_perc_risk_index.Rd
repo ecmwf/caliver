@@ -18,7 +18,7 @@ below (lt) the threshold}
 }
 \description{
 Generates the mean of the values over a certain percentile
-threshold for the pixel of the raster stack under the polygons of a shapefile
+threshold for the portion of the Raster* that intersects a polygon
 }
 \examples{
 \dontrun{

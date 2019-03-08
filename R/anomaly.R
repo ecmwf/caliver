@@ -22,8 +22,6 @@
 
 anomaly <- function(r, clima){
 
-  options(warn = -1)
-
   if (round(r@extent@xmin, 0) == 0) {
 
     # Rotate a Raster* object that has x coordinates (longitude) from 0 to 360,
@@ -46,7 +44,6 @@ anomaly <- function(r, clima){
 
   anomaly_map_cat <- r
   for (i in 1:raster::nlayers(r)){
-    print(i)
     rx <- r[[i]]
     # Get the forecast dates
     forecast_date <- substr(x = names(rx), start = 7, stop = 11)

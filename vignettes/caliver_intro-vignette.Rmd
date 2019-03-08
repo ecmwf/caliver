@@ -18,15 +18,15 @@ The name caliver stands for **CALI**bration and **VER**ification of gridded mode
 
 ## Package installation and dependencies
 
-The caliver package is implemented in the R statistical language and depends on the following external libraries: the Climate Data Operators [@schulzweida2006cdo] a large tool set for working on climate and NWP model data), the NCAR Command Language [@brown2012ncar] an interpreted language for scientific data analysis, the Geospatial Data Abstraction Library [@warmerdam2008geospatial] a translator library for raster and vector geospatial data formats, and the NetCDF4 library [@rew1990netcdf].
+The caliver package is implemented in the R statistical language and depends on the following external libraries: the Geospatial Data Abstraction Library [@warmerdam2008geospatial] a translator library for raster and vector geospatial data formats (with HDF4 and HDF5 support), and the NetCDF4 library [@rew1990netcdf].
 
-The caliver package also depends on additional R packages from both CRAN and Bioconductor. Users must have the above dependencies installed before attempting to install caliver. Installation instructions for different operating systems are available in the README file.
+Installation instructions for different operating systems are available in the README file. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.
 
 Once all the dependencies are available, the package can be installed via [devtools](https://github.com/hadley/devtools):
 
 ```{r}
 # Install caliver from GitHub via devtools
-# install.packages("devtools", repos = "http://cran.rstudio.com")
+install.packages("devtools")
 devtools::install_github("ecmwf/caliver")
 ```
 
@@ -41,9 +41,10 @@ library("caliver")
 Observed burned areas around the world are collected by the GFED4 in hdf format \citep{giglio2013analysis}. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability.
 
 ```{r}
-# Get daily burned area maps from 2003 to 2015 (to be run in the console!)
-BurnedAreas <- get_gfed4(start_date = "2003-01-01",
-                         end_date = "2015-12-31",
+# Get daily burned area maps for 15-18 July 2003
+# (to be run in the console!)
+BurnedAreas <- get_gfed4(start_date = "2003-07-15",
+                         end_date = "2003-07-18",
                          temporal_resolution = "daily",
                          varname = "BurnedArea",
                          region = "GLOB")

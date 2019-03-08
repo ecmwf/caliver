@@ -2,6 +2,8 @@ context("test-import_geff_data_from_tar")
 
 test_that("import_geff_data_from_tar works", {
 
+  skip("Skip - deprecated function")
+
   geff1tar <- system.file(file.path("testdata", "geff1.tar"),
                           package = "caliver")
 
