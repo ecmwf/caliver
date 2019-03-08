@@ -10,12 +10,12 @@ addons:
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
       - libssl-dev
-      - libnetcdf-dev
-      - netcdf-bin
-      - libhdf5-dev
       - libproj-dev
+      - libgeos-dev
+      - libhdf4-alt-dev
+      - libhdf5-serial-dev
       - libgdal-dev
-      - gdal-bin
+      - libnetcdf-dev
 
 r_github_packages:
   - jimhester/lintr
