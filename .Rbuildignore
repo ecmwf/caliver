@@ -11,3 +11,4 @@
 ^NOTICE$
 ^docs$
 ^_pkgdown\.yml$
+^Dockerfile$
