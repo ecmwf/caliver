@@ -9,7 +9,7 @@ addons:
     sources:
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
-      - libhdf4-dev
+      - libhdf4-alt-dev
       - proj-bin
       - libproj-dev
       - libgdal-dev
