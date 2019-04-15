@@ -1,7 +1,7 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-dist: cosmic
+dist: xenial
 
 addons:
   apt:
@@ -13,6 +13,7 @@ addons:
       - libgdal-dev
       - gdal-bin
       - libnetcdf-dev
+      - netcdf-bin
 
 r_github_packages:
   - jimhester/lintr
