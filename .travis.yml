@@ -15,7 +15,6 @@ addons:
       - libgdal-dev
       - gdal-bin
       - libnetcdf-dev
-      - libhdf4-alt-dev
       - libhdf5-serial-dev
 
 r_github_packages:
