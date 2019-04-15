@@ -6,10 +6,10 @@ dist: xenial
 addons:
   apt:
     packages:
-      - libhdf4-dev
+      - libhdf4-alt-dev
       - libhdf5-dev
-      - proj-bin
       - libproj-dev
+      - proj-bin
       - libgdal-dev
       - gdal-bin
       - libnetcdf-dev
