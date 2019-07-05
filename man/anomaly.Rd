@@ -12,8 +12,8 @@ anomaly(r, clima)
 \item{clima}{RasterBrick containing the climatological information.}
 }
 \description{
-This function calculates the anomaly (a standard deviation
-from the mean climatology) of a forecast layer
+This function calculates the anomaly (number of standard
+deviations from the mean climatology) of a forecast layer
 }
 \details{
 More information on anomaly is available here:

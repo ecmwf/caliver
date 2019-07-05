@@ -3,8 +3,9 @@
 #' @description This function generates daily climatological maps.
 #'
 #' @param r RasterBrick or RasterStack object used to calculate the climatology
-#' @param dates Dates for which we need to calculate daily climatology.
 #' \code{names(r)} should also contain dates for comparison (e.g. X2017.01.01).
+#' @param dates Dates for which we need to calculate daily climatology.
+#' By default, this is a leap year.
 #' @param probs probability (or percentile)
 #'
 #' @export
@@ -15,7 +16,14 @@
 #' }
 #'
 
-daily_clima <- function(r, dates, probs){
+daily_clima <- function(r, dates = NULL, probs){
+
+  if (is.null(dates)) {
+    # By default use a leap year
+    dates <- seq.Date(from = as.Date("2000-01-01"),
+                      to = as.Date("2000-12-31"),
+                      by = "day")
+  }
 
   # Initialise empty list of stacks
   clima_maps <- list()

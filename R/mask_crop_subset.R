@@ -9,6 +9,8 @@
 #' @param idx vector of strings indicating the layer indices to subset
 #' @param accurate logical, TRUE to apply more accurate cropping/masking,
 #' FALSE otherwise
+#' @param ... additional arguments as in writeRaster
+#' (e.g. \code{progress = "text"})
 #'
 #' @return A Raster* object
 #'
@@ -25,13 +27,13 @@
 #'
 
 mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
-                             accurate = FALSE){
+                             accurate = FALSE, ...){
 
   if (!("RasterLayer" %in% class(r)) &
       !("RasterBrick" %in% class(r)) &
       !("RasterStack" %in% class(r))) {
 
-    stop("Error: r can only be a raster brick/stack")
+    stop("Error: r can only be a raster layer/brick/stack")
 
   }
 
@@ -39,15 +41,11 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
     if (accurate == TRUE){
 
-      # To keep cells along the border cannot use mask(r, p) because only cells
-      # with center falling in the polygon will be returned.
+      # To keep cells along the border we cannot use mask(r, p) because only
+      # cells with centroids falling in the polygon will be returned.
       # The solution is to identify cells covering the polygon and set all
       # remaining pixels to NA, see https://goo.gl/22LwJt
-      if (class(r) == "RasterLayer") {
-        temp_mask <- r
-      }else{
-        temp_mask <- r[[1]]
-      }
+      temp_mask <- r[[1]]
       cls <- raster::cellFromPolygon(temp_mask,
                                      p, weights = TRUE)[[1]][, "cell"]
       temp_mask[][-cls] <- NA
@@ -71,7 +69,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
         }
 
         new_extent <- extent(raster::trim(temp_mask))
-        r_cropped <- raster::crop(r_masked, new_extent, progress = "text")
+        r_cropped <- raster::crop(r_masked, new_extent, ...)
 
       }else{
 
@@ -89,7 +87,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
       if (mask == TRUE) {
 
-        r_masked <- raster::mask(r, p, progress = "text")
+        r_masked <- raster::mask(r, p, ...)
 
       }else{
 
@@ -99,7 +97,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
       if (crop == TRUE) {
 
-        r_cropped <- raster::crop(r_masked, p, progress = "text")
+        r_cropped <- raster::crop(r_masked, p, ...)
 
       }else{
 
@@ -127,7 +125,7 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
   if ("RasterStack" %in% class(r_subsetted)) {
 
-    r_output <- raster::brick(r_subsetted, progress = "text")
+    r_output <- raster::brick(r_subsetted, ...)
 
   }
 

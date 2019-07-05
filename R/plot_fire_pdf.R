@@ -37,6 +37,13 @@ plot_fire_pdf <- function(fire_index,
             "Very high" = fire_palette[5],
             "Extreme" = fire_palette[6])
 
+  labels <- c(paste0("Very low (<=", thresholds[1], ")"),
+              paste0("Low (", thresholds[1], "-", thresholds[2], ")"),
+              paste0("Moderate (", thresholds[2], "-", thresholds[3], ")"),
+              paste0("High (", thresholds[3], "-", thresholds[4], ")"),
+              paste0("Very high (", thresholds[4], "-", thresholds[5], ")"),
+              paste0("Extreme (>", thresholds[5], ")"))
+
   if (is.null(upper_limit)) {
 
     upper_limit <- ceiling(max(idxno0))
@@ -62,17 +69,13 @@ plot_fire_pdf <- function(fire_index,
     geom_segment(aes(x = x1, y = y1,
                      xend = x2, yend = y2, colour = df$danger_levels),
                  data = df, size = 14) +
-    scale_colour_manual(name = "Danger classes",
+    scale_colour_manual(name = "California\nDanger classes",
                         values = fire_palette,
-                        labels = c("Very Low", "Low", "Moderate",
-                                   "High", "Very high", "Extreme")) +
-    geom_text(aes(x = x1 + hdistance, y = y1,
-                         label = round(x1, 0)),
-              data = df[2:6, ], size = 5, colour = "#e1dbdb") +
+                        labels = labels) +
     theme_bw() + xlab("FWI") + ylab("Density") +
-    theme(legend.title = element_text(size = 10, face = "bold"),
-          text = element_text(size = 10, lineheight = .8),
-          legend.position = c(0.98, 0.98), legend.justification = c(1, 1)) +
+    theme(legend.title = element_text(size = 20, face = "bold"),
+          text = element_text(size = 20, lineheight = .8),
+          legend.position = c(0.98, 0.78), legend.justification = c(1, 1)) +
     scale_x_continuous(limits = c(0, upper_limit))
 
   label <- value <- NULL # to avoid NOTE during check
@@ -81,9 +84,12 @@ plot_fire_pdf <- function(fire_index,
     dfv <- data.frame(label = names(v_lines), value = as.numeric(v_lines))
     p <- p + geom_vline(data = dfv, mapping = aes(xintercept = value),
                         color = "darkgray", linetype = 2) +
-      geom_text(data = dfv, mapping = aes(x = value, y = max(density(idxno0)$y),
-                                          label = label),
-                angle = 90, vjust = -0.4, colour = "#585858")
+      geom_text(data = dfv,
+                mapping = aes(x = value,
+                              y = max(density(idxno0)$y),
+                              label = label),
+                angle = 90, hjust = 1, vjust = -0.4,
+                colour = "#585858", size = 6)
 
   }
 

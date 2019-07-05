@@ -8,6 +8,7 @@
 #'
 #' @param r is the Raster* object to classify.
 #' @param thresholds numeric vector containing 5 thresholds.
+#' @param labels string of characters to be used as labels
 #'
 #' @return The function returns a Raster* object of the same dimensions of
 #' \code{r} but the values are categorical from 1 to 6 (corresponding to
@@ -23,19 +24,19 @@
 #' }
 #'
 
-classify_index <- function(r, thresholds = NULL){
+classify_index <- function(r, thresholds = NULL, labels = NULL){
 
-  if (is.null(thresholds)){
+  if (is.null(thresholds) | is.null(labels)){
     thresholds <- c(5.2, 11.2, 21.3, 38, 50)
+    labels <- c("Very low", "Low", "Moderate", "High", "Very high", "Extreme")
   }
 
   index_class <- raster::cut(r, breaks = c(-Inf, thresholds, Inf))
 
   # Convert to Stack and associate a Raster Attribute Table (RAT)
   index_stack <- stack_with_rat(r = index_class,
-                                ids = 1:6,
-                                classes = c("Very low", "Low", "Moderate",
-                                            "High", "Very high", "Extreme"))
+                                ids = 1:(length(thresholds) + 1),
+                                classes = labels)
 
   return(index_stack)
 
@@ -69,6 +70,6 @@ plot_classified_index <- function(r, custom_palette = NULL, ...){
     custom_palette <- rev(viridis::viridis(n = length(levels(r)[[1]][, "ID"])))
   }
 
-  rasterVis::levelplot(r, att = "Danger", col.regions = custom_palette)
+  rasterVis::levelplot(r, col.regions = custom_palette)
 
 }

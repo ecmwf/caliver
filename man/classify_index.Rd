@@ -4,12 +4,14 @@
 \alias{classify_index}
 \title{classify_index}
 \usage{
-classify_index(r, thresholds = NULL)
+classify_index(r, thresholds = NULL, labels = NULL)
 }
 \arguments{
 \item{r}{is the Raster* object to classify.}
 
 \item{thresholds}{numeric vector containing 5 thresholds.}
+
+\item{labels}{string of characters to be used as labels}
 }
 \value{
 The function returns a Raster* object of the same dimensions of

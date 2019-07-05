@@ -1,7 +1,7 @@
 #' @title anomaly
 #'
-#' @description This function calculates the anomaly (a standard deviation
-#' from the mean climatology) of a forecast layer
+#' @description This function calculates the anomaly (number of standard
+#' deviations from the mean climatology) of a forecast layer
 #'
 #' @param r is the Raster layer to compare to the climatology.
 #' @param clima RasterBrick containing the climatological information.
