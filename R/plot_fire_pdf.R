@@ -53,7 +53,7 @@ plot_fire_pdf <- function(fire_index,
   danger_classes <- c(0, thresholds, upper_limit)
 
   vdistance <- max(density(idxno0)$y) / 15
-  hdistance <- max(danger_classes) / 100
+  # ToDo: hdistance <- max(danger_classes) / 100
 
   x1 <- x2 <- y1 <- y2 <- NULL # to avoid warning in check!
 

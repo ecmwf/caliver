@@ -25,6 +25,6 @@ get_fire_season_length <- function(x, threshold = 268.15){
 
   df_above <- R.utils::seqToIntervals(dat_above)
 
-  return(max(df_above[,2] - df_above[, 1]))
+  return(max(df_above[, 2] - df_above[, 1]))
 
 }
