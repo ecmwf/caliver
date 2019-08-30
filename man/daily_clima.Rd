@@ -13,7 +13,8 @@ daily_clima(r, dates = NULL, probs)
 \item{dates}{Dates for which we need to calculate daily climatology.
 By default, this is a leap year.}
 
-\item{probs}{probability (or percentile)}
+\item{probs}{probability (or percentile).
+This is a decimal number between 0 and 1.}
 }
 \description{
 This function generates daily climatological maps.

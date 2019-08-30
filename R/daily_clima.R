@@ -6,7 +6,8 @@
 #' \code{names(r)} should also contain dates for comparison (e.g. X2017.01.01).
 #' @param dates Dates for which we need to calculate daily climatology.
 #' By default, this is a leap year.
-#' @param probs probability (or percentile)
+#' @param probs probability (or percentile).
+#' This is a decimal number between 0 and 1.
 #'
 #' @export
 #'
