@@ -30,6 +30,19 @@ very high = 38-50.0, extreme = > 50.
 \dontrun{
   r <- brick("ECMWF_FWI_20180723_1200_hr_fwi.nc")
   x <- classify_index(r, thresholds = c(5.2, 11.2, 21.3, 38, 50))
+
+  # This can be plotted using rasterVis::levelplot()
+  rasterVis::levelplot(x)
+  # Plot above plus custom labels
+  rasterVis::levelplot(x, names.attr = substring(names(x), 2))
+  # Plot above plus custom palette
+  rasterVis::levelplot(x, names.attr = substring(names(x), 2),
+                       col.regions = colorspace::diverge_hcl(6,
+                       palette = "Berlin"))
+  # Plot above but different custom palette
+  rasterVis::levelplot(x, names.attr = substring(names(x), 2),
+                       col.regions = colorRamps::matlab.like(n = 6))
+
 }
 
 }

@@ -21,6 +21,19 @@
 #' \dontrun{
 #'   r <- brick("ECMWF_FWI_20180723_1200_hr_fwi.nc")
 #'   x <- classify_index(r, thresholds = c(5.2, 11.2, 21.3, 38, 50))
+#'
+#'   # This can be plotted using rasterVis::levelplot()
+#'   rasterVis::levelplot(x)
+#'   # Plot above plus custom labels
+#'   rasterVis::levelplot(x, names.attr = substring(names(x), 2))
+#'   # Plot above plus custom palette
+#'   rasterVis::levelplot(x, names.attr = substring(names(x), 2),
+#'                        col.regions = colorspace::diverge_hcl(6,
+#'                        palette = "Berlin"))
+#'   # Plot above but different custom palette
+#'   rasterVis::levelplot(x, names.attr = substring(names(x), 2),
+#'                        col.regions = colorRamps::matlab.like(n = 6))
+#'
 #' }
 #'
 
@@ -39,37 +52,5 @@ classify_index <- function(r, thresholds = NULL, labels = NULL){
                                 classes = labels)
 
   return(index_stack)
-
-}
-
-#' @title plot_classified_index
-#'
-#' @description Plot classified index as shown in GWIS:
-#' \url{https://bit.ly/2BbBfsm}
-#'
-#' @param r is the Raster* object already classified.
-#' @param custom_palette palette to use (default is \code{viridis::plasma})
-#' @param ... other plotting arguments, see \code{?raster::plot} function.
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#'   r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
-#'   clima <- brick("fwi.nc")
-#'   anomaly_map <- anomaly(r, clima)
-#'   plot_anomaly(anomaly_map,
-#'                custom_palette = colorRamps::matlab.like(n = length(breaks)))
-#' }
-#'
-
-plot_classified_index <- function(r, custom_palette = NULL, ...){
-
-  if (is.null(custom_palette)){
-    # Define palette
-    custom_palette <- rev(viridis::viridis(n = length(levels(r)[[1]][, "ID"])))
-  }
-
-  rasterVis::levelplot(r, col.regions = custom_palette)
 
 }
