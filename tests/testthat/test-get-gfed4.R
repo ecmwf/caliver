@@ -2,6 +2,7 @@ context("get_gfed4")
 
 test_that("Check get_gfed4 behaves as expected with BasisRegions", {
 
+  skip("Skip")
   # Basis regions: only BONA region
   bona <- get_gfed4(varname = "BasisRegions", region = "BONA")
   expect_true("SpatialPolygonsDataFrame" %in% class(bona))
