@@ -100,3 +100,15 @@
   return(raster_out)
 
 }
+
+.create_rat <- function(ids, classes){
+
+  # Define a Raster Attribute Table (RAT)
+  rat <- data.frame(id = ids, danger = classes, stringsAsFactors = FALSE)
+  rat$id <- factor(x = rat$id, levels = ids)
+  rat$category <- factor(x = rat$danger, levels = classes)
+  names(rat) <- c("ID", "Class")
+
+  return(rat)
+
+}

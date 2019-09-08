@@ -67,15 +67,9 @@ ranking <- function(r, clima){
   ranking_map <- raster::ratify(ranking_map)
   
   # Define a Raster Attribute Table (RAT)
-  rat <- data.frame(id = 1:6,
-                    category = c("<=75", "75..85", "85..90",
-                                "90..95", "95..98", "98..100"),
-                    stringsAsFactors = FALSE)
-  rat$id <- factor(x = rat$id, levels = 1:6)
-  rat$category <- factor(x = rat$category,
-                        levels = c("<=75", "75..85", "85..90",
-                                   "90..95", "95..98", "98..100"))
-  names(rat) <- c("ID", "category")
+  rat <- .create_rat(ids = 1:6,
+                     classes = c("<=75", "75..85", "85..90",
+                                 "90..95", "95..98", "98..100"))
   levels(ranking_map) <- rat
 
   return(ranking_map)

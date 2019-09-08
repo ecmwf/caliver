@@ -59,19 +59,11 @@ anomaly <- function(r, clima){
   anomaly_map_cat <- raster::ratify(anomaly_map_cat)
   
   # Define a Raster Attribute Table (RAT)
-  rat <- data.frame(id = 1:11,
-                    n_stdev = c("<=-3.0", "-3.0..-2.0", "-2.0..-1.5",
+  rat <- .create_rat(ids = 1:11,
+                     classes = c("<=-3.0", "-3.0..-2.0", "-2.0..-1.5",
                                 "-1.5..-1.0", "-1.0..-0.5", "-0.5..0.5",
                                 "0.5..1.0", "1.0..1.5", "1.5..2.0",
-                                "2.0..3.0", ">3.0"),
-                    stringsAsFactors = FALSE)
-  rat$id <- factor(x = rat$id, levels = 1:11)
-  rat$n_stdev <- factor(x = rat$n_stdev,
-                       levels = c("<=-3.0", "-3.0..-2.0", "-2.0..-1.5",
-                                  "-1.5..-1.0", "-1.0..-0.5", "-0.5..0.5",
-                                  "0.5..1.0", "1.0..1.5", "1.5..2.0",
-                                  "2.0..3.0", ">3.0"))
-  names(rat) <- c("ID", "n_stdev")
+                                "2.0..3.0", ">3.0"))
   levels(anomaly_map_cat) <- rat
 
   return(anomaly_map_cat)
