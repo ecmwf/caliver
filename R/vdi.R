@@ -73,11 +73,12 @@ vdi <- function(dc, dmc){
                                  "Moderate drying", "Important drying",
                                  "Extreme drying"),
                       stringsAsFactors = FALSE)
-    rat$ID <- factor(x = rat$ID, levels = 1:5)
-    rat$Danger <- factor(x = rat$Danger,
+    rat$id <- factor(x = rat$id, levels = 1:5)
+    rat$danger <- factor(x = rat$danger,
                          levels = c("No Vulnerability", "Limited drying",
                                     "Moderate drying", "Important drying",
                                     "Extreme drying"))
+    names(rat) <- c("ID", "Danger")
     levels(veg_drought) <- rat
   }
 
