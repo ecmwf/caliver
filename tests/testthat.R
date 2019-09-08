@@ -8,6 +8,6 @@ test_check("caliver")
 if (requireNamespace("lintr", quietly = TRUE)) {
   context("lints")
   test_that("Package Style", {
-    lintr::expect_lint_free(exclusions = list("R/zzz.R", "R/get_gfed4.R"))
+    lintr::expect_lint_free()
   })
 }

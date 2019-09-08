@@ -40,7 +40,11 @@ test_that("mask_crop_subset works", {
   # Check whether subset works
   x5a <- mask_crop_subset(rstack1, shape, mask = TRUE, crop = TRUE, idx = 1:3)
   expect_equal(dim(x5a), c(3, 3, 3))
-  x5b <- round(sum(raster::cellStats(x5a, sum, na.rm = TRUE)), 0)
-  expect_equal(x5b, 341)
+  expect_equal(round(sum(raster::cellStats(x5a, sum, na.rm = TRUE)), 0), 341)
+
+  # Check whether subset works with accurate option
+  x5b <- mask_crop_subset(rstack1, shape, mask = TRUE, crop = TRUE,
+                          accurate = TRUE)
+  expect_equal(round(sum(raster::cellStats(x5b, sum, na.rm = TRUE)), 0), 1313)
 
 })
