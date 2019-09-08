@@ -31,7 +31,7 @@ stack_with_rat <- function(r, ids, classes){
   index_stack <- raster::stack()
   for (i in 1:nlayers(r)){
     # there is a problem with the ID = 0, they are resetted to start from 1
-    if (cellStats(r[[i]], min) == 0){
+    if (raster::cellStats(r[[i]], min) == 0){
       ri <- r[[i]] + 1
       tmp <- raster::ratify(ri)
     }else{

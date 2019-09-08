@@ -15,8 +15,6 @@
 #' (default is fwi, belonging to fwi origin).
 #' @param clima RasterBrick containing the climatological information.
 #'
-#' @export
-#'
 #' @examples
 #' \dontrun{
 #'   forecast_summary(input_dir = "forecast",

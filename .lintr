@@ -1,3 +1,0 @@
-linters: with_defaults(
-     exclusions: list("R/zzz.R", "R/get_gfed4.R")
-  )
