@@ -68,8 +68,8 @@ vdi <- function(dc, dmc){
     veg_drought <- raster::ratify(veg_drought)
 
     # Define a Raster Attribute Table (RAT)
-    rat <- data.frame(ID = 1:5,
-                      Danger = c("No Vulnerability", "Limited drying",
+    rat <- data.frame(id = 1:5,
+                      danger = c("No Vulnerability", "Limited drying",
                                  "Moderate drying", "Important drying",
                                  "Extreme drying"),
                       stringsAsFactors = FALSE)
