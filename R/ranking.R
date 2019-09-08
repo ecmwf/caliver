@@ -38,10 +38,10 @@ ranking <- function(r, clima){
 
   # Get the forecast dates
   forecast_date <- substr(x = names(r), start = 2, stop = 11)
-  
+
   # Extract layers corresponding to a given date
   r_sub <- get_layers_for_clima(clima, forecast_date)
-  
+
   # Compute reference percentile maps
   prob_maps <- raster::calc(x = r_sub, fun = .quant_function)
   # Resample to match forecast layer
@@ -62,10 +62,10 @@ ranking <- function(r, clima){
   ranking_map[p90to95] <- 4
   ranking_map[p95to98] <- 5
   ranking_map[pabove98] <- 6
-  
+
   # Associate a Raster Attribute Table (RAT)
   ranking_map <- raster::ratify(ranking_map)
-  
+
   # Define a Raster Attribute Table (RAT)
   rat <- .create_rat(ids = 1:6,
                      classes = c("<=75", "75..85", "85..90",

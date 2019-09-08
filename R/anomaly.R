@@ -46,18 +46,18 @@ anomaly <- function(r, clima){
   # Standard deviation from clima
   sd_clima <- raster::calc(x = r_sub, fun = sd)
   sd_clima <- raster::resample(x = sd_clima, y = r)
-  
+
   # Generate anomaly map
   anomaly_map <- (r - mean_clima) / sd_clima
-  
+
   # Categorize the anomaly
   anomaly_map_cat <- raster::cut(anomaly_map,
                                  breaks = c(-Inf, -3, -2, -1.5, -1, -0.5,
                                             0.5, 1, 1.5, 2, 3, Inf))
-  
+
   # Associate a Raster Attribute Table (RAT)
   anomaly_map_cat <- raster::ratify(anomaly_map_cat)
-  
+
   # Define a Raster Attribute Table (RAT)
   rat <- .create_rat(ids = 1:11,
                      classes = c("<=-3.0", "-3.0..-2.0", "-2.0..-1.5",
