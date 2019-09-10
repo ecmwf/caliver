@@ -19,8 +19,8 @@
 #'   r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
 #'   clima <- brick("fwi.nc")
 #'   x <- ranking(r, clima)
-#'   
-#'   # This plots nicely using rasterVis::levelplot(), in example on GWIS 
+#'
+#'   # This plots nicely using rasterVis::levelplot(), in example on GWIS
 #'   # (\url{https://gwis.jrc.ec.europa.eu}
 #'   rasterVis::levelplot(x, col.regions = colorRamps::matlab.like(n = 6))
 #'   rasterVis::levelplot(x, col.regions = c("green", "yellow", "salmon",
@@ -30,17 +30,11 @@
 
 ranking <- function(r, clima){
 
-  if (!raster::compareRaster(r, clima)){
-    stop(paste("r and clima are not comparable.",
-               "Please make sure they have same extent, number of rows and",
-               "columns, projection, resolution, and origin."))
-  }
-
   # Get the forecast dates
   forecast_date <- substr(x = names(r), start = 2, stop = 11)
 
   # Extract layers corresponding to a given date
-  r_sub <- get_layers_for_clima(clima, forecast_date)
+  r_sub <- .get_layers_for_clima(clima, forecast_date)
 
   # Compute reference percentile maps
   prob_maps <- raster::calc(x = r_sub, fun = .quant_function)

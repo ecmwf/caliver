@@ -81,8 +81,8 @@ forecast_summary <- function(input_dir,
 
   # reclassify the values into two groups
   # all values < threshold become 0, the others are 1
-  m <- c(0, threshold, 0,
-         threshold, 10000000000, 1)
+  m <- c(-Inf, threshold, 0,
+         threshold, Inf, 1)
   rclmat <- matrix(m, ncol = 3, byrow = TRUE)
   s_reclassified <- raster::reclassify(s_cropped, rclmat)
 
@@ -122,31 +122,6 @@ forecast_summary <- function(input_dir,
   # reshape the data.frame with forecast values
   x <- reshape2::melt(raster_mean_matrix)
 
-  if (!is.null(obs)){
-
-    # Check whether obs is a string or a brick
-    if ("RasterBrick" %in% class(obs)) {
-      frp <- obs
-    }else{
-      frp <- raster::brick(obs)
-    }
-
-    # Check whether I need to crop the observation
-    if (!is.null(p)) {
-      frp_cropped <- mask_crop_subset(r = frp, p = p, mask = TRUE, crop = FALSE)
-    }else{
-      frp_cropped <- frp
-    }
-
-    frp_ts <- as.numeric(raster::cellStats(frp_cropped, sum))
-    df_frp <- data.frame(date = forecast_dates[seq_along(frp_ts)],
-                         frp_original = frp_ts,
-                         frp = plotrix::rescale(frp_ts, c(0, length(frp_ts))))
-    labels_obs <- round(plotrix::rescale(seq_along(frp_ts),
-                                         c(1, max(frp_ts))),
-                        0)[seq_along(frp_ts)]
-  }
-
   # Make the boxy forecast plot using ggplot2
   final_plot <- ggplot(x, aes_string("Var2", "Var1")) +
     geom_tile(aes_string(fill = "value"), colour = "white") +
@@ -160,20 +135,54 @@ forecast_summary <- function(input_dir,
     scale_x_continuous(expand = c(0, 0),
                        breaks = seq_along(observation_dates),
                        labels = as.character(observation_dates)) +
-    scale_y_continuous(expand = c(0, 0),
-                       breaks = seq_along(forecast_dates),
-                       labels = as.character(forecast_dates)) +
     theme(axis.text.x = element_text(angle = 90),
           panel.grid.major = element_blank(),
           plot.title = element_text(hjust = 0.5),
-          legend.position = c(1, 0),
-          legend.justification = c(1, 0),
+          legend.position = c(0, 1),
+          legend.justification = c(0, 1),
           legend.direction = "vertical",
           legend.box = "horizontal",
           legend.box.just = c("top"),
           legend.background = element_rect(fill = NA))
 
   if (!is.null(obs)){
+
+    message("Extract observations")
+
+    # Check whether obs is a string or a brick
+    if ("RasterBrick" %in% class(obs)) {
+      frp <- obs
+    }else{
+      frp <- raster::brick(obs)
+    }
+
+    # Check whether I need to crop the observation
+    if (!is.null(p)) {
+      frp_cropped <- raster::mask(frp, p, progress = "text")
+    }else{
+      frp_cropped <- frp
+    }
+
+    if (nchar(names(frp_cropped)[1]) > 11){
+      frp_aggregated <- raster::stack()
+      # Aggregate to daily
+      for (dayx in unique(substr(names(frp_cropped), 2, 11))){
+        print(dayx)
+        idx <- which(substr(names(frp_cropped), 2, 11) == dayx)
+        frp_aggregated <- raster::stack(frp_aggregated,
+                                        raster::calc(frp_cropped[[idx]], sum))
+      }
+    }
+
+    frp_ts <- as.numeric(raster::cellStats(frp_aggregated, sum,
+                                           progress = "text"))
+    df_frp <- data.frame(date = forecast_dates[seq_along(frp_ts)],
+                         frp_original = frp_ts,
+                         frp = plotrix::rescale(frp_ts, c(0, length(frp_ts))))
+    labels_obs <- round(plotrix::rescale(seq_along(frp_ts),
+                                         c(1, max(frp_ts))),
+                        0)[seq_along(frp_ts)]
+
     mylist <- list(shape = "A")
     myname <- "Fire radiative power [Wm-2]"
     final_plot <- final_plot +
@@ -187,10 +196,18 @@ forecast_summary <- function(input_dir,
                          guide = guide_legend(direction = "vertical",
                                               title.position = "top",
                                               override.aes = mylist)) +
-      scale_y_continuous(sec.axis = sec_axis(~.,
+      scale_y_continuous(expand = c(0, 0),
+                         breaks = seq_along(forecast_dates),
+                         labels = as.character(forecast_dates),
+                         sec.axis = sec_axis(~.,
                                              name = myname,
                                              breaks = seq_along(labels_obs),
                                              labels = labels_obs))
+  }else{
+    final_plot <- final_plot +
+      scale_y_continuous(expand = c(0, 0),
+                         breaks = seq_along(forecast_dates),
+                         labels = as.character(forecast_dates))
   }
 
   return(final_plot)

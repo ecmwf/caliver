@@ -1,6 +1,7 @@
 #' @title forecast_summary_clima
 #'
-#' @description Plot observations versus forecast
+#' @description Plot observations versus forecast using daily climatology
+#' (EXPERIMENTAL).
 #'
 #' @param input_dir folder containing forecast files
 #' @param r Raster* object containing the forecasts

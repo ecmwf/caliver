@@ -27,8 +27,8 @@ https://zenodo.org/communities/wildfire.
   r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
   clima <- brick("fwi.nc")
   x <- anomaly(r, clima)
-  
-  # This plots nicely using rasterVis::levelplot(), in example on GWIS 
+
+  # This plots nicely using rasterVis::levelplot(), in example on GWIS
   # (\\url{https://gwis.jrc.ec.europa.eu}
   rasterVis::levelplot(x, col.regions = colorRamps::matlab.like(n = 11))
 }

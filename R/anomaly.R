@@ -19,8 +19,8 @@
 #'   r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
 #'   clima <- brick("fwi.nc")
 #'   x <- anomaly(r, clima)
-#'   
-#'   # This plots nicely using rasterVis::levelplot(), in example on GWIS 
+#'
+#'   # This plots nicely using rasterVis::levelplot(), in example on GWIS
 #'   # (\url{https://gwis.jrc.ec.europa.eu}
 #'   rasterVis::levelplot(x, col.regions = colorRamps::matlab.like(n = 11))
 #' }
@@ -28,24 +28,18 @@
 
 anomaly <- function(r, clima){
 
-  if (!raster::compareRaster(r, clima)){
-    stop(paste("r and clima are not comparable.",
-               "Please make sure they have same extent, number of rows and",
-               "columns, projection, resolution, and origin."))
-  }
-
   # Get the forecast dates
   forecast_date <- substr(x = names(r), start = 2, stop = 11)
 
   # Extract layers corresponding to a given date
-  r_sub <- get_layers_for_clima(clima, forecast_date)
+  r_sub <- .get_layers_for_clima(r = clima, single_date = forecast_date)
 
   # Mean from clima
   mean_clima <- raster::calc(x = r_sub, fun = mean)
-  mean_clima <- raster::resample(x = mean_clima, y = r)
+  mean_clima <- raster::resample(x = mean_clima, y = r, method = "bilinear")
   # Standard deviation from clima
   sd_clima <- raster::calc(x = r_sub, fun = sd)
-  sd_clima <- raster::resample(x = sd_clima, y = r)
+  sd_clima <- raster::resample(x = sd_clima, y = r, method = "bilinear")
 
   # Generate anomaly map
   anomaly_map <- (r - mean_clima) / sd_clima
@@ -61,9 +55,9 @@ anomaly <- function(r, clima){
   # Define a Raster Attribute Table (RAT)
   rat <- .create_rat(ids = 1:11,
                      classes = c("<=-3.0", "-3.0..-2.0", "-2.0..-1.5",
-                                "-1.5..-1.0", "-1.0..-0.5", "-0.5..0.5",
-                                "0.5..1.0", "1.0..1.5", "1.5..2.0",
-                                "2.0..3.0", ">3.0"))
+                                 "-1.5..-1.0", "-1.0..-0.5", "-0.5..0.5",
+                                 "0.5..1.0", "1.0..1.5", "1.5..2.0",
+                                 "2.0..3.0", ">3.0"))
   levels(anomaly_map_cat) <- rat
 
   return(anomaly_map_cat)
