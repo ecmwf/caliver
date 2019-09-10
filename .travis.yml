@@ -5,6 +5,8 @@ dist: xenial
 
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
       - libhdf4-alt-dev
       - libhdf5-dev
