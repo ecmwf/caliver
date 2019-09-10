@@ -32,7 +32,8 @@ fwi (default, currently called cfwis), mark5, nfdrs.}
 \item{clima}{RasterBrick containing the climatological information.}
 }
 \description{
-Plot observations versus forecast
+Plot observations versus forecast using daily climatology
+(EXPERIMENTAL).
 }
 \examples{
 \dontrun{

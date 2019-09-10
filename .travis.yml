@@ -1,7 +1,6 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-sudo: required
 dist: xenial
 
 addons:
@@ -9,13 +8,14 @@ addons:
     sources:
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
-      - libssl-dev
-      - libproj-dev
-      - libgeos-dev
       - libhdf4-alt-dev
-      - libhdf5-serial-dev
+      - libhdf5-dev
+      - libproj-dev
+      - proj-bin
       - libgdal-dev
+      - gdal-bin
       - libnetcdf-dev
+      - netcdf-bin
 
 r_github_packages:
   - jimhester/lintr

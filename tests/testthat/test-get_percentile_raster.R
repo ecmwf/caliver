@@ -51,6 +51,7 @@ test_that("get_percentile_raster works with multiple probs from raster", {
 
 test_that("get_percentile_raster works with input file", {
 
+  skip("Skip")
   tempfilepath <- tempfile(fileext = ".nc")
   raster::writeRaster(rstack1,
                       filename = tempfilepath,

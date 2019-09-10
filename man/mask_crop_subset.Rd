@@ -5,7 +5,7 @@
 \title{mask_crop_subset}
 \usage{
 mask_crop_subset(r, p, mask = TRUE, crop = TRUE, idx = NULL,
-  accurate = FALSE)
+  accurate = FALSE, ...)
 }
 \arguments{
 \item{r}{Raster* object}
@@ -20,6 +20,9 @@ mask_crop_subset(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
 \item{accurate}{logical, TRUE to apply more accurate cropping/masking,
 FALSE otherwise}
+
+\item{...}{additional arguments as in writeRaster
+(e.g. \code{progress = "text"})}
 }
 \value{
 A Raster* object

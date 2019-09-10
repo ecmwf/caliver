@@ -45,9 +45,11 @@ library("rowr")
 library("dplyr")
 library("rgeos")
 library("maptools")
+library("sp")
 library("RColorBrewer")
+library("stringr")
 
-# setwd("/hugetmp/fire/JAMCpaper/")
+# setwd("/hugetmp/publications/FireForecasting/data")
 # rasterOptions(tmpdir="/hugetmp/tmp")
 # Check path dirname(rasterTmpFile()) 
 ```
@@ -63,20 +65,37 @@ We will demonstrate how to calculate and validate fire danger levels for 4 GFED4
 - Southern Hemisphere South America (SHSA) and Chile.
 
 ```{r}
-regions <- c("BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO", "MIDE", "NHAF",
-             "SHAF", "BOAS", "CEAS", "SEAS", "EQAS", "AUST")
-zones <- c("north", "north", "tropics", "tropics", "south", "north", "north",
-           "tropics", "south", "north", "north", "tropics", "tropics", "south")
+# All the GFED4 regions
+df_gfed4 <- data.frame(ID = 1:14,
+                 Region = c("BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO",
+                            "MIDE", "NHAF", "SHAF", "BOAS", "CEAS", "SEAS",
+                            "EQAS", "AUST"),
+                 Zone = c("north", "north", "tropics", "tropics", "south",
+                          "north", "north", "tropics", "south", "north",
+                          "north", "tropics", "tropics", "south"),
+                 stringsAsFactors = FALSE)
+
+BasisRegions <- caliver::get_gfed4(varname = "BasisRegions")
+simplepolys <- maptools::unionSpatialPolygons(BasisRegions, BasisRegions$layer)
+BasisRegions <- SpatialPolygonsDataFrame(Sr = simplepolys[as.character(1:14)],
+                                         data = df_gfed4)
+saveRDS(object = BasisRegions, file = "BasisRegions_simplified.rds")
+# BasisRegions <- readRDS("BasisRegions_simplified.rds")
 
 # GFED4 regions of interest
-EURO <- get_gfed4(varname = "BasisRegions", region = "EURO")
-TENA <- get_gfed4(varname = "BasisRegions", region = "EQAS")
-SHSA <- get_gfed4(varname = "BasisRegions", region = "SHSA")
+EURO <- BasisRegions[BasisRegions$Region == "EURO",]
+TENA <- BasisRegions[BasisRegions$Region == "TENA",]
+SHSA <- BasisRegions[BasisRegions$Region == "SHSA",]
+# Countries of interest
+pt <- raster::getData(name = "GADM", country = "Portugal", level = 1)[-c(2,13), ]
+chile <- raster::getData(name = "GADM", country = "Chile", level = 0)
+cali <- raster::getData(name = "GADM", country = "USA", level = 1)[5, ] # cali
 
-BasisRegions <- get_gfed4(varname = "BasisRegions")
-BasisRegions@data$id <- 1:nrow(BasisRegions@data)   # add id column for join
-regionXFort <- fortify(BasisRegions, data = BasisRegions@data)
-regionXPoly <- merge(regionXFort, BasisRegions@data, 
+# All the GFED4 regions
+BasisRegions_join <- BasisRegions
+BasisRegions_join@data$id <- 1:nrow(BasisRegions_join@data)   # add id column for join
+regionXFort <- fortify(BasisRegions_join, data = BasisRegions_join@data)
+regionXPoly <- merge(regionXFort, BasisRegions_join@data, 
                      by.x = "id", by.y = "id")  # join data
 #regionXPoly$Region <- region
 
@@ -123,8 +142,10 @@ For a matter of consistency with the introductory vignette, we will use the FWI 
 
 ```{r}
 # FWI reanalysis dataset, GEFF reanalysis v2.0
-FWI <- brick("../geff/reanalysis/fwi.nc") # 7GB!
-FWI <- brick(FWI[[1:(nlayers(FWI)-365)]]) #only 1980-2016
+FWI <- brick("/hugetmp/GEFF_ERAI_Zenodo/fwi.nc") # 7GB!
+FWI <- FWI[[which(FWI@z[[1]] < as.Date("2017-01-01"))]] # only 1980-2016
+writeRaster(FWI, filename="fwi_erai_1980_2016.nc", format="CDF", overwrite=TRUE)
+# FWI <- raster::brick("fwi_erai_1980_2016.nc")
 ```
 
 ## Calculate fire danger classes by GFED4 areas and countries
@@ -141,11 +162,12 @@ dataDates <- seq.Date(from = as.Date("1980-01-01"),
 df <- matrix(data = NA, nrow = 0, ncol = 6)
 
 # Mask/Crop/Subset FWI and generate thresholds for each GFED4 region
-for (i in seq_along(regions)) {
-  print(i)
-  region <- regions[i]
-  regionPoly <- get_gfed4(varname = "BasisRegions", region = region)
-  season <- which(get_fire_season(dates = dataDates, zone = zones[i]) == TRUE)
+for (i in seq_along(df_gfed4$Region)) {
+  region <- df_gfed4$Region[i]
+  zone <- df_gfed4$Zone[i]
+  print(paste(i, region, zone))
+  regionPoly <- BasisRegions[BasisRegions$Region == region,]
+  season <- which(get_fire_season(dates = dataDates, zone = zone) == TRUE)
   regionR <- mask_crop_subset(r = FWI, p = regionPoly, idx = season)
   df <- rbind(df, c(region, get_fire_danger_levels(fire_index = regionR)))
 }
@@ -156,49 +178,60 @@ df[] <- lapply(X = df, FUN = as.character)
 df[2:6] <- lapply(X = df[2:6], FUN = as.numeric)
 
 # Mask/Crop/Subset FWI and generate thresholds for each country of interest
-listOfPlots <- list()
-countries <- c("Portugal", "Chile")
-zonescountries <- c("north", "south")
 regionData <- list()
-for (i in seq_along(countries)) {
-  region <- countries[i]
-  regionPoly <- raster::getData(name = "GADM", country = region, level = 0)
-  season <- which(get_fire_season(dates = dataDates, zone = zonescountries[i]) == TRUE)
-  regionR <- mask_crop_subset(r = FWI, p = regionPoly, idx = season)
-  df <- rbind(df, c(region, get_fire_danger_levels(fire_index = regionR)))
-  percs <- round(quantile(na.omit(as.vector(regionR)), 
-                        probs = c(0.70, 0.90, 0.98)), 0)
-  # Density plot with thresholds
-  listOfPlots[[i]] <- plot_fire_pdf(fire_index = regionR,
-                     thresholds = as.numeric(df[which(df[,1]== region), 2:6]),
-                     upper_limit = 110,
-                     v_lines = percs)
-  regionData[[i]] <- na.omit(as.vector(regionR))
-}
-
-regionPoly <- raster::getData(name = "GADM", country = "USA", level = 1)[6,]
+### Portugal ###
 season <- which(get_fire_season(dates = dataDates, zone = "north") == TRUE)
-regionR <- mask_crop_subset(r = FWI, p = regionPoly, idx = season)
-df <- rbind(df, c("California", get_fire_danger_levels(fire_index = regionR)))
-percs <- round(quantile(na.omit(as.vector(regionR)),
-                        probs = c(0.70, 0.90, 0.98)), 0)
+regionR_pt <- mask_crop_subset(r = FWI, p = pt, idx = season, accurate = FALSE)
+df <- rbind(df, c("Portugal", get_fire_danger_levels(fire_index = regionR_pt)))
+percs <- round(quantile(na.omit(as.vector(regionR_pt)), probs = c(0.70, 0.90, 0.98)), 0)
 # Density plot with thresholds
-listOfPlots[[3]] <- plot_fire_pdf(fire_index = regionR,
-                     thresholds = as.numeric(df[which(df[,1]== "California"), 2:6]),
-                     upper_limit = 110,
-                     v_lines = percs)
-regionData[[3]] <- na.omit(as.vector(regionR))
+pdf_pt <- plot_fire_pdf(fire_index = regionR_pt,
+              thresholds = as.numeric(df[which(df[,1]== "Portugal"), 2:6]),
+              upper_limit = 110,
+              v_lines = percs)
+regionData[[1]] <- na.omit(as.vector(regionR_pt))
+### Chile ###
+season <- which(get_fire_season(dates = dataDates, zone = "south") == TRUE)
+regionR_chile <- mask_crop_subset(r = FWI, p = chile, idx = season, accurate = FALSE)
+df <- rbind(df, c("Chile", get_fire_danger_levels(fire_index = regionR_chile)))
+percs <- round(quantile(na.omit(as.vector(regionR_chile)), probs = c(0.70, 0.90, 0.98)), 0)
+# Density plot with thresholds
+pdf_chile <- plot_fire_pdf(fire_index = regionR_chile,
+              thresholds = as.numeric(df[which(df[,1]== "Chile"), 2:6]),
+              upper_limit = 110,
+              v_lines = percs)
+regionData[[2]] <- na.omit(as.vector(regionR_chile))
+### California ###
+season <- which(get_fire_season(dates = dataDates, zone = "north") == TRUE)
+regionR_cali <- mask_crop_subset(r = FWI, p = cali, idx = season, accurate = FALSE)
+df <- rbind(df, c("California", get_fire_danger_levels(fire_index = regionR_cali)))
+percs <- round(quantile(na.omit(as.vector(regionR_cali)), probs = c(0.70, 0.90, 0.98)), 0)
+# Density plot with thresholds
+pdf_cali <- plot_fire_pdf(fire_index = regionR_cali,
+              thresholds = as.numeric(df[which(df[,1]== "California"), 2:6]),
+              upper_limit = 110,
+              v_lines = percs)
+regionData[[3]] <- na.omit(as.vector(regionR_cali))
 
 regionDF <- cbind.fill(regionData[[1]], regionData[[2]], regionData[[3]], fill = NA)
 names(regionDF) <- c("Portugal", "Chile", "California")
-
 # saveRDS(regionDF, "regionDF.rds")
 # saveRDS(df, "thresholds_geff.rds")
 # df <- readRDS("thresholds_geff.rds")
 knitr::kable(df, row.names = FALSE)
+# ggsave(file = paste0(region, "PDF2.eps"),
+#        plot = listOfPlots[[i]], width=unit(8, "in"), height=unit(5, "in"))
+```
 
-ggsave(file = paste0(region, "PDF2.eps"),
-       plot = listOfPlots[[i]], width=unit(8, "in"), height=unit(5, "in"))
+## Daily climatology fire danger by GFED4 areas and countries
+
+Calculate daily climatology.
+
+```{r}
+dclima <- caliver::daily_clima(r = FWI, probs = 0.50) # median
+dclima <- dclima[[c(1:59,61:366)]] # Remove 29-02
+writeRaster(dclima, filename='dclima_50.nc', format="CDF", overwrite=TRUE)
+# dclima <- brick("dclima_50.nc")
 ```
 
 ## POD by GFED4 regions
@@ -207,94 +240,111 @@ It is interesting to try and understand whether there is a higher POD in some ar
 
 * use the previously calculated regional thresholds
 * extract 1 year of forecasts (day 2 and 6 only)
-* for each forecast day we compare the forecasted fwi to the frp observed from satellites
+* for each forecast day we compare the forecasted fwi to the frp observed from satellites, adding also the climatology
 
 ```{r}
+# Load thresholds
+df <- readRDS("thresholds_geff.rds")
+
+# Get forecasts for day 2-6-10
 day2FWI <- stack()
 day6FWI <- stack()
-for (file in list.files(path = "../geff/forecast/fwi2017/ffwi_rotated", pattern = "*hr.nc", full.names = TRUE)){
+day10FWI <- stack()
+for (file in list.files(path = "/hugetmp/FireEventsDatabase/fwi2017/ffwi_rotated",
+                        pattern = "*hr.nc", full.names = TRUE)){
   print(file)
   x <- brick(file)
   day2FWI <- stack(day2FWI, x[[2]])
   day6FWI <- stack(day6FWI, x[[6]])
+  day10FWI <- stack(day10FWI, x[[10]])
 }
 
-# Read in Fire Radiative Power (frp)
-frp <- raster::brick("../CAMS/CAMS_2017-01-01_2017-12-31_frpfire_rotated.nc")
+# Read in Fire Radiative Power (frp) and resample
+frp <- raster::brick("/hugetmp/CAMS/CAMS_2017-01-01_2017-12-31_frpfire_rotated.nc")
 frpR <- raster::resample(x = frp, y = day2FWI[[1]], progress = "text")
 
-rm(frp, x, file)
-gc()
+# Load clima, if not already in memory
+# dclima <- brick("dclima_50.nc")
+# Resample clima
+dclimaR <- resample(x = dclima, y = day2FWI[[1]], progress = "text")
 
-POD2 <- POD6 <- c()
-for (region in regions){
+POD2 <- POD6 <- POD10 <- climafire <- c()
+for (i in 1:14){
+
+  print(df_gfed4$Region[i])
+
+  areaOfInterest <- BasisRegions[i,]
+  my_threshold <- as.numeric(df$`Very high`[df$RegionCountry == df_gfed4$Region[i]])
   
-  print(region)
-  
-  areaOfInterest <- caliver::get_gfed4(varname = "BasisRegions",
-                                       region = region)
-  areaOfInterest <- as(raster::extent(areaOfInterest), "SpatialPolygons")
-  
-  highT <- as.numeric(df$`Very high`[df$Location == region])
-  
-  frpM <- mask_crop_subset(r = frpR, p = areaOfInterest)
-  day2FWIM <- mask_crop_subset(r = day2FWI, p = areaOfInterest)
-  day6FWIM <- mask_crop_subset(r = day6FWI, p = areaOfInterest)
-  # dim(day2FWIM) == dim(frpM); dim(day6FWIM) == dim(frpM)
+  frpM <- caliver::mask_crop_subset(r = frpR, p = areaOfInterest)
+  #day2FWIM <- mask_crop_subset(r = day2FWI, p = areaOfInterest)
+  #day6FWIM <- mask_crop_subset(r = day6FWI, p = areaOfInterest)
+  day10FWIM <- mask_crop_subset(r = day10FWI, p = areaOfInterest)
+  clima_temp <- mask_crop_subset(r = dclima, p = areaOfInterest)
   
   frp_vector <- as.vector(frpM[])
-  day2_vector <- as.vector(day2FWIM[])
-  day6_vector <- as.vector(day6FWIM[])
+  #day2_vector <- as.vector(day2FWIM[])
+  #day6_vector <- as.vector(day6FWIM[])
+  day10_vector <- as.vector(day10FWIM[])
+  clima_vector <- as.vector(clima_temp[])
   idx <- which(frp_vector >= 0.5)
   
   # Take only cells where there has been a large fire
   frp_vector <- frp_vector[idx]
-  day2_vector <- day2_vector[idx]
-  day6_vector <- day6_vector[idx]
-  
+  #day2_vector <- day2_vector[idx]
+  #day6_vector <- day6_vector[idx]
+  day10_vector <- day10_vector[idx]
+  clima_vector <- clima_vector[idx]
+
   frp_vector <- frp_vector >= 0.5
-  day2_vector <- day2_vector >= highT
-  day6_vector <- day6_vector >= highT
+  #day2_vector <- day2_vector >= my_threshold
+  #day6_vector <- day6_vector >= my_threshold
+  day10_vector <- day10_vector >= my_threshold
+  clima_vector <- clima_vector >= my_threshold
   
-  POD2 <- c(POD2, verify(obs = frp_vector, pred = day2_vector, 
+  #POD2 <- c(POD2, verify(obs = frp_vector, pred = day2_vector, frcst.type = "binary", obs.type = "binary")$POD)
+  
+  #POD6 <- c(POD6, verify(obs = frp_vector, pred = day6_vector, frcst.type = "binary", obs.type = "binary")$POD)
+  
+  POD10 <- c(POD10, verify(obs = frp_vector, pred = day10_vector, frcst.type = "binary", obs.type = "binary")$POD)
+
+  climafire <- c(climafire, verify(obs = frp_vector, pred = clima_vector, 
                          frcst.type = "binary", obs.type = "binary")$POD)
   
-  POD6 <- c(POD6, verify(obs = frp_vector, pred = day6_vector, 
-                         frcst.type = "binary", obs.type = "binary")$POD)
-  
-  rm(areaOfInterest, highT, frpM, day2FWIM, day6FWIM, frp_vector, day2_vector,
-     day6_vector, idx)
+  #rm(areaOfInterest, my_threshold, frpM, day2FWIM, day6FWIM, frp_vector, day2_vector, day6_vector, idx)
+  #saveRDS(POD2, "POD2.rds")
+  #saveRDS(POD6, "POD6.rds")
+  saveRDS(POD10, "POD10.rds")
+  saveRDS(climafire, "climafire.rds")
   gc()
-  # removeTmpFiles(3) # remove temp files older than 3 hours 
+  removeTmpFiles() # remove temp files
 }
-saveRDS(POD2, "POD2.rds")
-saveRDS(POD6, "POD6.rds")
 # POD2 <- readRDS("POD2.rds")
 # POD6 <- readRDS("POD6.rds")
+# POD10 <- readRDS("POD10.rds")
+# climafire <- readRDS("climafire.rds")
 
-allRegions <- get_gfed4(varname = "BasisRegions")
-
-regions.pod <- allRegions %>% broom::tidy(region = "layer")
+regions.pod <- BasisRegions %>% broom::tidy(region = "ID") # to fix!
 # add attributes
-regions.pod$POD2 <- regions.pod$POD6 <- NA
+regions.pod$POD2 <- regions.pod$POD6 <- regions.pod$POD10 <- regions.pod$clima <- NA
 for (i in 1:14){
-  regions.pod$POD2[regions.pod$id == as.character(i)] <- floor(POD2[i]*10)/10
-  regions.pod$POD6[regions.pod$id == as.character(i)] <- floor(POD6[i]*10)/10
+  regions.pod$POD2[regions.pod$id == as.character(i)] <- round(POD2[i], 1)
+  regions.pod$POD6[regions.pod$id == as.character(i)] <- round(POD6[i], 1)
+  regions.pod$POD10[regions.pod$id == as.character(i)] <- round(POD10[i], 1)
+  regions.pod$clima[regions.pod$id == as.character(i)] <- round(climafire[i], 1)
 }
 regions.pod$POD2 <- factor(regions.pod$POD2,
-                           levels = seq(from = 0.1,
-                                        to = 0.9,
-                                        by = 0.1),
-                           labels = seq(from = 0.1,
-                                        to = 0.9,
-                                        by = 0.1))
+                           levels = seq(from = 0.0, to = 1.0, by = 0.1),
+                           labels = seq(from = 0.0, to = 1.0, by = 0.1))
 regions.pod$POD6 <- factor(regions.pod$POD6,
-                           levels = seq(from = 0.1,
-                                        to = 0.9,
-                                        by = 0.1),
-                           labels = seq(from = 0.1,
-                                        to = 0.9,
-                                        by = 0.1))
+                           levels = seq(from = 0.0, to = 1.0, by = 0.1),
+                           labels = seq(from = 0.0, to = 1.0, by = 0.1))
+regions.pod$POD10 <- factor(regions.pod$POD10,
+                           levels = seq(from = 0.0, to = 1.0, by = 0.1),
+                           labels = seq(from = 0.0, to = 1.0, by = 0.1))
+regions.pod$clima <- factor(regions.pod$clima,
+                           levels = seq(from = 0.0, to = 1.0, by = 0.1),
+                           labels = seq(from = 0.0, to = 1.0, by = 0.1))
 
 ggplot(aes(x = long, y = lat), data = map_data("world")) +
   geom_polygon(aes(group = group), fill=NA, colour = "grey65") +
@@ -303,8 +353,8 @@ ggplot(aes(x = long, y = lat), data = map_data("world")) +
                aes(x = long, y = lat, group = group, fill = as.factor(POD2)),
                alpha = 0.6) +
   scale_fill_manual(name="POD2",
-                    values = brewer.pal(11, "Spectral"),
-                    drop = FALSE)
+                    values = c("#FFF7EC", "#FFF7EC", brewer.pal(9, "OrRd")), drop = FALSE) +
+  theme(text = element_text(size=20))
 
 ggplot(aes(x = long, y = lat), data = map_data("world")) +
   geom_polygon(aes(group = group), fill=NA, colour = "grey65") +
@@ -313,9 +363,28 @@ ggplot(aes(x = long, y = lat), data = map_data("world")) +
                aes(x = long, y = lat, group = group, fill = POD6),
                alpha = 0.6) +
   scale_fill_manual(name="POD6",
-                    values = brewer.pal(11, "Spectral"),
-                    drop = FALSE)
-  # scale_fill_gradientn(colours=rev(viridis::viridis(10)))
+                    values = c("#FFF7EC", "#FFF7EC", brewer.pal(9, "OrRd")), drop = FALSE) +
+  theme(text = element_text(size=20))
+
+ggplot(aes(x = long, y = lat), data = map_data("world")) +
+  geom_polygon(aes(group = group), fill=NA, colour = "grey65") +
+  coord_equal() +  theme_bw() + xlab("Longitude") + ylab("Latitude") +
+  geom_polygon(data = regions.pod,
+               aes(x = long, y = lat, group = group, fill = POD10),
+               alpha = 0.6) +
+  scale_fill_manual(name="POD10",
+                    values = c("#FFF7EC", "#FFF7EC", brewer.pal(9, "OrRd")), drop = FALSE) +
+  theme(text = element_text(size=20))
+
+ggplot(aes(x = long, y = lat), data = map_data("world")) +
+  geom_polygon(aes(group = group), fill=NA, colour = "grey65") +
+  coord_equal() +  theme_bw() + xlab("Longitude") + ylab("Latitude") +
+  geom_polygon(data = regions.pod,
+               aes(x = long, y = lat, group = group, fill = clima),
+               alpha = 0.6) +
+  scale_fill_manual(name="Climatology",
+                    values = c("#FFF7EC", "#FFF7EC", brewer.pal(9, "OrRd")), drop = FALSE) +
+  theme(text = element_text(size=20))
 ```
 
 ## Verify fire danger classes
@@ -551,7 +620,7 @@ areaOfInterest <- as(raster::extent(-74, -70, -37, -33), "SpatialPolygons")
 mydays <- seq(from=as.Date(start_date), to=as.Date(end_date), by="days")[(eventDay-9):eventDay]
 
 df <- readRDS("thresholds_geff.rds")
-highT <- as.numeric(df$`Very high`[df$Location == place])
+my_threshold <- as.numeric(df$`Very high`[df$Location == place])
 
 # Extract frp only once (for the event day)
 frpR <- raster::brick(paste0("../CAMS/CAMS_", start_date, "_", end_date, "_frpfire_rotated.nc"))[[eventDay]]
@@ -577,8 +646,8 @@ for (i in seq_along(mydays)) {
     fwi <- mask_crop_subset(r = fwiR, p = areaOfInterest, mask = TRUE, crop = FALSE)
     fwi <- raster::resample(fwi, frpR, progress = "text")
     fwi_v <- as.vector(fwi)
-    fwi_v[fwi_v < highT] <- FALSE
-    fwi_v[fwi_v >= highT] <- TRUE
+    fwi_v[fwi_v < my_threshold] <- FALSE
+    fwi_v[fwi_v >= my_threshold] <- TRUE
     A <- verify(obs = frp_v, pred = fwi_v,
                 frcst.type = "binary", obs.type = "binary")
     y[i, j] <- A$POD
@@ -612,7 +681,7 @@ areaOfInterest <- as(raster::extent(-8.5, -7.6, 39.6, 40.3), "SpatialPolygons")
 mydays <- seq(from=as.Date(start_date), to=as.Date(end_date), by="days")[(eventDay-9):eventDay]
 
 df <- readRDS("thresholds_geff.rds")
-highT <- as.numeric(df$`Very high`[df$Location == place])
+my_threshold <- as.numeric(df$`Very high`[df$Location == place])
 
 # Extract frp only once (for the event day)
 frpR <- raster::brick(paste0("../CAMS/CAMS_", start_date, "_", end_date, "_frpfire_rotated.nc"))[[eventDay]]
@@ -638,8 +707,8 @@ for (i in seq_along(mydays)) {
     fwi <- mask_crop_subset(r = fwiR, p = areaOfInterest, mask = TRUE, crop = FALSE)
     fwi <- raster::resample(fwi, frpR, progress = "text")
     fwi_v <- as.vector(fwi)
-    fwi_v[fwi_v < highT] <- FALSE
-    fwi_v[fwi_v >= highT] <- TRUE
+    fwi_v[fwi_v < my_threshold] <- FALSE
+    fwi_v[fwi_v >= my_threshold] <- TRUE
     A <- verify(obs = frp_v, pred = fwi_v,
                 frcst.type = "binary", obs.type = "binary")
     y[i, j] <- A$POD
@@ -672,7 +741,7 @@ areaOfInterest <- as(raster::extent(-123.4, -117.6, 33.7, 42), "SpatialPolygons"
 mydays <- seq(from=as.Date(start_date), to=as.Date(end_date), by="days")[(eventDay-9):eventDay]
 
 df <- readRDS("thresholds_geff.rds")
-highT <- as.numeric(df$`Very high`[df$Location == place])
+my_threshold <- as.numeric(df$`Very high`[df$Location == place])
 
 # Extract frp only once (for the event day)
 frpR <- raster::brick(paste0("../CAMS/CAMS_", start_date, "_", end_date, "_frpfire_rotated.nc"))[[eventDay]]
@@ -698,8 +767,8 @@ for (i in seq_along(mydays)) {
     fwi <- mask_crop_subset(r = fwiR, p = areaOfInterest, mask = TRUE, crop = FALSE)
     fwi <- raster::resample(fwi, frpR, progress = "text")
     fwi_v <- as.vector(fwi)
-    fwi_v[fwi_v < highT] <- FALSE
-    fwi_v[fwi_v >= highT] <- TRUE
+    fwi_v[fwi_v < my_threshold] <- FALSE
+    fwi_v[fwi_v >= my_threshold] <- TRUE
     A <- verify(obs = frp_v, pred = fwi_v,
                 frcst.type = "binary", obs.type = "binary")
     y[i, j] <- A$POD
@@ -946,8 +1015,8 @@ df <- df[df$id %in% names(table(df$id)[which(table(df$id) == 30)]), ]
 stPT <- stPT[stPT$id %in% df$id, ]
 
 # FROM REANALYSIS
-plot(x = df$fwiobs, y = df$fwimod)
-lm(formula = fwiobs~fwimod, data = df)
+plot(x = df$fwiobs, y = df$fwimod_re)
+lm(formula = fwiobs~fwimod_re, data = df)
 
 # GET FORECASTS
 start_date <- "2017-06-01"
@@ -1151,4 +1220,324 @@ smoothScatter(df2$fwiobs,df2$fwimod, nrpoints = 0, postPlotHook=fudgeit,
               xlim = c(0,120), ylim = c(0,120),
               colramp = Lab.palette, pch = 20, cex = 0.5,
               xlab = "FWI observed", ylab = "FWI modelled")
+```
+
+## Compare SYNOP worldwide
+```{r}
+df <- readRDS("/hugetmp/publications/geff-erai_datadescriptor/datasets/df_all.rds")
+stations <- readRDS("/hugetmp/publications/geff-erai_datadescriptor/datasets/stations_all.rds")
+
+# FWI from reanalysis
+fwi2017 <-  raster::brick("/hugetmp/publications/geff-erai_datadescriptor/datasets/fwi2017re.nc")
+names(fwi2017) <- seq.Date(from = as.Date("2017-01-01"),
+                           to = as.Date("2017-12-31"),
+                           by = "day")
+
+# Get forecasts for day 2-6-10
+day2FWI <- stack()
+day6FWI <- stack()
+day10FWI <- stack()
+for (file in list.files(path = "/hugetmp/FireEventsDatabase/fwi2017/ffwi_rotated",
+                        pattern = "*hr.nc", full.names = TRUE)){
+  print(file)
+  x <- brick(file)
+  day2FWI <- stack(day2FWI, x[[2]])
+  day6FWI <- stack(day6FWI, x[[6]])
+  day10FWI <- stack(day10FWI, x[[10]])
+}
+
+df_used <- data.frame(matrix(NA, nrow = 0, ncol = 17))
+names(df_used) <- c("id", "lat", "long", "UTCtime", "yr", "mon", "day", "hour",
+                    "temp", "prec", "rh", "ws", "fwiobs", "fwimod_re",
+                    "fwimod_d2", "fwimod_d6", "fwimod_d10")
+for (i in seq_along(stations$id)){
+
+  # We filter over the station
+  dfx <- df %>% filter(id == stations$id[i],
+                       lat == stations$lat[i],
+                       long == stations$long[i])
+  print(paste(i, dim(dfx)[1]))
+
+  if (dim(dfx)[1] >= 30){
+    # Calculate the observed FWI
+    initial_condition <- data.frame(ffmc = 85, dmc = 6, dc = 15,
+                                    lat = dfx$lat[1])
+    dfx$fwiobs <- cffdrs::fwi(input = dfx,
+                              init = initial_condition,
+                              out = "fwi")$FWI
+    
+    # Define spatial point
+    spdf <- dfx[1, ]
+    # Promote data.frame to spatial
+    coordinates(spdf) = ~long + lat
+    
+    # Select timestamp
+    mytimestamps <- which(substr(names(fwi2017), 2, 11) %in%
+                            paste0(dfx$yr, ".", sprintf("%02d", dfx$mon), ".",
+                                   sprintf("%02d", dfx$day)))
+
+    # Extract the modelled FWI from reanalysis
+    temp_re <- t(raster::extract(x = fwi2017, y = spdf))
+    dfx$fwimod_re <- temp_re[mytimestamps]
+    
+    # Extract the modelled FWI from HRES day 2
+    temp_d2 <- t(raster::extract(x = day2FWI, y = spdf))
+    dfx$fwimod_d2 <- temp_d2[mytimestamps]
+    
+    # Extract the modelled FWI from HRES day 6
+    temp_d6 <- t(raster::extract(x = day6FWI, y = spdf))
+    dfx$fwimod_d6 <- temp_d6[mytimestamps]
+    
+    # Extract the modelled FWI from HRES day 10
+    temp_d10 <- t(raster::extract(x = day10FWI, y = spdf))
+    dfx$fwimod_d10 <- temp_d10[mytimestamps]
+
+    df_used <- dplyr::bind_rows(df_used, dfx)
+    rm(mytimestamps, temp_re, temp_d2, temp_d6, temp_d10, initial_condition, dfx)
+  }
+
+}
+
+saveRDS(df_used, "SYNOPtable.rds")
+
+# Remove NAs
+df_temp <- df_used[complete.cases(df_used),]
+saveRDS(df_temp, "SYNOPtable_no_missing.rds")
+```
+
+```{r}
+# MAP LENGTH OF FIRE SEASON BASED ON 5C THRESHOLD
+# /perm/rd/nen/claudia
+era <- brick("/perm/rd/nen/claudia/era_t2_an_daymax.nc")
+fire_length <- calc(era, caliver::get_fire_season_length)
+# Open a file
+png("fire_season_length.png", width = 1000) 
+# 2. Create a plot
+plot(rotate(fire_length, main = "Fire season length"))
+maps::map("world", add = TRUE, col = "lightgrey")
+# Close the file
+dev.off()
+```
+
+## SCORING RULES
+Extract reanalysis and forecasted values.
+
+```{r}
+# FWI reanalysis dataset, GEFF reanalysis v2.0
+# rasterTmpFile('/hugetmp/tmpdir/')
+BasisRegions <- readRDS("BasisRegions_simplified.rds")
+FWI <- brick("/hugetmp/GEFF_ERAI_Zenodo/fwi.nc") # 7GB!
+rea <- FWI[[which(substr(FWI@z[[1]], 1, 4) == "2017")]] # only 2017
+ens_test <- brick("/hugetmp/FireEventsDatabase/fwi2017/ffwi_rotated/cfwis_ffwi_20170101_1200_00.nc")[[1]]
+# Resample so that reanalysis and ens have same cells
+rea_res <- resample(rea, ens_test, progress = "text")
+year2017 <- seq.Date(from = as.Date("2017-01-01"), to = as.Date("2017-12-31"), by = "day")
+dfre <- array(NA, c(365, 1, 14))
+df02 <- df06 <- df10 <- array(NA, c(365, 51, 14))
+# seq_along(year2017) # corrupted: 108,42,: and i = 324-344
+for (i in seq_along(year2017)){
+  print(year2017[i])
+  # Find cells in reanalysis where FWI > 5
+  #rea_mask <- rea_res[[i]] > 5
+  for (k in 1:14){
+    # print(k)
+    # Find average FWI by region
+    rea_cropped <- caliver::mask_crop_subset(rea_res[[i]], BasisRegions[k, ])
+    dfre[i, 1, k] <- cellStats(x = rea_cropped, stat = mean)
+    for (j in 0:50){
+      ens_member <- stringr::str_pad(j, 2, pad = "0")
+      file_ens <- paste0("/hugetmp/FireEventsDatabase/fwi2017/ffwi_rotated/cfwis_ffwi_",
+                         gsub(pattern = "-", replacement = "", year2017[i]),
+                         "_1200_", ens_member, ".nc")
+      ens <- brick(file_ens)[[c(2, 6, 10)]]
+      ens_cropped <- try(caliver::mask_crop_subset(ens, BasisRegions[k, ]), silent = TRUE)
+      if (class(ens_cropped) != "try-error"){
+        df02[i, j + 1, k] <- cellStats(x = ens_cropped[[1]], stat = mean)
+        df06[i, j + 1, k] <- cellStats(x = ens_cropped[[2]], stat = mean)
+        df10[i, j + 1, k] <- cellStats(x = ens_cropped[[3]], stat = mean)
+      }
+    }
+  }
+  saveRDS(dfre, "dfre.rds")
+  saveRDS(df02, "df02.rds")
+  saveRDS(df06, "df06.rds")
+  saveRDS(df10, "df10.rds")
+}
+
+# Remove NAs - some files may be corrupted
+idx <- which(!is.na(dfre[, 1, 1]))
+dfre <- dfre[idx, , ]
+df02 <- df02[idx, , ]
+df06 <- df06[idx, , ]
+df10 <- df10[idx, , ]
+saveRDS(dfre, "dfre_noNAs.rds")
+saveRDS(df02, "df02_noNAs.rds")
+saveRDS(df06, "df06_noNAs.rds")
+saveRDS(df10, "df10_noNAs.rds")
+```
+
+Use the above values for plotting.
+
+```{r}
+library(ggplot2)
+library(ggridges)
+
+dfre <- readRDS("dfre_noNAs.rds")
+df02 <- readRDS("df02_noNAs.rds")
+df06 <- readRDS("df06_noNAs.rds")
+df10 <- readRDS("df10_noNAs.rds")
+xdays <- dim(dfre)[1]
+for (region in 1:14){
+  tdf_re <- dfre[, region]
+  tdf_02 <- df02[, , region]
+  tdf_06 <- df06[, , region]
+  tdf_10 <- df10[, , region]
+  # Calculate Biases
+  tdf_02b <- as.data.frame(tdf_02 - tdf_re)
+  tdf_06b <- as.data.frame(tdf_06 - tdf_re)
+  tdf_10b <- as.data.frame(tdf_10 - tdf_re)
+  # Rbind and Melt
+  tdf_02b$Day <- 1:xdays; tdf_02b$Leadtime <- 2
+  tdf_06b$Day <- 1:xdays; tdf_06b$Leadtime <- 6
+  tdf_10b$Day <- 1:xdays; tdf_10b$Leadtime <- 10
+  tdf <- rbind(tdf_02b, tdf_06b, tdf_10b)
+  tdfm <- reshape2::melt(tdf, id=c("Day", "Leadtime"))
+  # grouped boxplot
+  ggplot(tdfm, aes(x=Day, y=value, group = Leadtime)) + 
+    geom_boxplot()
+  cols <- rainbow(3, s = 0.5)
+  boxplot(value ~ Leadtime, data = tdfm, col = cols,
+          names = c("Day2", "Day6", "Day10"),
+          horizontal = TRUE)
+  # Calculate ensemble means
+  # tdf_02_mean <- apply(X = tdf_02, MARGIN = 1, FUN = mean)
+  # tdf_06_mean <- apply(X = tdf_06, MARGIN = 1, FUN = mean)
+  # tdf_10_mean <- apply(X = tdf_10, MARGIN = 1, FUN = mean)
+  # Melt data.frames
+  # tdf_rem <- data.frame(Day = 1:xdays, REA = tdf_re)
+  # tdf_rem <- do.call("rbind",
+  #                    replicate(51, tdf_rem, simplify = FALSE))
+  # tdf_rem <- cbind(tdf_rem, Member = rep(1:51, each = xdays))
+  # tdf_rem <- tdf_rem[, c(1, 3, 2)]
+  # tdfrem <- reshape2::melt(tdf_rem, id=c("Day", "Member"))
+  # tdfrem02 <- tdfrem; tdfrem02$variable <- "D02"
+  # tdfrem06 <- tdfrem; tdfrem06$variable <- "D06"
+  # tdfrem10 <- tdfrem; tdfrem10$variable <- "D10"
+  # tdfrem <- rbind(tdfrem02, tdfrem06, tdfrem10)
+  # tdf_02m <- reshape2::melt(tdf_02); names(tdf_02m) <- c("Day", "Member", "D02")
+  # tdf_06m <- reshape2::melt(tdf_06); names(tdf_06m) <- c("Day", "Member", "D06")
+  # tdf_10m <- reshape2::melt(tdf_10); names(tdf_10m) <- c("Day", "Member", "D10")
+  # tdf <- cbind(tdf_02m, D06 = tdf_06m$D06, D10 = tdf_10m$D10)
+  # tdfm <- reshape2::melt(tdf, id=c("Day", "Member"))
+  # Boxplots
+  boxplot(tdfrem$value, tdf_02m$D02, tdf_06m$D06, tdf_10m$D10)
+  # Densities
+  ggplot() + 
+    geom_density(data = tdfm, aes(x = value, group = variable, fill=variable),
+                 alpha=0.5, adjust=2) +
+    geom_density(data = tdfrem, aes(x = value, fill="REA"), alpha=0.5, adjust=2) +
+    scale_x_continuous(limits=c(0, 12.5), expand = c(0, 0)) +
+    theme_bw() +
+    ylab("Density") +
+    xlab("FWI")
+  # Conduct one-way ANOVA
+  tdf <- as.data.frame(cbind(tdf_rem$REA, tdf_02m$D02, tdf_06m$D06, tdf_10m$D10))
+  tdf_stack <- stack(tdf)
+  anova1 <- aov(values ~ ind, data = tdf_stack)
+  summary(anova1)
+  TukeyHSD(anova1)
+  # Plot time series
+  ggplot() + 
+    geom_line(data = tdfm, aes(x = Day, y = value, group = Member), color = "lightgray") +
+    facet_grid(rows = vars(variable)) +
+    geom_line(data = tdfrem, aes(x = Day, y = value, group = Member), color = "red") +
+    scale_x_continuous(limits=c(1, xdays), expand = c(0, 0)) +
+    theme_bw() +
+    ylab("FWI") +
+    xlab("")
+}
+```
+
+Continuous Ranked Probability Score for ensemble forecasts
+
+```{r}
+dfre <- readRDS("dfre_noNAs.rds")
+df02 <- readRDS("df02_noNAs.rds")
+df06 <- readRDS("df06_noNAs.rds")
+df10 <- readRDS("df10_noNAs.rds")
+
+library("easyVerification")
+
+crps <- data.frame(matrix(NA, nrow = 0, ncol = 5))
+
+for (region in 1:14){
+  
+  print(region)
+  
+  fc_Mem_02 <- df02[, , region]
+  fc_Mem_06 <- df06[, , region]
+  fc_Mem_10 <- df10[, , region]
+  Obs <- dfre[, region]
+  
+  CRPS_FC_02 <- veriApply(verifun = "EnsCrps", fcst = fc_Mem_02, obs = Obs)
+  CRPS_FC_06 <- veriApply(verifun = "EnsCrps", fcst = fc_Mem_06, obs = Obs)
+  CRPS_FC_10 <- veriApply(verifun = "EnsCrps", fcst = fc_Mem_10, obs = Obs)
+  tmp <- data.frame(day02 = CRPS_FC_02,
+                     day06 = CRPS_FC_06,
+                     day10 = CRPS_FC_10)
+  tmp$day <- 1:343
+  tmp$region <- region
+  
+  crps <- rbind(crps, tmp)
+}
+saveRDS(object = crps, file = "crps.rds")
+
+# Daily mean across regions
+library(tidyverse)
+crps_mean <- crps %>%
+  group_by(day) %>%
+  summarise(Day2 = list(enframe(quantile(day02, probs=c(0.10, 0.50, 0.90), na.rm = TRUE))),
+            Day6 = list(enframe(quantile(day06, probs=c(0.10, 0.50, 0.90), na.rm = TRUE))),
+            Day10 = list(enframe(quantile(day10, probs=c(0.10, 0.50, 0.90), na.rm = TRUE)))) %>%
+  unnest %>%
+  select(day, name, value, value1, value2) %>%
+  rename(Day = day, Prob = name, Day2 = value, Day6 = value1, Day10 = value2)
+# Plot quantiles
+crps_long <- reshape2::melt(crps_mean, id = c("Day", "Prob")) # convert to long format
+ggplot(data=crps_long, aes(x=Day, y=value, colour=Prob)) +
+  geom_line() +
+  facet_grid(variable ~ .) +
+  xlab("Day of year") +
+  ylab("CRPS")+
+  scale_color_manual(values=c('#999999','#E69F00', '#999999')) +
+  scale_x_continuous(limits=c(1, 343), expand = c(0, 0)) +
+  theme_bw()
+# Plot histograms
+crps_hist <- crps %>%
+  group_by(day) %>%
+  summarise(Day2 = mean(day02, na.rm = TRUE),
+            Day6 = mean(day06, na.rm = TRUE),
+            Day10 = mean(day10, na.rm = TRUE))
+crps_hist <- reshape2::melt(crps_hist, id = "day")
+ggplot(crps_hist, aes(x=value, color=variable, fill=variable)) +
+  geom_histogram(position="dodge") +
+  xlab("")
+
+
+# Example plot
+crps_long <- reshape2::melt(crps, id = c("day", "region"))  # convert to long format
+ggplot(data=crps_long, aes(x=day, y=value, colour=variable)) +
+  geom_line() +
+  facet_grid(region ~ .)
+
+# Region X
+region <- 1
+x <- as.data.frame(df02[, , region])
+x$day <- 1:343
+x$rea <- dfre[, region]
+x <- reshape2::melt(x, id = "day")
+x$Type <- "Ensemble"; x$Type[x$variable == "rea"] <- "Reanalysis"
+ggplot(data=x, aes(x=day, y=value, colour=Type, group = variable)) +
+  geom_line() +
+  scale_color_manual(values=c('#999999','#E69F00'))
 ```

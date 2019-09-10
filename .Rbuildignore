@@ -12,3 +12,7 @@
 ^docs$
 ^_pkgdown\.yml$
 ^Dockerfile$
+^CONTRIBUTING.md$
+^data$
+^\.covrignore$
+^\.lintr$

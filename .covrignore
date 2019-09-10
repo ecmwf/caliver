@@ -1,0 +1,9 @@
+R/zzz.R
+R/deprecated.R
+R/get_fire_season_length.R
+R/get_gfed4.R
+R/forecast_summary.R
+R/forecast_summary_clima.R
+R/firegram.R
+R/plot_percentile_raster.R
+R/plot_fire_pdf.R

@@ -8,45 +8,25 @@
 
 **caliver** is a package developed for the R programming language. The name stands for **cal**Ibration and **ver**ification of gridded models. Although caliver was initially designed for wildfire danger models such as GEFF (developed by ECMWF) and RISICO (developed by CIMA Research Foundation), the algorithms can be applied to any gridded model output. Caliver is available with an APACHE-2 license.
 
-For more details, please see the following paper:
+For more details, please see the following papers:
 
 *Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **“Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs”**. PLOS ONE 13 (1). Public Library of Science: 1–18. [doi:10.1371/journal.pone.0189419](doi:10.1371/journal.pone.0189419)*
 
-## External dependencies
-The installation of the caliver package depends on the Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/), a translator library for raster and vector geospatial data formats, with HDF4 and HDF5 support), the NetCDF4 library ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)) and the HDF5 library([hdf5](https://www.hdfgroup.org/solutions/hdf5/)).
+*Vitolo C., Di Giuseppe F., Krzeminski B., San-Miguel-Ayanz J., 2019. A 1980–2018 global fire danger re-analysis dataset for the Canadian Fire Weather Indices, Scientific Data. https://doi.org/10.1038/sdata.2019.32*
 
-Assuming the user has already installed R, below are the instructions to install caliver's external dependencies on various operating systems.
+## Installation
+The installation of the caliver package depends on the following libraries:
 
-On **Ubuntu-Linux**, run the following in a terminal:
+* [HDF4](https://support.hdfgroup.org/ftp/HDF/releases/HDF4.2.14/src/hdf-4.2.14.tar.gz) and [HDF5](https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.gz)
+* Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/))
+* NetCDF4 ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/)
 
-* `sudo apt-get install libssl-dev`
-* `sudo apt-get install libproj-dev`
-* `sudo apt-get install libgdal-dev`
-* `sudo apt-get install gdal-bin`
-* `sudo apt-get install libhdf5-dev`
-* `sudo apt-get install libnetcdf-dev`
-* `sudo apt-get install netcdf-bin`
-
-On **MAC**, use homebrew and run the following in a terminal:
-
-* `brew install netcdf`
-* `brew install hdf5`
-* `brew install proj`
-* `brew install gdal`
-
-On **Windows**, follow the steps below:
-
-  * install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
-  * launch an R console and run the following commands:
-    - ToDo
-
-## Install and load caliver
-
-Get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
+Make sure you have the above libraries installed before attempting to install caliver.
+Once all the dependencies are installed, get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
 
 ``` r
-install.packages("devtools")
-devtools::install_github("ecmwf/caliver")
+install.packages("remotes")
+remotes::install_github("ecmwf/caliver")
 ```
 
 Load the caliver package:
@@ -56,7 +36,7 @@ library("caliver")
 ```
 
 ## Docker
-If you use docker, in this repository you find a Dockerfile that contains all the necessary dependencies and the caliver package already installed.
+In this repository you find a Dockerfile that contains all the necessary dependencies and the caliver package already installed.
 
 ```
 docker build -t ecmwf/caliver:latest -f Dockerfile .

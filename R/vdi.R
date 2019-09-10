@@ -64,21 +64,23 @@ vdi <- function(dc, dmc){
 
   veg_drought <- raster::overlay(dc, dmc, fun = dc_dmc_class, progress = "text")
 
-  # Define a Raster Attribute Table (RAT)
-  rat <- data.frame(id = 1:5,
-                    danger = c("No Vulnerability", "Limited drying",
-                               "Moderate drying", "Important drying",
-                               "Extreme drying"),
-                    stringsAsFactors = FALSE)
-  rat$id <- factor(x = rat$id, levels = 1:5)
-  rat$danger <- factor(x = rat$danger,
-                       levels = c("No Vulnerability", "Limited drying",
-                                  "Moderate drying", "Important drying",
-                                  "Extreme drying"))
-  names(rat) <- c("ID", "Danger")
+  if (nlayers(veg_drought) == 1){
+    veg_drought <- raster::ratify(veg_drought)
 
-  veg_drought <- raster::ratify(veg_drought)
-  levels(veg_drought) <- rat
+    # Define a Raster Attribute Table (RAT)
+    rat <- data.frame(id = 1:5,
+                      danger = c("No Vulnerability", "Limited drying",
+                                 "Moderate drying", "Important drying",
+                                 "Extreme drying"),
+                      stringsAsFactors = FALSE)
+    rat$id <- factor(x = rat$id, levels = 1:5)
+    rat$danger <- factor(x = rat$danger,
+                         levels = c("No Vulnerability", "Limited drying",
+                                    "Moderate drying", "Important drying",
+                                    "Extreme drying"))
+    names(rat) <- c("ID", "Danger")
+    levels(veg_drought) <- rat
+  }
 
   return(veg_drought)
 }
