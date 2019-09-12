@@ -21,8 +21,6 @@
 #' @importFrom RCurl getURL getBinaryURL
 #' @importFrom plotrix rescale
 #' @importFrom reshape2 melt
-#' @importFrom viridis viridis plasma inferno
-#' @importFrom rasterVis levelplot
 #' @importFrom utils download.file untar
 #' @importFrom R.utils gunzip
 #'
