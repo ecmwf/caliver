@@ -1,7 +1,7 @@
 #' @title get_fire_season_length
 #'
-#' @description Get a map of the length of the fire season.
-#' This function is experimental and not exported for the time being.
+#' @description Get a map of the length of the fire season
+#' (EXPERIMENTAL, not exported yet).
 #'
 #' @param x RasterBrick containing the information.
 #' @param threshold numeric value used to identify the fire season.
