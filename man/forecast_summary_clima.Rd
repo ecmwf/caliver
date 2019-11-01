@@ -33,7 +33,7 @@ fwi (default, currently called cfwis), mark5, nfdrs.}
 }
 \description{
 Plot observations versus forecast using daily climatology
-(EXPERIMENTAL).
+(EXPERIMENTAL, not exported yet).
 }
 \examples{
 \dontrun{
