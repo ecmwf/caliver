@@ -1,6 +1,6 @@
 # caliver R package
 
-> CALIbration and VERification of gridded (wildfire danger) models
+> **cali**bration and **ver**ification of gridded (wildfire danger) models
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.376613.svg)](https://doi.org/10.5281/zenodo.376613)
 [![Travis-CI Build Status](https://travis-ci.org/ecmwf/caliver.svg?branch=master)](https://travis-ci.org/ecmwf/caliver)
@@ -10,9 +10,9 @@
 
 For more details, please see the following papers:
 
-*Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **“Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs”**. PLOS ONE 13 (1). Public Library of Science: 1–18. [doi:10.1371/journal.pone.0189419](doi:10.1371/journal.pone.0189419)*
+- *Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs**. PLOS ONE 13 (1). Public Library of Science: 1–18. [https://doi.org/10.1371/journal.pone.0189419](https://doi.org/10.1371/journal.pone.0189419)*
 
-*Vitolo C., Di Giuseppe F., Krzeminski B., San-Miguel-Ayanz J., 2019. A 1980–2018 global fire danger re-analysis dataset for the Canadian Fire Weather Indices, Scientific Data. https://doi.org/10.1038/sdata.2019.32*
+- *Vitolo C., Di Giuseppe F., Krzeminski B., San-Miguel-Ayanz J., 2019. **A 1980–2018 global fire danger re-analysis dataset for the Canadian Fire Weather Indices**, Scientific Data, vol. 6, no. 1. [https://doi.org/10.1038/sdata.2019.32](https://doi.org/10.1038/sdata.2019.32)*
 
 ## Installation
 The installation of the caliver package depends on the following libraries:

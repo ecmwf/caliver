@@ -9,7 +9,7 @@ import_geff_data_from_tar(archive, stack_ncfiles = TRUE)
 \arguments{
 \item{archive}{file path to the tar file}
 
-\item{stack_ncfiles}{logical (TRUE by default) variable to decided wheteher
+\item{stack_ncfiles}{logical (TRUE by default) variable to decided whether
 decompressed nc files should be stacked or not.}
 }
 \value{
