@@ -1,4 +1,235 @@
-#' @title forecast_summary
+#' @title make_forecast_summary
+#'
+#' @description Generate a summary table of deterministic forecasts compared
+#' with daily climatology.
+#' This function is EXPERIMENTAL, therefore not exported yet!
+#'
+#' @param input_dir folder containing forecast files
+#' @param p SpatialPolygon* identifying the area affected by fires
+#' @param event_dates date when observations end
+#' @param obs file path to observations (optional input)
+#' @param clima file path to dataset containing the climatological information.
+#' @param origin This is the rating system of interest:
+#' fwi (default, currently called cfwis), mark5, nfdrs.
+#' @param index This is the index to analyse
+#' (default is fwi, belonging to fwi origin).
+#'
+#' @examples
+#' \dontrun{
+#'   df <- make_forecast_summary(input_dir = "forecast",
+#'                                     p = fireBBOX,
+#'                                     event_dates = event_dates,
+#'                                     obs = "CAMS_frpfire.nc")
+#' }
+#'
+
+make_forecast_summary <- function(input_dir,
+                                        p = NULL,
+                                        event_dates,
+                                        obs = NULL,
+                                        clima,
+                                        origin = "FWI",
+                                        index = "fwi"){
+
+  message("Preparing climatology")
+  leap_year <- seq.Date(from = as.Date("2000-01-01"),
+                        to = as.Date("2000-12-31"),
+                        by = "day")
+  idx <- which(lubridate::month(leap_year) %in% lubridate::month(event_dates) &
+                 lubridate::day(leap_year) %in% lubridate::day(event_dates))
+  fire_clima <- raster::brick(clima)[[idx]]
+  fire_clima <- mask_crop_subset(r = fire_clima, p = p,
+                                 mask = TRUE, crop = TRUE)
+
+  message("Stacking forecast information")
+  # For each starting date and forecast date, calculate the percentage of
+  # pixels exceeding the clima
+  w <- raster::stack()
+  for (i in seq_along(event_dates)) {
+    print(event_dates[i])
+
+    # transform dates to strings to build file name
+    start_d <- gsub("-", "", as.character(event_dates[i]))
+
+    file2read <- file.path(input_dir,
+                           paste0("ECMWF_", origin,
+                                  "_", start_d, "_1200_hr_", index, ".nc"))
+    # Load file as brick
+    if (file.exists(file2read)) {
+      r <- raster::brick(file2read)
+    }
+
+    # Check extent
+    if (is.null(intersect(extent(r), extent(fire_clima)))) {
+      r = raster::rotate(r)
+    }
+
+    # Crop, if necessary
+    if (!is.null(p)) {
+      r <- mask_crop_subset(r, p)
+    }
+
+    if (i == 1) {
+      message("Resampling clima to match forecast (this is done only once!)")
+      fire_clima <- raster::resample(x = fire_clima, y = r, method = "ngb")
+    }
+
+    # Stack forecasts
+    for (j in 1:nlayers(r)){
+      fc_date <- as.Date(gsub(pattern = "\\.", replacement = "-",
+                              x = substr(names(r[[j]]), 2, 11)))
+      idx <- which(event_dates == fc_date)
+      if (length(idx) > 0){
+        r[[j]] <- r[[j]] > fire_clima[[idx]]
+      }else{
+        r[[j]] <- 0
+      }
+    }
+    w <- raster::stack(w, r)
+
+  }
+
+  # Total number of non-NA cells
+  n_total <- sum(as.vector(!is.na(w[[1]])))
+
+  # Calculate percentages
+  x <- round(raster::cellStats(w, sum) / n_total, 2) * 100
+  xmat <- matrix(x, ncol = 10, byrow = TRUE)
+
+  # Initialise the matrix to hold the values
+  raster_mean_matrix <- matrix(NA,
+                               nrow = length(event_dates),
+                               ncol = length(event_dates))
+
+  # Populate the matrix
+  j <- 1
+  for (i in seq_along(event_dates)){
+    if (j + 9 <= length(event_dates)){
+      w <- 10
+    }else{
+      w <- length(event_dates) - min(length(event_dates), j) + 1
+    }
+    raster_mean_matrix[i, j:(j + w - 1)] <- xmat[i, 1:w]
+    j <- j + 1
+  }
+
+  raster_mean_matrix <- data.frame(raster_mean_matrix)
+  raster_mean_matrix$event_dates <- event_dates
+
+  if (!is.null(obs)){
+
+    message("Preparing observations")
+    fire_obs <- raster::brick(obs)
+
+    obs_dates <- as.Date(gsub(pattern = "\\.", replacement = "-",
+                              x = substr(names(fire_obs),
+                                         start = 2, stop = 11)))
+    idx <- which(lubridate::month(obs_dates) %in%
+                   lubridate::month(event_dates) &
+                   lubridate::day(obs_dates) %in% lubridate::day(event_dates))
+    fire_obs <- fire_obs[[idx]]
+
+    if (is.null(intersect(extent(fire_obs), extent(fire_clima)))) {
+      fire_obs <- raster::rotate(fire_obs)
+    }
+
+    if (!is.null(p)) {
+      fire_obs <-  mask_crop_subset(r = fire_obs, p = p,
+                                    mask = TRUE, crop = TRUE)
+    }
+
+    # Extract time series
+    frp_ts <- as.numeric(raster::cellStats(fire_obs, sum))
+    obs_factor <- (max(frp_ts) - min(frp_ts))/length(frp_ts)
+
+    # Add observation data to data.frame
+    raster_mean_matrix$obs <- frp_ts
+    raster_mean_matrix$obs_rescaled <- frp_ts / obs_factor
+    raster_mean_matrix$obs_index <- 1:length(frp_ts)
+
+    # reshape the data.frame with forecast values
+    df <- reshape2::melt(raster_mean_matrix,
+                         id.vars = c("event_dates",
+                                     "obs_index", "obs", "obs_rescaled"))
+
+  }else{
+
+    # reshape the data.frame with forecast values
+    df <- reshape2::melt(raster_mean_matrix, id.vars = c("event_dates"))
+
+  }
+
+  df$variable <- as.numeric(gsub("X", "", df$variable))
+
+  return(df)
+
+}
+
+
+#' @title plot_forecast_summary
+#'
+#' @description Generate a plot of deterministic forecasts compared
+#' with daily climatology.
+#' This function is EXPERIMENTAL, therefore not exported yet!
+#'
+#' @param df data.frame obtained from \code{make_forecast_summary()}.
+#'
+#' @examples
+#' \dontrun{
+#'   df <- make_forecast_summary(input_dir = "forecast",
+#'                                     p = fireBBOX,
+#'                                     event_dates = event_dates,
+#'                                     obs = "CAMS_frpfire.nc")
+#'   plot_forecast_summary(df)
+#' }
+#'
+
+plot_forecast_summary <- function(df){
+
+  final_plot <- ggplot(df) +
+    geom_tile(aes_string(x = "variable", y = "obs_index", fill = "value"),
+              colour = "white") +
+    scale_fill_distiller(palette = "Spectral",
+                         na.value = NA,
+                         limits = c(0, 100),
+                         name = "% of pixels\nexceeding\nthreshold") +
+    theme_bw() + labs(x = "Observation date", y = "Forecast issue date") +
+    scale_x_continuous(expand = c(0, 0),
+                       breaks = unique(df$variable),
+                       labels = as.character(unique(df$event_dates))) +
+    theme(axis.text.x = element_text(angle = 90),
+          panel.grid.major = element_blank(),
+          plot.title = element_text(hjust = 0.5))
+
+  if ("obs" %in% names(df)){
+
+    obs_factor <- (max(df$obs) - min(df$obs))/max(df$obs_index)
+
+    final_plot <- final_plot +
+      geom_line(data = df,
+                aes_string(x = "obs_index", y = "obs_rescaled"),
+                linetype = 2,
+                col = "#47494c") +
+      scale_y_continuous(sec.axis = sec_axis(~ .*obs_factor,
+                                             name = "Fire radiative power [Wm-2]"),
+                         expand = c(0, 0),
+                         breaks = unique(df$variable),
+                         labels = as.character(unique(df$event_dates)))
+  }else{
+    final_plot <- final_plot +
+      scale_y_continuous(expand = c(0, 0),
+                         breaks = unique(df$variable),
+                         labels = as.character(unique(df$event_dates)))
+  }
+
+  return(final_plot)
+
+}
+
+
+### Old version, to be deprecated
+
+#' @title forecast_summary (TO BE DEPRECATED SOON!)
 #'
 #' @description Plot observations versus forecast
 #'
@@ -38,8 +269,8 @@ forecast_summary <- function(input_dir,
                              index = "fwi"){
 
   my_dates <- seq.Date(from = as.Date(start_date),
-                      to = as.Date(end_date),
-                      by = "day")
+                       to = as.Date(end_date),
+                       by = "day")
 
   message("Collating forecast information")
 
