@@ -54,13 +54,15 @@ make_forecast_summary <- function(input_dir,
     file2read <- file.path(input_dir,
                            paste0("ECMWF_", origin,
                                   "_", start_d, "_1200_hr_", index, ".nc"))
+
     # Load file as brick
     if (file.exists(file2read)) {
       r <- raster::brick(file2read)
     }
 
     # Check extent
-    if (is.null(intersect(extent(r), extent(fire_clima)))) {
+    if (is.null(raster::intersect(raster::extent(r),
+                                  raster::extent(fire_clima)))) {
       r = raster::rotate(r)
     }
 

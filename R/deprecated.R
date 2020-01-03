@@ -39,7 +39,7 @@ decompress_gz <- function(input_dir = getwd()){
 #' portal, the stack can contain different variables.
 #'
 #' @param archive file path to the tar file
-#' @param stack_ncfiles logical (TRUE by default) variable to decided wheteher
+#' @param stack_ncfiles logical (TRUE by default) that determines whether
 #' decompressed nc files should be stacked or not.
 #'
 #' @export

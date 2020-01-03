@@ -13,6 +13,7 @@
 #' @importFrom gdalUtils get_subdatasets gdal_translate
 #' @importFrom raster raster stack brick mask crop rotate extent extract t plot
 #' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay
+#' @importFrom raster intersect
 #' @importFrom rworldmap getMap
 #' @importFrom graphics plot legend par
 #' @importFrom stringr str_pad
