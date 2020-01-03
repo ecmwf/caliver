@@ -17,19 +17,19 @@
 #' @examples
 #' \dontrun{
 #'   df <- make_forecast_summary(input_dir = "forecast",
-#'                                     p = fireBBOX,
-#'                                     event_dates = event_dates,
-#'                                     obs = "CAMS_frpfire.nc")
+#'                               p = fireBBOX,
+#'                               event_dates = event_dates,
+#'                               obs = "CAMS_frpfire.nc")
 #' }
 #'
 
 make_forecast_summary <- function(input_dir,
-                                        p = NULL,
-                                        event_dates,
-                                        obs = NULL,
-                                        clima,
-                                        origin = "FWI",
-                                        index = "fwi"){
+                                  p = NULL,
+                                  event_dates,
+                                  obs = NULL,
+                                  clima,
+                                  origin = "FWI",
+                                  index = "fwi"){
 
   message("Preparing climatology")
   leap_year <- seq.Date(from = as.Date("2000-01-01"),
@@ -177,9 +177,9 @@ make_forecast_summary <- function(input_dir,
 #' @examples
 #' \dontrun{
 #'   df <- make_forecast_summary(input_dir = "forecast",
-#'                                     p = fireBBOX,
-#'                                     event_dates = event_dates,
-#'                                     obs = "CAMS_frpfire.nc")
+#'                               p = fireBBOX,
+#'                               event_dates = event_dates,
+#'                               obs = "CAMS_frpfire.nc")
 #'   plot_forecast_summary(df)
 #' }
 #'

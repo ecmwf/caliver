@@ -32,9 +32,9 @@ This function is EXPERIMENTAL, therefore not exported yet!
 \examples{
 \dontrun{
   df <- make_forecast_summary(input_dir = "forecast",
-                                    p = fireBBOX,
-                                    event_dates = event_dates,
-                                    obs = "CAMS_frpfire.nc")
+                              p = fireBBOX,
+                              event_dates = event_dates,
+                              obs = "CAMS_frpfire.nc")
 }
 
 }
