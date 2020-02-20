@@ -148,3 +148,33 @@
   return(r_sub)
 
 }
+
+# Convert longitudes from -180,+180 to 0,360 range
+.convert_long_from_180_to_360 <- function(long){
+  long <- ifelse(long < 0, 360 + long, long)
+}
+
+# Center the palette on zero
+# p <- levelplot(fwi_anomaly)
+.diverge0 <- function(p, ramp = 'RdBu', len_legend = 20) {
+  # p: a trellis object resulting from rasterVis::levelplot
+  # ramp: the name of an RColorBrewer palette (as character), a character
+  #       vector of colour names to interpolate, or a colorRampPalette.
+  require(RColorBrewer)
+  require(rasterVis)
+  if(length(ramp)==1 && is.character(ramp) && ramp %in%
+     row.names(brewer.pal.info)) {
+    ramp <- suppressWarnings(colorRampPalette(rev(brewer.pal(11, ramp))))
+  } else if(length(ramp) > 1 && is.character(ramp) && all(ramp %in% colors())) {
+    ramp <- colorRampPalette(ramp)
+  } else if(!is.function(ramp))
+    stop('ramp should be either the name of a RColorBrewer palette, ',
+         'a vector of colours to be interpolated, or a colorRampPalette.')
+  rng <- range(p$legend[[1]]$args$key$at)
+  s <- seq(-max(abs(rng)), max(abs(rng)), len=len_legend)
+  i <- findInterval(rng[which.min(abs(rng))], s)
+  zlim <- switch(which.min(abs(rng)), `1`=i:(len_legend), `2`=1:(i+1))
+  p$legend[[1]]$args$key$at <- s[zlim]
+  p$par.settings$regions$col <- ramp(len_legend - 1)[zlim[-length(zlim)]]
+  p
+}

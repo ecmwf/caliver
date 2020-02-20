@@ -35,8 +35,7 @@ make_forecast_summary <- function(input_dir,
   leap_year <- seq.Date(from = as.Date("2000-01-01"),
                         to = as.Date("2000-12-31"),
                         by = "day")
-  idx <- which(lubridate::month(leap_year) %in% lubridate::month(event_dates) &
-                 lubridate::day(leap_year) %in% lubridate::day(event_dates))
+  idx <- which(format(leap_year, "%m-%d") %in% format(event_dates, "%m-%d"))
   fire_clima <- raster::brick(clima)[[idx]]
   fire_clima <- mask_crop_subset(r = fire_clima, p = p,
                                  mask = TRUE, crop = TRUE)
@@ -126,9 +125,7 @@ make_forecast_summary <- function(input_dir,
     obs_dates <- as.Date(gsub(pattern = "\\.", replacement = "-",
                               x = substr(names(fire_obs),
                                          start = 2, stop = 11)))
-    idx <- which(lubridate::month(obs_dates) %in%
-                   lubridate::month(event_dates) &
-                   lubridate::day(obs_dates) %in% lubridate::day(event_dates))
+    idx <- which(format(obs_dates, "%m-%d") %in% format(event_dates, "%m-%d"))
     fire_obs <- fire_obs[[idx]]
 
     if (is.null(intersect(extent(fire_obs), extent(fire_clima)))) {
