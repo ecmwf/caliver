@@ -155,6 +155,7 @@
 }
 
 # Center the palette on zero
+# Source: https://stackoverflow.com/questions/33750235/plotting-a-raster-with-the-color-ramp-diverging-around-zero
 # p <- levelplot(fwi_anomaly)
 .diverge0 <- function(p, ramp = 'RdBu', len_legend = 20) {
   # p: a trellis object resulting from rasterVis::levelplot
