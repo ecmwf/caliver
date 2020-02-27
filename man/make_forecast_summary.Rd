@@ -34,7 +34,8 @@ This function is EXPERIMENTAL, therefore not exported yet!
   df <- make_forecast_summary(input_dir = "forecast",
                               p = fireBBOX,
                               event_dates = event_dates,
-                              obs = "CAMS_frpfire.nc")
+                              obs = "CAMS_frpfire.nc",
+                              clima)
 }
 
 }

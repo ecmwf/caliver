@@ -29,7 +29,8 @@
 anomaly <- function(r, clima){
 
   # Get the forecast dates
-  forecast_date <- substr(x = names(r), start = 2, stop = 11)
+  forecast_date <- as.Date(gsub(pattern = "\\.", replacement = "-",
+                                x = substr(x = names(r), start = 2, stop = 11)))
 
   # Extract layers corresponding to a given date
   r_sub <- .get_layers_for_clima(r = clima, single_date = forecast_date)

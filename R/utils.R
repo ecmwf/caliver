@@ -137,7 +137,8 @@
   idx_vector <- sort(unique(idx_vector))
 
   if (length(idx_vector) < length(idx) * 9){
-    message(paste0("Caution: climatology for the ", single_date,
+    message(paste0("Caution: climatology for the ",
+                   format(single_date, "%B %d"),
                    " is calculated using ", length(idx_vector),
                    " days rather then ", length(idx) * 9, "!"))
   }
@@ -154,28 +155,12 @@
   long <- ifelse(long < 0, 360 + long, long)
 }
 
-# Center the palette on zero
-# Source: https://stackoverflow.com/questions/33750235/plotting-a-raster-with-the-color-ramp-diverging-around-zero
-# p <- levelplot(fwi_anomaly)
-.diverge0 <- function(p, ramp = 'RdBu', len_legend = 20) {
-  # p: a trellis object resulting from rasterVis::levelplot
-  # ramp: the name of an RColorBrewer palette (as character), a character
-  #       vector of colour names to interpolate, or a colorRampPalette.
-  require(RColorBrewer)
-  require(rasterVis)
-  if(length(ramp)==1 && is.character(ramp) && ramp %in%
-     row.names(brewer.pal.info)) {
-    ramp <- suppressWarnings(colorRampPalette(rev(brewer.pal(11, ramp))))
-  } else if(length(ramp) > 1 && is.character(ramp) && all(ramp %in% colors())) {
-    ramp <- colorRampPalette(ramp)
-  } else if(!is.function(ramp))
-    stop('ramp should be either the name of a RColorBrewer palette, ',
-         'a vector of colours to be interpolated, or a colorRampPalette.')
-  rng <- range(p$legend[[1]]$args$key$at)
-  s <- seq(-max(abs(rng)), max(abs(rng)), len=len_legend)
-  i <- findInterval(rng[which.min(abs(rng))], s)
-  zlim <- switch(which.min(abs(rng)), `1`=i:(len_legend), `2`=1:(i+1))
-  p$legend[[1]]$args$key$at <- s[zlim]
-  p$par.settings$regions$col <- ramp(len_legend - 1)[zlim[-length(zlim)]]
-  p
-}
+# https://www.ncl.ucar.edu/Document/Graphics/ColorTables/BlAqGrWh2YeOrReVi22.shtml
+ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
+                  "#6FEAB5", "#5DCA61", "#4FAC23", "#50A612",
+                  "#74C417", "#99DD19", "#FFFFFF", "#FFFFFF",
+                  "#F9FE24", "#EADF1F", "#E4C31B", "#DCA31A",
+                  "#CB6013", "#C12D11", "#BE0010", "#860016",
+                  "#47003D", "#28005E")
+
+.is_date <- function(x) inherits(x, 'Date')
