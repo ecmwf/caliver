@@ -7,7 +7,7 @@
 #' @param dates Dates for which we need to calculate daily climatology.
 #' By default, this is a leap year.
 #' @param probs probability (or percentile).
-#' This is a decimal number between 0 and 1.
+#' This is a number between 0 and 1.
 #'
 #' @export
 #'
@@ -39,7 +39,7 @@ daily_clima <- function(r, dates = NULL, probs){
     # Assemble daily climatology over all the years in the brick
     for (j in seq_along(dates)){
 
-      message(paste("Day", j, "=", dates[[j]]))
+      message(paste("Day", j, "=", format(dates[[j]], "%B %d")))
 
       # Extract layers corresponding to a given date
       r_sub <- .get_layers_for_clima(r, dates[j])
