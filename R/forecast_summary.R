@@ -19,7 +19,8 @@
 #'   df <- make_forecast_summary(input_dir = "forecast",
 #'                               p = fireBBOX,
 #'                               event_dates = event_dates,
-#'                               obs = "CAMS_frpfire.nc")
+#'                               obs = "CAMS_frpfire.nc",
+#'                               clima)
 #' }
 #'
 
@@ -32,10 +33,11 @@ make_forecast_summary <- function(input_dir,
                                   index = "fwi"){
 
   message("Preparing climatology")
-  leap_year <- seq.Date(from = as.Date("2000-01-01"),
-                        to = as.Date("2000-12-31"),
-                        by = "day")
-  idx <- which(format(leap_year, "%m-%d") %in% format(event_dates, "%m-%d"))
+  clima_dates <- as.Date(gsub(pattern = "\\.",
+                              replacement = "-",
+                              x = substr(x = names(clima),
+                                         start = 2, stop = 11)))
+  idx <- which(format(clima_dates, "%m-%d") %in% format(event_dates, "%m-%d"))
   fire_clima <- raster::brick(clima)[[idx]]
   fire_clima <- mask_crop_subset(r = fire_clima, p = p,
                                  mask = TRUE, crop = TRUE)
@@ -55,9 +57,7 @@ make_forecast_summary <- function(input_dir,
                                   "_", start_d, "_1200_hr_", index, ".nc"))
 
     # Load file as brick
-    if (file.exists(file2read)) {
-      r <- raster::brick(file2read)
-    }
+    r <- raster::brick(file2read)
 
     # Check extent
     if (is.null(raster::intersect(raster::extent(r),
