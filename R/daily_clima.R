@@ -2,8 +2,10 @@
 #'
 #' @description This function generates daily climatological maps.
 #'
-#' @param r RasterBrick or RasterStack object used to calculate the climatology
-#' \code{names(r)} should also contain dates for comparison (e.g. X2017.01.01).
+#' @param clima RasterBrick or RasterStack object used to calculate the
+#' climatology.
+#' \code{names(clima)} should also contain dates for comparison
+#' (e.g. X2017.01.01).
 #' @param dates Dates for which we need to calculate daily climatology.
 #' By default, this is a leap year.
 #' @param probs probability (or percentile).
@@ -13,11 +15,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   daily_clima(r, dates, probs)
+#'   daily_clima(clima, dates, probs)
 #' }
 #'
 
-daily_clima <- function(r, dates = NULL, probs){
+daily_clima <- function(clima, dates = NULL, probs){
 
   if (is.null(dates)) {
     # By default use a leap year
@@ -44,9 +46,10 @@ daily_clima <- function(r, dates = NULL, probs){
       message(paste("Day", j, "=", format(dates[[j]], "%B %d")))
 
       # Extract layers corresponding to a given date
-      r_sub <- .get_layers_for_clima(r, dates[j])
+      clima_sub <- .get_layers_for_clima(clima = clima,
+                                         raster_date = dates[[j]])
 
-      temp_map <- raster::calc(x = r_sub,
+      temp_map <- raster::calc(x = clima_sub,
                                fun = function(x){
                                  raster::quantile(x, probs[i], na.rm = TRUE)
                                  })

@@ -113,11 +113,11 @@
 
 }
 
-.get_layers_for_clima <- function(r, single_date){
+.get_layers_for_clima <- function(clima, raster_date = NULL){
 
   # which indices correspond to day j?
-  idx <- which(substr(names(r), 7, 11) ==
-                 gsub("-", ".", substr(as.character(single_date), 6, 10)))
+  idx <- which(substr(names(clima), 7, 11) ==
+                 gsub("-", ".", substr(as.character(raster_date), 6, 10)))
 
   # Do not take the single day but the period spanning 4 days before and
   # 4 days after the given date
@@ -129,8 +129,8 @@
     elements2remove <- which(idx_vector <= 0)
     idx_vector <- idx_vector[-elements2remove]
   }
-  if (any(idx_vector > raster::nlayers(r))){
-    elements2remove <- which(idx_vector > raster::nlayers(r))
+  if (any(idx_vector > raster::nlayers(clima))){
+    elements2remove <- which(idx_vector > raster::nlayers(clima))
     idx_vector <- idx_vector[-elements2remove]
   }
 
@@ -138,15 +138,15 @@
 
   if (length(idx_vector) < length(idx) * 9){
     message(paste0("Caution: climatology for the ",
-                   format(single_date, "%B %d"),
+                   format(raster_date, "%B %d"),
                    " is calculated using ", length(idx_vector),
                    " days rather then ", length(idx) * 9, "!"))
   }
 
   # Collection of layers spanning the date of interest +/- 4 days & 37 years
-  r_sub <- r[[idx_vector]]
+  clima_sub <- clima[[idx_vector]]
 
-  return(r_sub)
+  return(clima_sub)
 
 }
 
