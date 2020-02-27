@@ -19,7 +19,7 @@ test_that("Testing the file utils.R - background_map_fun", {
   # Check whether the result is correct
   example_box <- as(raster::extent(-180, +180, -90, +90), "SpatialPolygons")
   p <- {
-    plot(example_box)
+    raster::plot(example_box)
     .background_map_fun()
   }
 

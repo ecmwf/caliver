@@ -6,7 +6,7 @@
   background_map <- rworldmap::getMap(resolution = "low")
 
   # Plotting function
-  plot(background_map, add = TRUE, border = "lightgray")
+  raster::plot(background_map, add = TRUE, border = "lightgray")
 
 }
 
