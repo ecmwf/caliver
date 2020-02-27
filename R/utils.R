@@ -162,5 +162,3 @@ ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
                   "#F9FE24", "#EADF1F", "#E4C31B", "#DCA31A",
                   "#CB6013", "#C12D11", "#BE0010", "#860016",
                   "#47003D", "#28005E")
-
-.is_date <- function(x) inherits(x, 'Date')
