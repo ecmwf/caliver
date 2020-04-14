@@ -164,9 +164,16 @@ ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
                   "#47003D", "#28005E")
 
 # Calculate relative humidity using Clausius-Clapeyron relation
-# t2m = 2m temperature
-# d2m = 2m dew point temperature
+# t2m = 2m temperature (in Kelvin)
+# d2m = 2m dew point temperature (in Kelvin)
 relative_humidity <- function(t2m, d2m){
+  # Values are calculated using the August-Roche-Magnus approximation.
+  numerator <- exp((17.625 * (d2m - 273.15)) / (243.04 + (d2m - 273.15)))
+  denominator <- exp((17.625 * (t2m - 273.15)) / (243.04 + (t2m - 273.15)))
+  rh <- (numerator * 100)/denominator
+  return(rh)
+}
+relative_humidity2 <- function(t2m, d2m){
   numerator <- 6.11 * 10 ^ (7.5 * ((d2m - 273.15)/(237.7 + d2m - 273.15)))
   denominator <- 6.11 * 10 ^ (7.5 * ((t2m - 273.15)/(237.7 + t2m - 273.15)))
   rh <- (numerator * 100)/denominator
