@@ -10,9 +10,11 @@
 
 For more details, please see the following papers:
 
-*Vitolo C., Di Giuseppe F. and D’Andrea M. (2018) **“Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs”**. PLOS ONE 13 (1). Public Library of Science: 1–18. [doi:10.1371/journal.pone.0189419](doi:10.1371/journal.pone.0189419)*
+- Vitolo C, Di Giuseppe F, D’Andrea M (2018) **Caliver: An R package for CALIbration and VERification of forest fire gridded model outputs**. PLOS ONE 13(1): e0189419. https://doi.org/10.1371/journal.pone.0189419
 
-*Vitolo C., Di Giuseppe F., Krzeminski B., San-Miguel-Ayanz J., 2019. A 1980–2018 global fire danger re-analysis dataset for the Canadian Fire Weather Indices, Scientific Data. https://doi.org/10.1038/sdata.2019.32*
+- Vitolo C., Di Giuseppe F., Barnard C., Coughlan R., Krzeminski B., San-Miguel-Ayanz J. **ERA5-based global meteorological wildfire danger maps**. Sci Data 7, 216 (2020). https://doi.org/10.1038/s41597-020-0554-z
+
+- Vitolo C., Di Giuseppe F., Krzeminski B., San-Miguel-Ayanz J. **A 1980–2018 global fire danger re-analysis dataset for the Canadian Fire Weather Indices**, Sci Data 6, 190032 (2019). https://doi.org/10.1038/sdata.2019.32
 
 ## Installation
 The installation of the caliver package depends on the following libraries:
