@@ -16,6 +16,8 @@ addons:
       - gdal-bin
       - libnetcdf-dev
       - netcdf-bin
+      - libharfbuzz-dev
+      - libfribidi-dev
 
 r_packages:
   - lintr
