@@ -44,6 +44,6 @@ Suggests:
 VignetteBuilder: knitr
 Encoding: UTF-8
 SystemRequirements: GDAL with HDF4&5 support, PROJ.4, netcdf4, hdf5, openssl
-License:  Apache License 2.0
+License: Apache License 2.0
 Language: en-GB
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
