@@ -33,7 +33,7 @@ after_success:
 
 deploy:
   provider: pages
-  skip-cleanup: true
+  cleanup: true
   github-token: $GITHUB_PAT
   keep-history: true
   local-dir: docs
