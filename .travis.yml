@@ -28,7 +28,7 @@ r_github_packages:
   - ecmwf/caliver
 
 after_success:
-  - Rscript -e 'covr::codecov()'
+  - Rscript -e 'covr::codecov(line_exclusions = list("R/deprecated.R"))'
   - Rscript -e 'pkgdown::build_site()'
 
 deploy:
