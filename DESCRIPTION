@@ -20,18 +20,13 @@ Depends:
 Imports:
     ncdf4,
     ggplot2,
-    gdalUtils,
     raster,
     rworldmap,
     graphics,
-    stringr,
     lubridate,
     stats,
-    RCurl,
     plotrix,
-    reshape2,
-    utils,
-    R.utils
+    reshape2
 Suggests:
     testthat,
     png,
