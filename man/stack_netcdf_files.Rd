@@ -4,8 +4,13 @@
 \alias{stack_netcdf_files}
 \title{stack_netcdf_files (DEPRECATED)}
 \usage{
-stack_netcdf_files(input_dir = NULL, varname = NULL, pattern = NULL,
-  recursive = FALSE, output_file = NULL)
+stack_netcdf_files(
+  input_dir = NULL,
+  varname = NULL,
+  pattern = NULL,
+  recursive = FALSE,
+  output_file = NULL
+)
 }
 \arguments{
 \item{input_dir}{is the directory where all the files to read are stored}

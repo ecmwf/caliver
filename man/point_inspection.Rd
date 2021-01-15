@@ -4,8 +4,15 @@
 \alias{point_inspection}
 \title{point_inspection}
 \usage{
-point_inspection(issue_date, points, maxleadtime = 10, fc_hres = NULL,
-  fc_ens = NULL, rea_hres = NULL, rea_ens = NULL)
+point_inspection(
+  issue_date,
+  points,
+  maxleadtime = 10,
+  fc_hres = NULL,
+  fc_ens = NULL,
+  rea_hres = NULL,
+  rea_ens = NULL
+)
 }
 \arguments{
 \item{issue_date}{x}

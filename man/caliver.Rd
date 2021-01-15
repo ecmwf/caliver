@@ -3,7 +3,6 @@
 \docType{package}
 \name{caliver}
 \alias{caliver}
-\alias{caliver-package}
 \title{caliver: CALIbration and VERification of gridded model outputs}
 \description{
 Utility functions for the post-processing, calibration and validation of

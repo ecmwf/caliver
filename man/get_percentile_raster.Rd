@@ -4,8 +4,12 @@
 \alias{get_percentile_raster}
 \title{get_percentile_raster}
 \usage{
-get_percentile_raster(probs, r = NULL, input_file = NULL,
-  output_dir = tempdir())
+get_percentile_raster(
+  probs,
+  r = NULL,
+  input_file = NULL,
+  output_dir = tempdir()
+)
 }
 \arguments{
 \item{probs}{numeric vector of probabilities with values in [0,100] listing

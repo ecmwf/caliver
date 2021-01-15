@@ -4,8 +4,17 @@
 \alias{forecast_summary}
 \title{forecast_summary (TO BE DEPRECATED SOON!)}
 \usage{
-forecast_summary(input_dir, r = NULL, p = NULL, threshold, start_date,
-  end_date, obs = NULL, origin = "FWI", index = "fwi")
+forecast_summary(
+  input_dir,
+  r = NULL,
+  p = NULL,
+  threshold,
+  start_date,
+  end_date,
+  obs = NULL,
+  origin = "FWI",
+  index = "fwi"
+)
 }
 \arguments{
 \item{input_dir}{folder containing forecast files}

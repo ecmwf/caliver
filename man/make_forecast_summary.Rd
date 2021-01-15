@@ -4,8 +4,15 @@
 \alias{make_forecast_summary}
 \title{make_forecast_summary}
 \usage{
-make_forecast_summary(input_dir, p = NULL, event_dates, obs = NULL,
-  clima, origin = "FWI", index = "fwi")
+make_forecast_summary(
+  input_dir,
+  p = NULL,
+  event_dates,
+  obs = NULL,
+  clima,
+  origin = "FWI",
+  index = "fwi"
+)
 }
 \arguments{
 \item{input_dir}{folder containing forecast files}

@@ -29,7 +29,7 @@ https://zenodo.org/communities/wildfire.
   x <- ranking(r, clima)
 
   # This plots nicely using rasterVis::levelplot(), in example on GWIS
-  # (\\url{https://gwis.jrc.ec.europa.eu}
+  # (\url{https://gwis.jrc.ec.europa.eu}
   rasterVis::levelplot(x, col.regions = colorRamps::matlab.like(n = 6))
   rasterVis::levelplot(x, col.regions = c("green", "yellow", "salmon",
                                           "orange", "red", "black"))
