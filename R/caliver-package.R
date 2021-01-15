@@ -9,14 +9,15 @@
 #'
 #' @import ncdf4
 #' @import ggplot2
+#' @importFrom lubridate is.Date
 #' @importFrom raster raster stack brick mask crop rotate extent extract t plot
 #' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay
 #' @importFrom raster intersect
 #' @importFrom rworldmap getMap
 #' @importFrom graphics plot legend par
-#' @importFrom lubridate yday
 #' @importFrom stats median na.omit sd uniroot density quantile
 #' @importFrom plotrix rescale
 #' @importFrom reshape2 melt
+#' @importFrom R.utils seqToIntervals
 #'
 NULL
