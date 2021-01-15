@@ -18,7 +18,7 @@ The name caliver stands for **CALI**bration and **VER**ification of gridded mode
 
 ## Package installation and dependencies
 
-The caliver package is implemented in the R statistical language and depends on the following external libraries: the Geospatial Data Abstraction Library [@warmerdam2008geospatial] a translator library for raster and vector geospatial data formats (with HDF4 and HDF5 support), and the NetCDF4 library [@rew1990netcdf].
+The caliver package is implemented in the R statistical language and depends on the following external libraries: the Geospatial Data Abstraction Library [@warmerdam2008geospatial] a translator library for raster and vector geospatial data formats and the NetCDF4 library [@rew1990netcdf].
 
 Installation instructions for different operating systems are available in the README file. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.
 
@@ -36,40 +36,22 @@ Load the caliver package:
 library("caliver")
 ```
 
-## Get data from the fourth-generation Global Fire Emissions Database (GFED4)
+## Sample regions
 
-Observed burned areas around the world are collected by the GFED4 in hdf format \citep{giglio2013analysis}. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability.
-
-```{r}
-# Get daily burned area maps for 15-18 July 2003
-# (to be run in the console!)
-BurnedAreas <- get_gfed4(start_date = "2003-07-15",
-                         end_date = "2003-07-18",
-                         temporal_resolution = "daily",
-                         varname = "BurnedArea",
-                         region = "GLOB")
-
-# The above can be saved as follows:
-raster::writeRaster(BurnedAreas,
-                    filename="BurnedArea.grd",
-                    bandorder='BIL', overwrite=TRUE, progress = 'text')
-```
-
-```{r, echo = FALSE}
-# The above can be re-loaded as follows:
-BurnedAreas <- raster::brick("BurnedArea.grd")
-```
-
-The fourth-generation global fire emissions database also provides as ancillary data a map of 14 basis regions used to evaluate regional annual emission estimates. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the sp package) setting `varname = "BasisRegions"'.
+The fourth-generation global fire emissions database \citep{giglio2013analysis} provides as ancillary data a map of 14 basis regions used to evaluate regional annual emission estimates. This map is included in the caliver package and can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the sp package) as follows.
 
 ```{r}
 # Get all the BasisRegions
-BasisRegions <- get_gfed4(varname = "BasisRegions")
+BasisRegions <- readRDS(system.file("extdata", "GFED4_BasisRegions.rds",
+                                    package = "caliver"))
+
+library("sp")
+plot(BasisRegions)
 ```
 
 ```{r}
-# Europe
-Europe <- get_gfed4(varname = "BasisRegions", region = "EURO")
+# Europe can be subsetted as follows
+Europe <- BasisRegions[BasisRegions$Region == "EURO",]
 ```
 
 Get administrative areas using getdata from the raster package
@@ -100,35 +82,6 @@ Sicily <- Italy1[15,]
 # Get polygon for the Province of Genoa
 Italy2 <- raster::getData(name = "GADM", country = "Italy", level = 2)
 Genoa <- Italy2[42,]
-```
-
-## Utilities (deprecated)
-
-The following functions are used to handle data as downloaded from the ECMWF web app. 
-
-**20-12-2018 update:
-Since summer 2018, the web app is no longer available because data is more easily accessible from the Zenodo archives (https://zenodo.org/communities/wildfire). For this reason, all the functions in this section are deprecated. This section will be removed in the next release.**
-
-The function `import_GEFF_data_from_tar()` can be used to open the tar archive, decompress the gz files, merge the layers into a RasterStack and convert this to a RasterBrick object. A sample dataset (geff5.tar) is available in the testdata folder of the package.
-
-```{r}
-geff5tar <- system.file(file.path("testdata", "geff5.tar"), 
-                        package = "caliver")
-b <- import_geff_data_from_tar(archive = geff5tar)
-```
-
-Decompress bulk gz archives using the function `decompress_gz()`.
-
-```{r}
-decompress_gz(input_dir = "./tmp")
-```
-
-Once all the files are decompressed they can be merged in a unique netCDF file using the function `stack_netcdf_files()`.
-
-```{r}
-processingTime <- system.time({
-  stack_netcdf_files(input_dir = "./tmp", output_file = "FWI.nc")
-})
 ```
 
 ## Analysis and visualisation

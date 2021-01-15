@@ -19,7 +19,6 @@ For more details, please see the following papers:
 ## Installation
 The installation of the caliver package depends on the following libraries:
 
-* [HDF4](https://support.hdfgroup.org/ftp/HDF/releases/HDF4.2.14/src/hdf-4.2.14.tar.gz) and [HDF5](https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.gz)
 * Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/))
 * NetCDF4 ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/))
 

@@ -8,8 +8,6 @@ addons:
     sources:
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
-      - libhdf4-alt-dev
-      - libhdf5-dev
       - libproj-dev
       - proj-bin
       - libgdal-dev
@@ -28,7 +26,7 @@ r_github_packages:
   - ecmwf/caliver
 
 after_success:
-  - Rscript -e 'covr::codecov(line_exclusions = list("R/defunct.R"))'
+  - Rscript -e 'covr::codecov(line_exclusions = list("R/zzz.R", "R/experimental.R, "R/defunct.R"))'
   - Rscript -e 'pkgdown::build_site()'
 
 deploy:

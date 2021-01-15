@@ -1,3 +1,12 @@
+# caliver 1.7
+
+Removed references and dependencies from defunct functions.
+
+# caliver 1.6
+
+Added non-exported experimental functions
+Deprecated function, then moved to defunct
+
 # caliver 1.5
 
 * In the new GEFF release, the archival system and naming convention have changed. As a result the following functions have been deprecated:

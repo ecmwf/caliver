@@ -9,7 +9,6 @@
 #'
 #' @import ncdf4
 #' @import ggplot2
-#' @importFrom hdf5r h5file
 #' @importFrom gdalUtils get_subdatasets gdal_translate
 #' @importFrom raster raster stack brick mask crop rotate extent extract t plot
 #' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay

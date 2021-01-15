@@ -1,7 +1,7 @@
 Package: caliver
 Type: Package
 Title: Calibration and Verification of Grid Model Outputs
-Version: 1.6.2
+Version: 1.7.0
 Authors@R: c(person(given = "Claudia",
                     family = "Vitolo",
                     email = "claudia.vitolo@ecmwf.int",
@@ -20,7 +20,6 @@ Depends:
 Imports:
     ncdf4,
     ggplot2,
-    hdf5r,
     gdalUtils,
     raster,
     rworldmap,
@@ -43,7 +42,7 @@ Suggests:
     lintr
 VignetteBuilder: knitr
 Encoding: UTF-8
-SystemRequirements: GDAL with HDF4&5 support, PROJ.4, netcdf4, hdf5, openssl
+SystemRequirements: GDAL, PROJ, netcdf4, openssl
 License: Apache License 2.0
 Language: en-GB
 RoxygenNote: 7.1.1
