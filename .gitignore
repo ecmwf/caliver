@@ -38,6 +38,3 @@ inst/doc
 inst/blog/*
 inst/PLOSONEpaper/*
 inst/tmp/*
-
-#Remove docs folder (auto deployment using pkgdown and travis)
-docs/*

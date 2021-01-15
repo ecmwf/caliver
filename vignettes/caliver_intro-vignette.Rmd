@@ -41,7 +41,7 @@ library("caliver")
 The fourth-generation global fire emissions database \citep{giglio2013analysis} provides as ancillary data a map of 14 basis regions used to evaluate regional annual emission estimates. This map is included in the caliver package and can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the sp package) as follows.
 
 ```{r}
-# Get all the BasisRegions
+# Get all the GFED4 basis regions
 BasisRegions <- readRDS(system.file("extdata", "GFED4_BasisRegions.rds",
                                     package = "caliver"))
 

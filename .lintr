@@ -1,2 +1,2 @@
 linters: with_defaults(line_length_linter(120))
-exclusions: list("R/zzz.R" = 1, "R/get_gfed4.R")
+exclusions: list("R/zzz.R" = 1, "R/defunct.R", "R/experimental.R")

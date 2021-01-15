@@ -1,11 +1,12 @@
 # caliver 1.7
 
-Removed references and dependencies from defunct functions.
+* Removed references and dependencies from defunct functions
+* Removed unused test datasets.
 
 # caliver 1.6
 
-Added non-exported experimental functions
-Deprecated function, then moved to defunct
+* Added non-exported experimental functions
+* Deprecated function, then moved to defunct
 
 # caliver 1.5
 

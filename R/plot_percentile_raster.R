@@ -22,7 +22,9 @@ plot_percentile_raster <- function(maps, region = "GLOB", ...){
 
   if (region != "GLOB") {
 
-    mask_map <- get_gfed4(varname = "BasisRegions", region = region)
+    BasisRegions <- readRDS(system.file("extdata", "GFED4_BasisRegions.rds",
+                                        package = "caliver"))
+    mask_map <- BasisRegions[BasisRegions$Region == region, ]
     cropped_map <- raster::trim(raster::mask(maps, mask_map))
 
   } else {

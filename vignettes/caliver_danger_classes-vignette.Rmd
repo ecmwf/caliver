@@ -56,7 +56,7 @@ library("stringr")
 
 ## Get data
 
-#### GFED4 areas and countries of interest 
+#### Regions/countries of interest 
 
 We will demonstrate how to calculate and validate fire danger levels for 4 GFED4 areas and countries: 
 
@@ -65,7 +65,6 @@ We will demonstrate how to calculate and validate fire danger levels for 4 GFED4
 - Southern Hemisphere South America (SHSA) and Chile.
 
 ```{r}
-# All the GFED4 regions
 df_gfed4 <- data.frame(ID = 1:14,
                  Region = c("BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO",
                             "MIDE", "NHAF", "SHAF", "BOAS", "CEAS", "SEAS",
@@ -75,17 +74,15 @@ df_gfed4 <- data.frame(ID = 1:14,
                           "north", "tropics", "tropics", "south"),
                  stringsAsFactors = FALSE)
 
-BasisRegions <- caliver::get_gfed4(varname = "BasisRegions")
-simplepolys <- maptools::unionSpatialPolygons(BasisRegions, BasisRegions$layer)
-BasisRegions <- SpatialPolygonsDataFrame(Sr = simplepolys[as.character(1:14)],
-                                         data = df_gfed4)
-saveRDS(object = BasisRegions, file = "BasisRegions_simplified.rds")
-# BasisRegions <- readRDS("BasisRegions_simplified.rds")
+# Get all the GFED4 basis regions
+BasisRegions <- readRDS(system.file("extdata", "GFED4_BasisRegions.rds",
+                                    package = "caliver"))
 
 # GFED4 regions of interest
 EURO <- BasisRegions[BasisRegions$Region == "EURO",]
 TENA <- BasisRegions[BasisRegions$Region == "TENA",]
 SHSA <- BasisRegions[BasisRegions$Region == "SHSA",]
+
 # Countries of interest
 pt <- raster::getData(name = "GADM", country = "Portugal", level = 1)[-c(2,13), ]
 chile <- raster::getData(name = "GADM", country = "Chile", level = 0)
@@ -97,7 +94,6 @@ BasisRegions_join@data$id <- 1:nrow(BasisRegions_join@data)   # add id column fo
 regionXFort <- fortify(BasisRegions_join, data = BasisRegions_join@data)
 regionXPoly <- merge(regionXFort, BasisRegions_join@data, 
                      by.x = "id", by.y = "id")  # join data
-#regionXPoly$Region <- region
 
 ggplot(aes(x = long, y = lat), data = map_data("world")) +
   geom_polygon(aes(group = group), fill=NA, colour = "grey65") +
@@ -145,7 +141,6 @@ For a matter of consistency with the introductory vignette, we will use the FWI 
 FWI <- brick("/hugetmp/GEFF_ERAI_Zenodo/fwi.nc") # 7GB!
 FWI <- FWI[[which(FWI@z[[1]] < as.Date("2017-01-01"))]] # only 1980-2016
 writeRaster(FWI, filename="fwi_erai_1980_2016.nc", format="CDF", overwrite=TRUE)
-# FWI <- raster::brick("fwi_erai_1980_2016.nc")
 ```
 
 ## Calculate fire danger classes by GFED4 areas and countries
