@@ -6,7 +6,7 @@
   background_map <- rworldmap::getMap(resolution = "low")
 
   # Plotting function
-  plot(background_map, add = TRUE, border = "lightgray")
+  raster::plot(background_map, add = TRUE, border = "lightgray")
 
 }
 
@@ -113,11 +113,11 @@
 
 }
 
-.get_layers_for_clima <- function(r, single_date){
+.get_layers_for_clima <- function(clima, raster_date = NULL){
 
   # which indices correspond to day j?
-  idx <- which(substr(names(r), 7, 11) ==
-                 gsub("-", ".", substr(as.character(single_date), 6, 10)))
+  idx <- which(substr(names(clima), 7, 11) ==
+                 gsub("-", ".", substr(as.character(raster_date), 6, 10)))
 
   # Do not take the single day but the period spanning 4 days before and
   # 4 days after the given date
@@ -129,22 +129,53 @@
     elements2remove <- which(idx_vector <= 0)
     idx_vector <- idx_vector[-elements2remove]
   }
-  if (any(idx_vector > raster::nlayers(r))){
-    elements2remove <- which(idx_vector > raster::nlayers(r))
+  if (any(idx_vector > raster::nlayers(clima))){
+    elements2remove <- which(idx_vector > raster::nlayers(clima))
     idx_vector <- idx_vector[-elements2remove]
   }
 
   idx_vector <- sort(unique(idx_vector))
 
   if (length(idx_vector) < length(idx) * 9){
-    message(paste0("Caution: climatology for the ", single_date,
+    message(paste0("Caution: climatology for the ",
+                   format(raster_date, "%B %d"),
                    " is calculated using ", length(idx_vector),
                    " days rather then ", length(idx) * 9, "!"))
   }
 
   # Collection of layers spanning the date of interest +/- 4 days & 37 years
-  r_sub <- r[[idx_vector]]
+  clima_sub <- clima[[idx_vector]]
 
-  return(r_sub)
+  return(clima_sub)
 
+}
+
+# Convert longitudes from -180,+180 to 0,360 range
+.convert_long_from_180_to_360 <- function(long){
+  long <- ifelse(long < 0, 360 + long, long)
+}
+
+# https://www.ncl.ucar.edu/Document/Graphics/ColorTables/BlAqGrWh2YeOrReVi22.shtml
+ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
+                  "#6FEAB5", "#5DCA61", "#4FAC23", "#50A612",
+                  "#74C417", "#99DD19", "#FFFFFF", "#FFFFFF",
+                  "#F9FE24", "#EADF1F", "#E4C31B", "#DCA31A",
+                  "#CB6013", "#C12D11", "#BE0010", "#860016",
+                  "#47003D", "#28005E")
+
+# Calculate relative humidity using Clausius-Clapeyron relation
+# t2m = 2m temperature (in Kelvin)
+# d2m = 2m dew point temperature (in Kelvin)
+relative_humidity <- function(t2m, d2m){
+  # Values are calculated using the August-Roche-Magnus approximation.
+  numerator <- exp((17.625 * (d2m - 273.15)) / (243.04 + (d2m - 273.15)))
+  denominator <- exp((17.625 * (t2m - 273.15)) / (243.04 + (t2m - 273.15)))
+  rh <- (numerator * 100)/denominator
+  return(rh)
+}
+relative_humidity2 <- function(t2m, d2m){
+  numerator <- 6.11 * 10 ^ (7.5 * ((d2m - 273.15)/(237.7 + d2m - 273.15)))
+  denominator <- 6.11 * 10 ^ (7.5 * ((t2m - 273.15)/(237.7 + t2m - 273.15)))
+  rh <- (numerator * 100)/denominator
+  return(rh)
 }

@@ -10,20 +10,20 @@
 #' @return The function returns a categorical Raster* object.
 #' Values and their descriptions are listed below:
 #' \enumerate{
-#' \item No fire vulnerability, consireding an important superficial
+#' \item 1 = No fire vulnerability, corresponding to an important superficial
 #' humidification.
-#' \item Very limited drying. Small fires possible.
-#' \item The zone is considered vulnerable, due to strong wind and low humidity.
-#' \item Important drying; the zone is considered vulnerable. Fires can occur in
-#' any considtions, excepts by high air moisture. Very severe Fire Weather
-#' Danger by moderate wond, even low wind with foehn effect or very hot and
+#' \item 2 = Very limited drying. Small fires possible.
+#' \item 3 = The zone is considered vulnerable, due to strong wind and low humidity.
+#' \item 4 = Important drying; the zone is considered vulnerable. Fires can occur in
+#' any conditions, excepts by high air moisture. Very severe Fire Weather
+#' Danger by moderate wind, even low wind with foehn effect or very hot and
 #' very dry air. Strong drougth rules are applied, the FWI is no longer
 #' appropriate.
-#' \item Extreme drying, the zone is considered extremely vulnerable. Very big
+#' \item 5 = Extreme drying, the zone is considered extremely vulnerable. Very big
 #' fire conditions are gathered. Permanent risk of very big fires on slope
-#' zones. Catastrophic fires are possible in any zones, by moderate or string
+#' zones. Catastrophic fires are possible in any zones, by moderate or strong
 #' wind. Strong drought rules are applied, the FWI is no longer appropriate.
-#' The IPse works well and models very fast fire propagation apeeds (sometimes
+#' The IPse works well and models very fast fire propagation speeds (sometimes
 #' underestimated).
 #' }
 #'

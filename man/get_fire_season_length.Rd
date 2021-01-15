@@ -12,8 +12,8 @@ get_fire_season_length(x, threshold = 268.15)
 \item{threshold}{numeric value used to identify the fire season.}
 }
 \description{
-Get a map of the length of the fire season.
-This function is experimental and not exported for the time being.
+Get a map of the length of the fire season
+(EXPERIMENTAL, not exported yet).
 }
 \examples{
 \dontrun{

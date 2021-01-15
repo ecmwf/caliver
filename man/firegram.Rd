@@ -4,7 +4,7 @@
 \alias{firegram}
 \title{firegram}
 \usage{
-firegram(thresholds, hres, ens, max_index = 25)
+firegram(thresholds, hres, ens, max_index = 100)
 }
 \arguments{
 \item{thresholds}{is a numeric vector containing the index thresholds
@@ -22,7 +22,9 @@ against the hres and previously calculated thresholds
 }
 \examples{
 \dontrun{
-  firegram(thresholds, hres, ens)
+  p <- firegram(thresholds, hres, ens)
+  # Use custom color palette
+  p + colorspace::scale_fill_discrete_diverging(palette = "Blue-Red 2")
 }
 
 }

@@ -11,8 +11,9 @@
 #' @import ggplot2
 #' @importFrom hdf5r h5file
 #' @importFrom gdalUtils get_subdatasets gdal_translate
-#' @importFrom raster raster stack mask crop rotate extent extract t plot crs
-#' @importFrom raster cellFromPolygon cellStats nlayers getData trim overlay
+#' @importFrom raster raster stack brick mask crop rotate extent extract t plot
+#' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay
+#' @importFrom raster intersect
 #' @importFrom rworldmap getMap
 #' @importFrom graphics plot legend par
 #' @importFrom stringr str_pad
@@ -21,8 +22,6 @@
 #' @importFrom RCurl getURL getBinaryURL
 #' @importFrom plotrix rescale
 #' @importFrom reshape2 melt
-#' @importFrom viridis viridis plasma inferno
-#' @importFrom rasterVis levelplot
 #' @importFrom utils download.file untar
 #' @importFrom R.utils gunzip
 #'

@@ -1,7 +1,7 @@
 Package: caliver
 Type: Package
 Title: Calibration and Verification of Grid Model Outputs
-Version: 1.5
+Version: 1.6.2
 Authors@R: c(person(given = "Claudia",
                     family = "Vitolo",
                     email = "claudia.vitolo@ecmwf.int",
@@ -19,20 +19,20 @@ Depends:
     R (>= 3.1)
 Imports:
     ncdf4,
-    raster,
-    gdalUtils,
     ggplot2,
+    hdf5r,
+    gdalUtils,
+    raster,
     rworldmap,
     graphics,
     stringr,
     lubridate,
-    hdf5r,
+    stats,
     RCurl,
     plotrix,
     reshape2,
-    R.utils,
-    viridis,
-    rasterVis
+    utils,
+    R.utils
 Suggests:
     testthat,
     png,
@@ -44,5 +44,6 @@ Suggests:
 VignetteBuilder: knitr
 Encoding: UTF-8
 SystemRequirements: GDAL with HDF4&5 support, PROJ.4, netcdf4, hdf5, openssl
-License:  Apache License 2.0
-RoxygenNote: 6.1.1
+License: Apache License 2.0
+Language: en-GB
+RoxygenNote: 7.1.1

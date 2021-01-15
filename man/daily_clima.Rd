@@ -4,24 +4,26 @@
 \alias{daily_clima}
 \title{daily_clima}
 \usage{
-daily_clima(r, dates = NULL, probs)
+daily_clima(clima, dates = NULL, probs)
 }
 \arguments{
-\item{r}{RasterBrick or RasterStack object used to calculate the climatology
-\code{names(r)} should also contain dates for comparison (e.g. X2017.01.01).}
+\item{clima}{RasterBrick or RasterStack object used to calculate the
+climatology.
+\code{names(clima)} should also contain dates for comparison
+(e.g. X2017.01.01).}
 
 \item{dates}{Dates for which we need to calculate daily climatology.
 By default, this is a leap year.}
 
 \item{probs}{probability (or percentile).
-This is a decimal number between 0 and 1.}
+This is a number between 0 and 1.}
 }
 \description{
 This function generates daily climatological maps.
 }
 \examples{
 \dontrun{
-  daily_clima(r, dates, probs)
+  daily_clima(clima, dates, probs)
 }
 
 }

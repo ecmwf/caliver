@@ -4,8 +4,15 @@
 \alias{mask_crop_subset}
 \title{mask_crop_subset}
 \usage{
-mask_crop_subset(r, p, mask = TRUE, crop = TRUE, idx = NULL,
-  accurate = FALSE, ...)
+mask_crop_subset(
+  r,
+  p,
+  mask = TRUE,
+  crop = TRUE,
+  idx = NULL,
+  accurate = FALSE,
+  ...
+)
 }
 \arguments{
 \item{r}{Raster* object}

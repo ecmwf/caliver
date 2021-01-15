@@ -4,8 +4,12 @@
 \alias{validate_fire_danger_levels}
 \title{validate_fire_danger_levels}
 \usage{
-validate_fire_danger_levels(fire_index, observation, fire_threshold,
-  obs_threshold)
+validate_fire_danger_levels(
+  fire_index,
+  observation,
+  fire_threshold,
+  obs_threshold
+)
 }
 \arguments{
 \item{fire_index}{RasterBrick containing the fire index (only one variable)}

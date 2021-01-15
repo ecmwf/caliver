@@ -2,22 +2,24 @@
 #'
 #' @description This function generates daily climatological maps.
 #'
-#' @param r RasterBrick or RasterStack object used to calculate the climatology
-#' \code{names(r)} should also contain dates for comparison (e.g. X2017.01.01).
+#' @param clima RasterBrick or RasterStack object used to calculate the
+#' climatology.
+#' \code{names(clima)} should also contain dates for comparison
+#' (e.g. X2017.01.01).
 #' @param dates Dates for which we need to calculate daily climatology.
 #' By default, this is a leap year.
 #' @param probs probability (or percentile).
-#' This is a decimal number between 0 and 1.
+#' This is a number between 0 and 1.
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#'   daily_clima(r, dates, probs)
+#'   daily_clima(clima, dates, probs)
 #' }
 #'
 
-daily_clima <- function(r, dates = NULL, probs){
+daily_clima <- function(clima, dates = NULL, probs){
 
   if (is.null(dates)) {
     # By default use a leap year
@@ -25,6 +27,8 @@ daily_clima <- function(r, dates = NULL, probs){
                       to = as.Date("2000-12-31"),
                       by = "day")
   }
+
+  if (!lubridate::is.Date(dates)) dates <- as.Date(dates)
 
   # Initialise empty list of stacks
   clima_maps <- list()
@@ -39,12 +43,13 @@ daily_clima <- function(r, dates = NULL, probs){
     # Assemble daily climatology over all the years in the brick
     for (j in seq_along(dates)){
 
-      message(paste("Day", j, "=", dates[[j]]))
+      message(paste("Day", j, "=", format(dates[[j]], "%B %d")))
 
       # Extract layers corresponding to a given date
-      r_sub <- .get_layers_for_clima(r, dates[j])
+      clima_sub <- .get_layers_for_clima(clima = clima,
+                                         raster_date = dates[[j]])
 
-      temp_map <- raster::calc(x = r_sub,
+      temp_map <- raster::calc(x = clima_sub,
                                fun = function(x){
                                  raster::quantile(x, probs[i], na.rm = TRUE)
                                  })

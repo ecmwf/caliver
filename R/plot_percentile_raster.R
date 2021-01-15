@@ -4,7 +4,6 @@
 #'
 #' @param maps is the result of get_percentile_raster()
 #' @param region string of characters describing the region.
-#' @param custom_palette palette to use (default is \code{viridis::inferno})
 #' @param ... additional graphical parameters inherited from plot() in the
 #' raster package.
 #'
@@ -13,34 +12,22 @@
 #' @examples
 #' \dontrun{
 #'   plot_percentile_raster(maps)
+#'   # Use custom color palette
+#'   plot_percentile_raster(maps,
+#'                          col = rev(viridis::inferno(n = 10)))
 #' }
 #'
 
-plot_percentile_raster <- function(maps, region = "GLOB", custom_palette = NULL,
-                                   ...){
-
-  if (round(maps@extent@xmin, 0) == 0) {
-
-    # Rotate a Raster* object that has x coordinates (longitude) from 0 to 360,
-    # to standard coordinates between -180 and 180 degrees.
-    # Longitude between 0 and 360 is frequently used in data
-    # from global climate models.
-    rotated_map <- raster::rotate(maps)
-
-  } else {
-
-    rotated_map <- maps
-
-  }
+plot_percentile_raster <- function(maps, region = "GLOB", ...){
 
   if (region != "GLOB") {
 
     mask_map <- get_gfed4(varname = "BasisRegions", region = region)
-    cropped_map <- raster::trim(raster::mask(rotated_map, mask_map))
+    cropped_map <- raster::trim(raster::mask(maps, mask_map))
 
   } else {
 
-    cropped_map <- rotated_map
+    cropped_map <- maps
 
   }
 
@@ -49,12 +36,6 @@ plot_percentile_raster <- function(maps, region = "GLOB", custom_palette = NULL,
   breaks <- round(seq(from = 0, to = raster_max, length.out = 10), 0)
   breaks <- unique(breaks)
 
-  if (is.null(custom_palette)){
-    # Define palette
-    custom_palette <- rev(viridis::inferno(n = length(breaks)))
-  }
-
-  raster::plot(cropped_map, addfun = .background_map_fun,
-               col = custom_palette, breaks = breaks, ...)
+  raster::plot(cropped_map, addfun = .background_map_fun, breaks = breaks, ...)
 
 }
