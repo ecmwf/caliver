@@ -16,7 +16,7 @@ Description: Utility functions for the post-processing, calibration and
     validation of grid model outputs. Initial test cases include the outputs of
     the following forest fire models: 'GEFF' and 'RISICO'.
 Depends:
-    R (>= 3.1)
+    R (>= 3.5)
 Imports:
     ncdf4,
     ggplot2,
