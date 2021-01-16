@@ -23,6 +23,8 @@ plot_fire_pdf <- function(fire_index,
                           upper_limit = NULL,
                           v_lines = NULL){
 
+  danger_levels <- NULL
+
   fire_palette <- c("#4DAF4A", "#FFFF33", "#FF7F00",
                     "#E41A1C", "#6b3535", "#403131")
 
