@@ -6,6 +6,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.376613.svg)](https://doi.org/10.5281/zenodo.376613)
 [![R-CMD-check](https://github.com/ecmwf/caliver/workflows/R-CMD-check/badge.svg)](https://github.com/ecmwf/caliver/actions)
 [![Coverage Status](https://codecov.io/gh/ecmwf/caliver/master.svg)](https://codecov.io/github/ecmwf/caliver?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/ecmwf/caliver/branch/master/graph/badge.svg)](https://codecov.io/gh/ecmwf/caliver?branch=master)
 <!-- badges: end -->
 
 **caliver** is a package developed for the R programming language. The name stands for **cal**Ibration and **ver**ification of gridded models. Although caliver was initially designed for wildfire danger models such as GEFF (developed by ECMWF) and RISICO (developed by CIMA Research Foundation), the algorithms can be applied to any gridded model output. Caliver is available with an APACHE-2 license.
