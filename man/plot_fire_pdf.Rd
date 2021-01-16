@@ -10,7 +10,7 @@ plot_fire_pdf(fire_index, thresholds, upper_limit = NULL, v_lines = NULL)
 \item{fire_index}{RasterBrick containing the fire index}
 
 \item{thresholds}{thresholds calculated using the function
-\code{danger_levels()}}
+\code{get_fire_danger_levels()}}
 
 \item{upper_limit}{FWI upper limit to visualise
 (the default is the maximum FWI)}

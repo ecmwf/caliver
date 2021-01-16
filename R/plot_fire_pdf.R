@@ -4,7 +4,7 @@
 #'
 #' @param fire_index RasterBrick containing the fire index
 #' @param thresholds thresholds calculated using the function
-#' \code{danger_levels()}
+#' \code{get_fire_danger_levels()}
 #' @param upper_limit FWI upper limit to visualise
 #' (the default is the maximum FWI)
 #' @param v_lines named vector of values to plot as vertical lines
@@ -66,9 +66,9 @@ plot_fire_pdf <- function(fire_index,
   p <- ggplot(as.data.frame(idxno0), aes(idxno0)) +
     geom_density(colour = "#6d6b6b", fill = "grey") +
     geom_segment(aes(x = x1, y = y1,
-                     xend = x2, yend = y2, colour = df$danger_levels),
+                     xend = x2, yend = y2, colour = danger_levels),
                  data = df, size = 14) +
-    scale_colour_manual(name = "California\nDanger classes",
+    scale_colour_manual(name = "Danger classes",
                         values = fire_palette,
                         labels = labels) +
     theme_bw() + xlab("FWI") + ylab("Density") +
