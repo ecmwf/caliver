@@ -3,7 +3,7 @@
 > An R package for the **cali**bration and **ver**ification of gridded models
 
 <!-- badges: start -->
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.376613.svg)](https://doi.org/10.5281/zenodo.376613)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.596343.svg)](https://doi.org/10.5281/zenodo.596343)
 [![R-CMD-check](https://github.com/ecmwf/caliver/workflows/R-CMD-check/badge.svg)](https://github.com/ecmwf/caliver/actions)
 [![Coverage Status](https://codecov.io/gh/ecmwf/caliver/master.svg)](https://codecov.io/github/ecmwf/caliver?branch=master)
 [![Codecov test coverage](https://codecov.io/gh/ecmwf/caliver/branch/master/graph/badge.svg)](https://codecov.io/gh/ecmwf/caliver?branch=master)
