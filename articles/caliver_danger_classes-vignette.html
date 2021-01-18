@@ -82,7 +82,7 @@
       <h1 data-toc-skip>Verification of fire danger classes</h1>
                         <h4 class="author">Claudia Vitolo</h4>
             
-            <h4 class="date">2021-01-16</h4>
+            <h4 class="date">2021-01-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ecmwf/caliver/blob/master/vignettes/caliver_danger_classes-vignette.Rmd"><code>vignettes/caliver_danger_classes-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>caliver_danger_classes-vignette.Rmd</code></div>
@@ -205,7 +205,7 @@
 <div id="reanalysis-data" class="section level4">
 <h4 class="hasAnchor">
 <a href="#reanalysis-data" class="anchor"></a>Reanalysis data</h4>
-<p>For a matter of consistency with the introductory vignette, we will use the FWI as index to estimate the fire danger classes. The first step is to download, from the <a href="http://apps.ecmwf.int/datasets/data/geff-reanalysis/">GEFF-reanalysis web app</a>, reanalysis data from 1980 to 2016. Assuming that data is downloaded in the folder “reanalysis” of the working directory, we can use <code><a href="../reference/stack_netcdf_files.html">stack_netcdf_files()</a></code> to aggregate all the files into one netcdf file (this is not necessary if you have run through the examples in the intro vignette) and load it as RasterBrick. See the introductory vignette for more information.</p>
+<p>For a matter of consistency with the introductory vignette, we will use the FWI as index to estimate the fire danger classes. The first step is to download, from the <a href="http://apps.ecmwf.int/datasets/data/geff-reanalysis/">GEFF-reanalysis web app</a>, reanalysis data from 1980 to 2016. Assuming that data is downloaded in the folder “reanalysis” of the working directory, we can use <code>stack_netcdf_files()</code> to aggregate all the files into one netcdf file (this is not necessary if you have run through the examples in the intro vignette) and load it as RasterBrick. See the introductory vignette for more information.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># FWI reanalysis dataset, GEFF reanalysis v2.0</span>
 <span class="va">FWI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"/hugetmp/GEFF_ERAI_Zenodo/fwi.nc"</span><span class="op">)</span> <span class="co"># 7GB!</span>

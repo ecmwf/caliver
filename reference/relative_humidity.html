@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • caliver</title>
+<title>relative_humidity — relative_humidity • caliver</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,9 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="relative_humidity — relative_humidity" />
+<meta property="og:description" content="Calculate relative humidity from 2m temperature (in Celsius) and
+2m dew point temperature (in Celsius)." />
 
 
 
@@ -58,7 +60,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -119,91 +121,54 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/ecmwf/caliver/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>relative_humidity</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ecmwf/caliver/blob/master/R/relative_humidity.R'><code>R/relative_humidity.R</code></a></small>
+    <div class="hidden name"><code>relative_humidity.Rd</code></div>
     </div>
 
-    <div id="caliver-17" class="section level1">
-<h1 class="page-header" data-toc-text="1.7">
-<a href="#caliver-17" class="anchor"></a>caliver 1.7</h1>
-<ul>
-<li>Removed references and dependencies from defunct functions.</li>
-<li>Removed unused test datasets.</li>
-<li>The following functions are now defunct:
-<ul>
-<li>decompress_gz() - Decompress all .gz files in a given folder</li>
-<li>import_geff_data_from_tar() - Import GEFF data from a tar file into a raster stack</li>
-<li>mean_percs() - Calculate average percentile</li>
-<li>stack_netcdf_files() - Merges all the netcdf files in a given directory over the time dimension</li>
-<li>get_gfed4 - Get data from the fourth-generation Global Fire Emissions (GFED4 ftp service is no longer available)</li>
-</ul>
-</li>
-</ul>
-</div>
-    <div id="caliver-16" class="section level1">
-<h1 class="page-header" data-toc-text="1.6">
-<a href="#caliver-16" class="anchor"></a>caliver 1.6</h1>
-<ul>
-<li>Added non-exported experimental functions</li>
-<li>Deprecated function, then moved to defunct</li>
-</ul>
-</div>
-    <div id="caliver-15" class="section level1">
-<h1 class="page-header" data-toc-text="1.5">
-<a href="#caliver-15" class="anchor"></a>caliver 1.5</h1>
-<ul>
-<li>
-<p>In the new GEFF release, the archival system and naming convention have changed. As a result the following functions have been deprecated:</p>
-<ul>
-<li>import_geff_data_from_tar()</li>
-<li>decompress_gz()</li>
-</ul>
-</li>
-<li><p>The function plot_obs_vs_forecast() is renamed to forecast_summary()</p></li>
-<li><p>Argument rotate_map is deprecated as the function automatically detect extent</p></li>
-<li><p>Removed dependency from visualTest as it is not in mainstream repositories</p></li>
-<li><p>Removed LICENSE file, linking directly to Apache License 2.0 in DESCRIPTION</p></li>
-<li><p>Removed dependency from bioconductor package rhdf5, now using hdf5r from cran</p></li>
-<li><p>Removed external dependency from ncl and cdo</p></li>
-<li><p>Removed obsolete/deprecated dependencies</p></li>
-</ul>
-</div>
-    <div id="caliver-14" class="section level1">
-<h1 class="page-header" data-toc-text="1.4">
-<a href="#caliver-14" class="anchor"></a>caliver 1.4</h1>
-<ul>
-<li>New addition: anomaly and ranking functions.</li>
-</ul>
-</div>
-    <div id="caliver-12" class="section level1">
-<h1 class="page-header" data-toc-text="1.2">
-<a href="#caliver-12" class="anchor"></a>caliver 1.2</h1>
-<ul>
-<li>Changes due to review on plosone.</li>
-</ul>
-</div>
-    <div id="caliver-10" class="section level1">
-<h1 class="page-header" data-toc-text="1.0">
-<a href="#caliver-10" class="anchor"></a>caliver 1.0</h1>
-<ul>
-<li>This is the first stable release.</li>
-</ul>
-</div>
-    <div id="caliver-01" class="section level1">
-<h1 class="page-header" data-toc-text="0.1">
-<a href="#caliver-01" class="anchor"></a>caliver 0.1</h1>
-<ul>
-<li>This is the first release of the caliver R package and contains function for the retrieval, analysis and visualisation of GEFF and RISICO forest fire model outputs.</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>Calculate relative humidity from 2m temperature (in Celsius) and
+2m dew point temperature (in Celsius).</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>relative_humidity</span><span class='op'>(</span><span class='va'>t2m</span>, <span class='va'>d2m</span>, unit <span class='op'>=</span> <span class='st'>"Celsius"</span>, method <span class='op'>=</span> <span class='st'>"August-Roche-Magnus"</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>t2m</th>
+      <td><p>2m temperature (in Celsius)</p></td>
+    </tr>
+    <tr>
+      <th>d2m</th>
+      <td><p>2m dew point temperature (in Celsius)</p></td>
+    </tr>
+    <tr>
+      <th>unit</th>
+      <td><p>can be "Celsius" (default) or "Kelvin"</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>can be "August-Roche-Magnus" (default) or "Clausius-Clapeyron"</p></td>
+    </tr>
+    </table>
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>relative_humidity</span><span class='op'>(</span>t2m <span class='op'>=</span> <span class='fl'>30</span>, d2m <span class='op'>=</span> <span class='fl'>25</span>,
+                    unit <span class='op'>=</span> <span class='st'>"Celsius"</span>,
+                    method <span class='op'>=</span> <span class='st'>"August-Roche-Magnus"</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 
