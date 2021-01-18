@@ -1,3 +1,11 @@
+# https://www.ncl.ucar.edu/Document/Graphics/ColorTables/BlAqGrWh2YeOrReVi22.shtml
+ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
+                  "#6FEAB5", "#5DCA61", "#4FAC23", "#50A612",
+                  "#74C417", "#99DD19", "#FFFFFF", "#FFFFFF",
+                  "#F9FE24", "#EADF1F", "#E4C31B", "#DCA31A",
+                  "#CB6013", "#C12D11", "#BE0010", "#860016",
+                  "#47003D", "#28005E")
+
 # To plot the background map on each layers of a stack we need to create a
 # function and pass it to the addfun argument of raster::plot()
 .background_map_fun <- function(){
@@ -18,6 +26,83 @@
 
   raster::quantile(x, probs = default_probs, na.rm = TRUE)
 
+}
+
+# Convert longitudes from -180,+180 to 0,360 range
+.convert_long_from_180_to_360 <- function(long){
+  long <- ifelse(long < 0, 360 + long, long)
+}
+
+# Transform the raster
+.transform_raster <- function(raster_in, variable_name){
+  
+  if (variable_name == "BasisRegions"){
+    # Transform the rasterBrick, transposing it
+    raster_out <- raster::t(raster_in)
+  }else{
+    # Transform the rasterBrick, flipping it on the y direction
+    raster_out <- raster::flip(raster_in, direction = "y")
+  }
+  # Set extent
+  raster::extent(raster_out) <- raster::extent(-180, 180, -90, 90)
+  # Assign CRS (WGS84)
+  raster::crs(raster_out) <- "+proj=longlat +datum=WGS84 +no_defs"
+  
+  return(raster_out)
+  
+}
+
+.create_rat <- function(ids, classes){
+  
+  # Define a Raster Attribute Table (RAT)
+  rat <- data.frame(id = ids, danger = classes, stringsAsFactors = FALSE)
+  rat$id <- factor(x = rat$id, levels = ids)
+  rat$danger <- factor(x = rat$danger, levels = classes)
+  names(rat) <- c("ID", "Class")
+  
+  return(rat)
+  
+}
+
+.get_layers_for_clima <- function(clima, raster_date = NULL, expand = TRUE){
+  
+  # which indices correspond to day j?
+  idx <- which(substr(names(clima), 7, 11) ==
+                 gsub("-", ".", substr(as.character(raster_date), 6, 10)))
+  
+  if (expand == TRUE){
+    # Do not take the single day but the period spanning 4 days before and
+    # 4 days after the given date
+    idx_vector <- c()
+    for (k in seq_along(idx)){
+      idx_vector <- c(idx_vector, (idx[k] - 4):(idx[k] + 4))
+    }
+    if (any(idx_vector <= 0)){
+      elements2remove <- which(idx_vector <= 0)
+      idx_vector <- idx_vector[-elements2remove]
+    }
+    if (any(idx_vector > raster::nlayers(clima))){
+      elements2remove <- which(idx_vector > raster::nlayers(clima))
+      idx_vector <- idx_vector[-elements2remove]
+    }
+    
+    idx_vector <- sort(unique(idx_vector))
+    
+    if (length(idx_vector) < length(idx) * 9){
+      message(paste0("Caution: climatology for the ",
+                     format(raster_date, "%B %d"),
+                     " is calculated using ", length(idx_vector),
+                     " days rather then ", length(idx) * 9, "!"))
+    }
+  } else {
+    idx_vector <- idx
+  }
+  
+  # Collection of layers spanning the date of interest +/- 4 days & 37 years
+  clima_sub <- clima[[idx_vector]]
+  
+  return(clima_sub)
+  
 }
 
 # Utility functions for multi-hazard assessments
@@ -80,102 +165,4 @@
 
   return(rtp)
 
-}
-
-# Transform the raster
-.transform_raster <- function(raster_in, variable_name){
-
-  if (variable_name == "BasisRegions"){
-    # Transform the rasterBrick, transposing it
-    raster_out <- raster::t(raster_in)
-  }else{
-    # Transform the rasterBrick, flipping it on the y direction
-    raster_out <- raster::flip(raster_in, direction = "y")
-  }
-  # Set extent
-  raster::extent(raster_out) <- raster::extent(-180, 180, -90, 90)
-  # Assign CRS (WGS84)
-  raster::crs(raster_out) <- "+proj=longlat +datum=WGS84 +no_defs"
-
-  return(raster_out)
-
-}
-
-.create_rat <- function(ids, classes){
-
-  # Define a Raster Attribute Table (RAT)
-  rat <- data.frame(id = ids, danger = classes, stringsAsFactors = FALSE)
-  rat$id <- factor(x = rat$id, levels = ids)
-  rat$category <- factor(x = rat$danger, levels = classes)
-  names(rat) <- c("ID", "Class")
-
-  return(rat)
-
-}
-
-.get_layers_for_clima <- function(clima, raster_date = NULL){
-
-  # which indices correspond to day j?
-  idx <- which(substr(names(clima), 7, 11) ==
-                 gsub("-", ".", substr(as.character(raster_date), 6, 10)))
-
-  # Do not take the single day but the period spanning 4 days before and
-  # 4 days after the given date
-  idx_vector <- c()
-  for (k in seq_along(idx)){
-    idx_vector <- c(idx_vector, (idx[k] - 4):(idx[k] + 4))
-  }
-  if (any(idx_vector <= 0)){
-    elements2remove <- which(idx_vector <= 0)
-    idx_vector <- idx_vector[-elements2remove]
-  }
-  if (any(idx_vector > raster::nlayers(clima))){
-    elements2remove <- which(idx_vector > raster::nlayers(clima))
-    idx_vector <- idx_vector[-elements2remove]
-  }
-
-  idx_vector <- sort(unique(idx_vector))
-
-  if (length(idx_vector) < length(idx) * 9){
-    message(paste0("Caution: climatology for the ",
-                   format(raster_date, "%B %d"),
-                   " is calculated using ", length(idx_vector),
-                   " days rather then ", length(idx) * 9, "!"))
-  }
-
-  # Collection of layers spanning the date of interest +/- 4 days & 37 years
-  clima_sub <- clima[[idx_vector]]
-
-  return(clima_sub)
-
-}
-
-# Convert longitudes from -180,+180 to 0,360 range
-.convert_long_from_180_to_360 <- function(long){
-  long <- ifelse(long < 0, 360 + long, long)
-}
-
-# https://www.ncl.ucar.edu/Document/Graphics/ColorTables/BlAqGrWh2YeOrReVi22.shtml
-ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
-                  "#6FEAB5", "#5DCA61", "#4FAC23", "#50A612",
-                  "#74C417", "#99DD19", "#FFFFFF", "#FFFFFF",
-                  "#F9FE24", "#EADF1F", "#E4C31B", "#DCA31A",
-                  "#CB6013", "#C12D11", "#BE0010", "#860016",
-                  "#47003D", "#28005E")
-
-# Calculate relative humidity using Clausius-Clapeyron relation
-# t2m = 2m temperature (in Kelvin)
-# d2m = 2m dew point temperature (in Kelvin)
-relative_humidity <- function(t2m, d2m){
-  # Values are calculated using the August-Roche-Magnus approximation.
-  numerator <- exp((17.625 * (d2m - 273.15)) / (243.04 + (d2m - 273.15)))
-  denominator <- exp((17.625 * (t2m - 273.15)) / (243.04 + (t2m - 273.15)))
-  rh <- (numerator * 100)/denominator
-  return(rh)
-}
-relative_humidity2 <- function(t2m, d2m){
-  numerator <- 6.11 * 10 ^ (7.5 * ((d2m - 273.15)/(237.7 + d2m - 273.15)))
-  denominator <- 6.11 * 10 ^ (7.5 * ((t2m - 273.15)/(237.7 + t2m - 273.15)))
-  rh <- (numerator * 100)/denominator
-  return(rh)
 }

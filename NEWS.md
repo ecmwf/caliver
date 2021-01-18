@@ -1,7 +1,14 @@
 # caliver 1.7
 
-* Removed references and dependencies from defunct functions
+* Removed references and dependencies from defunct functions.
 * Removed unused test datasets.
+* The following functions are now defunct:
+  * decompress_gz() - Decompress all .gz files in a given folder
+  * import_geff_data_from_tar() - Import GEFF data from a tar file into a raster stack
+  * mean_percs() - Calculate average percentile
+  * stack_netcdf_files() - Merges all the netcdf files in a given directory over the time dimension
+  * get_gfed4 - Get data from the fourth-generation Global Fire Emissions (GFED4 ftp service is no longer available)
+
 
 # caliver 1.6
 

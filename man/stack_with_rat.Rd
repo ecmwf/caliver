@@ -7,7 +7,7 @@
 stack_with_rat(r, ids, classes)
 }
 \arguments{
-\item{r}{is the categorical Raster* object.}
+\item{r}{is the categorical RasterLayer object (does not work with bricks!).}
 
 \item{ids}{numeric vector containing the categorical levels.}
 
@@ -21,6 +21,9 @@ The function returns a RasterStack of the same dimensions of
 This function converts the Raster* object that contains
 categorical values to a stack and associates a Raster Attribute Table (rat).
 This is useful if plotting using the \code{rasterVis::levelplot()} function.
+}
+\details{
+Note there is a problem with the ID = 0, always start ID from 1!
 }
 \examples{
 \dontrun{

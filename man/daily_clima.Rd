@@ -8,7 +8,7 @@ daily_clima(clima, dates = NULL, probs)
 }
 \arguments{
 \item{clima}{RasterBrick or RasterStack object used to calculate the
-climatology.
+climatology. This needs to contain daily layers for multiple years.
 \code{names(clima)} should also contain dates for comparison
 (e.g. X2017.01.01).}
 

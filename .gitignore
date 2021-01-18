@@ -4,3 +4,4 @@
 .Rproj.user/
 .Rproj.user
 caliver.Rproj
+vignettes/*.html

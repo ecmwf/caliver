@@ -3,7 +3,7 @@
 #' @description This function generates daily climatological maps.
 #'
 #' @param clima RasterBrick or RasterStack object used to calculate the
-#' climatology.
+#' climatology. This needs to contain daily layers for multiple years.
 #' \code{names(clima)} should also contain dates for comparison
 #' (e.g. X2017.01.01).
 #' @param dates Dates for which we need to calculate daily climatology.
@@ -22,9 +22,9 @@
 daily_clima <- function(clima, dates = NULL, probs){
 
   if (is.null(dates)) {
-    # By default use a leap year
-    dates <- seq.Date(from = as.Date("2000-01-01"),
-                      to = as.Date("2000-12-31"),
+    # By default DO NOT use a leap year
+    dates <- seq.Date(from = as.Date("2001-01-01"),
+                      to = as.Date("2001-12-31"),
                       by = "day")
   }
 

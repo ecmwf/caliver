@@ -4,12 +4,14 @@
 #' categorical values to a stack and associates a Raster Attribute Table (rat).
 #' This is useful if plotting using the \code{rasterVis::levelplot()} function.
 #'
-#' @param r is the categorical Raster* object.
+#' @param r is the categorical RasterLayer object (does not work with bricks!).
 #' @param ids numeric vector containing the categorical levels.
 #' @param classes character vector containing the categorical labels.
 #'
 #' @return The function returns a RasterStack of the same dimensions of
 #' \code{r} but with associated rat.
+#' 
+#' @details Note there is a problem with the ID = 0, always start ID from 1!
 #'
 #' @export
 #'
@@ -24,20 +26,12 @@ stack_with_rat <- function(r, ids, classes){
   # Define a Raster Attribute Table (RAT)
   rat <- .create_rat(ids, classes)
 
-  # Transform the brick into a categorical stack of layers
-  index_stack <- raster::stack()
-  for (i in 1:nlayers(r)){
-    # there is a problem with the ID = 0, they are resetted to start from 1
-    if (raster::cellStats(r[[i]], min) == 0){
-      ri <- r[[i]] + 1
-      tmp <- raster::ratify(ri)
-    }else{
-      tmp <- raster::ratify(r[[i]])
-    }
-    levels(tmp) <- rat
-    index_stack <- raster::stack(index_stack, tmp)
-  }
+  # Ratify
+  r_out <- raster::ratify(r)
 
-  return(index_stack)
+  # Assign levels
+  levels(r_out) <- rat
+
+  return(r_out)
 
 }

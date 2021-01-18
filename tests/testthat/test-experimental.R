@@ -34,14 +34,6 @@ test_that("the forecast_summary functions behaves as expected", {
                         obs = NULL,
                         origin = "FWI",
                         index = "fwi")
-  
-  x <- make_forecast_summary(input_dir = mytempdir,
-                             p = NULL,
-                             event_dates,
-                             obs = NULL,
-                             clima,
-                             origin = "FWI",
-                             index = "fwi")
   expect_equal(x$labels, structure(list(x = "Observation date",
                                         y = "Forecast date",
                                         fill = "value"),
