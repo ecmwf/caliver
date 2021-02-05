@@ -37,105 +37,26 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
   }
 
-  if (mask == TRUE | crop == TRUE) {
+  if (!is.null(idx)) r <- raster::subset(r, idx)
 
-    if (accurate == TRUE){
-
-      # To keep cells along the border we cannot use mask(r, p) because only
-      # cells with centroids falling in the polygon will be returned.
-      # The solution is to identify cells covering the polygon and set all
-      # remaining pixels to NA, see https://goo.gl/22LwJt
-      temp_mask <- r[[1]]
-      cls <- raster::cellFromPolygon(temp_mask,
-                                     p, weights = TRUE)[[1]][, "cell"]
-      temp_mask[][-cls] <- NA
-
-      if (mask == TRUE) {
-
-        r_masked <- raster::mask(r, temp_mask)
-
-      }else{
-
-        r_masked <- r
-
-      }
-
-      if (crop == TRUE) {
-
-        if ("RasterBrick" %in% class(r_masked)){
-
-          r_masked <- raster::stack(r_masked)
-
-        }
-
-        new_extent <- extent(raster::trim(temp_mask))
-        r_cropped <- raster::crop(r_masked, new_extent, ...)
-
-      }else{
-
-        r_cropped <- r_masked
-
-      }
-
-      if (mask == TRUE & crop == TRUE) {
-
-        r_cropped <- raster::trim(r_cropped)
-
-      }
-
-    }else{
-
-      if (mask == TRUE) {
-
-        r_masked <- raster::mask(r, p, ...)
-
-      }else{
-
-        r_masked <- r
-
-      }
-
-      if (crop == TRUE) {
-
-        r_cropped <- raster::crop(r_masked, p, ...)
-
-      }else{
-
-        r_cropped <- r_masked
-
-      }
-
-    }
-
-  }else{
-
-    r_cropped <- r
-
+  if (accurate == TRUE){
+    # To keep cells along the border we cannot use mask(r, p) because only
+    # cells with centroids falling in the polygon will be returned.
+    # The solution is to identify cells covering the polygon and set all
+    # remaining pixels to NA, see https://goo.gl/22LwJt
+    temp_mask <- r[[1]]
+    cls <- raster::cellFromPolygon(temp_mask,
+                                   p, weights = TRUE)[[1]][, "cell"]
+    temp_mask[][-cls] <- NA
+    p <- temp_mask
   }
 
-  if (!is.null(idx)) {
+  if (mask == TRUE) r <- raster::mask(r, p, ...)
 
-    r_subsetted <- raster::subset(r_cropped, idx)
+  if (crop == TRUE) r <- raster::crop(r, p, ...)
 
-  } else {
+  if (mask == TRUE & crop == TRUE) r <- raster::trim(r)
 
-    r_subsetted <- r_cropped
-
-  }
-
-  if ("RasterStack" %in% class(r_subsetted)) {
-
-    r_output <- raster::brick(r_subsetted, ...)
-
-  }
-
-  if ("RasterBrick" %in% class(r_subsetted) |
-      "RasterLayer" %in% class(r_subsetted)) {
-
-    r_output <- r_subsetted
-
-  }
-
-  return(r_output)
+  return(r)
 
 }
