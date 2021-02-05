@@ -1,14 +1,20 @@
 FROM s22s/geo-swak
 
 RUN set -eux \
-	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
-	&& add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu/xenial-cran35/' \
+	&& apt-get update \
+	&& env DEBIAN_FRONTEND=noninteractive apt-get install --yes gnupg
+
+RUN set -eux \
+	&& apt-key adv --keyserver hkp://keys.gnupg.net:80 --recv-keys E19F5F87128899B192B1A2C2AD5F960A256A04AF \
+	&& echo 'deb http://cloud.r-project.org/bin/linux/debian buster-cran35/' > /etc/apt/sources.list.d/r-project.list \
 	&& apt-get update --yes
 
 RUN set -eux \
 	&& env DEBIAN_FRONTEND=noninteractive \
 		apt install --yes \
+		libnetcdf-dev \
 		libssl-dev \
+		libxml2-dev \
 		r-base-dev
 
 RUN set -eux \
