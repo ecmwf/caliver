@@ -8,6 +8,7 @@
   * mean_percs() - Calculate average percentile
   * stack_netcdf_files() - Merges all the netcdf files in a given directory over the time dimension
   * get_gfed4 - Get data from the fourth-generation Global Fire Emissions (GFED4 ftp service is no longer available)
+  * mask_with_fuelmodel - there is now an example in the vignette that explains how to do this more generally
 
 
 # caliver 1.6
