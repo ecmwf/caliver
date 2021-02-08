@@ -5,72 +5,90 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{caliver-intro}
+  %\VignetteIndexEntry{An introduction to the caliver package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, fig.width = 7)
 ```
 
-The name caliver stands for **CALI**bration and **VER**ification of gridded model outputs. It is a package developed for the R programming language and available with an APACHE-2 license from a public repository. The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regard to outputs of the following forest fire models: GEFF and RISICO. Applicability to other model results will be investigated in future works. Complete documentation is available within the package. This vignette contains the code to run all the examples in [@vitolo:2018], please refer to this paper for more information.
+**_NOTE: This vignette is an updated and extended version of [@vitolo:2018], since the publication of this PlosONE paper some functionalities have changed or have been deprecated._**
 
-## Package installation and dependencies
+# Abstract
 
-The caliver package is implemented in the R statistical language and depends on the following external libraries: the Geospatial Data Abstraction Library [@warmerdam2008geospatial] a translator library for raster and vector geospatial data formats and the NetCDF4 library [@rew1990netcdf].
+The name `caliver` stands for **CALI**bration and **VER**ification of (forest fire) gridded model outputs. This is a package developed for the R programming language and available under an APACHE-2 license from a public repository.
 
-Installation instructions for different operating systems are available in the README file. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.
+The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire Danger Forecasting models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regards to outputs of the following forest fire models: GEFF and RISICO.
 
-Once all the dependencies are available, the package can be installed via [devtools](https://github.com/hadley/devtools):
+# Introduction
+
+Forecasting wildfires is a complex task, theoretically challenging and computationally demanding. From a theoretical point of view, fires are difficult to predict as they depend on a stochastic (unpredictable) component: the ignition. The trigger can be natural in origin like lightning and self-combustion. But it can also be due to human behavior as intentional act of arson or unintentional act of negligence. Quite commonly human-caused ignition is performed to encourage regeneration and biodiversity in the forest ecosystem or replace forest vegetation with agricultural crops [@Velez2002,@McFarlane_etal_2002].
+
+Once a fire is ignited, its spread, sustainability, and difficulty of control is almost exclusively determined by weather conditions [@Flannigan_etal_2009]. Flames tend to rage out of control if certain soil and atmospheric conditions are met. As the ignition is casual and very difficult to predict, fire prediction systems, used in forest management, are design to highlight these favorable weather conditions which would allow sustained fire activity and not actual fire activities. On these premises is based one of the most widespread fire danger rating system, the Canadian forest service’s Fire Weather Index (FWI) [@van1974structure, @van1987development] which is selected here to showcase the capability of the proposed package.
+
+The FWI is a measure of fire potential and is expressed as a numeric rating. Rating rises as fire weather becomes more severe. By construction, the relationship between the FWI numerical values and the fuel status, such as the humidity content retained in the live or dead vegetation, is weak. This implies that the same FWI values can correspond to different danger levels depending on the ecosystem. To become a meaningful tool in fire management, the FWI requires the definition of danger levels that should be site specific (we call this post-processing task ‘calibration’ hereafter). Indeed the warning levels suggested for the original FWI were derived to describe fires in a standard jack pine stand, typical of the Canadian forests. Therefore the applicability of the FWI to other parts of the planet, with vegetation characteristics dissimilar from those of the Boreal forests, requires the user to understand the fire occurrence pattern in relation to the site specific conditions. Moreover, before transferring a fire danger system from one area to another, an extensive validation/verification (the terms validation and verification are used as synonyms in this work) against forecasted and observed fire events is required to build operational confidence. In practical terms, the calibration task implies the analysis of the soil and weather conditions as synthesized by the FWI for a long period in the past, while the verification consists of the analysis of the performance of the system and danger levels applied to observed events.
+
+From a computational point of view tailoring fire danger levels to a given area and validating the performances of an early warning system is a demanding task as it requires handling large datasets. The typical user of fire forecasting systems might not necessarily have access to powerful supercomputers or large data storages. There is a need, therefore, to design and implement post-processing algorithms in such a way that processing time and memory resources are kept to the minimum while relying on accessible hardware.
+
+In the light of these requirements, we have developed an open-source tool called caliver that contains reproducible algorithms for the calibration and verification of the FWI danger levels. This is developed in the R statistical language [@rcore2016r], it is available from a public repository and distributed under an open license.
+
+The calibration and verification methodologies implemented in caliver rely on the availability of long term datasets of predicted and observed fire events. In the present work we test the algorithms using the FWI predictions that the European Centre for Medium-range Weather Forecasts (ECMWF) provides to the European Forest Fire Information System (EFFIS). The modeling component of EFFIS is referred to as the Global ECMWF Fire Forecast system (GEFF, [@di2016potential]). Observed fires are provided by the the Global Fire Assimilation System, which is part of the Copernicus Atmospheric Management Service. Both datasets are publicly available under open licenses.
+
+In the following sections we present the caliver R package, illustrate the main functionalities and show the results of our experiments focused on calculating and validating fire danger thresholds for various areas in Europe. Europe is taken as an example study area but the methods are applicable worldwide. This work stems from the user-driven [Copernicus EU Programme](http://copernicus.eu/) which aims at developing freely and openly accessible information services based on satellite Earth Observation and in situ data. We believe that developing transparent and reproducible analysis workflows, even more if implemented within open-source initiatives is a necessary step towards the implementation of reliable modelling tools. This is because reproducible workflows aim to streamline the processing tasks as they present ready-made solutions to efficiently manipulate complex and heterogeneous datasets. Also, opening the code to the scrutiny of other experts increases the chances to implement more robust solutions and avoids duplication of efforts.
+
+# Package installation and dependencies
+
+The `caliver` package is implemented in the R statistical language. Here we describe version 1.7.0, the latest stable release at the time of this writing. The package does not require compilation but depends on the following external libraries: the Geospatial Data Abstraction Library [@warmerdam2008geospatial], a translator library for raster and vector geospatial data formats, and the NetCDF4 library [@rew1990netcdf]. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.
+
+The `caliver` package is available on CRAN, therefore once all the dependencies are available, the package can be installed and loaded as follows:
 
 ```{r}
-# Install caliver from GitHub via devtools
-install.packages("devtools")
-devtools::install_github("ecmwf/caliver")
+install.packages("caliver")
 ```
-
-Load the caliver package:
 
 ```{r}
 library("caliver")
 ```
 
-## Sample regions
+Please note that in the code snippets, we mention functions belonging to packages other than caliver and base, using the convention `package_name::function_name`.
 
-The fourth-generation global fire emissions database \citep{giglio2013analysis} provides as ancillary data a map of 14 basis regions used to evaluate regional annual emission estimates. This map is included in the caliver package and can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the sp package) as follows.
+## Source code availability
+Our work stands for the highest standards of scientific reproducibility from the computational point of view [@anel2011importance, @anel2017comment]. Hence, caliver’s source code is hosted on a public repository, maintained using the git version control system and distributed under an open license: APACHE-2. Users can suggest changes and report bugs using the dedicated [issue tracking system](https://github.com/ecmwf/caliver/issues).
+
+## Continuous integration and unit tests
+In order to have a reliable development process, system dependencies, installation and basic functionalities are tested using GitHub Actions for continuous integration on windows and unix-based systems. Unit tests for the main functions are developed using the testthat framework [@wickham2011testthat]. Software metrics, in terms of code coverage status, are tracked using the codecov platform (https://codecov.io/). The current release has a code coverage of 95%.
+
+# Datasets for testing
+
+In this work, the functionalities implemented in the caliver package are tested using the data products from the Global ECMWF Fire Forecast (GEFF) system and the Global Fire Assimilation System (GFAS) from the Copernicus Atmosphere Monitoring Service. In this vignette, we use Fire Radiative Power (FRP) from GFAS to validate fire danger. In [@vitolo:2018] observed burned areas fromt the 4th generation Global Fire Emissions Database [@giglio2013analysis] was originally used in place of FRP. Over time the service has changed and this has proven to be difficult to maintai. Therefore, **in the current version of `caliver`, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions)**. However, GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the `sp` package) as follows.
 
 ```{r}
+library("sp")
+
 # Get all the GFED4 basis regions
 BasisRegions <- readRDS(system.file("extdata", "GFED4_BasisRegions.rds",
                                     package = "caliver"))
-
-library("sp")
 plot(BasisRegions)
 ```
 
+## Areas of interest
+
+For the purpose of this vignette, we will demostrate the `caliver` functionalities on specific areas: Europe and Italy. Europe can be subsetted from GFED4 basis regions and plotted as follows:
+
 ```{r}
-# Europe can be subsetted as follows
 Europe <- BasisRegions[BasisRegions$Region == "EURO",]
+plot(Europe)
 ```
 
-Get administrative areas using getdata from the raster package
+Countries administrative boundaries can be obtained from the [GADM](https://gadm.org/) dataset using the function `getdata()` from the `raster` package. As an example, below we show how to obtain Italian administrative boundaries at country/region/province level.
 
 ```{r}
-# United Kingdom
-UnitedK <- raster::getData(name = "GADM", country = "United Kingdom", 
-                           level = 0)
-
-# Spain
-Spain <- raster::getData(name = "GADM", country = "Spain", level = 0)
-```
-
-```{r}
+library("raster")
 # Italy
 Italy <- raster::getData(name = "GADM", country = "Italy", level = 0)
-```
 
-```{r}
 # Italian regions
 Italy1 <- raster::getData(name = "GADM", country = "Italy", level = 1)
 
@@ -79,52 +97,123 @@ Liguria <- Italy1[9,]
 Calabria <- Italy1[4,]
 Sicily <- Italy1[15,]
 
-# Get polygon for the Province of Genoa
+# Get polygon for the Province of Genoa, in Liguria Region.
 Italy2 <- raster::getData(name = "GADM", country = "Italy", level = 2)
 Genoa <- Italy2[42,]
 ```
 
-## Analysis and visualisation
+## The EFFIS datasets: GEFF-reanalysis and GEFF-realtime
 
-A first understanding of how FWI value are distributed over time can be achieved by creating a map of percentiles. In the example below we generate two maps: 1 for the median and the othe for the 90th percentile. 
+In the last three years fire danger forecasts have been developed at ECMWF as a part of the Copernicus Emergency Management Services under the guidance of the Joint Research Centre (JRC). A subset of GEFF data is feeding the [EFFIS](https://effis.jrc.ec.europa.eu/) and [GWIS](https://gwis.jrc.ec.europa.eu/) web portals; operational platforms to access timely information for fire danger at European and Global scale, respectively. 38 local and national authorities across Europe are part of the EFFIS network and have been relying on the GEFF outputs for an early identification of regions which might experience fire events due to the establishment of persistent drought conditions.
 
-```{r}
-map <- get_percentile_raster(input_file = "FWI.nc", probs = 50)
-```
+Two datasets are available: the GEFF-reanalysis and the GEFF-realtime. GEFF-reanalysis provides historical records of global fire danger conditions from 1980 to date. The historic record is not static but it is updated regularly following the availability of the atmospheric reanalysis datasets. Reanalysis datasets are used to define warning levels on the base of past events, therefore levels derived from them should not be considered static as changes in climatic conditions can alter them. There are currently 2 GEFF-reanalysis datasets, the first one (used mainly for educational purposes) is based on the atmospheric reanalysis dataset ERA-Interim [@dee2011era]. The second dataset is based on the most recent atmospheric reanalysis ERA5 [@hersbach2020era5].
 
-```{r}
-maps <- get_percentile_raster(r = b, probs = c(50, 75, 90))
-```
+GEFF-realtime provides real time deterministic high resolution and probabilistic fire danger forecasts up to 10 days ahead using weather forcings from the latest model cycle of the ECMWF weather forecast system. The real-time dataset is updated every day with a new set of forecasts. This dataset is used for operational monitoring of danger conditions. Real-time data can be obtain making a data request to the [JRC](https://effis.jrc.ec.europa.eu/static/data.request.form/).
 
-### Mask/crop/subset
+In this vignette, the Fire Weather Index (from the homonymous Canadian system) ERA-Interim based reanalysis dataset is used to asses fire danger. This dataset has daily temporal resolution, global coverage (0.7 degrees, ~80 Km, with longitudes ranging between -180 to +180 in geographic coordinate systems) and spans from 1980-01-01 to 2018-12-31. It was computed by the European Centre for Medium-range Weather Forecast (ECMWF) and made available on [Zenodo](https://doi.org/10.5281/zenodo.1065400), for more details see [@Vitolo2019]. Newer and more detailed fire danger reanalysis data are available from the [Copernicus Climate Data Store (CDS)](https://cds.climate.copernicus.eu/cdsapp#!/dataset/cems-fire-historical?tab=overview), for more details see [@Vitolo2020].
 
-FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function `mask_crop_subset()` is used to extract the 50th and 90th percentiles (setting argument `idx = c(1, 3)`), masked and cropped over Europe.
+We assume the ERA-Interim based GEFF-reanalysis data have already been downloaded from Zenodo and locally available.
+
+Data are aggregated into one NetCDF file and can be loaded as RasterBrick.
 
 ```{r}
-mapItaly <- mask_crop_subset(r = maps, p = Italy, idx = c(1, 3))
+# Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded in the data directory
+fwi <- raster::brick("~/repos/caliver_extras/data/fwi.nc")
 ```
 
-### Plot
+## Fire Radiative Power from the Global Fire Assimilation System
 
-The function `plotPercentiles()` provides a modified version of the `raster::plot()` function. Below is a comparison.
+ToDo
+
+## Masking data using land cover maps
+
+Vegetation is the fuel for fire. In order to carry out an accurate estimation of fire danger worldwide it is important to use an homogeneous classification of land use and vegetation. The Global Wildfire Information System (GWIS) uses the Global Land Cover 2000 database and regional products for Africa, Asia, and Europe [JRC2003]. This map is publicly available and can be downloaded from [https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php](https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php). Another example of such a map was compiled by the European Space Agency (ESA): the Climate Change Initiative (CCI) Land Cover Maps (http://www.esa-landcover-cci.org/). Other land cover maps exist and the reader is invited to download and use the one more suitable for the problem at hand.
+
+The example below shows how to mask fire danger indices using the Global Land Cover 2000 map.
+
+```{r}
+# Global Land Cover 2000
+# Documentation
+# https://forobs.jrc.ec.europa.eu/data/products/glc2000/GLC2000_EUR_20849EN.pdf
+# Get map
+# system("wget https://forobs.jrc.ec.europa.eu/data/products/glc2000/glc2000_v1_1_Grid.zip")
+# Unzip the folder in the working directory
+
+# Load map
+fuel <- raster("/home/claudia/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf")
+# Save legend in data.frame
+df <- as.data.frame(levels(fuel))
+
+# If fuel and fwi have different extent and/or number of rows/cols, you will need to resample
+fuel <- raster::resample(fuel, fwi, method = "ngb", progress = "text")
+
+# Remove Bare Areas (19), Water Bodies (20), Snow and Ice (21), Artificial surfaces and associated areas (22), No data (23).
+codes_to_exclude <- 19:23
+fuel[fuel %in% codes_to_exclude] <- NA
+levels(fuel) <- df[1:18,]
+
+# Finaly, mask the first layer in fwi
+fwi_masked <- raster::mask(fwi[[1]], fuel)
+plot(fwi_masked, col = terrain.colors(120))
+```
+
+# Package functionalities
+
+The primary goal of the `caliver` package is to streamline the post-processing of GEFF model outputs and make the scientific workflow easily reproducible. For this reason, this section provides example applications in the form of short workflows. These are ordered chronologically, based on the sequential steps a modeller would perform to visually explore information, calibrate fire danger levels and validate them. This often results in an increasing level of complexity. To provide a concise description, each workflow is not a stand alone exercise but the result of one workflow is often used as input in the following ones.
+
+## Classify fire danger indices
+
+Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster.
+
+```{r}
+fwi_class <- classify_index(fwi_masked, index = "fwi", thresholds = NULL, labels = NULL)
+rasterVis::levelplot(fwi_class, col.regions = caliver:::effis_palette)
+```
+
+The categories of GEFF's indices are pre-defined but can be overwritten by explicitly defining the input parameters `thresholds` and `labels`. The `effis_palette` is pre-defined in caliver, however, any custom palette can be used.
+
+## Mask, crop and subset
+GEFF fire danger indices are characterized by three dimensions (latitude, longitude and time) and a variable for each index of interest. These can be masked and cropped to match a user-defined extent, this can be a geographical bounding box or a spatial polygon such as a given administrative boundary. The indices can also be subsetted over the layer index or the time dimension (e.g. to take into account only fire seasons). The function `mask_crop_subset()` wraps the functions `raster::mask()`, `raster::crop()` and `raster::subset()` and converts the result into a RasterLayer (single layer) or RasterBrick (multiple layers). The example below shows how to mask and crop the fwi brick over Italy, selecting only the reference period 1981-2010.
+
+```{r}
+# Get indices for climatological reference period 1981-2010
+idx <- which(substr(x = names(fwi), start = 2, stop = 5) %in% 1981:2010)
+# Mask, crop and subset
+fwi_Italy <- mask_crop_subset(r = fwi, p = Italy, idx = idx, progress = "text")
+```
+
+## Generate maps of percentiles
+
+For each index, calculating relevant quantiles cell by cell (over time) gives an indication of the local distribution of fire danger values. Such a map can be generated using the function `get_percentile_raster`.
+
+The example below uses the `fwi_Italy` (generated in the previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.
+
+```{r}
+maps <- get_percentile_raster(r = fwi_Italy, probs = c(50, 75, 90))
+```
+
+The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to: rotate the longitudinal coordinates (optional), overlay a background map and set the color scale to the same range so that multiple maps become comparable. The rotation issue is due to an ambiguity in the WGS84 coordinate system (EPSG: 4326) which does not explicitly define the longitude range neither the location of the central meridian. As a consequence different applications have developed different standards: global climate and derived models (such as GEFF) set the longitude range between 0 and 360 degrees, while others between -180 and +180 degrees (e.g. GADM and GFED4).
+
+By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentile_raster performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using `raster::plot()` (top) versus `plot_percentile_raster()` (bottom).
 
 ```{r, fig.width = 7}
 # Use the raster plot method
-raster::plot(mapItaly, main = c("FWI 50th perc.", "FWI 90th perc."))
+raster::plot(maps, main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
 
-# Use the caliver plotPercentiles function
-plot_percentile_raster(maps = mapItaly, main = c("FWI 50th perc.", "FWI 90th perc."))
+# Use the caliver plot_percentile_raster function
+plot_percentile_raster(maps = maps,
+                       main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
 ```
+
+## Fire danger levels.
+GEFF reanalysis data can be used to identify significant thresholds in fire danger levels. Danger levels can be calculated based on some user-defined parameters: the spatial extent of the area of interest and the fire season. The fire season is defined as the dry season, a period in which there is a reduced soil moisture and precipitation. In this work we adopt a convention: the fire season falls between 1st April and 31st October in the northern hemisphere, and between 1st October and 30th April in the southern hemisphere. This convention is coded in the function get_fire_season (see Table 8), which accepts at least two arguments: dates (the sequence of daily dates for which reanalysis data is available) and zone (which can be either ‘north’ or ‘south’ emisphere). There are also two optional arguments that allow to define an ad-hoc fire season: fss (which stands for Fire Season Start) and fse (which stands for Fire Season End).
 
 ### Define fire season
 
-In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe, starting in April and ending in October each year.
+In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe (and Italy in particular), starting in April and ending in October each year.
 
 ```{r}
-dataDates <- seq.Date(from = as.Date("1980-01-01"),
-                      to = as.Date("2016-12-31"),
-                      by = "day")
-                      
+dataDates <- as.Date(substr(names(fwi), 2, 11), format = "%Y.%m.%d")
 # Define a function to extract fire seasons in Europe
 seasons <- get_fire_season(dates = dataDates, zone = "north")
 
@@ -137,91 +226,65 @@ fireSeasonIndex <- which(seasons == TRUE)
 Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe, regions and a province in Italy. The result shows that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level. 
 
 ```{r}
-# Load FWI dataset obtained previously
-FWI <- raster::brick("FWI.nc")
-
 # Mask/Crop/Subset FWI over Europe
-FWIEURO <- mask_crop_subset(r = FWI, p = Europe, idx = fireSeasonIndex)
-                    
-# Calculate levels
-EuropeThr <- get_fire_danger_levels(fire_index = FWIEURO)
+fwi_euro <- mask_crop_subset(r = fwi, p = Europe, idx = fireSeasonIndex)
 
-# Country level: use a loop to calculate levels for all the countries in the EU:
-# This does not take into account Greenland, Cyprus, Andorra and Luxembrourg.
-EUcountries <- c("Austria", "Belgium", "Bulgaria", "Croatia",
-                 "Czech Republic", "Denmark", "Estonia", "Finland", "France",
-                 "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia",
-                 "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland",
-                 "Portugal", "Romania", "Slovakia", "Slovenia", "Spain",
-                 "Sweden", "United Kingdom")
-                 
-for (singleCountry in EUcountries){
+# Calculate homogenised fire danger levels (or thresholds) for Europe
+EuropeThr <- get_fire_danger_levels(fire_index = fwi_euro)
+EuropeThr
+```
 
-  print(singleCountry)
+Please note the differences between these danger levels and those recommended by the European Forest Fire Information System (EFFIS)[https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/), `caliver` danger levels are generally lower than EFFIS ones.
 
-  # Mask/Crop/Subset FWI and generate thresholds for singleCountry
-  singleCountryFWI <- mask_crop_subset(r = FWI,
-                                       p = raster::getData(name = "GADM",
-                                                           country = singleCountry,
-                                                           level = 0),
-                                       idx = fireSeasonIndex)
-  singleCountryThr <- get_fire_danger_levels(fire_index = singleCountryFWI)
+Fire danger levels are more useful when calculated at country level. Below is shown how to execute the same steps above recursively for most countries in Europe and bind the results together in a summary table.
+
+```{r}
+# Country level: use a loop to calculate levels for three sample countries.
+# Please note that in the original paper many more countries were used, here we process
+# only three to reduce the processing time but the procedure is exactly the same.
+EUcountries <- c("Spain", "UK", "Italy")
+
+for (country in EUcountries){
+
+  print(country)
+  country_poly <- raster::getData(name = "GADM",
+                                  country = country,
+                                  level = 0)
+
+  # Mask/Crop/Subset FWI and generate thresholds for country
+  country_fwi <- mask_crop_subset(r = fwi_euro, p = country_poly)
+  country_thrs <- get_fire_danger_levels(fire_index = country_fwi)
   
   # Append values to data.frame
-  if (singleCountry == "Austria") {
-    df <- data.frame(matrix(singleCountryThr, nrow = 1))
+  if (country == "Spain") {
+    df <- data.frame(matrix(country_thrs, nrow = 1))
   }else{
-    df <- rbind(df, singleCountryThr)
+    df <- rbind(df, country_thrs)
   }
   
   print(df)
 
 }
 
-EuroThr <- data.frame(cbind(EUcountries, df, stringsAsFactors=FALSE))
-names(EuroThr) <- c("Country", "Low", "Moderate", "High", "VeryHigh", "Extreme")
-
-# Regional level
-# Mask/Crop/Subset FWI and generate thresholds for Liguria
-LIG <- mask_crop_subset(r = FWI, p = Liguria, idx = fireSeasonIndex)
-EuroThr <- rbind(EuroThr, c("Liguria", get_fire_danger_levels(fire_index = LIG)))
-                               
-# Mask/Crop/Subset FWI and generate thresholds for Calabria
-CAL <- mask_crop_subset(r = FWI, p = Calabria, idx = fireSeasonIndex)
-EuroThr <- rbind(EuroThr, c("Calabria", get_fire_danger_levels(fire_index = CAL)))
-
-# Mask/Crop/Subset FWI and generate thresholds for Sicily
-SIC <- mask_crop_subset(r = FWI, p = Sicily, idx = fireSeasonIndex)
-EuroThr <- rbind(EuroThr, c("Sicily", get_fire_danger_levels(fire_index = SIC)))
-
-# Province level
-# Mask/Crop/Subset FWI and generate thresholds for Genoa
-GEN <- mask_crop_subset(r = FWI, p = Genoa, idx = fireSeasonIndex)
-EuroThr <- rbind(EuroThr, c("Genoa", get_fire_danger_levels(fire_index = GEN)))
-
-# Remove NAs, e.g. Luxembourg and Malta are too small compared to the ratser resolution
-EuroThr <- EuroThr[complete.cases(EuroThr),]
-
-EuroThr <- rbind(EuroThr, c("Europe", EuropeThr))
-
-# Save table with thresholds for future use
-saveRDS(EuroThr, "EuroThr.rds")
+df_thr <- data.frame(cbind(EUcountries, df, stringsAsFactors=FALSE))
+names(df_thr) <- c("Country", "Low", "Moderate", "High", "VeryHigh", "Extreme")
 ```
+
+Assessing the danger levels at regional and province level (using the ERA-Interim based dataset) is rather difficult because some areas are too small compared to the raster resolution. For assessing fire danger in small regions we suggest to use the ERA5-based fire indices [@Vitolo2020].
 
 ### Plot density with thresholds
 
-The thresholds are different from the percentiles, the PDF  below shows a comparison for Italy.
+The thresholds are different from the percentiles, the PDF below shows a comparison for Italy (the last country in the above loop).
 
 ```{r}
-countryPDF <- plot_fire_pdf(fire_index = IT,
-                            thresholds = EuroThr["Italy", ], 
-                            upper_limit = 75,
-                            v_lines = c(0.50, 0.75, 0.90))
+countryPDF <- plot_fire_pdf(fire_index = country_fwi,
+                            thresholds = country_thrs, 
+                            upper_limit = 60)
 ```
 
 ### Validate danger levels
 
-Test whether large fires correspond to FWI above high danger 
+Test whether large fires correspond to FWI above high danger.
 
 ```{r}
 library("pROC")
@@ -236,7 +299,7 @@ dataDates <- seq.Date(from = as.Date("2003-01-01"),
                       to = as.Date("2015-12-31"), by = "day")
 names(BA) <- dataDates
 
-EuroThrHigh <- as.numeric(EuroThr[EuroThr$Country == "Europe", 4])
+EuroThrHigh <- as.numeric(df_thr[df_thr$Country == "Europe", 4])
 
 # The above can be saved and re-loaded as follows:
 raster::writeRaster(BA, filename="BurnedAreaEurope.grd",
@@ -275,53 +338,48 @@ pROC::plot.roc(roc2, col = "red", add = TRUE,
                print.auc = pROC::auc(roc2), print.auc.x = 0, print.auc.y = 0.95,
                print.auc.col = "red")
 
-
 # Loop throught the countries
-for (singleCountry in EuroThr[1:26,"Country"]){
+for (country in df_thr[,"Country"]){
 
-  print(singleCountry)
+  print(country)
 
-  if (!(singleCountry %in% c("Cyprus"))){
+  countryPoly <- raster::getData(name = "GADM", country = country, level = 0)
+  countryThr <- as.numeric(df_thr[df_thr$Country == country, 4])
 
-    countryPoly <- raster::getData(name = "GADM", country = singleCountry, level = 0)
-    countryThr <- as.numeric(EuroThr[EuroThr$Country == singleCountry, 4])
+  # Crop RasterBricks over country of interest
+  BA_country <- mask_crop_subset(r = BurnedAreaEurope, p = countryPoly)
+  FWI_country <- mask_crop_subset(r = FWIEURO, p = countryPoly)
 
-    # Crop RasterBricks over country of interest
-    BA_country <- mask_crop_subset(r = BurnedAreaEurope, p = countryPoly)
-    FWI_country <- mask_crop_subset(r = FWIEURO, p = countryPoly)
-
-    JRC <- validate_fire_danger_levels(fire_index = FWI_country, 
-                                       observation = BA_country,
-                                       fire_threshold = 21.3, 
-                                       obs_threshold = 50)
-    tab_JRC <- data.frame(table(JRC$pred, JRC$obs))
-    caliver1 <- validate_fire_danger_levels(fire_index = FWI_country, 
-                                            observation = BA_country,
-                                            fire_threshold = EuroThrHigh, 
-                                            obs_threshold = 50)
-    tab_caliver1 <- data.frame(table(caliver1$pred, caliver1$obs))
-    caliver2 <- validate_fire_danger_levels(fire_index = FWI_country, 
-                                            observation = BA_country,
-                                            fire_threshold = countryThr, 
-                                            obs_threshold = 50)
-    tab_caliver2 <- data.frame(table(caliver2$pred, caliver2$obs))
+  JRC <- validate_fire_danger_levels(fire_index = FWI_country,
+                                     observation = BA_country,
+                                     fire_threshold = 21.3,
+                                     obs_threshold = 50)
+  tab_JRC <- data.frame(table(JRC$pred, JRC$obs))
+  caliver1 <- validate_fire_danger_levels(fire_index = FWI_country,
+                                          observation = BA_country,
+                                          fire_threshold = EuroThrHigh,
+                                          obs_threshold = 50)
+  tab_caliver1 <- data.frame(table(caliver1$pred, caliver1$obs))
+  caliver2 <- validate_fire_danger_levels(fire_index = FWI_country,
+                                          observation = BA_country,
+                                          fire_threshold = countryThr,
+                                          obs_threshold = 50)
+  tab_caliver2 <- data.frame(table(caliver2$pred, caliver2$obs))
     
-    if (singleCountry == "Austria") {
-      df_caliver1 <- df_caliver2 <- df_effis <- data.frame("pred" = tab_caliver1$pred, "obs" = tab_caliver1$obs)
-      i <- 3
-    }
-
-    df_caliver1 <- cbind(df_caliver1, tab_caliver1$Freq)
-    names(df_caliver1)[i] <- singleCountry
-    df_caliver2 <- cbind(df_caliver2, tab_caliver2$Freq)
-    names(df_caliver2)[i] <- singleCountry
-    df_effis <- cbind(df_effis, tab_JRC$Freq)
-    names(df_effis)[i] <- singleCountry
-    i <- i + 1
-
-    rm(countryPoly, countryThr, BA_country, FWI_country)
-
+  if (country == "Spain") {
+    df_caliver1 <- df_caliver2 <- df_effis <- data.frame("pred" = tab_caliver1$pred, "obs" = tab_caliver1$obs)
+    i <- 3
   }
+
+  df_caliver1 <- cbind(df_caliver1, tab_caliver1$Freq)
+  names(df_caliver1)[i] <- country
+  df_caliver2 <- cbind(df_caliver2, tab_caliver2$Freq)
+  names(df_caliver2)[i] <- country
+  df_effis <- cbind(df_effis, tab_JRC$Freq)
+  names(df_effis)[i] <- country
+  i <- i + 1
+
+  rm(countryPoly, countryThr, BA_country, FWI_country)
 
 }
 
