@@ -1,4 +1,4 @@
-#' @title plot_fire_pdf
+#' @title plot_pdf
 #'
 #' @description Plot PDF of fire index
 #'
@@ -14,12 +14,12 @@
 #'
 #' @examples
 #' \dontrun{
-#'   plot_fire_pdf(fire_index, thresholds, upper_limit = 100,
+#'   plot_pdf(fire_index, thresholds, upper_limit = 100,
 #'                 v_lines = c(0.75, 0.95))
 #' }
 #'
 
-plot_fire_pdf <- function(fire_index,
+plot_pdf <- function(fire_index,
                           thresholds,
                           upper_limit = NULL,
                           v_lines = NULL){

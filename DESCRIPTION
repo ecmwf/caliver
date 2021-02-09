@@ -1,7 +1,7 @@
 Package: caliver
 Type: Package
 Title: Calibration and Verification of Grid Model Outputs
-Version: 1.7.0
+Version: 2.0.0
 Authors@R: c(person(given = "Claudia",
                     family = "Vitolo",
                     email = "claudia.vitolo@ecmwf.int",

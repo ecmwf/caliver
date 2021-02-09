@@ -200,15 +200,15 @@ maps <- get_percentile_raster(r = fwi_Italy, probs = c(50, 75, 90))
 
 The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to: rotate the longitudinal coordinates (optional), overlay a background map and set the color scale to the same range so that multiple maps become comparable. The rotation issue is due to an ambiguity in the WGS84 coordinate system (EPSG: 4326) which does not explicitly define the longitude range neither the location of the central meridian. As a consequence different applications have developed different standards: global climate and derived models (such as GEFF) set the longitude range between 0 and 360 degrees, while others between -180 and +180 degrees (e.g. GADM and GFED4).
 
-By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentile_raster performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using `raster::plot()` (top) versus `plot_percentile_raster()` (bottom).
+By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentiles performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using `raster::plot()` (top) versus `plot_percentiles()` (bottom).
 
 ```{r, fig.width = 7}
 # Use the raster plot method
 raster::plot(maps, main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
 
-# Use the caliver plot_percentile_raster function
-plot_percentile_raster(maps = maps,
-                       main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
+# Use the caliver plot_percentiles function
+plot_percentiles(maps = maps,
+                 main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
 ```
 
 ## Fire danger levels.
@@ -283,9 +283,9 @@ Assessing the danger levels at regional and province level (using the ERA-Interi
 The thresholds are different from the percentiles, the PDF below shows a comparison for Italy (the last country in the above loop).
 
 ```{r}
-countryPDF <- plot_fire_pdf(fire_index = country_fwi,
-                            thresholds = country_thrs, 
-                            upper_limit = 60)
+countryPDF <- plot_pdf(fire_index = country_fwi,
+                       thresholds = country_thrs, 
+                       upper_limit = 60)
 ```
 
 ### Validate danger levels

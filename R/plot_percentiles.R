@@ -1,4 +1,4 @@
-#' @title plot_percentile_raster
+#' @title plot_percentiles
 #'
 #' @description This function plots the maps of percentiles
 #'
@@ -13,14 +13,14 @@
 #' @examples
 #' \dontrun{
 #'   # Use default palette
-#'   plot_percentile_raster(maps)
+#'   plot_percentiles(maps)
 #'   
 #'   # Use custom color palette
-#'   plot_percentile_raster(maps, col = rev(viridis::inferno(n = 10)))
+#'   plot_percentiles(maps, col = rev(viridis::inferno(n = 10)))
 #' }
 #'
 
-plot_percentile_raster <- function(maps, region = "GLOB", col = NULL, ...){
+plot_percentiles <- function(maps, region = "GLOB", col = NULL, ...){
 
   if (region != "GLOB") {
 

@@ -82,14 +82,22 @@ classify_index <- function(r, index = NULL, thresholds = NULL, labels = NULL){
   if (is.null(index) | is.null(thresholds) | is.null(labels)){
     stop("Please insert correct values for index, thresholds, labels")
   }
-
+  
   index_class <- raster::cut(r, breaks = c(-Inf, thresholds, Inf))
+  # Which indices are actually present in the raster?
+  j <- sort(unique(raster::getValues(index_class)))
 
-  # Convert to Stack and associate a Raster Attribute Table (RAT)
-  index_stack <- stack_with_rat(r = index_class,
-                                ids = 1:(length(thresholds) + 1),
-                                classes = labels)
-
-  return(index_stack)
-
+  # Ratify raster
+  # Note there is a problem with the ID = 0, make sure ID starts from 1!
+  r_out <- raster::ratify(index_class)
+  
+  # Define a Raster Attribute Table (RAT)
+  # rat <- .create_rat(ids = j, classes = labels[j])
+  # Define a Raster Attribute Table (RAT)
+  rat <- data.frame(ID = seq_along(j), Index = j, Class = labels[j], stringsAsFactors = FALSE)
+  
+  # Assign levels
+  suppressWarnings(levels(r_out) <- rat) # hide expected warning!
+  
+  return(r_out)
 }

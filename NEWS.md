@@ -1,3 +1,12 @@
+# caliver 2.0
+
+Version submitted to CRAN.
+Changes in function names:
+- plot_fire_pdf becomes plot_pdf
+- plot_percentile_raster becomes plot_percentiles
+Deprecated:
+- stack_with_rat
+
 # caliver 1.7
 
 * Removed references and dependencies from defunct functions.
