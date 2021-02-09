@@ -2,7 +2,7 @@
 
   packageStartupMessage("
 +------------------------------------------------------------------------------+
-| Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF).   |
+| Copyright 2016-2021 European Centre for Medium-Range Weather Forecasts (ECMWF).   |
 | This software is licensed under the terms of the Apache Licence Version 2.0  |
 | which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.         |
 | In applying this licence, ECMWF does not waive the privileges and immunities |
