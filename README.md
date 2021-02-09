@@ -13,7 +13,7 @@
 For more details, please see the following papers:
 
 - Vitolo C, Di Giuseppe F, D’Andrea M (2018) **Caliver: An R package for CALIbration and VERification of forest fire gridded model outputs**. PLOS ONE 13(1): e0189419. https://doi.org/10.1371/journal.pone.0189419
-**Please note: in the latest version of this package many functionalities described in the above paper have become obsolete and deprecated, please refer to the vignette "An introduction to the caliver package" for more details.**
+*Please note: in the latest version of the caliver package many functionalities described in this paper have become obsolete and deprecated, please refer to the vignette "An introduction to the caliver package" for more details.*
 
 - Vitolo C., Di Giuseppe F., Barnard C., Coughlan R., Krzeminski B., San-Miguel-Ayanz J. **ERA5-based global meteorological wildfire danger maps**. Sci Data 7, 216 (2020). https://doi.org/10.1038/s41597-020-0554-z
 
@@ -22,8 +22,8 @@ For more details, please see the following papers:
 ## Installation
 The installation of the caliver package depends on the following libraries:
 
-* Geospatial Data Abstraction Library ([GDAL](http://www.gdal.org/))
-* NetCDF4 ([netcdf4](http://www.unidata.ucar.edu/software/netcdf/))
+* Geospatial Data Abstraction Library ([GDAL](https://www.gdal.org/))
+* NetCDF4 ([netcdf4](https://www.unidata.ucar.edu/software/netcdf/))
 
 Make sure you have the above libraries installed before attempting to install caliver.
 Once all the dependencies are installed, get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
@@ -55,7 +55,7 @@ Meta
 ----
 
 - This package and functions herein are part of an experimental open-source project. They are provided as is, without any guarantee.
-- Contributions are welcome! Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+- [Contributions are welcome](https://github.com/ecmwf/caliver/blob/master/CONTRIBUTING.md)! Please note that this project is released with a [Contributor Code of Conduct](https://github.com/ecmwf/caliver/blob/master/CONDUCT.md). By participating in this project you agree to abide by its terms.
 - Please [report any issues or bugs](https://github.com/ecmwf/caliver/issues).
 - License: Apache License 2.0
 - Get citation information for `caliver` in R doing `citation(package = "caliver")`

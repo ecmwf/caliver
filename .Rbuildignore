@@ -3,15 +3,12 @@
 ^.*\.Rhistory$
 ^\.Rproj\.user$
 ^README\.Rmd$
-^CONDUCT\.md$
-^\.travis\.yml$
-^appveyor\.yml$
 ^codecov\.yml$
 ^README\.html$
 ^NOTICE$
-^docs$
 ^_pkgdown\.yml$
 ^Dockerfile$
+^CONDUCT.md$
 ^CONTRIBUTING.md$
 ^\.covrignore$
 ^\.lintr$

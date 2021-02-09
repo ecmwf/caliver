@@ -70,7 +70,7 @@ get_fire_danger_levels <- function(fire_index, ndays = 4){
 
     # Transform FWI threshold into Intensity (I)
     # see formula 31 and 32 in
-    # http://cfs.nrcan.gc.ca/pubwarehouse/pdfs/19927.pdf
+    # https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/19927.pdf
     f <- function(i_component_0, extreme_danger = median(extreme_value)) {
 
       log(0.289 * i_component_0) - 0.980 * (log(extreme_danger)) ^ 1.546
