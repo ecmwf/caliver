@@ -4,10 +4,12 @@
 \alias{classify_index}
 \title{classify_index}
 \usage{
-classify_index(r, thresholds = NULL, labels = NULL)
+classify_index(r, index = NULL, thresholds = NULL, labels = NULL)
 }
 \arguments{
 \item{r}{is the Raster* object to classify.}
+
+\item{index}{this is the code of the fire danger index.}
 
 \item{thresholds}{numeric vector containing 5 thresholds.}
 
@@ -21,18 +23,27 @@ Some cells may contain NAs, this happens typically over the sea.
 }
 \description{
 This function classifies a fire danger index based on user
-defined danger thresholds. If no thresholds are specified, the function
-assumes the index is FWI and thresholds are those defined by JRC for Europe:
+defined danger thresholds. If \code{index} is one of GEFF's indices (fwi,
+ffmc, dmc, dc, isi, bui), the user does not need to specify thresholds and
+labels. Default thresholds and labels are those defined by JRC for Europe:
+https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/
+For instance if index = "fwi", default thresholds and labels are:
 very Low = 0-5.2, low = 5.2-11.2, moderate = 11.2-21.3, high = 21.3-38.0,
 very high = 38-50.0, extreme = > 50.
+However, if threshold != NULL, the default values will be overwritten by the
+custom values.
 }
 \examples{
 \dontrun{
-  r <- brick("ECMWF_FWI_20180723_1200_hr_fwi.nc")
-  x <- classify_index(r, thresholds = c(5.2, 11.2, 21.3, 38, 50))
+  r <- raster::raster("ECMWF_FWI_20180723_1200_hr_fwi.nc")
+  x <- classify_index(r, index = "fwi")
 
   # This can be plotted using rasterVis::levelplot()
   rasterVis::levelplot(x)
+
+  # As plot above but using EFFIS pallette
+  rasterVis::levelplot(x, col.regions = caliver:::effis_palette)
+
   # Plot above plus custom labels
   rasterVis::levelplot(x, names.attr = substring(names(x), 2))
   # Plot above plus custom palette
