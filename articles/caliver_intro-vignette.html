@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caliver</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -257,14 +257,14 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">maps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_percentile_raster.html">get_percentile_raster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi_Italy</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">75</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to: rotate the longitudinal coordinates (optional), overlay a background map and set the color scale to the same range so that multiple maps become comparable. The rotation issue is due to an ambiguity in the WGS84 coordinate system (EPSG: 4326) which does not explicitly define the longitude range neither the location of the central meridian. As a consequence different applications have developed different standards: global climate and derived models (such as GEFF) set the longitude range between 0 and 360 degrees, while others between -180 and +180 degrees (e.g. GADM and GFED4).</p>
-<p>By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentile_raster performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using <code><a href="https://rdrr.io/pkg/raster/man/plot.html">raster::plot()</a></code> (top) versus <code><a href="../reference/plot_percentile_raster.html">plot_percentile_raster()</a></code> (bottom).</p>
+<p>By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentiles performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using <code><a href="https://rdrr.io/pkg/raster/man/plot.html">raster::plot()</a></code> (top) versus <code><a href="../reference/plot_percentiles.html">plot_percentiles()</a></code> (bottom).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Use the raster plot method</span>
 <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">maps</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co"># Use the caliver plot_percentile_raster function</span>
-<span class="fu"><a href="../reference/plot_percentile_raster.html">plot_percentile_raster</a></span><span class="op">(</span>maps <span class="op">=</span> <span class="va">maps</span>,
-                       main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="co"># Use the caliver plot_percentiles function</span>
+<span class="fu"><a href="../reference/plot_percentiles.html">plot_percentiles</a></span><span class="op">(</span>maps <span class="op">=</span> <span class="va">maps</span>,
+                 main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="fire-danger-levels-" class="section level2">
 <h2 class="hasAnchor">
@@ -332,9 +332,9 @@
 <a href="#plot-density-with-thresholds" class="anchor"></a>Plot density with thresholds</h3>
 <p>The thresholds are different from the percentiles, the PDF below shows a comparison for Italy (the last country in the above loop).</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">countryPDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_fire_pdf.html">plot_fire_pdf</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">country_fwi</span>,
-                            thresholds <span class="op">=</span> <span class="va">country_thrs</span>, 
-                            upper_limit <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">countryPDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_pdf.html">plot_pdf</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">country_fwi</span>,
+                       thresholds <span class="op">=</span> <span class="va">country_thrs</span>, 
+                       upper_limit <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="validate-danger-levels" class="section level3">
 <h3 class="hasAnchor">
