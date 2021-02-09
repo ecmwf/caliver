@@ -14,7 +14,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   plot_fire_pdf(fire_index, thresholds, upper_limit = 100)
+#'   plot_fire_pdf(fire_index, thresholds, upper_limit = 100,
+#'                 v_lines = c(0.75, 0.95))
 #' }
 #'
 
@@ -69,28 +70,29 @@ plot_fire_pdf <- function(fire_index,
     geom_density(colour = "#6d6b6b", fill = "grey") +
     geom_segment(aes(x = x1, y = y1,
                      xend = x2, yend = y2, colour = danger_levels),
-                 data = df, size = 14) +
+                 data = df, size = 8) +
     scale_colour_manual(name = "Danger classes",
                         values = fire_palette,
                         labels = labels) +
     theme_bw() + xlab("FWI") + ylab("Density") +
-    theme(legend.title = element_text(size = 20, face = "bold"),
-          text = element_text(size = 20, lineheight = .8),
-          legend.position = c(0.98, 0.78), legend.justification = c(1, 1)) +
+    theme(legend.title = element_text(face = "bold"),
+          text = element_text(lineheight = .8),
+          legend.position = c(0.98, 0.98), legend.justification = c(1, 1)) +
     scale_x_continuous(limits = c(0, upper_limit))
 
   label <- value <- NULL # to avoid NOTE during check
   if (!is.null(v_lines)) {
 
-    dfv <- data.frame(label = names(v_lines), value = as.numeric(v_lines))
+    percs <- apply(X = raster::quantile(fire_index, probs = v_lines),
+                   MARGIN = 2, FUN = mean)
+    dfv <- data.frame(label = names(percs), value = as.numeric(percs))
     p <- p + geom_vline(data = dfv, mapping = aes(xintercept = value),
                         color = "darkgray", linetype = 2) +
       geom_text(data = dfv,
                 mapping = aes(x = value,
                               y = max(density(idxno0)$y),
                               label = label),
-                angle = 90, hjust = 1, vjust = -0.4,
-                colour = "#585858", size = 6)
+                angle = 90, hjust = 1, vjust = -0.4, colour = "#585858")
 
   }
 

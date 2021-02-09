@@ -23,7 +23,8 @@ Plot PDF of fire index
 }
 \examples{
 \dontrun{
-  plot_fire_pdf(fire_index, thresholds, upper_limit = 100)
+  plot_fire_pdf(fire_index, thresholds, upper_limit = 100,
+                v_lines = c(0.75, 0.95))
 }
 
 }
