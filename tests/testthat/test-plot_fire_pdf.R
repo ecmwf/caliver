@@ -30,7 +30,7 @@ test_that("Plot layers match expectations with vLines", {
 
   p <- plot_fire_pdf(fire_index = r1,
                      thresholds = c(1, 2, 3, 4, 5),
-                     upper_limit = 15,
+                     upper_limit = 30,
                      v_lines = c("90%" = 0.90))
 
   expect_equal(length(p$layers), 4)

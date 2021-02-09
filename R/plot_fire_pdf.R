@@ -83,8 +83,13 @@ plot_fire_pdf <- function(fire_index,
   label <- value <- NULL # to avoid NOTE during check
   if (!is.null(v_lines)) {
 
-    percs <- apply(X = raster::quantile(fire_index, probs = v_lines),
-                   MARGIN = 2, FUN = mean)
+    if (length(v_lines) == 1) {
+      percs <- raster::quantile(fire_index, probs = v_lines)
+    } else {
+      percs <- apply(X = raster::quantile(fire_index, probs = v_lines),
+                     MARGIN = 2, FUN = mean)
+    }
+    
     dfv <- data.frame(label = names(percs), value = as.numeric(percs))
     p <- p + geom_vline(data = dfv, mapping = aes(xintercept = value),
                         color = "darkgray", linetype = 2) +
