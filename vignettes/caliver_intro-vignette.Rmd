@@ -62,7 +62,17 @@ In order to have a reliable development process, system dependencies, installati
 
 # Datasets for testing
 
-In this work, the functionalities implemented in the caliver package are tested using the data products from the Global ECMWF Fire Forecast (GEFF) system and the Global Fire Assimilation System (GFAS) from the Copernicus Atmosphere Monitoring Service. In this vignette, we use Fire Radiative Power (FRP) from GFAS to validate fire danger. In [@vitolo:2018] observed burned areas fromt the 4th generation Global Fire Emissions Database [@giglio2013analysis] was originally used in place of FRP. Over time the service has changed and this has proven to be difficult to maintai. Therefore, **in the current version of `caliver`, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions)**. However, GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the `sp` package) as follows.
+In this work, the functionalities implemented in the caliver package are tested using the data products from the Global ECMWF Fire Forecast (GEFF) system as well as external data sources (see below).
+
+## Get data from the fourth-generation Global Fire Emissions Database (GFED4)
+
+### Burned areas *deprecated*
+Observed burned areas around the world are collected by the 4th generation Global Fire Emissions Database [@giglio2013analysis] in hdf format. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability. In [@vitolo:2018], the function `get_gfed4()` was used to retrieve observed burned areas from GFED4. Over time the service has changed and this function has proven to be difficult to maintain.
+
+**In the current version of `caliver`, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions). Please, download daily burned area maps for 2003-01-01 to 2015-12-31 manually from https://www.globalfiredata.org/data.html.**
+
+### Basis regions
+GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the `sp` package) as follows.
 
 ```{r}
 library("sp")
@@ -120,10 +130,6 @@ Data are aggregated into one NetCDF file and can be loaded as RasterBrick.
 # Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded in the data directory
 fwi <- raster::brick("~/repos/caliver_extras/data/fwi.nc")
 ```
-
-## Fire Radiative Power from the Global Fire Assimilation System
-
-ToDo
 
 ## Masking data using land cover maps
 
@@ -289,6 +295,8 @@ Test whether large fires correspond to FWI above high danger.
 ```{r}
 library("pROC")
 
+# Assuming burned areas was downloaded and combined in a grid file,
+# this can be loaded as a brick:
 BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")
 
 # Mask and crop burned areas over Europe

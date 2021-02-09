@@ -13,6 +13,7 @@
 For more details, please see the following papers:
 
 - Vitolo C, Di Giuseppe F, D’Andrea M (2018) **Caliver: An R package for CALIbration and VERification of forest fire gridded model outputs**. PLOS ONE 13(1): e0189419. https://doi.org/10.1371/journal.pone.0189419
+**Please note: in the latest version of this package many functionalities described in the above paper have become obsolete and deprecated, please refer to the vignette "An introduction to the caliver package" for more details.**
 
 - Vitolo C., Di Giuseppe F., Barnard C., Coughlan R., Krzeminski B., San-Miguel-Ayanz J. **ERA5-based global meteorological wildfire danger maps**. Sci Data 7, 216 (2020). https://doi.org/10.1038/s41597-020-0554-z
 
