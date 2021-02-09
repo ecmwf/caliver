@@ -129,6 +129,11 @@
 <ul>
 <li>Removed references and dependencies from defunct functions.</li>
 <li>Removed unused test datasets.</li>
+<li>The following functions have changed:
+<ul>
+<li>mask_crop_subset, mask and crop input argument have been removed as deemed superflous. Also the option <code>accurate</code> has been removed.</li>
+</ul>
+</li>
 <li>The following functions are now defunct:
 <ul>
 <li>decompress_gz() - Decompress all .gz files in a given folder</li>
@@ -136,6 +141,7 @@
 <li>mean_percs() - Calculate average percentile</li>
 <li>stack_netcdf_files() - Merges all the netcdf files in a given directory over the time dimension</li>
 <li>get_gfed4 - Get data from the fourth-generation Global Fire Emissions (GFED4 ftp service is no longer available)</li>
+<li>mask_with_fuelmodel - there is now an example in the vignette that explains how to do this more generally</li>
 </ul>
 </li>
 </ul>

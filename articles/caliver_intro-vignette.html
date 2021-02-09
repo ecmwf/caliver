@@ -82,7 +82,7 @@
       <h1 data-toc-skip>An introduction to the caliver package</h1>
                         <h4 class="author">Claudia Vitolo</h4>
             
-            <h4 class="date">2021-02-05</h4>
+            <h4 class="date">2021-02-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ecmwf/caliver/blob/master/vignettes/caliver_intro-vignette.Rmd"><code>vignettes/caliver_intro-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>caliver_intro-vignette.Rmd</code></div>
@@ -91,48 +91,86 @@
 
     
     
-<p>The name caliver stands for <strong>CALI</strong>bration and <strong>VER</strong>ification of gridded model outputs. It is a package developed for the R programming language and available with an APACHE-2 license from a public repository. The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regard to outputs of the following forest fire models: GEFF and RISICO. Applicability to other model results will be investigated in future works. Complete documentation is available within the package. This vignette contains the code to run all the examples in <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span>, please refer to this paper for more information.</p>
-<div id="package-installation-and-dependencies" class="section level2">
-<h2 class="hasAnchor">
-<a href="#package-installation-and-dependencies" class="anchor"></a>Package installation and dependencies</h2>
-<p>The caliver package is implemented in the R statistical language and depends on the following external libraries: the Geospatial Data Abstraction Library <span class="citation">(Warmerdam 2008)</span> a translator library for raster and vector geospatial data formats and the NetCDF4 library <span class="citation">(Rew and Davis 1990)</span>.</p>
-<p>Installation instructions for different operating systems are available in the README file. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.</p>
-<p>Once all the dependencies are available, the package can be installed via <a href="https://github.com/hadley/devtools">devtools</a>:</p>
+<p><strong><em>NOTE: This vignette is an updated and extended version of <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span>, since the publication of this PlosONE paper some functionalities have changed or have been deprecated.</em></strong></p>
+<div id="abstract" class="section level1">
+<h1 class="hasAnchor">
+<a href="#abstract" class="anchor"></a>Abstract</h1>
+<p>The name <code>caliver</code> stands for <strong>CALI</strong>bration and <strong>VER</strong>ification of (forest fire) gridded model outputs. This is a package developed for the R programming language and available under an APACHE-2 license from a public repository.</p>
+<p>The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire Danger Forecasting models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regards to outputs of the following forest fire models: GEFF and RISICO.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h1>
+<p>Forecasting wildfires is a complex task, theoretically challenging and computationally demanding. From a theoretical point of view, fires are difficult to predict as they depend on a stochastic (unpredictable) component: the ignition. The trigger can be natural in origin like lightning and self-combustion. But it can also be due to human behavior as intentional act of arson or unintentional act of negligence. Quite commonly human-caused ignition is performed to encourage regeneration and biodiversity in the forest ecosystem or replace forest vegetation with agricultural crops <span class="citation">(Vélez 2002, @McFarlane_etal_2002)</span>.</p>
+<p>Once a fire is ignited, its spread, sustainability, and difficulty of control is almost exclusively determined by weather conditions <span class="citation">(Flannigan et al. 2009)</span>. Flames tend to rage out of control if certain soil and atmospheric conditions are met. As the ignition is casual and very difficult to predict, fire prediction systems, used in forest management, are design to highlight these favorable weather conditions which would allow sustained fire activity and not actual fire activities. On these premises is based one of the most widespread fire danger rating system, the Canadian forest service’s Fire Weather Index (FWI) <span class="citation">(Van Wagner and others 1974, 1333:@van1987development)</span> which is selected here to showcase the capability of the proposed package.</p>
+<p>The FWI is a measure of fire potential and is expressed as a numeric rating. Rating rises as fire weather becomes more severe. By construction, the relationship between the FWI numerical values and the fuel status, such as the humidity content retained in the live or dead vegetation, is weak. This implies that the same FWI values can correspond to different danger levels depending on the ecosystem. To become a meaningful tool in fire management, the FWI requires the definition of danger levels that should be site specific (we call this post-processing task ‘calibration’ hereafter). Indeed the warning levels suggested for the original FWI were derived to describe fires in a standard jack pine stand, typical of the Canadian forests. Therefore the applicability of the FWI to other parts of the planet, with vegetation characteristics dissimilar from those of the Boreal forests, requires the user to understand the fire occurrence pattern in relation to the site specific conditions. Moreover, before transferring a fire danger system from one area to another, an extensive validation/verification (the terms validation and verification are used as synonyms in this work) against forecasted and observed fire events is required to build operational confidence. In practical terms, the calibration task implies the analysis of the soil and weather conditions as synthesized by the FWI for a long period in the past, while the verification consists of the analysis of the performance of the system and danger levels applied to observed events.</p>
+<p>From a computational point of view tailoring fire danger levels to a given area and validating the performances of an early warning system is a demanding task as it requires handling large datasets. The typical user of fire forecasting systems might not necessarily have access to powerful supercomputers or large data storages. There is a need, therefore, to design and implement post-processing algorithms in such a way that processing time and memory resources are kept to the minimum while relying on accessible hardware.</p>
+<p>In the light of these requirements, we have developed an open-source tool called caliver that contains reproducible algorithms for the calibration and verification of the FWI danger levels. This is developed in the R statistical language <span class="citation">(RCore 2016)</span>, it is available from a public repository and distributed under an open license.</p>
+<p>The calibration and verification methodologies implemented in caliver rely on the availability of long term datasets of predicted and observed fire events. In the present work we test the algorithms using the FWI predictions that the European Centre for Medium-range Weather Forecasts (ECMWF) provides to the European Forest Fire Information System (EFFIS). The modeling component of EFFIS is referred to as the Global ECMWF Fire Forecast system (GEFF, <span class="citation">(Di Giuseppe et al. 2016)</span>). Observed fires are provided by the the Global Fire Assimilation System, which is part of the Copernicus Atmospheric Management Service. Both datasets are publicly available under open licenses.</p>
+<p>In the following sections we present the caliver R package, illustrate the main functionalities and show the results of our experiments focused on calculating and validating fire danger thresholds for various areas in Europe. Europe is taken as an example study area but the methods are applicable worldwide. This work stems from the user-driven <a href="http://copernicus.eu/">Copernicus EU Programme</a> which aims at developing freely and openly accessible information services based on satellite Earth Observation and in situ data. We believe that developing transparent and reproducible analysis workflows, even more if implemented within open-source initiatives is a necessary step towards the implementation of reliable modelling tools. This is because reproducible workflows aim to streamline the processing tasks as they present ready-made solutions to efficiently manipulate complex and heterogeneous datasets. Also, opening the code to the scrutiny of other experts increases the chances to implement more robust solutions and avoids duplication of efforts.</p>
+</div>
+<div id="package-installation-and-dependencies" class="section level1">
+<h1 class="hasAnchor">
+<a href="#package-installation-and-dependencies" class="anchor"></a>Package installation and dependencies</h1>
+<p>The <code>caliver</code> package is implemented in the R statistical language. Here we describe version 1.7.0, the latest stable release at the time of this writing. The package does not require compilation but depends on the following external libraries: the Geospatial Data Abstraction Library <span class="citation">(Warmerdam 2008)</span>, a translator library for raster and vector geospatial data formats, and the NetCDF4 library <span class="citation">(Rew and Davis 1990)</span>. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.</p>
+<p>The <code>caliver</code> package is available on CRAN, therefore once all the dependencies are available, the package can be installed and loaded as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Install caliver from GitHub via devtools</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ecmwf/caliver"</span><span class="op">)</span></code></pre></div>
-<p>Load the caliver package:</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"caliver"</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ecmwf.github.io/caliver">"caliver"</a></span><span class="op">)</span></code></pre></div>
-</div>
-<div id="sample-regions" class="section level2">
+<p>Please note that in the code snippets, we mention functions belonging to packages other than caliver and base, using the convention <code>package_name::function_name</code>.</p>
+<div id="source-code-availability" class="section level2">
 <h2 class="hasAnchor">
-<a href="#sample-regions" class="anchor"></a>Sample regions</h2>
-<p>The fourth-generation global fire emissions database  provides as ancillary data a map of 14 basis regions used to evaluate regional annual emission estimates. This map is included in the caliver package and can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the sp package) as follows.</p>
+<a href="#source-code-availability" class="anchor"></a>Source code availability</h2>
+<p>Our work stands for the highest standards of scientific reproducibility from the computational point of view <span class="citation">(Añel 2011, @anel2017comment)</span>. Hence, caliver’s source code is hosted on a public repository, maintained using the git version control system and distributed under an open license: APACHE-2. Users can suggest changes and report bugs using the dedicated <a href="https://github.com/ecmwf/caliver/issues">issue tracking system</a>.</p>
+</div>
+<div id="continuous-integration-and-unit-tests" class="section level2">
+<h2 class="hasAnchor">
+<a href="#continuous-integration-and-unit-tests" class="anchor"></a>Continuous integration and unit tests</h2>
+<p>In order to have a reliable development process, system dependencies, installation and basic functionalities are tested using GitHub Actions for continuous integration on windows and unix-based systems. Unit tests for the main functions are developed using the testthat framework <span class="citation">(Wickham 2011)</span>. Software metrics, in terms of code coverage status, are tracked using the codecov platform (<a href="https://codecov.io/" class="uri">https://codecov.io/</a>). The current release has a code coverage of 95%.</p>
+</div>
+</div>
+<div id="datasets-for-testing" class="section level1">
+<h1 class="hasAnchor">
+<a href="#datasets-for-testing" class="anchor"></a>Datasets for testing</h1>
+<p>In this work, the functionalities implemented in the caliver package are tested using the data products from the Global ECMWF Fire Forecast (GEFF) system as well as external data sources (see below).</p>
+<div id="get-data-from-the-fourth-generation-global-fire-emissions-database-gfed4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#get-data-from-the-fourth-generation-global-fire-emissions-database-gfed4" class="anchor"></a>Get data from the fourth-generation Global Fire Emissions Database (GFED4)</h2>
+<div id="burned-areas-deprecated" class="section level3">
+<h3 class="hasAnchor">
+<a href="#burned-areas-deprecated" class="anchor"></a>Burned areas <em>deprecated</em>
+</h3>
+<p>Observed burned areas around the world are collected by the 4th generation Global Fire Emissions Database <span class="citation">(Giglio, Randerson, and Werf 2013)</span> in hdf format. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability. In <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span>, the function <code>get_gfed4()</code> was used to retrieve observed burned areas from GFED4. Over time the service has changed and this function has proven to be difficult to maintain.</p>
+<p><strong>In the current version of <code>caliver</code>, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions). Please, download daily burned area maps for 2003-01-01 to 2015-12-31 manually from <a href="https://www.globalfiredata.org/data.html" class="uri">https://www.globalfiredata.org/data.html</a>.</strong></p>
+</div>
+<div id="basis-regions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#basis-regions" class="anchor"></a>Basis regions</h3>
+<p>GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the <code>sp</code> package) as follows.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Get all the GFED4 basis regions</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/edzer/sp/">"sp"</a></span><span class="op">)</span>
+
+<span class="co"># Get all the GFED4 basis regions</span>
 <span class="va">BasisRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GFED4_BasisRegions.rds"</span>,
                                     package <span class="op">=</span> <span class="st">"caliver"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/edzer/sp/">"sp"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">BasisRegions</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">BasisRegions</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div id="areas-of-interest" class="section level2">
+<h2 class="hasAnchor">
+<a href="#areas-of-interest" class="anchor"></a>Areas of interest</h2>
+<p>For the purpose of this vignette, we will demostrate the <code>caliver</code> functionalities on specific areas: Europe and Italy. Europe can be subsetted from GFED4 basis regions and plotted as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Europe can be subsetted as follows</span>
-<span class="va">Europe</span> <span class="op">&lt;-</span> <span class="va">BasisRegions</span><span class="op">[</span><span class="va">BasisRegions</span><span class="op">$</span><span class="va">Region</span> <span class="op">==</span> <span class="st">"EURO"</span>,<span class="op">]</span></code></pre></div>
-<p>Get administrative areas using getdata from the raster package</p>
+<code class="sourceCode R"><span class="va">Europe</span> <span class="op">&lt;-</span> <span class="va">BasisRegions</span><span class="op">[</span><span class="va">BasisRegions</span><span class="op">$</span><span class="va">Region</span> <span class="op">==</span> <span class="st">"EURO"</span>,<span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Europe</span><span class="op">)</span></code></pre></div>
+<p>Countries administrative boundaries can be obtained from the <a href="https://gadm.org/">GADM</a> dataset using the function <code>getdata()</code> from the <code>raster</code> package. As an example, below we show how to obtain Italian administrative boundaries at country/region/province level.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># United Kingdom</span>
-<span class="va">UnitedK</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"United Kingdom"</span>, 
-                           level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://rspatial.org/raster">"raster"</a></span><span class="op">)</span>
+<span class="co"># Italy</span>
+<span class="va">Italy</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
 
-<span class="co"># Spain</span>
-<span class="va">Spain</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Spain"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Italy</span>
-<span class="va">Italy</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Italian regions</span>
+<span class="co"># Italian regions</span>
 <span class="va">Italy1</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 
 <span class="co"># Get polygons for Liguria, Calabria and Sicily</span>
@@ -140,45 +178,104 @@
 <span class="va">Calabria</span> <span class="op">&lt;-</span> <span class="va">Italy1</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span>
 <span class="va">Sicily</span> <span class="op">&lt;-</span> <span class="va">Italy1</span><span class="op">[</span><span class="fl">15</span>,<span class="op">]</span>
 
-<span class="co"># Get polygon for the Province of Genoa</span>
+<span class="co"># Get polygon for the Province of Genoa, in Liguria Region.</span>
 <span class="va">Italy2</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="va">Genoa</span> <span class="op">&lt;-</span> <span class="va">Italy2</span><span class="op">[</span><span class="fl">42</span>,<span class="op">]</span></code></pre></div>
 </div>
-<div id="analysis-and-visualisation" class="section level2">
+<div id="the-effis-datasets-geff-reanalysis-and-geff-realtime" class="section level2">
 <h2 class="hasAnchor">
-<a href="#analysis-and-visualisation" class="anchor"></a>Analysis and visualisation</h2>
-<p>A first understanding of how FWI value are distributed over time can be achieved by creating a map of percentiles. In the example below we generate two maps: 1 for the median and the othe for the 90th percentile.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_percentile_raster.html">get_percentile_raster</a></span><span class="op">(</span>input_file <span class="op">=</span> <span class="st">"FWI.nc"</span>, probs <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">maps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_percentile_raster.html">get_percentile_raster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">b</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">75</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="maskcropsubset" class="section level3">
-<h3 class="hasAnchor">
-<a href="#maskcropsubset" class="anchor"></a>Mask/crop/subset</h3>
-<p>FWI values are related to the local vegetation as well as to localised soil and atmospheric conditions during the dry season. For this reason it is often useful to look at spatio-temporal subsets of the full reanalysis dataset. In the example below, the function <code><a href="../reference/mask_crop_subset.html">mask_crop_subset()</a></code> is used to extract the 50th and 90th percentiles (setting argument <code>idx = c(1, 3)</code>), masked and cropped over Europe.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mapItaly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">maps</span>, p <span class="op">=</span> <span class="va">Italy</span>, idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<a href="#the-effis-datasets-geff-reanalysis-and-geff-realtime" class="anchor"></a>The EFFIS datasets: GEFF-reanalysis and GEFF-realtime</h2>
+<p>In the last three years fire danger forecasts have been developed at ECMWF as a part of the Copernicus Emergency Management Services under the guidance of the Joint Research Centre (JRC). A subset of GEFF data is feeding the <a href="https://effis.jrc.ec.europa.eu/">EFFIS</a> and <a href="https://gwis.jrc.ec.europa.eu/">GWIS</a> web portals; operational platforms to access timely information for fire danger at European and Global scale, respectively. 38 local and national authorities across Europe are part of the EFFIS network and have been relying on the GEFF outputs for an early identification of regions which might experience fire events due to the establishment of persistent drought conditions.</p>
+<p>Two datasets are available: the GEFF-reanalysis and the GEFF-realtime. GEFF-reanalysis provides historical records of global fire danger conditions from 1980 to date. The historic record is not static but it is updated regularly following the availability of the atmospheric reanalysis datasets. Reanalysis datasets are used to define warning levels on the base of past events, therefore levels derived from them should not be considered static as changes in climatic conditions can alter them. There are currently 2 GEFF-reanalysis datasets, the first one (used mainly for educational purposes) is based on the atmospheric reanalysis dataset ERA-Interim <span class="citation">(Dee et al. 2011)</span>. The second dataset is based on the most recent atmospheric reanalysis ERA5 <span class="citation">(Hersbach et al. 2020)</span>.</p>
+<p>GEFF-realtime provides real time deterministic high resolution and probabilistic fire danger forecasts up to 10 days ahead using weather forcings from the latest model cycle of the ECMWF weather forecast system. The real-time dataset is updated every day with a new set of forecasts. This dataset is used for operational monitoring of danger conditions. Real-time data can be obtain making a data request to the <a href="https://effis.jrc.ec.europa.eu/static/data.request.form/">JRC</a>.</p>
+<p>In this vignette, the Fire Weather Index (from the homonymous Canadian system) ERA-Interim based reanalysis dataset is used to asses fire danger. This dataset has daily temporal resolution, global coverage (0.7 degrees, ~80 Km, with longitudes ranging between -180 to +180 in geographic coordinate systems) and spans from 1980-01-01 to 2018-12-31. It was computed by the European Centre for Medium-range Weather Forecast (ECMWF) and made available on <a href="https://doi.org/10.5281/zenodo.1065400">Zenodo</a>, for more details see <span class="citation">(Vitolo et al. 2019)</span>. Newer and more detailed fire danger reanalysis data are available from the <a href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/cems-fire-historical?tab=overview">Copernicus Climate Data Store (CDS)</a>, for more details see <span class="citation">(Vitolo et al. 2020)</span>.</p>
+<p>We assume the ERA-Interim based GEFF-reanalysis data have already been downloaded from Zenodo and locally available.</p>
+<p>Data are aggregated into one NetCDF file and can be loaded as RasterBrick.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded in the data directory</span>
+<span class="va">fwi</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"~/repos/caliver_extras/data/fwi.nc"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="plot" class="section level3">
-<h3 class="hasAnchor">
-<a href="#plot" class="anchor"></a>Plot</h3>
-<p>The function <code>plotPercentiles()</code> provides a modified version of the <code><a href="https://rdrr.io/pkg/raster/man/plot.html">raster::plot()</a></code> function. Below is a comparison.</p>
+<div id="masking-data-using-land-cover-maps" class="section level2">
+<h2 class="hasAnchor">
+<a href="#masking-data-using-land-cover-maps" class="anchor"></a>Masking data using land cover maps</h2>
+<p>Vegetation is the fuel for fire. In order to carry out an accurate estimation of fire danger worldwide it is important to use an homogeneous classification of land use and vegetation. The Global Wildfire Information System (GWIS) uses the Global Land Cover 2000 database and regional products for Africa, Asia, and Europe [JRC2003]. This map is publicly available and can be downloaded from <a href="https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php">https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php</a>. Another example of such a map was compiled by the European Space Agency (ESA): the Climate Change Initiative (CCI) Land Cover Maps (<a href="http://www.esa-landcover-cci.org/" class="uri">http://www.esa-landcover-cci.org/</a>). Other land cover maps exist and the reader is invited to download and use the one more suitable for the problem at hand.</p>
+<p>The example below shows how to mask fire danger indices using the Global Land Cover 2000 map.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Global Land Cover 2000</span>
+<span class="co"># Documentation</span>
+<span class="co"># https://forobs.jrc.ec.europa.eu/data/products/glc2000/GLC2000_EUR_20849EN.pdf</span>
+<span class="co"># Get map</span>
+<span class="co"># system("wget https://forobs.jrc.ec.europa.eu/data/products/glc2000/glc2000_v1_1_Grid.zip")</span>
+<span class="co"># Unzip the folder in the working directory</span>
+
+<span class="co"># Load map</span>
+<span class="va">fuel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span><span class="op">(</span><span class="st">"/home/claudia/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf"</span><span class="op">)</span>
+<span class="co"># Save legend in data.frame</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/factor.html">levels</a></span><span class="op">(</span><span class="va">fuel</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># If fuel and fwi have different extent and/or number of rows/cols, you will need to resample</span>
+<span class="va">fuel</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/resample.html">resample</a></span><span class="op">(</span><span class="va">fuel</span>, <span class="va">fwi</span>, method <span class="op">=</span> <span class="st">"ngb"</span>, progress <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span>
+
+<span class="co"># Remove Bare Areas (19), Water Bodies (20), Snow and Ice (21), Artificial surfaces and associated areas (22), No data (23).</span>
+<span class="va">codes_to_exclude</span> <span class="op">&lt;-</span> <span class="fl">19</span><span class="op">:</span><span class="fl">23</span>
+<span class="va">fuel</span><span class="op">[</span><span class="va">fuel</span> <span class="op">%in%</span> <span class="va">codes_to_exclude</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/factor.html">levels</a></span><span class="op">(</span><span class="va">fuel</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">18</span>,<span class="op">]</span>
+
+<span class="co"># Finaly, mask the first layer in fwi</span>
+<span class="va">fwi_masked</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/mask.html">mask</a></span><span class="op">(</span><span class="va">fwi</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">fuel</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">fwi_masked</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">terrain.colors</a></span><span class="op">(</span><span class="fl">120</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div id="package-functionalities" class="section level1">
+<h1 class="hasAnchor">
+<a href="#package-functionalities" class="anchor"></a>Package functionalities</h1>
+<p>The primary goal of the <code>caliver</code> package is to streamline the post-processing of GEFF model outputs and make the scientific workflow easily reproducible. For this reason, this section provides example applications in the form of short workflows. These are ordered chronologically, based on the sequential steps a modeller would perform to visually explore information, calibrate fire danger levels and validate them. This often results in an increasing level of complexity. To provide a concise description, each workflow is not a stand alone exercise but the result of one workflow is often used as input in the following ones.</p>
+<div id="classify-fire-danger-indices" class="section level2">
+<h2 class="hasAnchor">
+<a href="#classify-fire-danger-indices" class="anchor"></a>Classify fire danger indices</h2>
+<p>Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fwi_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_index.html">classify_index</a></span><span class="op">(</span><span class="va">fwi_masked</span>, index <span class="op">=</span> <span class="st">"fwi"</span>, thresholds <span class="op">=</span> <span class="cn">NULL</span>, labels <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
+<span class="fu">rasterVis</span><span class="fu">::</span><span class="fu">levelplot</span><span class="op">(</span><span class="va">fwi_class</span>, col.regions <span class="op">=</span> <span class="fu">caliver</span><span class="fu">:::</span><span class="va">effis_palette</span><span class="op">)</span></code></pre></div>
+<p>The categories of GEFF’s indices are pre-defined but can be overwritten by explicitly defining the input parameters <code>thresholds</code> and <code>labels</code>. The <code>effis_palette</code> is pre-defined in caliver, however, any custom palette can be used.</p>
+</div>
+<div id="mask-crop-and-subset" class="section level2">
+<h2 class="hasAnchor">
+<a href="#mask-crop-and-subset" class="anchor"></a>Mask, crop and subset</h2>
+<p>GEFF fire danger indices are characterized by three dimensions (latitude, longitude and time) and a variable for each index of interest. These can be masked and cropped to match a user-defined extent, this can be a geographical bounding box or a spatial polygon such as a given administrative boundary. The indices can also be subsetted over the layer index or the time dimension (e.g. to take into account only fire seasons). The function <code><a href="../reference/mask_crop_subset.html">mask_crop_subset()</a></code> wraps the functions <code><a href="https://rdrr.io/pkg/raster/man/mask.html">raster::mask()</a></code>, <code><a href="https://rdrr.io/pkg/raster/man/crop.html">raster::crop()</a></code> and <code><a href="https://rdrr.io/pkg/raster/man/subset.html">raster::subset()</a></code> and converts the result into a RasterLayer (single layer) or RasterBrick (multiple layers). The example below shows how to mask and crop the fwi brick over Italy, selecting only the reference period 1981-2010.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get indices for climatological reference period 1981-2010</span>
+<span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">fwi</span><span class="op">)</span>, start <span class="op">=</span> <span class="fl">2</span>, stop <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">%in%</span> <span class="fl">1981</span><span class="op">:</span><span class="fl">2010</span><span class="op">)</span>
+<span class="co"># Mask, crop and subset</span>
+<span class="va">fwi_Italy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi</span>, p <span class="op">=</span> <span class="va">Italy</span>, idx <span class="op">=</span> <span class="va">idx</span>, progress <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="generate-maps-of-percentiles" class="section level2">
+<h2 class="hasAnchor">
+<a href="#generate-maps-of-percentiles" class="anchor"></a>Generate maps of percentiles</h2>
+<p>For each index, calculating relevant quantiles cell by cell (over time) gives an indication of the local distribution of fire danger values. Such a map can be generated using the function <code>get_percentile_raster</code>.</p>
+<p>The example below uses the <code>fwi_Italy</code> (generated in the previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">maps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_percentile_raster.html">get_percentile_raster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi_Italy</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">75</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to: rotate the longitudinal coordinates (optional), overlay a background map and set the color scale to the same range so that multiple maps become comparable. The rotation issue is due to an ambiguity in the WGS84 coordinate system (EPSG: 4326) which does not explicitly define the longitude range neither the location of the central meridian. As a consequence different applications have developed different standards: global climate and derived models (such as GEFF) set the longitude range between 0 and 360 degrees, while others between -180 and +180 degrees (e.g. GADM and GFED4).</p>
+<p>By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentile_raster performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using <code><a href="https://rdrr.io/pkg/raster/man/plot.html">raster::plot()</a></code> (top) versus <code><a href="../reference/plot_percentile_raster.html">plot_percentile_raster()</a></code> (bottom).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Use the raster plot method</span>
-<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">mapItaly</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">maps</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co"># Use the caliver plotPercentiles function</span>
-<span class="fu"><a href="../reference/plot_percentile_raster.html">plot_percentile_raster</a></span><span class="op">(</span>maps <span class="op">=</span> <span class="va">mapItaly</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="co"># Use the caliver plot_percentile_raster function</span>
+<span class="fu"><a href="../reference/plot_percentile_raster.html">plot_percentile_raster</a></span><span class="op">(</span>maps <span class="op">=</span> <span class="va">maps</span>,
+                       main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
+<div id="fire-danger-levels-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#fire-danger-levels-" class="anchor"></a>Fire danger levels.</h2>
+<p>GEFF reanalysis data can be used to identify significant thresholds in fire danger levels. Danger levels can be calculated based on some user-defined parameters: the spatial extent of the area of interest and the fire season. The fire season is defined as the dry season, a period in which there is a reduced soil moisture and precipitation. In this work we adopt a convention: the fire season falls between 1st April and 31st October in the northern hemisphere, and between 1st October and 30th April in the southern hemisphere. This convention is coded in the function get_fire_season (see Table 8), which accepts at least two arguments: dates (the sequence of daily dates for which reanalysis data is available) and zone (which can be either ‘north’ or ‘south’ emisphere). There are also two optional arguments that allow to define an ad-hoc fire season: fss (which stands for Fire Season Start) and fse (which stands for Fire Season End).</p>
 <div id="define-fire-season" class="section level3">
 <h3 class="hasAnchor">
 <a href="#define-fire-season" class="anchor"></a>Define fire season</h3>
-<p>In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe, starting in April and ending in October each year.</p>
+<p>In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe (and Italy in particular), starting in April and ending in October each year.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dataDates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html">seq.Date</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"1980-01-01"</span><span class="op">)</span>,
-                      to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2016-12-31"</span><span class="op">)</span>,
-                      by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span>
-                      
+<code class="sourceCode R"><span class="va">dataDates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">fwi</span><span class="op">)</span>, <span class="fl">2</span>, <span class="fl">11</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y.%m.%d"</span><span class="op">)</span>
 <span class="co"># Define a function to extract fire seasons in Europe</span>
 <span class="va">seasons</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fire_season.html">get_fire_season</a></span><span class="op">(</span>dates <span class="op">=</span> <span class="va">dataDates</span>, zone <span class="op">=</span> <span class="st">"north"</span><span class="op">)</span>
 
@@ -190,93 +287,64 @@
 <a href="#calculate-danger-levels" class="anchor"></a>Calculate danger levels</h3>
 <p>Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe, regions and a province in Italy. The result shows that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load FWI dataset obtained previously</span>
-<span class="va">FWI</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"FWI.nc"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># Mask/Crop/Subset FWI over Europe</span>
+<span class="va">fwi_euro</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi</span>, p <span class="op">=</span> <span class="va">Europe</span>, idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
 
-<span class="co"># Mask/Crop/Subset FWI over Europe</span>
-<span class="va">FWIEURO</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWI</span>, p <span class="op">=</span> <span class="va">Europe</span>, idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
-                    
-<span class="co"># Calculate levels</span>
-<span class="va">EuropeThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">FWIEURO</span><span class="op">)</span>
+<span class="co"># Calculate homogenised fire danger levels (or thresholds) for Europe</span>
+<span class="va">EuropeThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">fwi_euro</span><span class="op">)</span>
+<span class="va">EuropeThr</span></code></pre></div>
+<p>Please note the differences between these danger levels and those recommended by the European Forest Fire Information System (EFFIS)[<a href="https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/" class="uri">https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/</a>), <code>caliver</code> danger levels are generally lower than EFFIS ones.</p>
+<p>Fire danger levels are more useful when calculated at country level. Below is shown how to execute the same steps above recursively for most countries in Europe and bind the results together in a summary table.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Country level: use a loop to calculate levels for three sample countries.</span>
+<span class="co"># Please note that in the original paper many more countries were used, here we process</span>
+<span class="co"># only three to reduce the processing time but the procedure is exactly the same.</span>
+<span class="va">EUcountries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Spain"</span>, <span class="st">"UK"</span>, <span class="st">"Italy"</span><span class="op">)</span>
 
-<span class="co"># Country level: use a loop to calculate levels for all the countries in the EU:</span>
-<span class="co"># This does not take into account Greenland, Cyprus, Andorra and Luxembrourg.</span>
-<span class="va">EUcountries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Austria"</span>, <span class="st">"Belgium"</span>, <span class="st">"Bulgaria"</span>, <span class="st">"Croatia"</span>,
-                 <span class="st">"Czech Republic"</span>, <span class="st">"Denmark"</span>, <span class="st">"Estonia"</span>, <span class="st">"Finland"</span>, <span class="st">"France"</span>,
-                 <span class="st">"Germany"</span>, <span class="st">"Greece"</span>, <span class="st">"Hungary"</span>, <span class="st">"Ireland"</span>, <span class="st">"Italy"</span>, <span class="st">"Latvia"</span>,
-                 <span class="st">"Lithuania"</span>, <span class="st">"Luxembourg"</span>, <span class="st">"Malta"</span>, <span class="st">"Netherlands"</span>, <span class="st">"Poland"</span>,
-                 <span class="st">"Portugal"</span>, <span class="st">"Romania"</span>, <span class="st">"Slovakia"</span>, <span class="st">"Slovenia"</span>, <span class="st">"Spain"</span>,
-                 <span class="st">"Sweden"</span>, <span class="st">"United Kingdom"</span><span class="op">)</span>
-                 
-<span class="kw">for</span> <span class="op">(</span><span class="va">singleCountry</span> <span class="kw">in</span> <span class="va">EUcountries</span><span class="op">)</span><span class="op">{</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">country</span> <span class="kw">in</span> <span class="va">EUcountries</span><span class="op">)</span><span class="op">{</span>
 
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">singleCountry</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">country</span><span class="op">)</span>
+  <span class="va">country_poly</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>,
+                                  country <span class="op">=</span> <span class="va">country</span>,
+                                  level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
 
-  <span class="co"># Mask/Crop/Subset FWI and generate thresholds for singleCountry</span>
-  <span class="va">singleCountryFWI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWI</span>,
-                                       p <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>,
-                                                           country <span class="op">=</span> <span class="va">singleCountry</span>,
-                                                           level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
-                                       idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
-  <span class="va">singleCountryThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">singleCountryFWI</span><span class="op">)</span>
+  <span class="co"># Mask/Crop/Subset FWI and generate thresholds for country</span>
+  <span class="va">country_fwi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi_euro</span>, p <span class="op">=</span> <span class="va">country_poly</span><span class="op">)</span>
+  <span class="va">country_thrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">country_fwi</span><span class="op">)</span>
   
   <span class="co"># Append values to data.frame</span>
-  <span class="kw">if</span> <span class="op">(</span><span class="va">singleCountry</span> <span class="op">==</span> <span class="st">"Austria"</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">singleCountryThr</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">country</span> <span class="op">==</span> <span class="st">"Spain"</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">country_thrs</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
   <span class="op">}</span><span class="kw">else</span><span class="op">{</span>
-    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">singleCountryThr</span><span class="op">)</span>
+    <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">country_thrs</span><span class="op">)</span>
   <span class="op">}</span>
   
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
 
 <span class="op">}</span>
 
-<span class="va">EuroThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">EUcountries</span>, <span class="va">df</span>, stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">EuroThr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Country"</span>, <span class="st">"Low"</span>, <span class="st">"Moderate"</span>, <span class="st">"High"</span>, <span class="st">"VeryHigh"</span>, <span class="st">"Extreme"</span><span class="op">)</span>
-
-<span class="co"># Regional level</span>
-<span class="co"># Mask/Crop/Subset FWI and generate thresholds for Liguria</span>
-<span class="va">LIG</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWI</span>, p <span class="op">=</span> <span class="va">Liguria</span>, idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
-<span class="va">EuroThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">EuroThr</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Liguria"</span>, <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">LIG</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-                               
-<span class="co"># Mask/Crop/Subset FWI and generate thresholds for Calabria</span>
-<span class="va">CAL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWI</span>, p <span class="op">=</span> <span class="va">Calabria</span>, idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
-<span class="va">EuroThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">EuroThr</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Calabria"</span>, <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">CAL</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Mask/Crop/Subset FWI and generate thresholds for Sicily</span>
-<span class="va">SIC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWI</span>, p <span class="op">=</span> <span class="va">Sicily</span>, idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
-<span class="va">EuroThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">EuroThr</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sicily"</span>, <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">SIC</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Province level</span>
-<span class="co"># Mask/Crop/Subset FWI and generate thresholds for Genoa</span>
-<span class="va">GEN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWI</span>, p <span class="op">=</span> <span class="va">Genoa</span>, idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
-<span class="va">EuroThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">EuroThr</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Genoa"</span>, <span class="fu"><a href="../reference/get_fire_danger_levels.html">get_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">GEN</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Remove NAs, e.g. Luxembourg and Malta are too small compared to the ratser resolution</span>
-<span class="va">EuroThr</span> <span class="op">&lt;-</span> <span class="va">EuroThr</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">EuroThr</span><span class="op">)</span>,<span class="op">]</span>
-
-<span class="va">EuroThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">EuroThr</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Europe"</span>, <span class="va">EuropeThr</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Save table with thresholds for future use</span>
-<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">EuroThr</span>, <span class="st">"EuroThr.rds"</span><span class="op">)</span></code></pre></div>
+<span class="va">df_thr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">EUcountries</span>, <span class="va">df</span>, stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_thr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Country"</span>, <span class="st">"Low"</span>, <span class="st">"Moderate"</span>, <span class="st">"High"</span>, <span class="st">"VeryHigh"</span>, <span class="st">"Extreme"</span><span class="op">)</span></code></pre></div>
+<p>Assessing the danger levels at regional and province level (using the ERA-Interim based dataset) is rather difficult because some areas are too small compared to the raster resolution. For assessing fire danger in small regions we suggest to use the ERA5-based fire indices <span class="citation">(Vitolo et al. 2020)</span>.</p>
 </div>
 <div id="plot-density-with-thresholds" class="section level3">
 <h3 class="hasAnchor">
 <a href="#plot-density-with-thresholds" class="anchor"></a>Plot density with thresholds</h3>
-<p>The thresholds are different from the percentiles, the PDF below shows a comparison for Italy.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">countryPDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_fire_pdf.html">plot_fire_pdf</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">IT</span>,
-                            thresholds <span class="op">=</span> <span class="va">EuroThr</span><span class="op">[</span><span class="st">"Italy"</span>, <span class="op">]</span>, 
-                            upper_limit <span class="op">=</span> <span class="fl">75</span>,
-                            v_lines <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">0.90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>The thresholds are different from the percentiles, the PDF below shows a comparison for Italy (the last country in the above loop).</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">countryPDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_fire_pdf.html">plot_fire_pdf</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">country_fwi</span>,
+                            thresholds <span class="op">=</span> <span class="va">country_thrs</span>, 
+                            upper_limit <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="validate-danger-levels" class="section level3">
 <h3 class="hasAnchor">
 <a href="#validate-danger-levels" class="anchor"></a>Validate danger levels</h3>
-<p>Test whether large fires correspond to FWI above high danger</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>Test whether large fires correspond to FWI above high danger.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"pROC"</span><span class="op">)</span>
 
+<span class="co"># Assuming burned areas was downloaded and combined in a grid file,</span>
+<span class="co"># this can be loaded as a brick:</span>
 <span class="va">BurnedAreas</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"GFED4_BurnedAreas/BurnedArea.grd"</span><span class="op">)</span>
 
 <span class="co"># Mask and crop burned areas over Europe</span>
@@ -287,7 +355,7 @@
                       to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2015-12-31"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">BA</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">dataDates</span>
 
-<span class="va">EuroThrHigh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">EuroThr</span><span class="op">[</span><span class="va">EuroThr</span><span class="op">$</span><span class="va">Country</span> <span class="op">==</span> <span class="st">"Europe"</span>, <span class="fl">4</span><span class="op">]</span><span class="op">)</span>
+<span class="va">EuroThrHigh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">df_thr</span><span class="op">[</span><span class="va">df_thr</span><span class="op">$</span><span class="va">Country</span> <span class="op">==</span> <span class="st">"Europe"</span>, <span class="fl">4</span><span class="op">]</span><span class="op">)</span>
 
 <span class="co"># The above can be saved and re-loaded as follows:</span>
 <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/writeRaster.html">writeRaster</a></span><span class="op">(</span><span class="va">BA</span>, filename<span class="op">=</span><span class="st">"BurnedAreaEurope.grd"</span>,
@@ -326,53 +394,48 @@
                print.auc <span class="op">=</span> <span class="fu">pROC</span><span class="fu">::</span><span class="fu">auc</span><span class="op">(</span><span class="va">roc2</span><span class="op">)</span>, print.auc.x <span class="op">=</span> <span class="fl">0</span>, print.auc.y <span class="op">=</span> <span class="fl">0.95</span>,
                print.auc.col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>
 
-
 <span class="co"># Loop throught the countries</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">singleCountry</span> <span class="kw">in</span> <span class="va">EuroThr</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">26</span>,<span class="st">"Country"</span><span class="op">]</span><span class="op">)</span><span class="op">{</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">country</span> <span class="kw">in</span> <span class="va">df_thr</span><span class="op">[</span>,<span class="st">"Country"</span><span class="op">]</span><span class="op">)</span><span class="op">{</span>
 
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">singleCountry</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">country</span><span class="op">)</span>
 
-  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="va">singleCountry</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Cyprus"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">countryPoly</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="va">country</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
+  <span class="va">countryThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">df_thr</span><span class="op">[</span><span class="va">df_thr</span><span class="op">$</span><span class="va">Country</span> <span class="op">==</span> <span class="va">country</span>, <span class="fl">4</span><span class="op">]</span><span class="op">)</span>
 
-    <span class="va">countryPoly</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="va">singleCountry</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
-    <span class="va">countryThr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">EuroThr</span><span class="op">[</span><span class="va">EuroThr</span><span class="op">$</span><span class="va">Country</span> <span class="op">==</span> <span class="va">singleCountry</span>, <span class="fl">4</span><span class="op">]</span><span class="op">)</span>
+  <span class="co"># Crop RasterBricks over country of interest</span>
+  <span class="va">BA_country</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">BurnedAreaEurope</span>, p <span class="op">=</span> <span class="va">countryPoly</span><span class="op">)</span>
+  <span class="va">FWI_country</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWIEURO</span>, p <span class="op">=</span> <span class="va">countryPoly</span><span class="op">)</span>
 
-    <span class="co"># Crop RasterBricks over country of interest</span>
-    <span class="va">BA_country</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">BurnedAreaEurope</span>, p <span class="op">=</span> <span class="va">countryPoly</span><span class="op">)</span>
-    <span class="va">FWI_country</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">FWIEURO</span>, p <span class="op">=</span> <span class="va">countryPoly</span><span class="op">)</span>
-
-    <span class="va">JRC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_fire_danger_levels.html">validate_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">FWI_country</span>, 
-                                       observation <span class="op">=</span> <span class="va">BA_country</span>,
-                                       fire_threshold <span class="op">=</span> <span class="fl">21.3</span>, 
-                                       obs_threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
-    <span class="va">tab_JRC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">JRC</span><span class="op">$</span><span class="va">pred</span>, <span class="va">JRC</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">caliver1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_fire_danger_levels.html">validate_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">FWI_country</span>, 
-                                            observation <span class="op">=</span> <span class="va">BA_country</span>,
-                                            fire_threshold <span class="op">=</span> <span class="va">EuroThrHigh</span>, 
-                                            obs_threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
-    <span class="va">tab_caliver1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">caliver1</span><span class="op">$</span><span class="va">pred</span>, <span class="va">caliver1</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">caliver2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_fire_danger_levels.html">validate_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">FWI_country</span>, 
-                                            observation <span class="op">=</span> <span class="va">BA_country</span>,
-                                            fire_threshold <span class="op">=</span> <span class="va">countryThr</span>, 
-                                            obs_threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
-    <span class="va">tab_caliver2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">caliver2</span><span class="op">$</span><span class="va">pred</span>, <span class="va">caliver2</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">JRC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_fire_danger_levels.html">validate_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">FWI_country</span>,
+                                     observation <span class="op">=</span> <span class="va">BA_country</span>,
+                                     fire_threshold <span class="op">=</span> <span class="fl">21.3</span>,
+                                     obs_threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
+  <span class="va">tab_JRC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">JRC</span><span class="op">$</span><span class="va">pred</span>, <span class="va">JRC</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">caliver1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_fire_danger_levels.html">validate_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">FWI_country</span>,
+                                          observation <span class="op">=</span> <span class="va">BA_country</span>,
+                                          fire_threshold <span class="op">=</span> <span class="va">EuroThrHigh</span>,
+                                          obs_threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
+  <span class="va">tab_caliver1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">caliver1</span><span class="op">$</span><span class="va">pred</span>, <span class="va">caliver1</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">caliver2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_fire_danger_levels.html">validate_fire_danger_levels</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">FWI_country</span>,
+                                          observation <span class="op">=</span> <span class="va">BA_country</span>,
+                                          fire_threshold <span class="op">=</span> <span class="va">countryThr</span>,
+                                          obs_threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
+  <span class="va">tab_caliver2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">caliver2</span><span class="op">$</span><span class="va">pred</span>, <span class="va">caliver2</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span><span class="op">)</span>
     
-    <span class="kw">if</span> <span class="op">(</span><span class="va">singleCountry</span> <span class="op">==</span> <span class="st">"Austria"</span><span class="op">)</span> <span class="op">{</span>
-      <span class="va">df_caliver1</span> <span class="op">&lt;-</span> <span class="va">df_caliver2</span> <span class="op">&lt;-</span> <span class="va">df_effis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"pred"</span> <span class="op">=</span> <span class="va">tab_caliver1</span><span class="op">$</span><span class="va">pred</span>, <span class="st">"obs"</span> <span class="op">=</span> <span class="va">tab_caliver1</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span>
-      <span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">3</span>
-    <span class="op">}</span>
-
-    <span class="va">df_caliver1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">df_caliver1</span>, <span class="va">tab_caliver1</span><span class="op">$</span><span class="va">Freq</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_caliver1</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">singleCountry</span>
-    <span class="va">df_caliver2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">df_caliver2</span>, <span class="va">tab_caliver2</span><span class="op">$</span><span class="va">Freq</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_caliver2</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">singleCountry</span>
-    <span class="va">df_effis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">df_effis</span>, <span class="va">tab_JRC</span><span class="op">$</span><span class="va">Freq</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_effis</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">singleCountry</span>
-    <span class="va">i</span> <span class="op">&lt;-</span> <span class="va">i</span> <span class="op">+</span> <span class="fl">1</span>
-
-    <span class="fu"><a href="https://rdrr.io/r/base/rm.html">rm</a></span><span class="op">(</span><span class="va">countryPoly</span>, <span class="va">countryThr</span>, <span class="va">BA_country</span>, <span class="va">FWI_country</span><span class="op">)</span>
-
+  <span class="kw">if</span> <span class="op">(</span><span class="va">country</span> <span class="op">==</span> <span class="st">"Spain"</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">df_caliver1</span> <span class="op">&lt;-</span> <span class="va">df_caliver2</span> <span class="op">&lt;-</span> <span class="va">df_effis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"pred"</span> <span class="op">=</span> <span class="va">tab_caliver1</span><span class="op">$</span><span class="va">pred</span>, <span class="st">"obs"</span> <span class="op">=</span> <span class="va">tab_caliver1</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span>
+    <span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">3</span>
   <span class="op">}</span>
+
+  <span class="va">df_caliver1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">df_caliver1</span>, <span class="va">tab_caliver1</span><span class="op">$</span><span class="va">Freq</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_caliver1</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">country</span>
+  <span class="va">df_caliver2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">df_caliver2</span>, <span class="va">tab_caliver2</span><span class="op">$</span><span class="va">Freq</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_caliver2</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">country</span>
+  <span class="va">df_effis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">df_effis</span>, <span class="va">tab_JRC</span><span class="op">$</span><span class="va">Freq</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_effis</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">country</span>
+  <span class="va">i</span> <span class="op">&lt;-</span> <span class="va">i</span> <span class="op">+</span> <span class="fl">1</span>
+
+  <span class="fu"><a href="https://rdrr.io/r/base/rm.html">rm</a></span><span class="op">(</span><span class="va">countryPoly</span>, <span class="va">countryThr</span>, <span class="va">BA_country</span>, <span class="va">FWI_country</span><span class="op">)</span>
 
 <span class="op">}</span>
 
@@ -426,14 +489,60 @@
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs" class="references">
+<div id="ref-anel2011importance">
+<p>Añel, Juan A. 2011. “The Importance of Reviewing the Code.” <em>Communications of the ACM</em> 54 (5): 40–41.</p>
+</div>
+<div id="ref-anel2017comment">
+<p>———. 2017. “Comment on ‘Most Computational Hydrology Is Not Reproducible, so Is It Really Science?’ By Christopher Hutton et Al.” <em>Water Resources Research</em> 53 (3): 2572–4.</p>
+</div>
+<div id="ref-dee2011era">
+<p>Dee, Dick P, S Mꎬ Uppala, AJ Simmons, Paul Berrisford, P Poli, S Kobayashi, U Andrae, et al. 2011. “The Era-Interim Reanalysis: Configuration and Performance of the Data Assimilation System.” <em>Quarterly Journal of the Royal Meteorological Society</em> 137 (656): 553–97.</p>
+</div>
+<div id="ref-di2016potential">
+<p>Di Giuseppe, Francesca, Florian Pappenberger, Fredrik Wetterhall, Blazej Krzeminski, Andrea Camia, Giorgio Libertá, and Jesus San Miguel. 2016. “The Potential Predictability of Fire Danger Provided by Numerical Weather Prediction.” <em>Journal of Applied Meteorology and Climatology</em> 55 (11): 2469–91.</p>
+</div>
+<div id="ref-Flannigan_etal_2009">
+<p>Flannigan, Mike D, Meg A Krawchuk, William J de Groot, B Mike Wotton, and Lynn M Gowman. 2009. “Implications of Changing Climate for Global Wildland Fire.” <em>International Journal of Wildland Fire</em> 18 (5): 483–507.</p>
+</div>
+<div id="ref-giglio2013analysis">
+<p>Giglio, Louis, James T Randerson, and Guido R Werf. 2013. “Analysis of Daily, Monthly, and Annual Burned Area Using the Fourth-Generation Global Fire Emissions Database (Gfed4).” <em>Journal of Geophysical Research: Biogeosciences</em> 118 (1): 317–28.</p>
+</div>
+<div id="ref-hersbach2020era5">
+<p>Hersbach, Hans, Bill Bell, Paul Berrisford, Shoji Hirahara, András Horányi, Joaquı́n Muñoz-Sabater, Julien Nicolas, et al. 2020. “The Era5 Global Reanalysis.” <em>Quarterly Journal of the Royal Meteorological Society</em> 146 (730): 1999–2049.</p>
+</div>
+<div id="ref-McFarlane_etal_2002">
+<p>McFarlane, Paul, H. Pearce, and John Moore. 2002. “Introduction: Forestry and Risk Management - New Zealand in a Global Context.” In, 5–19.</p>
+</div>
+<div id="ref-rcore2016r">
+<p>RCore, TEAM. 2016. “R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing, Vienna, Austria.”</p>
+</div>
 <div id="ref-rew1990netcdf">
 <p>Rew, Russ, and Glenn Davis. 1990. “NetCDF: An Interface for Scientific Data Access.” <em>IEEE Computer Graphics and Applications</em> 10 (4): 76–82.</p>
+</div>
+<div id="ref-van1987development">
+<p>Van Wagner, CE, Petawawa Forest, and others. 1987. “Development and Structure of the Canadian Forest Fireweather Index System.” In <em>Can. For. Serv., Forestry Tech. Rep</em>. Citeseer.</p>
+</div>
+<div id="ref-van1974structure">
+<p>Van Wagner, Charles Edward, and others. 1974. <em>Structure of the Canadian Forest Fire Weather Index</em>. Vol. 1333. Citeseer.</p>
+</div>
+<div id="ref-Velez2002">
+<p>Vélez, R. 2002. “Causes of Forest Fires in the Mediterranean Basin.” <em>EFI Proceedings</em>, no. No.45: 35–42.</p>
+</div>
+<div id="ref-Vitolo2020">
+<p>Vitolo, Claudia, Francesca Di Giuseppe, Christopher Barnard, Ruth Coughlan, Jesus San-Miguel-Ayanz, Giorgio Libertá, and Blazej Krzeminski. 2020. “ERA5-Based Global Meteorological Wildfire Danger Maps.” <em>Scientific Data</em> 7 (1): 216. <a href="https://doi.org/10.1038/s41597-020-0554-z">https://doi.org/10.1038/s41597-020-0554-z</a>.</p>
 </div>
 <div id="ref-vitolo:2018">
 <p>Vitolo, Claudia, Francesca Di Giuseppe, and Mirko D’Andrea. 2018. “Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs.” <em>PLOS ONE</em> 13 (1): 1–18. <a href="https://doi.org/10.1371/journal.pone.0189419">https://doi.org/10.1371/journal.pone.0189419</a>.</p>
 </div>
+<div id="ref-Vitolo2019">
+<p>Vitolo, Claudia, Francesca Di Giuseppe, Blazej Krzeminski, and Jesus San-Miguel-Ayanz. 2019. “A 1980–2018 Global Fire Danger Re-Analysis Dataset for the Canadian Fire Weather Indices.” <em>Scientific Data</em> 6 (1): 190032. <a href="https://doi.org/10.1038/sdata.2019.32">https://doi.org/10.1038/sdata.2019.32</a>.</p>
+</div>
 <div id="ref-warmerdam2008geospatial">
 <p>Warmerdam, Frank. 2008. “The Geospatial Data Abstraction Library.” In <em>Open Source Approaches in Spatial Data Handling</em>, 87–104. Springer.</p>
+</div>
+<div id="ref-wickham2011testthat">
+<p>Wickham, Hadley. 2011. “Testthat: Get Started with Testing.” <em>The R Journal</em> 3: 5–10. <a href="http://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf">http://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf</a>.</p>
+</div>
 </div>
 </div>
 </div>

@@ -2,7 +2,6 @@ pandoc: 2.7.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
-  caliver_danger_classes-vignette: caliver_danger_classes-vignette.html
   caliver_intro-vignette: caliver_intro-vignette.html
-last_built: 2021-02-05T16:32Z
+last_built: 2021-02-09T08:34Z
 
