@@ -2,6 +2,8 @@
 
 * Removed references and dependencies from defunct functions.
 * Removed unused test datasets.
+* The following functions have changed:
+  * mask_crop_subset, mask and crop input argument have been removed as deemed superflous. Also the option `accurate` has been removed.
 * The following functions are now defunct:
   * decompress_gz() - Decompress all .gz files in a given folder
   * import_geff_data_from_tar() - Import GEFF data from a tar file into a raster stack

@@ -4,13 +4,15 @@
 #'
 #' @param r Raster* object
 #' @param p SpatialPolygon* object
-#' @param mask logical, TRUE to apply mask (default) using p, FALSE otherwise
-#' @param crop logical, TRUE to crop (default) using p, FALSE otherwise
-#' @param idx vector of strings indicating the layer indices to subset
-#' @param accurate logical, TRUE to apply more accurate cropping/masking,
-#' FALSE otherwise
+#' @param idx vector of strings indicating the layer indices to subset.
 #' @param ... additional arguments as in writeRaster
 #' (e.g. \code{progress = "text"})
+#' 
+#' @details Please note that cells along the border with centroids falling
+#' outside the polygon \code{p} will not be returned.
+#' If cells along the border are needed, we suggest to identify cells covering
+#' the polygon and set all remaining pixels to NA, as described in this post:
+#' \url{https://goo.gl/22LwJt}.
 #'
 #' @return A Raster* object
 #'
@@ -21,13 +23,12 @@
 #'
 #'   r <- raster::brick('FWI_1980-2016.nc')
 #'   p <- raster::getData(name = "GADM", country = "Italy", level = 0)
-#'   mask_crop_subset(r, p, mask = TRUE, crop = TRUE)
+#'   mask_crop_subset(r, p)
 #'
 #' }
 #'
 
-mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
-                             accurate = FALSE, ...){
+mask_crop_subset <- function(r, p, idx = NULL, ...){
 
   if (!("RasterLayer" %in% class(r)) &
       !("RasterBrick" %in% class(r)) &
@@ -37,25 +38,29 @@ mask_crop_subset <- function(r, p, mask = TRUE, crop = TRUE, idx = NULL,
 
   }
 
-  if (!is.null(idx)) r <- raster::subset(r, idx)
-
-  if (accurate == TRUE){
-    # To keep cells along the border we cannot use mask(r, p) because only
-    # cells with centroids falling in the polygon will be returned.
-    # The solution is to identify cells covering the polygon and set all
-    # remaining pixels to NA, see https://goo.gl/22LwJt
-    temp_mask <- r[[1]]
-    cls <- raster::cellFromPolygon(temp_mask,
-                                   p, weights = TRUE)[[1]][, "cell"]
-    temp_mask[][-cls] <- NA
-    p <- temp_mask
+  if (!is.null(idx)) {
+    message("Subsetting...")
+    r <- raster::subset(r, idx, ...)
   }
 
-  if (mask == TRUE) r <- raster::mask(r, p, ...)
+  # if (accurate == TRUE){
+  #   # To keep cells along the border we cannot use mask(r, p) because only
+  #   # cells with centroids falling in the polygon will be returned.
+  #   # The solution is to identify cells covering the polygon and set all
+  #   # remaining pixels to NA, see https://goo.gl/22LwJt
+  #   temp_mask <- r[[1]]
+  #   cls <- raster::cellFromPolygon(temp_mask,
+  #                                  p, weights = TRUE)[[1]][, "cell"]
+  #   temp_mask[][-cls] <- NA
+  #   p <- temp_mask
+  # }
 
-  if (crop == TRUE) r <- raster::crop(r, p, ...)
+  message("Cropping...")
+  r <- raster::crop(r, p, ...)
 
-  if (mask == TRUE & crop == TRUE) r <- raster::trim(r)
+  message("Masking...")
+  r <- raster::mask(r, p, ...)
+  r <- raster::trim(r, ...)
 
   return(r)
 

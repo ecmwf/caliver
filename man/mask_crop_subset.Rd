@@ -4,29 +4,14 @@
 \alias{mask_crop_subset}
 \title{mask_crop_subset}
 \usage{
-mask_crop_subset(
-  r,
-  p,
-  mask = TRUE,
-  crop = TRUE,
-  idx = NULL,
-  accurate = FALSE,
-  ...
-)
+mask_crop_subset(r, p, idx = NULL, ...)
 }
 \arguments{
 \item{r}{Raster* object}
 
 \item{p}{SpatialPolygon* object}
 
-\item{mask}{logical, TRUE to apply mask (default) using p, FALSE otherwise}
-
-\item{crop}{logical, TRUE to crop (default) using p, FALSE otherwise}
-
-\item{idx}{vector of strings indicating the layer indices to subset}
-
-\item{accurate}{logical, TRUE to apply more accurate cropping/masking,
-FALSE otherwise}
+\item{idx}{vector of strings indicating the layer indices to subset.}
 
 \item{...}{additional arguments as in writeRaster
 (e.g. \code{progress = "text"})}
@@ -37,12 +22,19 @@ A Raster* object
 \description{
 mask and/or crop a Raster* based on a Polygon.
 }
+\details{
+Please note that cells along the border with centroids falling
+outside the polygon \code{p} will not be returned.
+If cells along the border are needed, we suggest to identify cells covering
+the polygon and set all remaining pixels to NA, as described in this post:
+\url{https://goo.gl/22LwJt}.
+}
 \examples{
 \dontrun{
 
   r <- raster::brick('FWI_1980-2016.nc')
   p <- raster::getData(name = "GADM", country = "Italy", level = 0)
-  mask_crop_subset(r, p, mask = TRUE, crop = TRUE)
+  mask_crop_subset(r, p)
 
 }
 
