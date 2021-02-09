@@ -63,7 +63,7 @@ get_fire_danger_levels <- function(fire_index, ndays = 4){
 
       year_idx <- which(years == fire_year)
       sub_fwi <- raster::subset(fire_index, year_idx)
-      idx_year <- quantile(na.omit(as.vector(sub_fwi)), extreme_percentile)
+      idx_year <- stats::quantile(na.omit(as.vector(sub_fwi)), extreme_percentile)
       extreme_value <- c(extreme_value, as.numeric(idx_year))
 
     }
