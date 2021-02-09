@@ -236,7 +236,7 @@
 <p>Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fwi_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_index.html">classify_index</a></span><span class="op">(</span><span class="va">fwi_masked</span>, index <span class="op">=</span> <span class="st">"fwi"</span>, thresholds <span class="op">=</span> <span class="cn">NULL</span>, labels <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-<span class="fu">rasterVis</span><span class="fu">::</span><span class="fu">levelplot</span><span class="op">(</span><span class="va">fwi_class</span>, col.regions <span class="op">=</span> <span class="fu">caliver</span><span class="fu">:::</span><span class="va">effis_palette</span><span class="op">)</span></code></pre></div>
+<span class="fu">rasterVis</span><span class="fu">::</span><span class="fu">levelplot</span><span class="op">(</span><span class="va">fwi_class</span>, col.regions <span class="op">=</span> <span class="fu">caliver</span><span class="fu">:::</span><span class="va">effis_palette</span>, att <span class="op">=</span> <span class="st">"Class"</span><span class="op">)</span></code></pre></div>
 <p>The categories of GEFF’s indices are pre-defined but can be overwritten by explicitly defining the input parameters <code>thresholds</code> and <code>labels</code>. The <code>effis_palette</code> is pre-defined in caliver, however, any custom palette can be used.</p>
 </div>
 <div id="mask-crop-and-subset" class="section level2">
