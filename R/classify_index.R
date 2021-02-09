@@ -92,8 +92,6 @@ classify_index <- function(r, index = NULL, thresholds = NULL, labels = NULL){
   r_out <- raster::ratify(index_class)
   
   # Define a Raster Attribute Table (RAT)
-  # rat <- .create_rat(ids = j, classes = labels[j])
-  # Define a Raster Attribute Table (RAT)
   rat <- data.frame(ID = seq_along(j), Index = j, Class = labels[j], stringsAsFactors = FALSE)
   
   # Assign levels
