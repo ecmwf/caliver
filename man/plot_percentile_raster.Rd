@@ -4,12 +4,14 @@
 \alias{plot_percentile_raster}
 \title{plot_percentile_raster}
 \usage{
-plot_percentile_raster(maps, region = "GLOB", ...)
+plot_percentile_raster(maps, region = "GLOB", col = NULL, ...)
 }
 \arguments{
 \item{maps}{is the result of get_percentile_raster()}
 
 \item{region}{string of characters describing the region.}
+
+\item{col}{custom color palette (default is `dput(rev(RColorBrewer::brewer.pal(n = 10, name = "RdYlGn")))`)}
 
 \item{...}{additional graphical parameters inherited from plot() in the
 raster package.}
@@ -19,10 +21,11 @@ This function plots the maps of percentiles
 }
 \examples{
 \dontrun{
+  # Use default palette
   plot_percentile_raster(maps)
+  
   # Use custom color palette
-  plot_percentile_raster(maps,
-                         col = rev(viridis::inferno(n = 10)))
+  plot_percentile_raster(maps, col = rev(viridis::inferno(n = 10)))
 }
 
 }

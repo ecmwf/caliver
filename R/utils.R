@@ -6,6 +6,20 @@ ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
                   "#CB6013", "#C12D11", "#BE0010", "#860016",
                   "#47003D", "#28005E")
 
+effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#280523")
+
+# Round ANY number Up/Down to ANY interval
+# https://stackoverflow.com/questions/6461209/how-to-round-up-to-the-nearest-10-or-100-or-x
+.round.choose <- function(x, roundTo, dir = 1) {
+  if(dir == 1) {  ##ROUND UP
+    x + (roundTo - x %% roundTo)
+  } else {
+    if(dir == 0) {  ##ROUND DOWN
+      x - (x %% roundTo)
+    }
+  }
+}
+
 # To plot the background map on each layers of a stack we need to create a
 # function and pass it to the addfun argument of raster::plot()
 .background_map_fun <- function(){

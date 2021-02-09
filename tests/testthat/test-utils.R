@@ -1,5 +1,13 @@
 context("utils")
 
+test_that("Testing the file utils.R - .round.choose", {
+  
+  # Check whether the results are correct
+  expect_equal(.round.choose(41, 5, 1), 45)
+  expect_equal(.round.choose(41, 5, 0), 40)
+  
+})
+
 test_that("Testing the file utils.R - .background_map_fun", {
   
   # Check whether the result is correct

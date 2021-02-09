@@ -4,6 +4,7 @@
 #'
 #' @param maps is the result of get_percentile_raster()
 #' @param region string of characters describing the region.
+#' @param col custom color palette (default is `dput(rev(RColorBrewer::brewer.pal(n = 10, name = "RdYlGn")))`)
 #' @param ... additional graphical parameters inherited from plot() in the
 #' raster package.
 #'
@@ -11,14 +12,15 @@
 #'
 #' @examples
 #' \dontrun{
+#'   # Use default palette
 #'   plot_percentile_raster(maps)
+#'   
 #'   # Use custom color palette
-#'   plot_percentile_raster(maps,
-#'                          col = rev(viridis::inferno(n = 10)))
+#'   plot_percentile_raster(maps, col = rev(viridis::inferno(n = 10)))
 #' }
 #'
 
-plot_percentile_raster <- function(maps, region = "GLOB", ...){
+plot_percentile_raster <- function(maps, region = "GLOB", col = NULL, ...){
 
   if (region != "GLOB") {
 
@@ -34,10 +36,17 @@ plot_percentile_raster <- function(maps, region = "GLOB", ...){
   }
 
   raster_max <- max(raster::cellStats(cropped_map, stat = "max", na.rm = TRUE))
-
+  # Round UP to the nearest 10th
+  raster_max <- .round.choose(raster_max, 5, 1)
+  
   breaks <- round(seq(from = 0, to = raster_max, length.out = 10), 0)
   breaks <- unique(breaks)
+  
+  if (is.null(col)){col = c("#006837", "#1A9850", "#66BD63", "#A6D96A",
+                            "#D9EF8B", "#FEE08B", "#FDAE61", "#F46D43",
+                            "#D73027", "#A50026")}
 
-  raster::plot(cropped_map, addfun = .background_map_fun, breaks = breaks, ...)
+  raster::plot(cropped_map, addfun = .background_map_fun, breaks = breaks,
+               col = col, ...)
 
 }
