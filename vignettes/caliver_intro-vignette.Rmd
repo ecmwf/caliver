@@ -173,7 +173,7 @@ Given a raster containing a fire danger index, e.g. fwi, this can be transformed
 
 ```{r}
 fwi_class <- classify_index(fwi_masked, index = "fwi", thresholds = NULL, labels = NULL)
-rasterVis::levelplot(fwi_class, col.regions = caliver:::effis_palette)
+rasterVis::levelplot(fwi_class, col.regions = caliver:::effis_palette, att = "Class")
 ```
 
 The categories of GEFF's indices are pre-defined but can be overwritten by explicitly defining the input parameters `thresholds` and `labels`. The `effis_palette` is pre-defined in caliver, however, any custom palette can be used.
