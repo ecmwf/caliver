@@ -5,36 +5,20 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{caliver-advanced}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
-<!--
-# Copyright 2016 European Centre for Medium-Range Weather Forecasts (ECMWF)
-# This software is licensed under the terms of the Apache Licence Version 2.0 
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
-# In applying this licence, ECMWF does not waive the privileges and immunities 
-# granted to it by virtue of its status as an intergovernmental organisation nor
-# does it submit to any jurisdiction.
--->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       eval = FALSE)
 ```
 
-The package caliver contains functions for the calibration and verification of gridded model outputs. The package was designed with a fire risk model in mind (GEFF) but, in the near future, this is going to develop in a model agnostic tool. The introductory vignette "An introduction to the caliver package" [@vitolo:2018] contain a detailed description of the main functionalities of this package. The goal of this vignette, instead, is to describe how to use caliver to calculate and verify fire danger classes based on user-defined areas. This vignette contains the code to run all the analyses in [@digiuseppe:2018], please refer to this paper for more information on the methodology.
+The package caliver contains functions for the calibration and verification of gridded model outputs. The package was designed with a fire risk model in mind (GEFF) but, in the near future, this is going to develop in a model agnostic tool. The the article [@vitolo:2018] contain a detailed description of the main functionalities of this package, however in the most recent version some of these functionalities have changed or have been deprecated (see introductory vignette "An introduction to the caliver package" for more details). The goal of this vignette, is to describe how to implement more advanced workflows, e.g. using caliver to calculate and verify fire danger classes based on user-defined areas. This vignette contains the code to run most the analyses in [@digiuseppe:2020], please refer to this paper for more information on the methodology.
 
 ## R package caliver
 
 For information on how to install and load caliver, please refer to the vignette "An introduction to the caliver package" and the README file in the repository.
-
-```{r}
-# Install caliver from GitHub
-# install.packages("devtools", repos = "http://cran.rstudio.com")
-devtools::install_github("ecmwf/caliver")
-```
 
 ```{r}
 library("caliver")
@@ -134,7 +118,7 @@ Plot areas and countries of interest (Fig.1).
 
 #### Reanalysis data
 
-For a matter of consistency with the introductory vignette, we will use the FWI as index to estimate the fire danger classes. The first step is to download, from the [GEFF-reanalysis web app](http://apps.ecmwf.int/datasets/data/geff-reanalysis/), reanalysis data from 1980 to 2016. Assuming that data is downloaded in the folder "reanalysis" of the working directory, we can use `stack_netcdf_files()` to aggregate all the files into one netcdf file (this is not necessary if you have run through the examples in the intro vignette) and load it as RasterBrick. See the introductory vignette for more information.
+For a matter of consistency with the introductory vignette, we will use the FWI as index to estimate the fire danger classes. The first step is to download the ERA-Interim based dataset from [Zenodo](https://doi.org/10.5281/zenodo.1065400), this reanalysis spans from 1980-01-01 to 2018-12-31. Data are aggregated into one netcdf file (this is not necessary if you have run through the examples in the intro vignette) and load it as RasterBrick. See the introductory vignette for more information.
 
 ```{r}
 # FWI reanalysis dataset, GEFF reanalysis v2.0
