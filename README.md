@@ -22,11 +22,11 @@ For more details, please see the following papers:
 ## Installation
 The installation of the caliver package depends on the following libraries:
 
-* Geospatial Data Abstraction Library ([GDAL](https://www.gdal.org/))
+* Geospatial Data Abstraction Library ([GDAL](https://gdal.org/))
 * NetCDF4 ([netcdf4](https://www.unidata.ucar.edu/software/netcdf/))
 
 Make sure you have the above libraries installed before attempting to install caliver.
-Once all the dependencies are installed, get caliver's development version from github using [devtools](https://github.com/hadley/devtools):
+Once all the dependencies are installed, get caliver's development version from github using [devtools](https://github.com/r-lib/devtools):
 
 ``` r
 install.packages("remotes")

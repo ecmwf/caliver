@@ -10,7 +10,7 @@ Authors@R: c(person(given = "Claudia",
              person("Francesca", "Di Giuseppe", role = c("ctb")),
              person("Mirko", "D'Andrea", role = c("aut", "ctb")))
 Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
-URL: https://ecmwf.github.io/caliver, https://github.com/ecmwf/caliver
+URL: https://ecmwf.github.io/caliver/, https://github.com/ecmwf/caliver
 BugReports: https://github.com/ecmwf/caliver/issues
 Description: Utility functions for the post-processing, calibration and
     validation of grid model outputs. Initial test cases include the outputs of
