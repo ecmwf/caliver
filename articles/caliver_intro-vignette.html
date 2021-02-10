@@ -82,7 +82,7 @@
       <h1 data-toc-skip>An introduction to the caliver package</h1>
                         <h4 class="author">Claudia Vitolo</h4>
             
-            <h4 class="date">2021-02-09</h4>
+            <h4 class="date">2021-02-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ecmwf/caliver/blob/master/vignettes/caliver_intro-vignette.Rmd"><code>vignettes/caliver_intro-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>caliver_intro-vignette.Rmd</code></div>
@@ -144,6 +144,11 @@
 <p>Observed burned areas around the world are collected by the 4th generation Global Fire Emissions Database <span class="citation">(Giglio, Randerson, and Werf 2013)</span> in hdf format. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability. In <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span>, the function <code>get_gfed4()</code> was used to retrieve observed burned areas from GFED4. Over time the service has changed and this function has proven to be difficult to maintain.</p>
 <p><strong>In the current version of <code>caliver</code>, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions). Please, download daily burned area maps for 2003-01-01 to 2015-12-31 manually from <a href="https://www.globalfiredata.org/data.html" class="uri">https://www.globalfiredata.org/data.html</a>.</strong></p>
 </div>
+</div>
+<div id="areas-of-interest" class="section level2">
+<h2 class="hasAnchor">
+<a href="#areas-of-interest" class="anchor"></a>Areas of interest</h2>
+<p>For the purpose of this vignette, we will demostrate the <code>caliver</code> functionalities on specific areas: Europe and Italy.</p>
 <div id="basis-regions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#basis-regions" class="anchor"></a>Basis regions</h3>
@@ -155,32 +160,20 @@
 <span class="va">BasisRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GFED4_BasisRegions.rds"</span>,
                                     package <span class="op">=</span> <span class="st">"caliver"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">BasisRegions</span><span class="op">)</span></code></pre></div>
-</div>
-</div>
-<div id="areas-of-interest" class="section level2">
-<h2 class="hasAnchor">
-<a href="#areas-of-interest" class="anchor"></a>Areas of interest</h2>
-<p>For the purpose of this vignette, we will demostrate the <code>caliver</code> functionalities on specific areas: Europe and Italy. Europe can be subsetted from GFED4 basis regions and plotted as follows:</p>
+<p>Europe can be subsetted from GFED4 basis regions and plotted as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">Europe</span> <span class="op">&lt;-</span> <span class="va">BasisRegions</span><span class="op">[</span><span class="va">BasisRegions</span><span class="op">$</span><span class="va">Region</span> <span class="op">==</span> <span class="st">"EURO"</span>,<span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Europe</span><span class="op">)</span></code></pre></div>
-<p>Countries administrative boundaries can be obtained from the <a href="https://gadm.org/">GADM</a> dataset using the function <code>getdata()</code> from the <code>raster</code> package. As an example, below we show how to obtain Italian administrative boundaries at country/region/province level.</p>
+</div>
+<div id="administrative-boundaries" class="section level3">
+<h3 class="hasAnchor">
+<a href="#administrative-boundaries" class="anchor"></a>Administrative boundaries</h3>
+<p>Countries administrative boundaries can be obtained from the <a href="https://gadm.org/">GADM</a> dataset using the function <code>getdata()</code> from the <code>raster</code> package. As an example, below we show how to obtain Italian administrative boundaries.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://rspatial.org/raster">"raster"</a></span><span class="op">)</span>
 <span class="co"># Italy</span>
-<span class="va">Italy</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
-
-<span class="co"># Italian regions</span>
-<span class="va">Italy1</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-
-<span class="co"># Get polygons for Liguria, Calabria and Sicily</span>
-<span class="va">Liguria</span> <span class="op">&lt;-</span> <span class="va">Italy1</span><span class="op">[</span><span class="fl">9</span>,<span class="op">]</span>
-<span class="va">Calabria</span> <span class="op">&lt;-</span> <span class="va">Italy1</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span>
-<span class="va">Sicily</span> <span class="op">&lt;-</span> <span class="va">Italy1</span><span class="op">[</span><span class="fl">15</span>,<span class="op">]</span>
-
-<span class="co"># Get polygon for the Province of Genoa, in Liguria Region.</span>
-<span class="va">Italy2</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="va">Genoa</span> <span class="op">&lt;-</span> <span class="va">Italy2</span><span class="op">[</span><span class="fl">42</span>,<span class="op">]</span></code></pre></div>
+<span class="va">Italy</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"Italy"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
+</div>
 </div>
 <div id="the-effis-datasets-geff-reanalysis-and-geff-realtime" class="section level2">
 <h2 class="hasAnchor">
@@ -192,7 +185,7 @@
 <p>We assume the ERA-Interim based GEFF-reanalysis data have already been downloaded from Zenodo and locally available.</p>
 <p>Data are aggregated into one NetCDF file and can be loaded as RasterBrick.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded in the data directory</span>
+<code class="sourceCode R"><span class="co"># Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded</span>
 <span class="va">fwi</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"~/repos/caliver_extras/data/fwi.nc"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="masking-data-using-land-cover-maps" class="section level2">
@@ -209,7 +202,7 @@
 <span class="co"># Unzip the folder in the working directory</span>
 
 <span class="co"># Load map</span>
-<span class="va">fuel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span><span class="op">(</span><span class="st">"/home/claudia/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf"</span><span class="op">)</span>
+<span class="va">fuel</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span><span class="op">(</span><span class="st">"~/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf"</span><span class="op">)</span>
 <span class="co"># Save legend in data.frame</span>
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/factor.html">levels</a></span><span class="op">(</span><span class="va">fuel</span><span class="op">)</span><span class="op">)</span>
 
@@ -230,63 +223,87 @@
 <h1 class="hasAnchor">
 <a href="#package-functionalities" class="anchor"></a>Package functionalities</h1>
 <p>The primary goal of the <code>caliver</code> package is to streamline the post-processing of GEFF model outputs and make the scientific workflow easily reproducible. For this reason, this section provides example applications in the form of short workflows. These are ordered chronologically, based on the sequential steps a modeller would perform to visually explore information, calibrate fire danger levels and validate them. This often results in an increasing level of complexity. To provide a concise description, each workflow is not a stand alone exercise but the result of one workflow is often used as input in the following ones.</p>
-<div id="classify-fire-danger-indices" class="section level2">
-<h2 class="hasAnchor">
-<a href="#classify-fire-danger-indices" class="anchor"></a>Classify fire danger indices</h2>
-<p>Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fwi_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_index.html">classify_index</a></span><span class="op">(</span><span class="va">fwi_masked</span>, index <span class="op">=</span> <span class="st">"fwi"</span>, thresholds <span class="op">=</span> <span class="cn">NULL</span>, labels <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-<span class="fu">rasterVis</span><span class="fu">::</span><span class="fu">levelplot</span><span class="op">(</span><span class="va">fwi_class</span>, col.regions <span class="op">=</span> <span class="fu">caliver</span><span class="fu">:::</span><span class="va">effis_palette</span>, att <span class="op">=</span> <span class="st">"Class"</span><span class="op">)</span></code></pre></div>
-<p>The categories of GEFF’s indices are pre-defined but can be overwritten by explicitly defining the input parameters <code>thresholds</code> and <code>labels</code>. The <code>effis_palette</code> is pre-defined in caliver, however, any custom palette can be used.</p>
-</div>
 <div id="mask-crop-and-subset" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mask-crop-and-subset" class="anchor"></a>Mask, crop and subset</h2>
 <p>GEFF fire danger indices are characterized by three dimensions (latitude, longitude and time) and a variable for each index of interest. These can be masked and cropped to match a user-defined extent, this can be a geographical bounding box or a spatial polygon such as a given administrative boundary. The indices can also be subsetted over the layer index or the time dimension (e.g. to take into account only fire seasons). The function <code><a href="../reference/mask_crop_subset.html">mask_crop_subset()</a></code> wraps the functions <code><a href="https://rdrr.io/pkg/raster/man/mask.html">raster::mask()</a></code>, <code><a href="https://rdrr.io/pkg/raster/man/crop.html">raster::crop()</a></code> and <code><a href="https://rdrr.io/pkg/raster/man/subset.html">raster::subset()</a></code> and converts the result into a RasterLayer (single layer) or RasterBrick (multiple layers). The example below shows how to mask and crop the fwi brick over Italy, selecting only the reference period 1981-2010.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get indices for climatological reference period 1981-2010</span>
 <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">fwi</span><span class="op">)</span>, start <span class="op">=</span> <span class="fl">2</span>, stop <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">%in%</span> <span class="fl">1981</span><span class="op">:</span><span class="fl">2010</span><span class="op">)</span>
 <span class="co"># Mask, crop and subset</span>
 <span class="va">fwi_Italy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi</span>, p <span class="op">=</span> <span class="va">Italy</span>, idx <span class="op">=</span> <span class="va">idx</span>, progress <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></code></pre></div>
 </div>
+<div id="generate-daily-climatology" class="section level2">
+<h2 class="hasAnchor">
+<a href="#generate-daily-climatology" class="anchor"></a>Generate daily climatology</h2>
+<p>In order to understand how the fire index on a given day compares with climatological values (distribution of values during the same period in the past years, typical reference period is 1981-2010) we build a daily climatology for each day of interest. This can be done with the function <code><a href="../reference/daily_clima.html">daily_clima()</a></code>. The function takes as input <code>r</code> (a RasterBrick/Stack with daily fire indices over a number of years, e.g. <code>fwi_Italy</code> defined in previous examples) and a sequence of <code>dates</code>, it then extracts from <code>r</code> the period that spans 4 days before and after the given date in <code>dates</code> (total of 9 days) for all the years available in <code>r</code>. The result is a list of stacks (one stack per day of interest). If <code>dates</code> are undefined, the function will assume all the days in a leap year are needed.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Calculate the daily climatology for the period 10-20 August</span>
+<span class="va">clima_Italy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/daily_clima.html">daily_clima</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi_Italy</span>,
+                           dates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html">seq.Date</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2020-08-10"</span><span class="op">)</span>,
+                                            to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2020-08-20"</span><span class="op">)</span>,
+                                            by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Please note that in <code>dates</code> the year is ignored!</p>
+</div>
 <div id="generate-maps-of-percentiles" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-maps-of-percentiles" class="anchor"></a>Generate maps of percentiles</h2>
-<p>For each index, calculating relevant quantiles cell by cell (over time) gives an indication of the local distribution of fire danger values. Such a map can be generated using the function <code>get_percentile_raster</code>.</p>
-<p>The example below uses the <code>fwi_Italy</code> (generated in the previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.</p>
+<p>For each index, calculating relevant quantiles cell by cell (over time) gives an indication of the local distribution of fire danger values. There are two common approaches to derive percentile maps for fire indices: * Approach A - the percentile is calculated over the full record available over a number of years, or during the fire season over a number of years. * Approach B - the percentile is calculated on the daily climatology. In both cases such a map can be generated using the function <code><a href="../reference/get_percentile_map.html">get_percentile_map()</a></code>.</p>
+<div id="approach-a-percentile-over-full-record" class="section level3">
+<h3 class="hasAnchor">
+<a href="#approach-a-percentile-over-full-record" class="anchor"></a>Approach A: percentile over full record</h3>
+<p>The example below uses the <code>fwi_Italy</code> (generated in a previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">maps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_percentile_raster.html">get_percentile_raster</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi_Italy</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">75</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to: rotate the longitudinal coordinates (optional), overlay a background map and set the color scale to the same range so that multiple maps become comparable. The rotation issue is due to an ambiguity in the WGS84 coordinate system (EPSG: 4326) which does not explicitly define the longitude range neither the location of the central meridian. As a consequence different applications have developed different standards: global climate and derived models (such as GEFF) set the longitude range between 0 and 360 degrees, while others between -180 and +180 degrees (e.g. GADM and GFED4).</p>
-<p>By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentiles performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using <code><a href="https://rdrr.io/pkg/raster/man/plot.html">raster::plot()</a></code> (top) versus <code><a href="../reference/plot_percentiles.html">plot_percentiles()</a></code> (bottom).</p>
+<code class="sourceCode R"><span class="va">mapsA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_percentile_map.html">get_percentile_map</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi_Italy</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">0.90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>With this approach, the object <code>mapsA</code> is a RasterLayer (for one probability) or a RasterBrick (for more than one probability).</p>
+</div>
+<div id="approach-b-percentile-over-daily-climatology" class="section level3">
+<h3 class="hasAnchor">
+<a href="#approach-b-percentile-over-daily-climatology" class="anchor"></a>Approach B: percentile over daily climatology</h3>
+<p>The example below uses the <code>clima_Italy</code> (generated in a previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mapsB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_percentile_map.html">get_percentile_map</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">clima_Italy</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">0.90</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>With this approach, the object <code>mapsB</code> is a list of RasterLayers (for one probability) or a RasterBricks (for more than one probability). The elements of the lists are named after the related date.</p>
+</div>
+</div>
+<div id="plot-percentile-maps" class="section level2">
+<h2 class="hasAnchor">
+<a href="#plot-percentile-maps" class="anchor"></a>Plot percentile maps</h2>
+<p>Once percentile maps are generated, these can be conviniently plotted with the raster/caliver packages. The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to overlay a background map and set the color scale to the same range so that multiple maps become comparable. The caliver function <code><a href="../reference/plot_percentile_map.html">plot_percentile_map()</a></code> performs these manipulations behind the scenes, incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using <code><a href="https://rdrr.io/pkg/raster/man/plot.html">raster::plot()</a></code> (top) versus <code><a href="../reference/plot_percentile_map.html">plot_percentile_map()</a></code> (bottom).</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Use the raster plot method</span>
-<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">maps</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">mapsA</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co"># Use the caliver plot_percentiles function</span>
-<span class="fu"><a href="../reference/plot_percentiles.html">plot_percentiles</a></span><span class="op">(</span>maps <span class="op">=</span> <span class="va">maps</span>,
-                 main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="co"># Use the caliver plot_percentile_map function</span>
+<span class="fu"><a href="../reference/plot_percentile_map.html">plot_percentile_map</a></span><span class="op">(</span>maps <span class="op">=</span> <span class="va">mapsA</span>,
+                    main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FWI 50th perc."</span>, <span class="st">"FWI 75th perc."</span>, <span class="st">"FWI 90th perc."</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="classify-fire-danger-indices" class="section level2">
+<h2 class="hasAnchor">
+<a href="#classify-fire-danger-indices" class="anchor"></a>Classify fire danger indices</h2>
+<p>Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster using <code><a href="../reference/classify_index.html">classify_index()</a></code> (which is a wrapper around raster::cut() with some default settings).</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fwi_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_index.html">classify_index</a></span><span class="op">(</span><span class="va">fwi_masked</span>, index <span class="op">=</span> <span class="st">"fwi"</span>, thresholds <span class="op">=</span> <span class="cn">NULL</span>, labels <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
+<span class="fu">rasterVis</span><span class="fu">::</span><span class="fu">levelplot</span><span class="op">(</span><span class="va">fwi_class</span>, col.regions <span class="op">=</span> <span class="fu">caliver</span><span class="fu">:::</span><span class="va">effis_palette</span>, att <span class="op">=</span> <span class="st">"Class"</span><span class="op">)</span></code></pre></div>
+<p>The categories of GEFF’s indices are pre-defined but can be overwritten by explicitly defining the input parameters <code>thresholds</code> and <code>labels</code>. The <code>effis_palette</code> is pre-defined in caliver, however, any custom palette can be used.</p>
 </div>
 <div id="fire-danger-levels-" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fire-danger-levels-" class="anchor"></a>Fire danger levels.</h2>
-<p>GEFF reanalysis data can be used to identify significant thresholds in fire danger levels. Danger levels can be calculated based on some user-defined parameters: the spatial extent of the area of interest and the fire season. The fire season is defined as the dry season, a period in which there is a reduced soil moisture and precipitation. In this work we adopt a convention: the fire season falls between 1st April and 31st October in the northern hemisphere, and between 1st October and 30th April in the southern hemisphere. This convention is coded in the function get_fire_season (see Table 8), which accepts at least two arguments: dates (the sequence of daily dates for which reanalysis data is available) and zone (which can be either ‘north’ or ‘south’ emisphere). There are also two optional arguments that allow to define an ad-hoc fire season: fss (which stands for Fire Season Start) and fse (which stands for Fire Season End).</p>
-<div id="define-fire-season" class="section level3">
-<h3 class="hasAnchor">
-<a href="#define-fire-season" class="anchor"></a>Define fire season</h3>
+<p>Raw values of fire indices are expressed as a continuous rating (e.g. FWI values are in the range [0, +Inf[, although very rarely above 100). In order to aid decision makers raw values are routinely converted into danger classes, based on predefined thresholds.</p>
+<p>The European Forest Fire Information System provides a set of fire danger thresholds/classes harmonized across Europe (<a href="https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/" class="uri">https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/</a>). For instance, the FWI ranges are (upper bound excluded): * Very low = 0 - 5.2 * Low = 5.2 - 11.2 * Moderate = 11.2 - 21.3 * High = 21.3 - 38.0 * Very high = 38.0 - 50.0 * Extreme &gt; 50.0</p>
+<p>In our experience, the above thresholds are particularly suited to assess fire danger in southern Europe, e.g. in the Mediterranean Region. Some countries, tend to calibrate these thresholds depending on local vegetation characteristics and fire regimes. This require local knowledge and/or experimentation. The caliver package provides some useful functionalities for this type of tasks.</p>
+<p>The fire season is the period of the year during which 80% of wildfires have occurred. For historical analysis, this is defined <em>a posteriori</em> and changes year-on-year. However, a more simplistic approach assumes that the fire season is the period of the year in which <strong>wildfires are more likely to occur</strong> (this is also the assumption made by EFFIS). Therefore it often coincides with the dry season, a period in which there is a reduced soil moisture and precipitation. In this work we adopt a convention: the fire season falls between 1st April and 31st October in the northern hemisphere, and between 1st October and 30th April in the southern hemisphere. This convention is coded in the function <code><a href="../reference/get_fire_season.html">get_fire_season()</a></code>, which accepts at least two arguments: dates (the sequence of daily dates for which reanalysis data is available) and zone (which can be either ‘north’ or ‘south’ hemisphere). There are also two optional arguments that allow to define an ad-hoc fire season: fss (which stands for Fire Season Start) and fse (which stands for Fire Season End).</p>
 <p>In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe (and Italy in particular), starting in April and ending in October each year.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dataDates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">fwi</span><span class="op">)</span>, <span class="fl">2</span>, <span class="fl">11</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"%Y.%m.%d"</span><span class="op">)</span>
 <span class="co"># Define a function to extract fire seasons in Europe</span>
 <span class="va">seasons</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fire_season.html">get_fire_season</a></span><span class="op">(</span>dates <span class="op">=</span> <span class="va">dataDates</span>, zone <span class="op">=</span> <span class="st">"north"</span><span class="op">)</span>
 
 <span class="co"># Create an index of fire season dates</span>
 <span class="va">fireSeasonIndex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">seasons</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="calculate-danger-levels" class="section level3">
-<h3 class="hasAnchor">
-<a href="#calculate-danger-levels" class="anchor"></a>Calculate danger levels</h3>
-<p>Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe, regions and a province in Italy. The result shows that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p>Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe. <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span> show that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Mask/Crop/Subset FWI over Europe</span>
 <span class="va">fwi_euro</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_crop_subset.html">mask_crop_subset</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">fwi</span>, p <span class="op">=</span> <span class="va">Europe</span>, idx <span class="op">=</span> <span class="va">fireSeasonIndex</span><span class="op">)</span>
 
@@ -295,11 +312,11 @@
 <span class="va">EuropeThr</span></code></pre></div>
 <p>Please note the differences between these danger levels and those recommended by the European Forest Fire Information System (EFFIS)[<a href="https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/" class="uri">https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/</a>), <code>caliver</code> danger levels are generally lower than EFFIS ones.</p>
 <p>Fire danger levels are more useful when calculated at country level. Below is shown how to execute the same steps above recursively for most countries in Europe and bind the results together in a summary table.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Country level: use a loop to calculate levels for three sample countries.</span>
 <span class="co"># Please note that in the original paper many more countries were used, here we process</span>
 <span class="co"># only three to reduce the processing time but the procedure is exactly the same.</span>
-<span class="va">EUcountries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Spain"</span>, <span class="st">"UK"</span>, <span class="st">"Italy"</span><span class="op">)</span>
+<span class="va">EUcountries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Spain"</span>, <span class="st">"GBR"</span>, <span class="st">"Italy"</span><span class="op">)</span>
 
 <span class="kw">for</span> <span class="op">(</span><span class="va">country</span> <span class="kw">in</span> <span class="va">EUcountries</span><span class="op">)</span><span class="op">{</span>
 
@@ -326,12 +343,11 @@
 <span class="va">df_thr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">EUcountries</span>, <span class="va">df</span>, stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">df_thr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Country"</span>, <span class="st">"Low"</span>, <span class="st">"Moderate"</span>, <span class="st">"High"</span>, <span class="st">"VeryHigh"</span>, <span class="st">"Extreme"</span><span class="op">)</span></code></pre></div>
 <p>Assessing the danger levels at regional and province level (using the ERA-Interim based dataset) is rather difficult because some areas are too small compared to the raster resolution. For assessing fire danger in small regions we suggest to use the ERA5-based fire indices <span class="citation">(Vitolo et al. 2020)</span>.</p>
-</div>
 <div id="plot-density-with-thresholds" class="section level3">
 <h3 class="hasAnchor">
 <a href="#plot-density-with-thresholds" class="anchor"></a>Plot density with thresholds</h3>
 <p>The thresholds are different from the percentiles, the PDF below shows a comparison for Italy (the last country in the above loop).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">countryPDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_pdf.html">plot_pdf</a></span><span class="op">(</span>fire_index <span class="op">=</span> <span class="va">country_fwi</span>,
                        thresholds <span class="op">=</span> <span class="va">country_thrs</span>, 
                        upper_limit <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></code></pre></div>
@@ -340,7 +356,7 @@
 <h3 class="hasAnchor">
 <a href="#validate-danger-levels" class="anchor"></a>Validate danger levels</h3>
 <p>Test whether large fires correspond to FWI above high danger.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"pROC"</span><span class="op">)</span>
 
 <span class="co"># Assuming burned areas was downloaded and combined in a grid file,</span>
