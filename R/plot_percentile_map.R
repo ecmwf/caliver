@@ -1,8 +1,8 @@
-#' @title plot_percentiles
+#' @title plot_percentile_map
 #'
 #' @description This function plots the maps of percentiles
 #'
-#' @param maps is the result of get_percentile_raster()
+#' @param maps is the result of get_percentile_map()
 #' @param region string of characters describing the region.
 #' @param col custom color palette (default is `dput(rev(RColorBrewer::brewer.pal(n = 10, name = "RdYlGn")))`)
 #' @param ... additional graphical parameters inherited from plot() in the
@@ -13,14 +13,14 @@
 #' @examples
 #' \dontrun{
 #'   # Use default palette
-#'   plot_percentiles(maps)
+#'   plot_percentile_map(maps)
 #'   
 #'   # Use custom color palette
-#'   plot_percentiles(maps, col = rev(viridis::inferno(n = 10)))
+#'   plot_percentile_map(maps, col = rev(viridis::inferno(n = 10)))
 #' }
 #'
 
-plot_percentiles <- function(maps, region = "GLOB", col = NULL, ...){
+plot_percentile_map <- function(maps, region = "GLOB", col = NULL, ...){
 
   if (region != "GLOB") {
 

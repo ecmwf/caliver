@@ -28,3 +28,16 @@ r1_shifted <- raster::shift(r1, 180)
 shape <- as(raster::extent(6, 18, 35, 47), "SpatialPolygons")
 # Set missing crs
 raster::crs(shape) <- "+proj=longlat +datum=WGS84 +no_defs"
+
+# Dummy clima
+set.seed(0)
+clima1 <- raster(nrows = 1, ncols = 1, res = 1,
+                 xmn = -1, xmx = 1, ymn = -1, ymx = 1, vals = 0.3)
+rr <- lapply(1:(365*3), function(i) raster::setValues(clima1, runif(raster::ncell(clima1))))
+rr <- brick(rr)
+names(rr) <- seq.Date(from = as.Date("1993-01-01"),
+                      to = as.Date("1995-12-31"),
+                      by = "day")
+
+rr_clima <- list(rr[[1:300]], rr[[301:600]], rr[[601:900]])
+names(rr_clima) <- as.Date(names(rr)[1:3], format = "X%Y.%m.%d")

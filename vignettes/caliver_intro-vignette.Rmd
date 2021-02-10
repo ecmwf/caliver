@@ -71,6 +71,10 @@ Observed burned areas around the world are collected by the 4th generation Globa
 
 **In the current version of `caliver`, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions). Please, download daily burned area maps for 2003-01-01 to 2015-12-31 manually from https://www.globalfiredata.org/data.html.**
 
+## Areas of interest
+
+For the purpose of this vignette, we will demostrate the `caliver` functionalities on specific areas: Europe and Italy. 
+
 ### Basis regions
 GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the `sp` package) as follows.
 
@@ -83,33 +87,21 @@ BasisRegions <- readRDS(system.file("extdata", "GFED4_BasisRegions.rds",
 plot(BasisRegions)
 ```
 
-## Areas of interest
-
-For the purpose of this vignette, we will demostrate the `caliver` functionalities on specific areas: Europe and Italy. Europe can be subsetted from GFED4 basis regions and plotted as follows:
+Europe can be subsetted from GFED4 basis regions and plotted as follows:
 
 ```{r}
 Europe <- BasisRegions[BasisRegions$Region == "EURO",]
 plot(Europe)
 ```
 
-Countries administrative boundaries can be obtained from the [GADM](https://gadm.org/) dataset using the function `getdata()` from the `raster` package. As an example, below we show how to obtain Italian administrative boundaries at country/region/province level.
+### Administrative boundaries
+
+Countries administrative boundaries can be obtained from the [GADM](https://gadm.org/) dataset using the function `getdata()` from the `raster` package. As an example, below we show how to obtain Italian administrative boundaries.
 
 ```{r}
 library("raster")
 # Italy
 Italy <- raster::getData(name = "GADM", country = "Italy", level = 0)
-
-# Italian regions
-Italy1 <- raster::getData(name = "GADM", country = "Italy", level = 1)
-
-# Get polygons for Liguria, Calabria and Sicily
-Liguria <- Italy1[9,]
-Calabria <- Italy1[4,]
-Sicily <- Italy1[15,]
-
-# Get polygon for the Province of Genoa, in Liguria Region.
-Italy2 <- raster::getData(name = "GADM", country = "Italy", level = 2)
-Genoa <- Italy2[42,]
 ```
 
 ## The EFFIS datasets: GEFF-reanalysis and GEFF-realtime
@@ -127,7 +119,7 @@ We assume the ERA-Interim based GEFF-reanalysis data have already been downloade
 Data are aggregated into one NetCDF file and can be loaded as RasterBrick.
 
 ```{r}
-# Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded in the data directory
+# Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded
 fwi <- raster::brick("~/repos/caliver_extras/data/fwi.nc")
 ```
 
@@ -146,7 +138,7 @@ The example below shows how to mask fire danger indices using the Global Land Co
 # Unzip the folder in the working directory
 
 # Load map
-fuel <- raster("/home/claudia/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf")
+fuel <- raster::raster("~/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf")
 # Save legend in data.frame
 df <- as.data.frame(levels(fuel))
 
@@ -167,17 +159,6 @@ plot(fwi_masked, col = terrain.colors(120))
 
 The primary goal of the `caliver` package is to streamline the post-processing of GEFF model outputs and make the scientific workflow easily reproducible. For this reason, this section provides example applications in the form of short workflows. These are ordered chronologically, based on the sequential steps a modeller would perform to visually explore information, calibrate fire danger levels and validate them. This often results in an increasing level of complexity. To provide a concise description, each workflow is not a stand alone exercise but the result of one workflow is often used as input in the following ones.
 
-## Classify fire danger indices
-
-Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster.
-
-```{r}
-fwi_class <- classify_index(fwi_masked, index = "fwi", thresholds = NULL, labels = NULL)
-rasterVis::levelplot(fwi_class, col.regions = caliver:::effis_palette, att = "Class")
-```
-
-The categories of GEFF's indices are pre-defined but can be overwritten by explicitly defining the input parameters `thresholds` and `labels`. The `effis_palette` is pre-defined in caliver, however, any custom palette can be used.
-
 ## Mask, crop and subset
 GEFF fire danger indices are characterized by three dimensions (latitude, longitude and time) and a variable for each index of interest. These can be masked and cropped to match a user-defined extent, this can be a geographical bounding box or a spatial polygon such as a given administrative boundary. The indices can also be subsetted over the layer index or the time dimension (e.g. to take into account only fire seasons). The function `mask_crop_subset()` wraps the functions `raster::mask()`, `raster::crop()` and `raster::subset()` and converts the result into a RasterLayer (single layer) or RasterBrick (multiple layers). The example below shows how to mask and crop the fwi brick over Italy, selecting only the reference period 1981-2010.
 
@@ -188,33 +169,85 @@ idx <- which(substr(x = names(fwi), start = 2, stop = 5) %in% 1981:2010)
 fwi_Italy <- mask_crop_subset(r = fwi, p = Italy, idx = idx, progress = "text")
 ```
 
-## Generate maps of percentiles
+## Generate daily climatology
 
-For each index, calculating relevant quantiles cell by cell (over time) gives an indication of the local distribution of fire danger values. Such a map can be generated using the function `get_percentile_raster`.
-
-The example below uses the `fwi_Italy` (generated in the previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.
+In order to understand how the fire index on a given day compares with climatological values (distribution of values during the same period in the past years, typical reference period is 1981-2010) we build a daily climatology for each day of interest. This can be done with the function `daily_clima()`. The function takes as input `r` (a RasterBrick/Stack with daily fire indices over a number of years, e.g. `fwi_Italy` defined in previous examples) and a sequence of `dates`, it then extracts from `r` the period that spans 4 days before and after the given date in `dates` (total of 9 days) for all the years available in `r`. The result is a list of stacks (one stack per day of interest). If `dates` are undefined, the function will assume all the days in a leap year are needed.
 
 ```{r}
-maps <- get_percentile_raster(r = fwi_Italy, probs = c(50, 75, 90))
+# Calculate the daily climatology for the period 10-20 August
+clima_Italy <- daily_clima(r = fwi_Italy,
+                           dates = seq.Date(from = as.Date("2020-08-10"),
+                                            to = as.Date("2020-08-20"),
+                                            by = "day"))
 ```
 
-The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to: rotate the longitudinal coordinates (optional), overlay a background map and set the color scale to the same range so that multiple maps become comparable. The rotation issue is due to an ambiguity in the WGS84 coordinate system (EPSG: 4326) which does not explicitly define the longitude range neither the location of the central meridian. As a consequence different applications have developed different standards: global climate and derived models (such as GEFF) set the longitude range between 0 and 360 degrees, while others between -180 and +180 degrees (e.g. GADM and GFED4).
+Please note that in `dates` the year is ignored!
 
-By convention, all the functions in caliver assume WGS84 (European-centric, with longitudes ranging between -180 and +180) as the reference coordinate system to make data compatible with other sources of information. This also means that GEFF grids should be rotated prior to using the functions in this package. The rotation can be obtained in, at least, two ways: using the raster::rotate function or sellonlatbox from the cdo library. The caliver function plot_percentiles performs these manipulations behind the scenes, also incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using `raster::plot()` (top) versus `plot_percentiles()` (bottom).
+## Generate maps of percentiles
+
+For each index, calculating relevant quantiles cell by cell (over time) gives an indication of the local distribution of fire danger values. There are two common approaches to derive percentile maps for fire indices:
+  * Approach A - the percentile is calculated over the full record available over a number of years, or during the fire season over a number of years.
+  * Approach B - the percentile is calculated on the daily climatology.
+In both cases such a map can be generated using the function `get_percentile_map()`.
+
+### Approach A: percentile over full record
+The example below uses the `fwi_Italy` (generated in a previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.
+
+```{r}
+mapsA <- get_percentile_map(r = fwi_Italy, probs = c(0.50, 0.75, 0.90))
+```
+
+With this approach, the object `mapsA` is a RasterLayer (for one probability) or a RasterBrick (for more than one probability).
+
+### Approach B: percentile over daily climatology
+The example below uses the `clima_Italy` (generated in a previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.
+
+```{r}
+mapsB <- get_percentile_map(r = clima_Italy, probs = c(0.50, 0.75, 0.90))
+```
+
+With this approach, the object `mapsB` is a list of RasterLayers (for one probability) or a RasterBricks (for more than one probability). The elements of the lists are named after the related date.
+
+## Plot percentile maps
+
+Once percentile maps are generated, these can be conviniently plotted with the raster/caliver packages.
+The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to overlay a background map and set the color scale to the same range so that multiple maps become comparable. The caliver function `plot_percentile_map()` performs these manipulations behind the scenes, incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using `raster::plot()` (top) versus `plot_percentile_map()` (bottom).
 
 ```{r, fig.width = 7}
 # Use the raster plot method
-raster::plot(maps, main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
+raster::plot(mapsA, main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
 
-# Use the caliver plot_percentiles function
-plot_percentiles(maps = maps,
-                 main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
+# Use the caliver plot_percentile_map function
+plot_percentile_map(maps = mapsA,
+                    main = c("FWI 50th perc.", "FWI 75th perc.", "FWI 90th perc."))
 ```
 
-## Fire danger levels.
-GEFF reanalysis data can be used to identify significant thresholds in fire danger levels. Danger levels can be calculated based on some user-defined parameters: the spatial extent of the area of interest and the fire season. The fire season is defined as the dry season, a period in which there is a reduced soil moisture and precipitation. In this work we adopt a convention: the fire season falls between 1st April and 31st October in the northern hemisphere, and between 1st October and 30th April in the southern hemisphere. This convention is coded in the function get_fire_season (see Table 8), which accepts at least two arguments: dates (the sequence of daily dates for which reanalysis data is available) and zone (which can be either ‘north’ or ‘south’ emisphere). There are also two optional arguments that allow to define an ad-hoc fire season: fss (which stands for Fire Season Start) and fse (which stands for Fire Season End).
+## Classify fire danger indices
 
-### Define fire season
+Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster using `classify_index()` (which is a wrapper around raster::cut() with some default settings).
+
+```{r}
+fwi_class <- classify_index(fwi_masked, index = "fwi", thresholds = NULL, labels = NULL)
+rasterVis::levelplot(fwi_class, col.regions = caliver:::effis_palette, att = "Class")
+```
+
+The categories of GEFF's indices are pre-defined but can be overwritten by explicitly defining the input parameters `thresholds` and `labels`. The `effis_palette` is pre-defined in caliver, however, any custom palette can be used.
+
+## Fire danger levels.
+
+Raw values of fire indices are expressed as a continuous rating (e.g. FWI values are in the range [0, +Inf[, although very rarely above 100). In order to aid decision makers raw values are routinely converted into danger classes, based on predefined thresholds.
+
+The European Forest Fire Information System provides a set of fire danger thresholds/classes harmonized across Europe (https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/). For instance, the FWI ranges are (upper bound excluded):
+  * Very low = 0 - 5.2
+  * Low = 5.2 - 11.2
+  * Moderate = 11.2 - 21.3
+  * High = 21.3 - 38.0
+  * Very high = 38.0 - 50.0
+  * Extreme > 50.0
+
+In our experience, the above thresholds are particularly suited to assess fire danger in southern Europe, e.g. in the Mediterranean Region. Some countries, tend to calibrate these thresholds depending on local vegetation characteristics and fire regimes. This require local knowledge and/or experimentation. The caliver package provides some useful functionalities for this type of tasks.
+
+The fire season is the period of the year during which 80% of wildfires have occurred. For historical analysis, this is defined *a posteriori* and changes year-on-year. However, a more simplistic approach assumes that the fire season is the period of the year in which **wildfires are more likely to occur** (this is also the assumption made by EFFIS). Therefore it often coincides with the dry season, a period in which there is a reduced soil moisture and precipitation. In this work we adopt a convention: the fire season falls between 1st April and 31st October in the northern hemisphere, and between 1st October and 30th April in the southern hemisphere. This convention is coded in the function `get_fire_season()`, which accepts at least two arguments: dates (the sequence of daily dates for which reanalysis data is available) and zone (which can be either ‘north’ or ‘south’ hemisphere). There are also two optional arguments that allow to define an ad-hoc fire season: fss (which stands for Fire Season Start) and fse (which stands for Fire Season End).
 
 In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe (and Italy in particular), starting in April and ending in October each year.
 
@@ -227,9 +260,7 @@ seasons <- get_fire_season(dates = dataDates, zone = "north")
 fireSeasonIndex <- which(seasons == TRUE)
 ```
 
-### Calculate danger levels
-
-Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe, regions and a province in Italy. The result shows that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level. 
+Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe. [@vitolo:2018] show that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level. 
 
 ```{r}
 # Mask/Crop/Subset FWI over Europe
@@ -248,7 +279,7 @@ Fire danger levels are more useful when calculated at country level. Below is sh
 # Country level: use a loop to calculate levels for three sample countries.
 # Please note that in the original paper many more countries were used, here we process
 # only three to reduce the processing time but the procedure is exactly the same.
-EUcountries <- c("Spain", "UK", "Italy")
+EUcountries <- c("Spain", "GBR", "Italy")
 
 for (country in EUcountries){
 

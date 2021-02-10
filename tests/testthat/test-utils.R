@@ -72,22 +72,22 @@ test_that("Testing the file utils.R - .get_layers_for_clima", {
 })
 
 test_that("Testing the file utils.R - .classify_hazard", {
-
-
+  
+  
   # Check whether the result is correct
   x <- .classify_hazard(r1[], r2[], r3[], r4[], r5[], r6[])
-
+  
   # Check the function does not generate a dummy layer
   expect_equal(sum(x), 11761)
-
+  
 })
 
 test_that("Testing the file utils.R - .utci_classification", {
-
+  
   # Check whether the result is correct
   x <- .utci_classification(rtp = r1)
-
+  
   # Check the function does not generate a dummy layer
   expect_equal(raster::cellStats(x, sum)[[1]], 65792)
-
+  
 })

@@ -4,6 +4,8 @@ Version submitted to CRAN.
 Changes in function names:
 - plot_fire_pdf becomes plot_pdf
 - plot_percentile_raster becomes plot_percentiles
+- get_percentile_raster becomes get_percentile_maps and incorporates two approaches:
+  percentile of full record and percentile over daily climatology
 Deprecated:
 - stack_with_rat
 

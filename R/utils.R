@@ -28,17 +28,17 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
   background_map <- rworldmap::getMap(resolution = "low")
 
   # Plotting function
-  raster::plot(background_map, add = TRUE, border = "lightgray")
+  raster::plot(background_map, add = TRUE, border = "darkgray")
 
 }
 
 # Calculate default quantiles for single hazard assessment
-.quant_function <- function(x){
+.quant_function <- function(x, probs = NULL){
 
   # Default probs
-  default_probs <- c(0.75, 0.85, 0.90, 0.95, 0.98)
+  if (is.null(probs)) {probs <- c(0.75, 0.85, 0.90, 0.95, 0.98)}
 
-  raster::quantile(x, probs = default_probs, na.rm = TRUE)
+  raster::quantile(x, probs = probs, na.rm = TRUE)
 
 }
 
@@ -112,14 +112,14 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
     idx_vector <- idx
   }
   
-  # Collection of layers spanning the date of interest +/- 4 days & 37 years
+  # Collection of layers spanning the date of interest +/- 4 days & all years
   clima_sub <- clima[[idx_vector]]
   
   return(clima_sub)
   
 }
 
-# Utility functions for multi-hazard assessments
+# EXTRA utility functions for multi-hazard assessments
 
 # Classify the danger level of an hazard
 .classify_hazard <- function(x, y1, y2, y3, y4, y5){
@@ -132,9 +132,9 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
 
 # Styling the UTCI layer
 .utci_classification <- function(rtp){
-
+  
   x <- raster::getValues(rtp)
-
+  
   rtp$colour <- base::cut(x,
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
@@ -148,7 +148,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                      "#FF3300", # original was
                                      "#910000", # original was #CC0000
                                      "#4c0000")) # original was #800000
-
+  
   rtp$label <- base::cut(x,
                          breaks = c(-Inf, -40, -27, -13, 0,
                                     9, 26, 32, 38, 46, +Inf),
@@ -162,7 +162,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                     "32 - 38",
                                     "38 - 46",
                                     "> 46"))
-
+  
   rtp$label2 <- base::cut(x,
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
@@ -176,7 +176,69 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                      "Strong heat stress",
                                      "Very strong heat stress",
                                      "Extreme heat stress"))
-
+  
   return(rtp)
+  
+}
 
+# EXTRA utility functions for multi-hazard assessments
+
+# Classify the danger level of an hazard
+.classify_hazard <- function(x, y1, y2, y3, y4, y5){
+  ifelse(x <= y1, 1,
+         ifelse(x <= y2, 2,
+                ifelse(x <= y3, 3,
+                       ifelse(x <= y4, 4,
+                              ifelse(x <= y5, 5, 6)))))
+}
+
+# Styling the UTCI layer
+.utci_classification <- function(rtp){
+  
+  x <- raster::getValues(rtp)
+  
+  rtp$colour <- base::cut(x,
+                          breaks = c(-Inf, -40, -27, -13, 0,
+                                     9, 26, 32, 38, 46, +Inf),
+                          labels = c("#000080",
+                                     "#0000C0",
+                                     "#0000FF",
+                                     "#0060FF",
+                                     "#00C0FF",
+                                     "#00C000",
+                                     "#f98436", # original was #FF6600
+                                     "#FF3300", # original was
+                                     "#910000", # original was #CC0000
+                                     "#4c0000")) # original was #800000
+  
+  rtp$label <- base::cut(x,
+                         breaks = c(-Inf, -40, -27, -13, 0,
+                                    9, 26, 32, 38, 46, +Inf),
+                         labels = c("< -40",
+                                    "-40 - -27",
+                                    "-27 - -13",
+                                    "-13 - 0",
+                                    "0 - 9",
+                                    "9 - 26",
+                                    "26 - 32",
+                                    "32 - 38",
+                                    "38 - 46",
+                                    "> 46"))
+  
+  rtp$label2 <- base::cut(x,
+                          breaks = c(-Inf, -40, -27, -13, 0,
+                                     9, 26, 32, 38, 46, +Inf),
+                          labels = c("Extreme cold stress",
+                                     "Very strong cold stress",
+                                     "Strong cold stress",
+                                     "Moderate cold stress",
+                                     "Slight cold stress",
+                                     "No thermal stress",
+                                     "Moderate heat stress",
+                                     "Strong heat stress",
+                                     "Very strong heat stress",
+                                     "Extreme heat stress"))
+  
+  return(rtp)
+  
 }
