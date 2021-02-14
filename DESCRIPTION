@@ -1,6 +1,6 @@
 Package: caliver
 Type: Package
-Title: Calibration and Verification of Grid Model Outputs
+Title: Calibration and Verification of gridded model utputs
 Version: 2.0.0
 Authors@R: c(person(given = "Claudia",
                     family = "Vitolo",
@@ -13,8 +13,11 @@ Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
 URL: https://ecmwf.github.io/caliver/, https://github.com/ecmwf/caliver
 BugReports: https://github.com/ecmwf/caliver/issues
 Description: Utility functions for the post-processing, calibration and
-    validation of grid model outputs. Initial test cases include the outputs of
-    the following forest fire models: 'GEFF' and 'RISICO'.
+  validation of grid model outputs. Initial test cases include the outputs of
+  the following forest fire models: GEFF and RISICO. The package is
+  described in Vitolo et al. (2018) "Caliver: An R package for CALIbration and
+  VERification of forest fire gridded model outputs"
+  <doi:10.1371/journal.pone.0189419>.
 Depends:
     R (>= 3.5)
 Imports:
