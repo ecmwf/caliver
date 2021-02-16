@@ -8,10 +8,6 @@ test_that("read_risico_binary works", {
   # Set missing crs
   raster::crs(loaded_data) <- "+proj=longlat +datum=WGS84 +no_defs"
 
-  test_data <- readRDS(system.file("extdata",
-                                   "RISICO_raster.rds",
-                                   package = "caliver"))
-
-  expect_equal(loaded_data, test_data)
+  expect_equal(dim(loaded_data), dim(r_risico))
 
 })
