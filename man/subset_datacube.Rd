@@ -13,6 +13,10 @@ subset_datacube(r, from, to)
 
 \item{to}{string, ending date (e.g. "2018-12-31").}
 }
+\value{
+The function returns a subset of \code{r}, with layer's date in the
+range starting with \code{from} and ending with \code{to}.
+}
 \description{
 This function subsets a datacube (RasterStack or RasterBrick)
 based on dates.
@@ -23,10 +27,16 @@ If the \code{from} and \code{to} strings are in the format
 }
 \examples{
 \dontrun{
-  r <- brick("fwi.nc")
-  x <- subset_datacube(r,
-                       from = "2017-12-30",
-                       to = "2017-12-31")
+  r <- raster(nrows = 2, ncols = 2,
+              xmn = 0, xmx = 360, ymn = -90, ymx = 90, vals = 30)
+  # Generate dummy RasterBrick
+  b <- raster::brick(lapply(1:(365 * 3),
+                     function(i) raster::setValues(r,
+                     unif(n = raster::ncell(r), min = 0, max = 100))))
+  names(b) <- seq.Date(from = as.Date("1993-01-01"),
+                       to = as.Date("1995-12-31"),
+                       by = "day")
+  subset_datacube(r = b, from = "1993-01-01", to = "1993-01-01")
 }
 
 }

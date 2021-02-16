@@ -6,6 +6,7 @@ ncar_palette <- c("#1204F3", "#1F04F3", "#3548F5", "#549DF6",
                   "#CB6013", "#C12D11", "#BE0010", "#860016",
                   "#47003D", "#28005E")
 
+# Palette used to plot FWI in EFFIS
 effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#280523")
 
 # Round ANY number Up/Down to ANY interval
@@ -78,10 +79,10 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
   
 }
 
-.get_layers_for_clima <- function(clima, raster_date = NULL, expand = TRUE){
+.get_layers_for_clima <- function(b, raster_date = NULL, expand = TRUE){
   
   # which indices correspond to day j?
-  idx <- which(substr(names(clima), 7, 11) ==
+  idx <- which(substr(names(b), 7, 11) ==
                  gsub("-", ".", substr(as.character(raster_date), 6, 10)))
   
   if (expand == TRUE){
@@ -95,8 +96,8 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
       elements2remove <- which(idx_vector <= 0)
       idx_vector <- idx_vector[-elements2remove]
     }
-    if (any(idx_vector > raster::nlayers(clima))){
-      elements2remove <- which(idx_vector > raster::nlayers(clima))
+    if (any(idx_vector > raster::nlayers(b))){
+      elements2remove <- which(idx_vector > raster::nlayers(b))
       idx_vector <- idx_vector[-elements2remove]
     }
     
@@ -113,7 +114,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
   }
   
   # Collection of layers spanning the date of interest +/- 4 days & all years
-  clima_sub <- clima[[idx_vector]]
+  clima_sub <- b[[idx_vector]]
   
   return(clima_sub)
   

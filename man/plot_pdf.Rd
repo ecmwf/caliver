@@ -23,8 +23,8 @@ Plot PDF of fire index
 }
 \examples{
 \dontrun{
-  plot_pdf(fire_index, thresholds, upper_limit = 100,
-                v_lines = c(0.75, 0.95))
+  r <- readRDS(system.file("extdata", "RISICO_raster.rds", package = "caliver"))
+  plot_pdf(r, thresholds = c(5.2, 11.2, 21.3, 38, 50))
 }
 
 }

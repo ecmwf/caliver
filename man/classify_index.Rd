@@ -35,25 +35,11 @@ custom values.
 }
 \examples{
 \dontrun{
-  r <- raster::raster("ECMWF_FWI_20180723_1200_hr_fwi.nc")
+  r <- readRDS(system.file("extdata", "RISICO_raster.rds", package = "caliver"))
   x <- classify_index(r, index = "fwi")
 
   # This can be plotted using rasterVis::levelplot()
   rasterVis::levelplot(x)
-
-  # As plot above but using EFFIS pallette
-  rasterVis::levelplot(x, col.regions = caliver:::effis_palette)
-
-  # Plot above plus custom labels
-  rasterVis::levelplot(x, names.attr = substring(names(x), 2))
-  # Plot above plus custom palette
-  rasterVis::levelplot(x, names.attr = substring(names(x), 2),
-                       col.regions = colorspace::diverge_hcl(6,
-                       palette = "Berlin"))
-  # Plot above but different custom palette
-  rasterVis::levelplot(x, names.attr = substring(names(x), 2),
-                       col.regions = colorRamps::matlab.like(n = 6))
-
 }
 
 }

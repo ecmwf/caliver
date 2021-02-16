@@ -7,6 +7,8 @@
 #' @param d2m 2m dew point temperature (in Celsius)
 #' @param unit can be "Celsius" (default) or "Kelvin"
 #' @param method can be "August-Roche-Magnus" (default) or "Clausius-Clapeyron"
+#' 
+#' @return The function returns a numeric, with length equal to t2m (and d2m).
 #'
 #' @export
 #'

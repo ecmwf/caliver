@@ -17,19 +17,17 @@
 #'
 #' @examples
 #' \dontrun{
-#'   setwd("/scratch/mo/moc0/fire/")
-#'
-#'   # Load and subset FWI
-#'   BurnedAreas <- raster::brick("GFED4_BurnedAreas/BurnedArea.grd")
-#'   names(BurnedAreas) <- seq.Date(from = as.Date("2003-01-01"),
-#'                                  to = as.Date("2015-12-31"), by = "day")
-#'   FWI <- raster::brick('GEFF/reanalysis/FWI_1980-2016.nc')
+#'  # Read example data
+#'  r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
+#'                                  package = "caliver"))
+#'  # Set missing crs
+#'  raster::crs(r_risico) <- "+proj=longlat +datum=WGS84 +no_defs"
 #'
 #'   # Generate obs and pred binary vectors
-#'   op <- validate_fire_danger_levels(fire_index = FWI,
-#'                                     observation = BurnedAreas,
-#'                                     fire_threshold = 10,
-#'                                     obs_threshold = 50)
+#'   validate_fire_danger_levels(fire_index = r_risico,
+#'                               observation = r_risico * 2,
+#'                               fire_threshold = 0.5,
+#'                               obs_threshold = 0.5)
 #'
 #' }
 #'

@@ -15,6 +15,10 @@ get_fire_season(dates, fss = NULL, fse = NULL, zone = NULL)
 
 \item{zone}{this can either: "north", "south" or "tropics"}
 }
+\value{
+A logical vector, where TRUE corresponds to a date in the fire season
+and FALSE correspond to a date not in the fire season.
+}
 \description{
 Get the season for each date in a vector
 }

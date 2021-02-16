@@ -1,6 +1,7 @@
 #' @title get_percentile_map
 #'
-#' @description This function calculates percentile(s) at each grid point. Wrappers raster::calc.
+#' @description This function calculates percentile(s) at each grid point.
+#' Wrappers raster::calc.
 #'
 #' @param r Raster* object (either RasterStack or RasterBrick). This could be the
 #' full record of daily indices or daily climatology.
@@ -13,8 +14,14 @@
 #'
 #' @examples
 #' \dontrun{
-#'
-#'   x <- get_percentile_map(r, probs = c(0.50, 0.75, 0.90, 0.99))
+#'  # Generate dummy RasterLayer
+#'  r <- raster(nrows = 2, ncols = 2, xmn = 0, xmx = 360, ymn = -90, ymx = 90, vals = 30)
+#'  # Generate dummy RasterBrick
+#'  b <- raster::brick(lapply(1:(365 * 3),
+#'                     function(i) raster::setValues(r,
+#'                       runif(n = raster::ncell(r), min = 0, max = 100))))
+#'  # Get percentile maps
+#'  get_percentile_map(b, probs = c(0.50, 0.75, 0.90, 0.99))
 #' }
 #'
 

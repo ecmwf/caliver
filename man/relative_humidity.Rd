@@ -15,6 +15,9 @@ relative_humidity(t2m, d2m, unit = "Celsius", method = "August-Roche-Magnus")
 
 \item{method}{can be "August-Roche-Magnus" (default) or "Clausius-Clapeyron"}
 }
+\value{
+The function returns a numeric, with length equal to t2m (and d2m).
+}
 \description{
 Calculate relative humidity from 2m temperature (in Celsius) and
 2m dew point temperature (in Celsius).

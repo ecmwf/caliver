@@ -3,25 +3,41 @@
 #' @description Generates the mean of the values over a certain percentile
 #' threshold for the portion of the Raster* that intersects a polygon
 #'
-#' @param r_stack is the raster or raster stack
-#' @param p_shape is the shapefile on which to aggregate the values
+#' @param b RasterLayer/Brick/Stack containing the historical observations or a
+#' proxy (typically a reanalysis).
+#' @param poly is the spatial polygon on which to aggregate the values
 #' @param perc_val is the percentile value used as a threshold
 #' @param mod defines if the values considered for the mean are above (gt) or
 #' below (lt) the threshold
+#' 
+#' @return The function returns a numeric value (for each layer in \code{b}),
+#' corresponding to the mean of the values of \code{b} above/below a given
+#' percentile of the historical observations.
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#'   r.index <- get_perc_risk_index(r_stack = r_stack, p_shape = poly,
-#'                               perc_val = 50, mod = "lt")
+#'   # Read RISICO test data
+#'   r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
+#'                                   package = "caliver"))
+#'   # Set missing crs
+#'   raster::crs(r_risico) <- "+proj=longlat +datum=WGS84 +no_defs"
+#'   
+#'   # Read dummy polygon
+#'   shape <- as(raster::extent(6, 18, 35, 47), "SpatialPolygons")
+#'   # Set missing crs
+#'   raster::crs(shape) <- "+proj=longlat +datum=WGS84 +no_defs"
+#'   
+#'   get_perc_risk_index(b = r_risico, poly = shape, perc_val = 75, mod = "gt")
+#'   
 #' }
 #'
 
-get_perc_risk_index <- function(r_stack, p_shape, perc_val = 75, mod = "gt"){
+get_perc_risk_index <- function(b, poly, perc_val = 75, mod = "gt"){
 
   # Crop and mask
-  r_vals <- mask_crop_subset(r_stack, p_shape)
+  r_vals <- mask_crop_subset(b, poly)
 
   # Percentile per layer
   ppl <- raster::quantile(x = r_vals, probs = perc_val / 100, na.rm = TRUE)

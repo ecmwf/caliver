@@ -4,12 +4,21 @@
 \alias{plot_percentile_map}
 \title{plot_percentile_map}
 \usage{
-plot_percentile_map(maps, region = "GLOB", col = NULL, ...)
+plot_percentile_map(
+  maps,
+  region = "GLOB",
+  add_background = FALSE,
+  col = NULL,
+  ...
+)
 }
 \arguments{
 \item{maps}{is the result of get_percentile_map()}
 
 \item{region}{string of characters describing the region.}
+
+\item{add_background}{logical, TRUE (default) to show background map.
+This only works if longitudes of maps are in the range [-180, +180]}
 
 \item{col}{custom color palette (default is `dput(rev(RColorBrewer::brewer.pal(n = 10, name = "RdYlGn")))`)}
 
@@ -21,11 +30,17 @@ This function plots the maps of percentiles
 }
 \examples{
 \dontrun{
+  # Generate dummy RasterLayer
+  r <- raster(nrows = 2, ncols = 2, xmn = 0, xmx = 360, ymn = -90, ymx = 90, vals = 30)
+  # Generate dummy RasterBrick
+  b <- raster::brick(lapply(1:(365 * 3),
+                     function(i) raster::setValues(r,
+                     runif(n = raster::ncell(r), min = 0, max = 100))))
+  # Get percentile maps
+  maps <- get_percentile_map(b, probs = c(0.50, 0.75, 0.90, 0.99))
+ 
   # Use default palette
   plot_percentile_map(maps)
-  
-  # Use custom color palette
-  plot_percentile_map(maps, col = rev(viridis::inferno(n = 10)))
 }
 
 }

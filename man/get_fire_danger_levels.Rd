@@ -23,29 +23,19 @@ This function calculates the danger levels
 \examples{
 \dontrun{
 
-  # Define period for Reanalysis
-  dataDates <- seq.Date(from = as.Date(strptime(paste("1980", 1),
-                                                format="\%Y \%j")),
-                        to = as.Date(strptime(paste("2016", 366),
-                                                format="\%Y \%j")),
-                        by = "day")
-
-  # Create an index of fire season dates
-  seasons <- get_fire_season(dataDates, emisphere = "north")
-  fireSeasonIndex <- which(seasons == TRUE)
-
-  r <- raster::brick('FWI_1980-2016.nc')
-  p <- raster::getData(name = "GADM", country = "Italy", level = 0)
-  maskcrop(r, p, mask = TRUE, crop = TRUE)
-
-  # Mask and crop over country
-  FWIcountry <- maskcrop(FWI, country, mask = TRUE, crop = TRUE)
-
-  # Subset based on fire season
-  FWIseasonal <- raster::subset(FWIcountry, fireSeasonIndex)
-
-  # Generate thresholds for the country of interest
-  countryThr <- get_fire_danger_levels(fire_index = FWIseasonal)
+  # Generate dummy brick
+  set.seed(0)
+  r <- raster(nrows = 2, ncols = 2,
+              xmn = 0, xmx = 360, ymn = -90, ymx = 90, vals = 30)
+  # Simulate a long reanalysis record
+  b <- raster::brick(lapply(1:(365 * 3),
+       function(i) raster::setValues(r, runif(n = raster::ncell(r),
+                                              min = 0, max = 100))))
+  names(b) <- seq.Date(from = as.Date("1993-01-01"),
+                       to = as.Date("1995-12-31"),
+                       by = "day")
+  # Generate danger levels
+  get_fire_danger_levels(fire_index = b)
 
 }
 

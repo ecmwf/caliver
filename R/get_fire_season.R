@@ -6,6 +6,9 @@
 #' @param fss Fire Season Start (date in the format Y-m-d)
 #' @param fse Fire Season End (date in the format Y-m-d)
 #' @param zone this can either: "north", "south" or "tropics"
+#' 
+#' @return A logical vector, where TRUE corresponds to a date in the fire season
+#' and FALSE correspond to a date not in the fire season.
 #'
 #' @export
 #'

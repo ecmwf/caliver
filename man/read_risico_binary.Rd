@@ -9,12 +9,16 @@ read_risico_binary(filename)
 \arguments{
 \item{filename}{is the file to read}
 }
+\value{
+The function returns a RasterLayer or Brick, depending on whether
+\code{filenane} contains one or more layers.
+}
 \description{
 Reads a RISICO output file and returns a raster map
 }
 \examples{
 \dontrun{
-  r_values <- read_risico_binary("data/RISICO2015_VPPF_201611140300")
+  read_risico_binary(system.file("extdata", "RISICO_binary.bin", package = "caliver"))
 }
 
 }

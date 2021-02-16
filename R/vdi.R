@@ -26,6 +26,10 @@
 #' The IPse works well and models very fast fire propagation speeds (sometimes
 #' underestimated).
 #' }
+#' 
+#' @return The function returns a categorical Raster* object with extent,
+#' resolution and land-sea mask matching those of \code{dc} (or \code{dmc}).
+#' Values are integers in the range [1, 5].
 #'
 #' @export
 #'

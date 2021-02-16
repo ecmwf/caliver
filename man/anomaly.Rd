@@ -4,19 +4,27 @@
 \alias{anomaly}
 \title{anomaly}
 \usage{
-anomaly(r, clima)
+anomaly(r, b)
 }
 \arguments{
 \item{r}{is the RasterLayer to compare to the climatology.}
 
-\item{clima}{RasterBrick containing the climatological information.}
+\item{b}{RasterBrick/Stack containing the historical observations or a proxy
+(typically a reanalysis) that is used to derive the climatological
+information.}
+}
+\value{
+The function returns a RasterLayer with extent, resolution and
+land-sea mask matching those of \code{r}. Values are the number standard
+deviations from the historical mean values.
 }
 \description{
 This function calculates the anomaly (number of standard
 deviations from the mean climatology) of a forecast layer.
 }
 \details{
-\code{r} and \code{clima} should have the same extent.
+The objects \code{r} and \code{b} should be comparable: same
+resolution and extent.
 More information on anomaly is available here:
 https://bit.ly/2Qvekz4. To estimate fire climatology one can use hindcast or
 reanalysis data. Examples of the latter are available from Zenodo:
@@ -24,11 +32,20 @@ https://zenodo.org/communities/wildfire.
 }
 \examples{
 \dontrun{
-  r <- brick("cfwis_ffwi_20170101_1200_00.nc")[[1]]
-  clima <- brick("fwi.nc")
-  x <- anomaly(r, clima)
+  # Generate dummy RasterLayer
+  r <- raster(nrows = 1, ncols = 1,
+              xmn = 0, xmx = 360, ymn = -90, ymx = 90, vals = 0.3)
+  names(r) <- as.Date("2018-01-01")
+  # Generate dummy RasterBrick
+  b <- raster::brick(lapply(1:(365 * 3),
+                  function(i) raster::setValues(r, runif(raster::ncell(r)))))
+  names(b) <- seq.Date(from = as.Date("1993-01-01"),
+                       to = as.Date("1995-12-31"),
+                       by = "day")
+  # Compute anomaly
+  x <- anomaly(r, b)
 
-  # This plots nicely using rasterVis::levelplot(), in example on GWIS
+  # This plots nicely using rasterVis::levelplot(), see example on GWIS
   # (\url{https://gwis.jrc.ec.europa.eu}
   rasterVis::levelplot(x, col.regions = colorRamps::matlab.like(n = 11))
 }

@@ -17,7 +17,8 @@ mask_crop_subset(r, p, idx = NULL, ...)
 (e.g. \code{progress = "text"})}
 }
 \value{
-A Raster* object
+A Raster* object with resolution and land-sea mask matching those of
+\code{r} and extent matching \code{p}.
 }
 \description{
 mask and/or crop a Raster* based on a Polygon.
@@ -32,9 +33,14 @@ the polygon and set all remaining pixels to NA, as described in this post:
 \examples{
 \dontrun{
 
-  r <- raster::brick('FWI_1980-2016.nc')
-  p <- raster::getData(name = "GADM", country = "Italy", level = 0)
-  mask_crop_subset(r, p)
+  # Define dummy polygon
+  shape <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
+  
+  # Read RISICO test data
+  r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
+                                  package = "caliver"))
+  
+  mask_crop_subset(r = r_risico, p = shape)
 
 }
 
