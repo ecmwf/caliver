@@ -42,7 +42,7 @@
 <meta property="og:title" content="ranking — ranking" />
 <meta property="og:description" content="The ranking is applied to a forecast map r and provides
 percentiles of occurrence of the values based on a given climatology
-(see clima)." />
+(see b)." />
 
 
 
@@ -130,10 +130,10 @@ percentiles of occurrence of the values based on a given climatology
     <div class="ref-description">
     <p>The ranking is applied to a forecast map <code>r</code> and provides
 percentiles of occurrence of the values based on a given climatology
-(see <code>clima</code>).</p>
+(see <code>b</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ranking</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>clima</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>ranking</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>b</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,27 +143,44 @@ percentiles of occurrence of the values based on a given climatology
       <td><p>is the RasterLayer to compare to the climatology.</p></td>
     </tr>
     <tr>
-      <th>clima</th>
-      <td><p>RasterBrick containing the climatological information.</p></td>
+      <th>b</th>
+      <td><p>RasterBrick/Stack containing the historical observations or a proxy
+(typically a reanalysis) that is used to derive the climatological
+information.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The function returns a RasterLayer with extent, resolution and
+land-sea mask matching those of <code>r</code>. Values are the percentiles of
+occurrence of the values.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>More information on ranking is available here:
+    <p>The objects <code>r</code> and <code>b</code> should be comparable: same
+resolution and extent.
+More information on ranking is available here:
 https://bit.ly/2Qvekz4. To estimate fire climatology one can use hindcast or
 reanalysis data. Examples of the latter are available from Zenodo:
 https://zenodo.org/communities/wildfire.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'>brick</span><span class='op'>(</span><span class='st'>"cfwis_ffwi_20170101_1200_00.nc"</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
-  <span class='va'>clima</span> <span class='op'>&lt;-</span> <span class='fu'>brick</span><span class='op'>(</span><span class='st'>"fwi.nc"</span><span class='op'>)</span>
-  <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>ranking</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>clima</span><span class='op'>)</span>
+  <span class='co'># Generate dummy RasterLayer</span>
+  <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span>nrows <span class='op'>=</span> <span class='fl'>1</span>, ncols <span class='op'>=</span> <span class='fl'>1</span>,
+              xmn <span class='op'>=</span> <span class='fl'>0</span>, xmx <span class='op'>=</span> <span class='fl'>360</span>, ymn <span class='op'>=</span> <span class='op'>-</span><span class='fl'>90</span>, ymx <span class='op'>=</span> <span class='fl'>90</span>, vals <span class='op'>=</span> <span class='fl'>0.3</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2018-01-01"</span><span class='op'>)</span>
+  <span class='co'># Generate dummy RasterBrick</span>
+  <span class='va'>b</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/brick.html'>brick</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='op'>(</span><span class='fl'>365</span> <span class='op'>*</span> <span class='fl'>3</span><span class='op'>)</span>,
+                  <span class='kw'>function</span><span class='op'>(</span><span class='va'>i</span><span class='op'>)</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/setValues.html'>setValues</a></span><span class='op'>(</span><span class='va'>r</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>b</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.Date.html'>seq.Date</a></span><span class='op'>(</span>from <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1993-01-01"</span><span class='op'>)</span>,
+                       to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1995-12-31"</span><span class='op'>)</span>,
+                       by <span class='op'>=</span> <span class='st'>"day"</span><span class='op'>)</span>
+  <span class='co'># Compute ranking</span>
+  <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>ranking</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>b</span><span class='op'>)</span>
 
-  <span class='co'># This plots nicely using rasterVis::levelplot(), in example on GWIS</span>
+  <span class='co'># This plots nicely using rasterVis::levelplot(), see example on GWIS</span>
   <span class='co'># (\url{https://gwis.jrc.ec.europa.eu}</span>
-  <span class='fu'>rasterVis</span><span class='fu'>::</span><span class='fu'>levelplot</span><span class='op'>(</span><span class='va'>x</span>, col.regions <span class='op'>=</span> <span class='fu'>colorRamps</span><span class='fu'>::</span><span class='fu'>matlab.like</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
   <span class='fu'>rasterVis</span><span class='fu'>::</span><span class='fu'>levelplot</span><span class='op'>(</span><span class='va'>x</span>, col.regions <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"green"</span>, <span class='st'>"yellow"</span>, <span class='st'>"salmon"</span>,
                                           <span class='st'>"orange"</span>, <span class='st'>"red"</span>, <span class='st'>"black"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>

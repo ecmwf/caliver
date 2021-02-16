@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="get_percentile_map — get_percentile_map" />
-<meta property="og:description" content="This function calculates percentile(s) at each grid point. Wrappers raster::calc." />
+<meta property="og:description" content="This function calculates percentile(s) at each grid point.
+Wrappers raster::calc." />
 
 
 
@@ -126,7 +127,8 @@
     </div>
 
     <div class="ref-description">
-    <p>This function calculates percentile(s) at each grid point. Wrappers raster::calc.</p>
+    <p>This function calculates percentile(s) at each grid point.
+Wrappers raster::calc.</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_percentile_map</span><span class='op'>(</span><span class='va'>r</span>, <span class='va'>probs</span><span class='op'>)</span></pre>
@@ -152,8 +154,14 @@ listing which percentiles should be calculated.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-
-  <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>get_percentile_map</span><span class='op'>(</span><span class='va'>r</span>, probs <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.50</span>, <span class='fl'>0.75</span>, <span class='fl'>0.90</span>, <span class='fl'>0.99</span><span class='op'>)</span><span class='op'>)</span>
+ <span class='co'># Generate dummy RasterLayer</span>
+ <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span>nrows <span class='op'>=</span> <span class='fl'>2</span>, ncols <span class='op'>=</span> <span class='fl'>2</span>, xmn <span class='op'>=</span> <span class='fl'>0</span>, xmx <span class='op'>=</span> <span class='fl'>360</span>, ymn <span class='op'>=</span> <span class='op'>-</span><span class='fl'>90</span>, ymx <span class='op'>=</span> <span class='fl'>90</span>, vals <span class='op'>=</span> <span class='fl'>30</span><span class='op'>)</span>
+ <span class='co'># Generate dummy RasterBrick</span>
+ <span class='va'>b</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/brick.html'>brick</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='op'>(</span><span class='fl'>365</span> <span class='op'>*</span> <span class='fl'>3</span><span class='op'>)</span>,
+                    <span class='kw'>function</span><span class='op'>(</span><span class='va'>i</span><span class='op'>)</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/setValues.html'>setValues</a></span><span class='op'>(</span><span class='va'>r</span>,
+                      <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span>n <span class='op'>=</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/ncell.html'>ncell</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span>, min <span class='op'>=</span> <span class='fl'>0</span>, max <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+ <span class='co'># Get percentile maps</span>
+ <span class='fu'>get_percentile_map</span><span class='op'>(</span><span class='va'>b</span>, probs <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.50</span>, <span class='fl'>0.75</span>, <span class='fl'>0.90</span>, <span class='fl'>0.99</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 </div></pre>

@@ -131,18 +131,19 @@ threshold for the portion of the Raster* that intersects a polygon" />
 threshold for the portion of the Raster* that intersects a polygon</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_perc_risk_index</span><span class='op'>(</span><span class='va'>r_stack</span>, <span class='va'>p_shape</span>, perc_val <span class='op'>=</span> <span class='fl'>75</span>, mod <span class='op'>=</span> <span class='st'>"gt"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_perc_risk_index</span><span class='op'>(</span><span class='va'>b</span>, <span class='va'>poly</span>, perc_val <span class='op'>=</span> <span class='fl'>75</span>, mod <span class='op'>=</span> <span class='st'>"gt"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>r_stack</th>
-      <td><p>is the raster or raster stack</p></td>
+      <th>b</th>
+      <td><p>RasterLayer/Brick/Stack containing the historical observations or a
+proxy (typically a reanalysis).</p></td>
     </tr>
     <tr>
-      <th>p_shape</th>
-      <td><p>is the shapefile on which to aggregate the values</p></td>
+      <th>poly</th>
+      <td><p>is the spatial polygon on which to aggregate the values</p></td>
     </tr>
     <tr>
       <th>perc_val</th>
@@ -155,11 +156,27 @@ below (lt) the threshold</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The function returns a numeric value (for each layer in <code>b</code>),
+corresponding to the mean of the values of <code>b</code> above/below a given
+percentile of the historical observations.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>r.index</span> <span class='op'>&lt;-</span> <span class='fu'>get_perc_risk_index</span><span class='op'>(</span>r_stack <span class='op'>=</span> <span class='va'>r_stack</span>, p_shape <span class='op'>=</span> <span class='va'>poly</span>,
-                              perc_val <span class='op'>=</span> <span class='fl'>50</span>, mod <span class='op'>=</span> <span class='st'>"lt"</span><span class='op'>)</span>
+  <span class='co'># Read RISICO test data</span>
+  <span class='va'>r_risico</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"RISICO_raster.rds"</span>,
+                                  package <span class='op'>=</span> <span class='st'>"caliver"</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='co'># Set missing crs</span>
+  <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>r_risico</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"+proj=longlat +datum=WGS84 +no_defs"</span>
+  
+  <span class='co'># Read dummy polygon</span>
+  <span class='va'>shape</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='fl'>6</span>, <span class='fl'>18</span>, <span class='fl'>35</span>, <span class='fl'>47</span><span class='op'>)</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
+  <span class='co'># Set missing crs</span>
+  <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>shape</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"+proj=longlat +datum=WGS84 +no_defs"</span>
+  
+  <span class='fu'>get_perc_risk_index</span><span class='op'>(</span>b <span class='op'>=</span> <span class='va'>r_risico</span>, poly <span class='op'>=</span> <span class='va'>shape</span>, perc_val <span class='op'>=</span> <span class='fl'>75</span>, mod <span class='op'>=</span> <span class='st'>"gt"</span><span class='op'>)</span>
+  
 <span class='op'>}</span>
 
 </div></pre>

@@ -179,25 +179,11 @@ Some cells may contain NAs, this happens typically over the sea.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span><span class='st'>"ECMWF_FWI_20180723_1200_hr_fwi.nc"</span><span class='op'>)</span>
+  <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"RISICO_raster.rds"</span>, package <span class='op'>=</span> <span class='st'>"caliver"</span><span class='op'>)</span><span class='op'>)</span>
   <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>classify_index</span><span class='op'>(</span><span class='va'>r</span>, index <span class='op'>=</span> <span class='st'>"fwi"</span><span class='op'>)</span>
 
   <span class='co'># This can be plotted using rasterVis::levelplot()</span>
   <span class='fu'>rasterVis</span><span class='fu'>::</span><span class='fu'>levelplot</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-  <span class='co'># As plot above but using EFFIS pallette</span>
-  <span class='fu'>rasterVis</span><span class='fu'>::</span><span class='fu'>levelplot</span><span class='op'>(</span><span class='va'>x</span>, col.regions <span class='op'>=</span> <span class='fu'>caliver</span><span class='fu'>:::</span><span class='va'>effis_palette</span><span class='op'>)</span>
-
-  <span class='co'># Plot above plus custom labels</span>
-  <span class='fu'>rasterVis</span><span class='fu'>::</span><span class='fu'>levelplot</span><span class='op'>(</span><span class='va'>x</span>, names.attr <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substring</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
-  <span class='co'># Plot above plus custom palette</span>
-  <span class='fu'>rasterVis</span><span class='fu'>::</span><span class='fu'>levelplot</span><span class='op'>(</span><span class='va'>x</span>, names.attr <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substring</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>)</span>,
-                       col.regions <span class='op'>=</span> <span class='fu'>colorspace</span><span class='fu'>::</span><span class='fu'><a href='http://colorspace.R-Forge.R-project.org//reference/hcl_palettes.html'>diverge_hcl</a></span><span class='op'>(</span><span class='fl'>6</span>,
-                       palette <span class='op'>=</span> <span class='st'>"Berlin"</span><span class='op'>)</span><span class='op'>)</span>
-  <span class='co'># Plot above but different custom palette</span>
-  <span class='fu'>rasterVis</span><span class='fu'>::</span><span class='fu'>levelplot</span><span class='op'>(</span><span class='va'>x</span>, names.attr <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substr.html'>substring</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>)</span>,
-                       col.regions <span class='op'>=</span> <span class='fu'>colorRamps</span><span class='fu'>::</span><span class='fu'>matlab.like</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
-
 <span class='op'>}</span>
 
 </div></pre>
