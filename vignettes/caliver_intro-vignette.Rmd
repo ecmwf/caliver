@@ -110,7 +110,7 @@ In the last three years fire danger forecasts have been developed at ECMWF as a 
 
 Two datasets are available: the GEFF-reanalysis and the GEFF-realtime. GEFF-reanalysis provides historical records of global fire danger conditions from 1980 to date. The historic record is not static but it is updated regularly following the availability of the atmospheric reanalysis datasets. Reanalysis datasets are used to define warning levels on the base of past events, therefore levels derived from them should not be considered static as changes in climatic conditions can alter them. There are currently 2 GEFF-reanalysis datasets, the first one (used mainly for educational purposes) is based on the atmospheric reanalysis dataset ERA-Interim [@dee2011era]. The second dataset is based on the most recent atmospheric reanalysis ERA5 [@hersbach2020era5].
 
-GEFF-realtime provides real time deterministic high resolution and probabilistic fire danger forecasts up to 10 days ahead using weather forcings from the latest model cycle of the ECMWF weather forecast system. The real-time dataset is updated every day with a new set of forecasts. This dataset is used for operational monitoring of danger conditions. Real-time data can be obtain making a data request to the [JRC](https://effis.jrc.ec.europa.eu/static/data.request.form/).
+GEFF-realtime provides real time deterministic high resolution and probabilistic fire danger forecasts up to 10 days ahead using weather forcings from the latest model cycle of the ECMWF weather forecast system. The real-time dataset is updated every day with a new set of forecasts. This dataset is used for operational monitoring of danger conditions. Real-time data can be obtain making a data request to the [JRC](https://effis.jrc.ec.europa.eu/apps/data.request.form/).
 
 In this vignette, the Fire Weather Index (from the homonymous Canadian system) ERA-Interim based reanalysis dataset is used to asses fire danger. This dataset has daily temporal resolution, global coverage (0.7 degrees, ~80 Km, with longitudes ranging between -180 to +180 in geographic coordinate systems) and spans from 1980-01-01 to 2018-12-31. It was computed by the European Centre for Medium-range Weather Forecast (ECMWF) and made available on [Zenodo](https://doi.org/10.5281/zenodo.1065400), for more details see [@Vitolo2019]. Newer and more detailed fire danger reanalysis data are available from the [Copernicus Climate Data Store (CDS)](https://cds.climate.copernicus.eu/cdsapp#!/dataset/cems-fire-historical?tab=overview), for more details see [@Vitolo2020].
 
@@ -237,7 +237,7 @@ The categories of GEFF's indices are pre-defined but can be overwritten by expli
 
 Raw values of fire indices are expressed as a continuous rating (e.g. FWI values are in the range [0, +Inf[, although very rarely above 100). In order to aid decision makers raw values are routinely converted into danger classes, based on predefined thresholds.
 
-The European Forest Fire Information System provides a set of fire danger thresholds/classes harmonized across Europe (https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/). For instance, the FWI ranges are (upper bound excluded):
+The European Forest Fire Information System (EFFIS) provides a set of fire danger thresholds/classes harmonized across Europe (https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast). For instance, the FWI ranges are (upper bound excluded):
   * Very low = 0 - 5.2
   * Low = 5.2 - 11.2
   * Moderate = 11.2 - 21.3
@@ -271,7 +271,7 @@ EuropeThr <- get_fire_danger_levels(fire_index = fwi_euro)
 EuropeThr
 ```
 
-Please note the differences between these danger levels and those recommended by the European Forest Fire Information System (EFFIS)[https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast/), `caliver` danger levels are generally lower than EFFIS ones.
+Please note the differences between these danger levels and those recommended by EFFIS, `caliver` danger levels are generally lower than EFFIS ones.
 
 Fire danger levels are more useful when calculated at country level. Below is shown how to execute the same steps above recursively for most countries in Europe and bind the results together in a summary table.
 
