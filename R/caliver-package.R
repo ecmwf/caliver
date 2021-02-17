@@ -16,8 +16,5 @@
 #' @importFrom rworldmap getMap
 #' @importFrom graphics plot legend par
 #' @importFrom stats median na.omit sd uniroot density quantile
-#' @importFrom plotrix rescale
-#' @importFrom reshape2 melt
-#' @importFrom R.utils seqToIntervals
 #'
 NULL
