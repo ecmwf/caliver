@@ -1,6 +1,6 @@
 Package: caliver
 Type: Package
-Title: Calibration and Verification of Gridded Model outputs
+Title: Calibration and Verification of Gridded Model Outputs
 Version: 2.0.0
 Authors@R: c(person(given = "Claudia",
                     family = "Vitolo",
