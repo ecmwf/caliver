@@ -27,14 +27,9 @@ Imports:
     raster,
     rworldmap,
     graphics,
-    stats,
-    plotrix,
-    reshape2,
-    R.utils
+    stats
 Suggests:
     testthat,
-    png,
-    proto,
     knitr,
     rmarkdown,
     covr,
