@@ -3,6 +3,8 @@
 export(anomaly)
 export(classify_index)
 export(daily_clima)
+export(get_fire_danger_levels)
+export(get_fire_season)
 export(ranking)
 import(ggplot2)
 import(ncdf4)
