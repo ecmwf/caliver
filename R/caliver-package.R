@@ -12,5 +12,6 @@
 #' @import ggplot2
 #' @importFrom rworldmap getMap
 #' @importFrom sp SpatialPolygons SpatialPolygonsDataFrame
+#' @importFrom stats median na.omit sd uniroot
 #'
 NULL

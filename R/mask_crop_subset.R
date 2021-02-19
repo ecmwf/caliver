@@ -22,15 +22,15 @@
 #' @examples
 #' \dontrun{
 #'
-#'   # Define dummy polygon, as sf simple feature
-#'   shape <- sf::st_bbox(c(xmin = 7, xmax = 18, ymax = 40, ymin = 18),
-#'                        crs = sf::st_crs(4326))
+#'   # Define dummy polygon
+#'   dummy_polygon <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
+#'   raster::crs(dummy_polygon) <- "+proj=longlat +datum=WGS84 +no_defs"
 #'   
 #'   # Read RISICO test data
 #'   r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
 #'                                   package = "caliver"))
 #'   
-#'   mask_crop_subset(r = r_risico, p = shape)
+#'   mask_crop_subset(r = r_risico, p = dummy_polygon)
 #'
 #' }
 #'

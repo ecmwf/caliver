@@ -16,10 +16,8 @@ clima <- list(b[[1:300]], b[[301:600]], b[[601:900]])
 names(clima) <- as.Date(names(b)[1:3], format = "X%Y.%m.%d")
 
 # Define dummy polygon
-# dummy_polygon <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
-# raster::crs(dummy_polygon) <- "+proj=longlat +datum=WGS84 +no_defs"
-# save(dummy_polygon, file = 'data/dummy_polygon.rda', compress='xz')
-data(dummy_polygon)
+dummy_polygon <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
+raster::crs(dummy_polygon) <- "+proj=longlat +datum=WGS84 +no_defs"
 
 # Read RISICO test data
 r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
