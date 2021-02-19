@@ -23,11 +23,9 @@ Depends:
 Imports:
     ncdf4,
     ggplot2,
-    lubridate,
     raster,
     rworldmap,
-    graphics,
-    stats
+    sp
 Suggests:
     testthat,
     knitr,

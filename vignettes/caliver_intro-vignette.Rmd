@@ -76,7 +76,7 @@ Observed burned areas around the world are collected by the 4th generation Globa
 For the purpose of this vignette, we will demostrate the `caliver` functionalities on specific areas: Europe and Italy. 
 
 ### Basis regions
-GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the `sp` package) as follows.
+GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as an sf polygon object (defined in the `sf` package) as follows.
 
 ```{r}
 library("sp")
@@ -160,7 +160,7 @@ plot(fwi_masked, col = terrain.colors(120))
 The primary goal of the `caliver` package is to streamline the post-processing of GEFF model outputs and make the scientific workflow easily reproducible. For this reason, this section provides example applications in the form of short workflows. These are ordered chronologically, based on the sequential steps a modeller would perform to visually explore information, calibrate fire danger levels and validate them. This often results in an increasing level of complexity. To provide a concise description, each workflow is not a stand alone exercise but the result of one workflow is often used as input in the following ones.
 
 ## Mask, crop and subset
-GEFF fire danger indices are characterized by three dimensions (latitude, longitude and time) and a variable for each index of interest. These can be masked and cropped to match a user-defined extent, this can be a geographical bounding box or a spatial polygon such as a given administrative boundary. The indices can also be subsetted over the layer index or the time dimension (e.g. to take into account only fire seasons). The function `mask_crop_subset()` wraps the functions `raster::mask()`, `raster::crop()` and `raster::subset()` and converts the result into a RasterLayer (single layer) or RasterBrick (multiple layers). The example below shows how to mask and crop the fwi brick over Italy, selecting only the reference period 1981-2010.
+GEFF fire danger indices are characterized by three dimensions (latitude, longitude and time) and a variable for each index of interest. These can be masked and cropped to match a user-defined extent, this can be a geographical bounding box or a given administrative boundary. The indices can also be subsetted over the layer index or the time dimension (e.g. to take into account only fire seasons). The function `mask_crop_subset()` wraps the functions `raster::mask()`, `raster::crop()` and `raster::subset()` and converts the result into a RasterLayer (single layer) or RasterBrick (multiple layers). The example below shows how to mask and crop the fwi brick over Italy, selecting only the reference period 1981-2010.
 
 ```{r}
 # Get indices for climatological reference period 1981-2010

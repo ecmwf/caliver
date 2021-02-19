@@ -5,7 +5,7 @@
 #'
 #' @param b RasterLayer/Brick/Stack containing the historical observations or a
 #' proxy (typically a reanalysis).
-#' @param poly is the spatial polygon on which to aggregate the values
+#' @param p SpatialPolygons* object
 #' @param perc_val is the percentile value used as a threshold
 #' @param mod defines if the values considered for the mean are above (gt) or
 #' below (lt) the threshold
@@ -24,20 +24,19 @@
 #'   # Set missing crs
 #'   raster::crs(r_risico) <- "+proj=longlat +datum=WGS84 +no_defs"
 #'   
-#'   # Read dummy polygon
-#'   shape <- as(raster::extent(6, 18, 35, 47), "SpatialPolygons")
-#'   # Set missing crs
-#'   raster::crs(shape) <- "+proj=longlat +datum=WGS84 +no_defs"
+#'   # Define dummy polygon, as sf simple feature
+#'   shape <- sf::st_bbox(c(xmin = 7, xmax = 18, ymax = 40, ymin = 18),
+#'                        crs = sf::st_crs(4326))
 #'   
-#'   get_perc_risk_index(b = r_risico, poly = shape, perc_val = 75, mod = "gt")
+#'   get_perc_risk_index(b = r_risico, p = shape, perc_val = 75, mod = "gt")
 #'   
 #' }
 #'
 
-get_perc_risk_index <- function(b, poly, perc_val = 75, mod = "gt"){
+get_perc_risk_index <- function(b, p, perc_val = 75, mod = "gt"){
 
   # Crop and mask
-  r_vals <- mask_crop_subset(b, poly)
+  r_vals <- mask_crop_subset(b, p)
 
   # Percentile per layer
   ppl <- raster::quantile(x = r_vals, probs = perc_val / 100, na.rm = TRUE)

@@ -3,7 +3,7 @@
 #' @description mask and/or crop a Raster* based on a Polygon.
 #'
 #' @param r Raster* object
-#' @param p SpatialPolygon* object
+#' @param p SpatialPolygons* object
 #' @param idx vector of strings indicating the layer indices to subset.
 #' @param ... additional arguments as in writeRaster
 #' (e.g. \code{progress = "text"})
@@ -22,8 +22,9 @@
 #' @examples
 #' \dontrun{
 #'
-#'   # Define dummy polygon
-#'   shape <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
+#'   # Define dummy polygon, as sf simple feature
+#'   shape <- sf::st_bbox(c(xmin = 7, xmax = 18, ymax = 40, ymin = 18),
+#'                        crs = sf::st_crs(4326))
 #'   
 #'   # Read RISICO test data
 #'   r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
@@ -40,7 +41,14 @@ mask_crop_subset <- function(r, p, idx = NULL, ...){
       !("RasterBrick" %in% class(r)) &
       !("RasterStack" %in% class(r))) {
 
-    stop("Error: r can only be a raster layer/brick/stack")
+    stop("Error: r can only be a RasterLayer/Brick/Stack")
+
+  }
+
+  if (!("SpatialPolygons" %in% class(p)) &
+      !("SpatialPolygonsDataFrame" %in% class(p))) {
+
+    stop("Error: p can only be a SpatialPolygons or SpatialPolygonsDataFrame")
 
   }
 
@@ -49,24 +57,11 @@ mask_crop_subset <- function(r, p, idx = NULL, ...){
     r <- raster::subset(r, idx, ...)
   }
 
-  # if (accurate == TRUE){
-  #   # To keep cells along the border we cannot use mask(r, p) because only
-  #   # cells with centroids falling in the polygon will be returned.
-  #   # The solution is to identify cells covering the polygon and set all
-  #   # remaining pixels to NA, see https://goo.gl/22LwJt
-  #   temp_mask <- r[[1]]
-  #   cls <- raster::cellFromPolygon(temp_mask,
-  #                                  p, weights = TRUE)[[1]][, "cell"]
-  #   temp_mask[][-cls] <- NA
-  #   p <- temp_mask
-  # }
-
   message("Cropping...")
   r <- raster::crop(r, p, ...)
 
   message("Masking...")
   r <- raster::mask(r, p, ...)
-  r <- raster::trim(r, ...)
 
   return(r)
 

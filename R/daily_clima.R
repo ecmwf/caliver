@@ -42,7 +42,7 @@ daily_clima <- function(b, dates = NULL){
                       by = "day")
   }
 
-  if (!lubridate::is.Date(dates)) dates <- as.Date(dates)
+  if (!inherits(dates, "Date")) dates <- as.Date(dates)
 
   # Initialise empty list of stacks
   clima_maps <- list()
