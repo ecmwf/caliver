@@ -62,6 +62,7 @@ mask_crop_subset <- function(r, p, idx = NULL, ...){
 
   message("Masking...")
   r <- raster::mask(r, p, ...)
+  # Do not use trim() otherwise the extent will change!
 
   return(r)
 
