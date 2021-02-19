@@ -22,10 +22,11 @@ Depends:
     R (>= 3.5)
 Imports:
     ncdf4,
-    ggplot2,
     raster,
+    ggplot2,
     rworldmap,
-    sp
+    sp,
+    stats
 Suggests:
     testthat,
     knitr,
