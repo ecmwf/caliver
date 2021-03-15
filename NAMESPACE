@@ -3,6 +3,7 @@
 export(anomaly)
 export(classify_index)
 export(daily_clima)
+export(firegram)
 export(get_fire_danger_levels)
 export(get_fire_season)
 export(get_perc_risk_index)
