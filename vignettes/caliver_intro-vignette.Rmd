@@ -40,7 +40,7 @@ In the following sections we present the caliver R package, illustrate the main 
 
 # Package installation and dependencies
 
-The `caliver` package is implemented in the R statistical language. Here we describe version 1.7.0, the latest stable release at the time of this writing. The package does not require compilation but depends on the following external libraries: the Geospatial Data Abstraction Library [@warmerdam2008geospatial], a translator library for raster and vector geospatial data formats, and the NetCDF4 library [@rew1990netcdf]. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.
+The `caliver` package is implemented in the R statistical language. Here we describe version 2.0.0, the latest stable release at the time of this writing. The package does not require compilation but depends on the following external libraries: the Geospatial Data Abstraction Library [@warmerdam2008geospatial], a translator library for raster and vector geospatial data formats, and the NetCDF4 library [@rew1990netcdf]. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.
 
 The `caliver` package is available on CRAN, therefore once all the dependencies are available, the package can be installed and loaded as follows:
 
@@ -76,7 +76,7 @@ Observed burned areas around the world are collected by the 4th generation Globa
 For the purpose of this vignette, we will demostrate the `caliver` functionalities on specific areas: Europe and Italy. 
 
 ### Basis regions
-GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the `sp` package) as follows.
+GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (see `sp` package) as follows.
 
 ```{r}
 library("sp")
@@ -119,8 +119,8 @@ We assume the ERA-Interim based GEFF-reanalysis data have already been downloade
 Data are aggregated into one NetCDF file and can be loaded as RasterBrick.
 
 ```{r}
-# Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded
-fwi <- raster::brick("~/repos/caliver_extras/data/fwi.nc")
+# Assuming the FWI reanalysis (GEFF-ERA-Interim reanalysis v3.0, 7.5GB) dataset is downloaded
+fwi <- raster::brick("fwi.nc")
 ```
 
 ## Masking data using land cover maps
@@ -138,20 +138,19 @@ The example below shows how to mask fire danger indices using the Global Land Co
 # Unzip the folder in the working directory
 
 # Load map
-fuel <- raster::raster("~/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf")
+fuel <- raster::raster("Grid/glc2000_v1_1/w001001.adf")
 # Save legend in data.frame
-df <- as.data.frame(levels(fuel))
+df <- as.data.frame(raster::levels(fuel))
 
 # If fuel and fwi have different extent and/or number of rows/cols, you will need to resample
-fuel <- raster::resample(fuel, fwi, method = "ngb", progress = "text")
+fuel <- raster::resample(fuel, fwi[[1]], method = "ngb", progress = "text")
 
 # Remove Bare Areas (19), Water Bodies (20), Snow and Ice (21), Artificial surfaces and associated areas (22), No data (23).
 codes_to_exclude <- 19:23
 fuel[fuel %in% codes_to_exclude] <- NA
 levels(fuel) <- df[1:18,]
 
-# Finaly, mask the first layer in fwi
-fwi_masked <- raster::mask(fwi[[1]], fuel)
+# Plot
 plot(fwi_masked, col = terrain.colors(120))
 ```
 
@@ -167,6 +166,44 @@ GEFF fire danger indices are characterized by three dimensions (latitude, longit
 idx <- which(substr(x = names(fwi), start = 2, stop = 5) %in% 1981:2010)
 # Mask, crop and subset
 fwi_Italy <- mask_crop_subset(r = fwi, p = Italy, idx = idx, progress = "text")
+```
+
+# Plot firegrams
+
+One way of comparing different forecast types (deterministic forecast vs probabilistic forecast) is to plot a `firegram`, which is the equivalent of a meteogram in the fire domain. This is particularly useful as a diagnostic tool for assessing the consistency between the two type of forecasts.
+
+```{r}
+# Set up a small raster structure
+set.seed(0)
+r <- raster(nrows = 2, ncols = 2,
+            xmn = 0, xmx = 360, ymn = -90, ymx = 90, vals = 30)
+# Generate dummy reanalysis (30 years)
+reanalysis <- raster::brick(lapply(1:10957,
+                          function(i) raster::setValues(r,
+                                                        runif(n = raster::ncell(r),
+                                                        min = 0, max = 100))))
+names(reanalysis) <- seq.Date(from = as.Date("1981-01-01"),
+                              to = as.Date("2010-12-31"),
+                              by = "day")
+# Generate danger levels
+thresholds <- get_fire_danger_levels(fire_index = reanalysis)
+
+# Generate dummy HRES forecast (10 days lead time)
+hres <- raster::brick(lapply(1:10,
+                          function(i) raster::setValues(r,
+                                                        runif(n = raster::ncell(r),
+                                                        min = 0, max = 100))))
+names(hres) <- seq.Date(from = as.Date("2011-01-01"), by = "day", length.out = 10)
+
+# Generate dummy ENS forecast (51 members and 15 days lead time)
+ens <- raster::brick(lapply(1:(51*15),
+                          function(i) raster::setValues(r,
+                                                        runif(n = raster::ncell(r),
+                                                        min = 0, max = 100))))
+names(ens) <- rep(seq.Date(from = as.Date("2011-01-01"), by = "day", length.out = 15), 51)
+
+# Firegram
+firegram(thresholds, hres, ens)
 ```
 
 ## Generate daily climatology

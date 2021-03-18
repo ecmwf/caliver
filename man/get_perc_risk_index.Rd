@@ -4,13 +4,13 @@
 \alias{get_perc_risk_index}
 \title{get_perc_risk_index}
 \usage{
-get_perc_risk_index(b, poly, perc_val = 75, mod = "gt")
+get_perc_risk_index(b, p, perc_val = 75, mod = "gt")
 }
 \arguments{
 \item{b}{RasterLayer/Brick/Stack containing the historical observations or a
 proxy (typically a reanalysis).}
 
-\item{poly}{is the spatial polygon on which to aggregate the values}
+\item{p}{SpatialPolygons* object}
 
 \item{perc_val}{is the percentile value used as a threshold}
 
@@ -34,12 +34,11 @@ threshold for the portion of the Raster* that intersects a polygon
   # Set missing crs
   raster::crs(r_risico) <- "+proj=longlat +datum=WGS84 +no_defs"
   
-  # Read dummy polygon
-  shape <- as(raster::extent(6, 18, 35, 47), "SpatialPolygons")
-  # Set missing crs
-  raster::crs(shape) <- "+proj=longlat +datum=WGS84 +no_defs"
+  # Define dummy polygon, as sf simple feature
+  shape <- sf::st_bbox(c(xmin = 7, xmax = 18, ymax = 40, ymin = 18),
+                       crs = sf::st_crs(4326))
   
-  get_perc_risk_index(b = r_risico, poly = shape, perc_val = 75, mod = "gt")
+  get_perc_risk_index(b = r_risico, p = shape, perc_val = 75, mod = "gt")
   
 }
 

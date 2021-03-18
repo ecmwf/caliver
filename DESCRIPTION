@@ -22,10 +22,10 @@ Depends:
     R (>= 3.5)
 Imports:
     ncdf4,
-    ggplot2,
-    lubridate,
     raster,
+    ggplot2,
     rworldmap,
+    sp,
     graphics,
     stats
 Suggests:

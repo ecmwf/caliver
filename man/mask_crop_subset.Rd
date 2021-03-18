@@ -9,7 +9,7 @@ mask_crop_subset(r, p, idx = NULL, ...)
 \arguments{
 \item{r}{Raster* object}
 
-\item{p}{SpatialPolygon* object}
+\item{p}{SpatialPolygons* object}
 
 \item{idx}{vector of strings indicating the layer indices to subset.}
 
@@ -34,13 +34,14 @@ the polygon and set all remaining pixels to NA, as described in this post:
 \dontrun{
 
   # Define dummy polygon
-  shape <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
+  dummy_polygon <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
+  raster::crs(dummy_polygon) <- "+proj=longlat +datum=WGS84 +no_defs"
   
   # Read RISICO test data
   r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
                                   package = "caliver"))
   
-  mask_crop_subset(r = r_risico, p = shape)
+  mask_crop_subset(r = r_risico, p = dummy_polygon)
 
 }
 
