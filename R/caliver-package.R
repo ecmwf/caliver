@@ -12,6 +12,7 @@
 #' @import ggplot2
 #' @importFrom rworldmap getMap
 #' @importFrom sp SpatialPolygons SpatialPolygonsDataFrame
-#' @importFrom stats median na.omit sd uniroot
+#' @importFrom graphics plot legend par
+#' @importFrom stats median na.omit sd uniroot density quantile
 #'
 NULL

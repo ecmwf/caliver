@@ -26,6 +26,7 @@ Imports:
     ggplot2,
     rworldmap,
     sp,
+    graphics,
     stats
 Suggests:
     testthat,
