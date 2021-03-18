@@ -13,6 +13,7 @@
 #' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay
 #' @importFrom raster intersect compareRaster
 #' @importFrom rworldmap getMap
+#' @importFrom sp SpatialPolygons SpatialPolygonsDataFrame
 #' @importFrom graphics plot legend par
 #' @importFrom stats median na.omit sd uniroot density quantile
 #'
