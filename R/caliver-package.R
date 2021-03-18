@@ -8,8 +8,10 @@
 #' @docType package
 #'
 #' @import ncdf4
-#' @import raster
 #' @import ggplot2
+#' @importFrom raster raster stack brick mask crop rotate extent extract t plot
+#' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay
+#' @importFrom raster intersect compareRaster
 #' @importFrom rworldmap getMap
 #' @importFrom sp SpatialPolygons SpatialPolygonsDataFrame
 #' @importFrom graphics plot legend par
