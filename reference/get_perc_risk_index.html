@@ -131,7 +131,7 @@ threshold for the portion of the Raster* that intersects a polygon" />
 threshold for the portion of the Raster* that intersects a polygon</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_perc_risk_index</span><span class='op'>(</span><span class='va'>b</span>, <span class='va'>poly</span>, perc_val <span class='op'>=</span> <span class='fl'>75</span>, mod <span class='op'>=</span> <span class='st'>"gt"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_perc_risk_index</span><span class='op'>(</span><span class='va'>b</span>, <span class='va'>p</span>, perc_val <span class='op'>=</span> <span class='fl'>75</span>, mod <span class='op'>=</span> <span class='st'>"gt"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,8 +142,8 @@ threshold for the portion of the Raster* that intersects a polygon</p>
 proxy (typically a reanalysis).</p></td>
     </tr>
     <tr>
-      <th>poly</th>
-      <td><p>is the spatial polygon on which to aggregate the values</p></td>
+      <th>p</th>
+      <td><p>SpatialPolygons* object</p></td>
     </tr>
     <tr>
       <th>perc_val</th>
@@ -170,12 +170,11 @@ percentile of the historical observations.</p>
   <span class='co'># Set missing crs</span>
   <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>r_risico</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"+proj=longlat +datum=WGS84 +no_defs"</span>
   
-  <span class='co'># Read dummy polygon</span>
-  <span class='va'>shape</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='fl'>6</span>, <span class='fl'>18</span>, <span class='fl'>35</span>, <span class='fl'>47</span><span class='op'>)</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
-  <span class='co'># Set missing crs</span>
-  <span class='fu'>raster</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>shape</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"+proj=longlat +datum=WGS84 +no_defs"</span>
+  <span class='co'># Define dummy polygon, as sf simple feature</span>
+  <span class='va'>shape</span> <span class='op'>&lt;-</span> <span class='fu'>sf</span><span class='fu'>::</span><span class='fu'>st_bbox</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>xmin <span class='op'>=</span> <span class='fl'>7</span>, xmax <span class='op'>=</span> <span class='fl'>18</span>, ymax <span class='op'>=</span> <span class='fl'>40</span>, ymin <span class='op'>=</span> <span class='fl'>18</span><span class='op'>)</span>,
+                       crs <span class='op'>=</span> <span class='fu'>sf</span><span class='fu'>::</span><span class='fu'>st_crs</span><span class='op'>(</span><span class='fl'>4326</span><span class='op'>)</span><span class='op'>)</span>
   
-  <span class='fu'>get_perc_risk_index</span><span class='op'>(</span>b <span class='op'>=</span> <span class='va'>r_risico</span>, poly <span class='op'>=</span> <span class='va'>shape</span>, perc_val <span class='op'>=</span> <span class='fl'>75</span>, mod <span class='op'>=</span> <span class='st'>"gt"</span><span class='op'>)</span>
+  <span class='fu'>get_perc_risk_index</span><span class='op'>(</span>b <span class='op'>=</span> <span class='va'>r_risico</span>, p <span class='op'>=</span> <span class='va'>shape</span>, perc_val <span class='op'>=</span> <span class='fl'>75</span>, mod <span class='op'>=</span> <span class='st'>"gt"</span><span class='op'>)</span>
   
 <span class='op'>}</span>
 
