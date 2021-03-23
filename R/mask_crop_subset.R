@@ -7,7 +7,7 @@
 #' @param idx vector of strings indicating the layer indices to subset.
 #' @param ... additional arguments as in writeRaster
 #' (e.g. \code{progress = "text"})
-#' 
+#'
 #' @details Please note that cells along the border with centroids falling
 #' outside the polygon \code{p} will not be returned.
 #' If cells along the border are needed, we suggest to identify cells covering
@@ -25,17 +25,17 @@
 #'   # Define dummy polygon
 #'   dummy_polygon <- as(raster::extent(7, 18, 37, 40), "SpatialPolygons")
 #'   raster::crs(dummy_polygon) <- "+proj=longlat +datum=WGS84 +no_defs"
-#'   
+#'
 #'   # Read RISICO test data
 #'   r_risico <- readRDS(system.file("extdata", "RISICO_raster.rds",
 #'                                   package = "caliver"))
-#'   
+#'
 #'   mask_crop_subset(r = r_risico, p = dummy_polygon)
 #'
 #' }
 #'
 
-mask_crop_subset <- function(r, p, idx = NULL, ...){
+mask_crop_subset <- function(r, p, idx = NULL){
 
   if (!("RasterLayer" %in% class(r)) &
       !("RasterBrick" %in% class(r)) &
@@ -53,15 +53,15 @@ mask_crop_subset <- function(r, p, idx = NULL, ...){
   }
 
   if (!is.null(idx)) {
-    message("Subsetting...")
-    r <- raster::subset(r, idx, ...)
+    # message("Subsetting...")
+    r <- raster::subset(r, idx, progress = "text")
   }
 
-  message("Cropping...")
-  r <- raster::crop(r, p, ...)
+  # message("Cropping...")
+  r <- raster::crop(r, p, progress = "text", overwrite = TRUE)
 
-  message("Masking...")
-  r <- raster::mask(r, p, ...)
+  # message("Masking...")
+  r <- raster::mask(r, p, progress = "text")
   # Do not use trim() otherwise the extent will change!
 
   return(r)

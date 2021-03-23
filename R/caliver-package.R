@@ -7,14 +7,16 @@
 #' @name caliver
 #' @docType package
 #'
-#' @import ncdf4
 #' @import ggplot2
+#' @import ncdf4
+#' @importFrom graphics plot legend par
 #' @importFrom raster raster stack brick mask crop rotate extent extract t plot
 #' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay
 #' @importFrom raster intersect compareRaster
+#' @importFrom reshape2 melt
 #' @importFrom rworldmap getMap
 #' @importFrom sp SpatialPolygons SpatialPolygonsDataFrame
-#' @importFrom graphics plot legend par
 #' @importFrom stats median na.omit sd uniroot density quantile
+#' @importFrom utils tail
 #'
 NULL

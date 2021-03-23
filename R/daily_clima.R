@@ -9,7 +9,10 @@
 #' (e.g. X2017.01.01).
 #' @param dates Dates for which we need to calculate daily climatology.
 #' By default, this is a leap year.
-#' 
+#'
+#' @details the climatology is calculated over the period spanning 4 days before and
+# 4 days after the given date.
+#'
 #' @return The function returns a RasterBrick (if \code{dates} contains one date)
 #' or a list of RasterBricks (if \code{dates} contains more than one date).
 #' Extent, resolution and land-sea mask match those of \code{b}.
@@ -49,15 +52,15 @@ daily_clima <- function(b, dates = NULL){
 
   # Assemble daily climatology over all the years in the brick
   for (i in seq_along(dates)){
-    
+
     message(paste("Day", i, "=", format(dates[[i]], "%B %d")))
-    
+
     # Extract brick of layers corresponding to a given date
     clima_sub <- .get_layers_for_clima(b = b,
                                        raster_date = dates[[i]])
-    
+
     clima_maps[[i]] <- clima_sub
-    
+
   }
   names(clima_maps) <- dates
 

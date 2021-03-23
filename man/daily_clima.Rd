@@ -25,6 +25,9 @@ Values are the subset of \code{b} related to the given \code{dates}.
 \description{
 This function generates daily climatological maps.
 }
+\details{
+the climatology is calculated over the period spanning 4 days before and
+}
 \examples{
 \dontrun{
   # Generate dummy RasterBrick
