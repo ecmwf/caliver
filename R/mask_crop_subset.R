@@ -5,8 +5,6 @@
 #' @param r Raster* object
 #' @param p SpatialPolygons* object
 #' @param idx vector of strings indicating the layer indices to subset.
-#' @param ... additional arguments as in writeRaster
-#' (e.g. \code{progress = "text"})
 #'
 #' @details Please note that cells along the border with centroids falling
 #' outside the polygon \code{p} will not be returned.
