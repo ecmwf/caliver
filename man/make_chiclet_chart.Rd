@@ -4,18 +4,19 @@
 \alias{make_chiclet_chart}
 \title{make_chiclet_chart}
 \usage{
-make_chiclet_chart(forecasts, p = NULL, obs = NULL, type = "raw", clima = NULL)
+make_chiclet_chart(forecasts, type = "raw", p = NULL, obs = NULL,
+  clima = NULL)
 }
 \arguments{
 \item{forecasts}{either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.}
 
-\item{p}{SpatialPolygon* identifying the area affected by fires}
+\item{type}{this can be one of the following: "raw" (default, clima not needed), "percentage exceeding clima".}
+
+\item{p}{SpatialPolygon* identifying the area affected by fires (optional)}
 
 \item{obs}{Raster* object containing 1 layer per day of observation (optional)}
 
-\item{type}{this can be one of the following: "raw" (default, clima not needed), "percentage exceeding clima".}
-
-\item{clima}{list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used.}
+\item{clima}{list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used. (optional)}
 }
 \description{
 Generate a summary table of deterministic forecasts compared

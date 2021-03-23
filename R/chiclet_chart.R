@@ -4,10 +4,10 @@
 #' with daily climatology.
 #'
 #' @param forecasts either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.
-#' @param p SpatialPolygon* identifying the area affected by fires
-#' @param obs Raster* object containing 1 layer per day of observation (optional)
 #' @param type this can be one of the following: "raw" (default, clima not needed), "percentage exceeding clima".
-#' @param clima list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used.
+#' @param p SpatialPolygon* identifying the area affected by fires (optional)
+#' @param obs Raster* object containing 1 layer per day of observation (optional)
+#' @param clima list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used. (optional)
 #'
 #' @export
 #'
@@ -31,12 +31,13 @@
 #'
 
 make_chiclet_chart <- function(forecasts,
+                               type = "raw",
                                p = NULL,
                                obs = NULL,
-                               type = "raw",
                                clima = NULL){
 
   # Index on the diagonal
+  forecast_time <- c()
   for (i in seq_along(forecasts)){
 
     # Read forecasts
@@ -45,6 +46,7 @@ make_chiclet_chart <- function(forecasts,
       fc <- raster::brick(fc)
     }
     fc_dates <- as.Date(x = names(fc), format = "X%Y.%m.%d")
+    forecast_time <- c(forecast_time, as.character(fc_dates[1]))
 
     message(paste("Processing forecast issued on", fc_dates[1]))
 
@@ -83,7 +85,7 @@ make_chiclet_chart <- function(forecasts,
     }
 
     # Format table
-    fc_df$date <- fc_dates
+    fc_df$valid_time <- fc_dates
     names(fc_df)[1] <- i
     row.names(fc_df) <- NULL
 
@@ -91,10 +93,12 @@ make_chiclet_chart <- function(forecasts,
     if (i == 1) {
       df <- fc_df
     }else{
-      df <- merge(df, fc_df, by = "date", all = T)
+      df <- merge(df, fc_df, by = "valid_time", all = TRUE)
     }
 
   }
+
+  df$time_index <- 1:dim(df)[1]
 
   if (!is.null(obs)){
 
@@ -116,15 +120,14 @@ make_chiclet_chart <- function(forecasts,
 
     # Add observation data to data.frame
     df$obs <- frp_ts
-    df$obs_index <- 1:length(frp_ts)
 
     # reshape the data.frame with forecast values
-    df_reshaped <- reshape2::melt(df, id.vars = c("date", "obs_index", "obs"))
+    df_reshaped <- reshape2::melt(df, id.vars = c("valid_time", "time_index", "obs"))
 
   }else{
 
     # reshape the data.frame with only forecast values
-    df_reshaped <- reshape2::melt(df, "date")
+    df_reshaped <- reshape2::melt(df, c("valid_time", "time_index"))
 
   }
 
@@ -135,6 +138,8 @@ make_chiclet_chart <- function(forecasts,
   }else{
     df_reshaped$clima <- FALSE
   }
+
+  df_reshaped$forecast_time <- forecast_time[df_reshaped$fc_index]
 
   return(df_reshaped)
 
@@ -164,21 +169,20 @@ plot_chiclet_chart <- function(df){
 
   if (df$clima[1] == TRUE){
     legend_title <- "% of pixels\nexceeding\nmean climatology"
+    limits = c(0, 100)
   }else{
     legend_title <- ""
+    limits = NULL
   }
 
   chiclet <- ggplot(df) +
-    geom_tile(aes_string(x = "obs_index", y = "fc_index", fill = "value"),
+    geom_tile(aes_string(x = "time_index", y = "fc_index", fill = "value"),
               colour = "white") +
     scale_fill_distiller(palette = "Spectral",
                          na.value = NA,
-                         limits = c(0, 100),
+                         limits = limits,
                          name = legend_title) +
-    theme_bw() + labs(x = "Valid time", y = "Forecast time") +
-    scale_x_continuous(expand = c(0, 0),
-                       breaks = unique(df$obs_index),
-                       labels = as.character(unique(df$date))) +
+    theme_bw() + labs(x = "Days", y = "Forecast time") +
     theme(axis.text.x = element_text(angle = 90),
           panel.grid.major = element_blank(),
           plot.title = element_text(hjust = 0.5))
@@ -196,19 +200,27 @@ plot_chiclet_chart <- function(df){
 
     chiclet <- chiclet +
       geom_line(data = df,
-                aes_string(x = "obs_index", y = "obs_rescaled"),
+                aes_string(x = "time_index", y = "obs_rescaled"),
                 linetype = 2, size = 0.75,
                 col = "#47494c") +
       scale_y_continuous(sec.axis = sec_axis(~ .*obs_factor,
                                              name = "Fire radiative power [Wm-2]"),
                          expand = c(0, 0),
                          breaks = unique(df$fc_index),
-                         labels = unique(df$date)[unique(df$fc_index)])
+                         labels = unique(df$forecast_time)[unique(df$fc_index)])
   }else{
     chiclet <- chiclet +
       scale_y_continuous(expand = c(0, 0),
                          breaks = unique(df$fc_index),
-                         labels = unique(df$date)[unique(df$fc_index)])
+                         labels = unique(df$forecast_time)[unique(df$fc_index)])
+  }
+
+  if (length(unique(df$valid_time)) <= 31) {
+    chiclet <- chiclet +
+      scale_x_continuous(expand = c(0, 0),
+                         breaks = unique(df$time_index),
+                         labels = as.character(unique(df$valid_time))) +
+      labs(x = "Valid time")
   }
 
   return(chiclet)
