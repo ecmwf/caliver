@@ -1,7 +1,7 @@
 #' @title make_chiclet_chart
 #'
 #' @description Generate a summary table of deterministic forecasts compared
-#' with daily climatology.
+#' with daily climatology. Example here: https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible
 #'
 #' @param forecasts either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.
 #' @param type this can be one of the following: "raw" (default, clima not needed), "percentage exceeding clima".

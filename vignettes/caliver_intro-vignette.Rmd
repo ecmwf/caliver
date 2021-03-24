@@ -138,17 +138,13 @@ The example below shows how to mask fire danger indices using the Global Land Co
 # Unzip the folder in the working directory
 
 # Load map
-fuel <- raster::raster("Grid/glc2000_v1_1/w001001.adf")
-# Save legend in data.frame
-df <- as.data.frame(raster::levels(fuel))
+fuel <- raster::raster("./Grid/glc2000_v1_1/w001001.adf")
 
 # If fuel and fwi have different extent and/or number of rows/cols, you will need to resample
 fuel <- raster::resample(fuel, fwi[[1]], method = "ngb", progress = "text")
 
 # Remove Bare Areas (19), Water Bodies (20), Snow and Ice (21), Artificial surfaces and associated areas (22), No data (23).
-codes_to_exclude <- 19:23
-fuel[fuel %in% codes_to_exclude] <- NA
-levels(fuel) <- df[1:18,]
+fwi_masked <- mask_with_fuelmodel(x = fwi[[1]], fuelmap = fuel, codes = 19:23)
 
 # Plot
 plot(fwi_masked, col = terrain.colors(120))

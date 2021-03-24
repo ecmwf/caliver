@@ -20,7 +20,7 @@ make_chiclet_chart(forecasts, type = "raw", p = NULL, obs = NULL,
 }
 \description{
 Generate a summary table of deterministic forecasts compared
-with daily climatology.
+with daily climatology. Example here: https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible
 }
 \examples{
 \dontrun{
