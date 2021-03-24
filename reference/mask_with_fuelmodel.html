@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">caliver</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
       </span>
     </div>
 
@@ -129,7 +129,7 @@
     <p>This function masks a Raster* object using JRC's fuelmodel.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mask_with_fuelmodel</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>mask_with_fuelmodel</span><span class='op'>(</span><span class='va'>x</span>, fuelmap <span class='op'>=</span> <span class='cn'>NULL</span>, codes <span class='op'>=</span> <span class='cn'>NULL</span>, value <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,16 +138,31 @@
       <th>x</th>
       <td><p>Raster* to mask</p></td>
     </tr>
+    <tr>
+      <th>fuelmap</th>
+      <td><p>Custom fuel map as RasterLayer.</p></td>
+    </tr>
+    <tr>
+      <th>codes</th>
+      <td><p>The value of the cells in fuelmap used to mask x.</p></td>
+    </tr>
+    <tr>
+      <th>value</th>
+      <td><p>The value of cells masked out by the fuel map (NA by default).</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In absence of vegetation the risk of ignition reduces considerably,
 regardless of the state of the soil. These areas are mapped in the JRC's
-fuelmodel. This package contains a cached version of this map. This is stored
-in the 'inst/extdata' folder of the package. For evaluating fire danger we
-use this map to mask deserts, glaciers, urban areas, etc.
-These areas have codes &gt; 20.</p>
+fuelmodel (in use in 2018). This package contains a cached version of this
+map (matching crs and resolution of ERA-Interim),
+stored in the 'inst/extdata' folder of the package. For evaluating fire
+danger we use this map to mask deserts, glaciers, urban areas, etc. These
+areas have codes &gt; 20. The optional argument `fuelmap` allows to input a
+custom fuelmap and costum `codes` to use for masking.
+Please note that</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>

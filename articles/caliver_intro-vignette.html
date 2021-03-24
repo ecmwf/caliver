@@ -202,17 +202,13 @@
 <span class="co"># Unzip the folder in the working directory</span>
 
 <span class="co"># Load map</span>
-<span class="va">fuel</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span><span class="op">(</span><span class="st">"Grid/glc2000_v1_1/w001001.adf"</span><span class="op">)</span>
-<span class="co"># Save legend in data.frame</span>
-<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/factor.html">levels</a></span><span class="op">(</span><span class="va">fuel</span><span class="op">)</span><span class="op">)</span>
+<span class="va">fuel</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span><span class="op">(</span><span class="st">"./Grid/glc2000_v1_1/w001001.adf"</span><span class="op">)</span>
 
 <span class="co"># If fuel and fwi have different extent and/or number of rows/cols, you will need to resample</span>
 <span class="va">fuel</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/resample.html">resample</a></span><span class="op">(</span><span class="va">fuel</span>, <span class="va">fwi</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"ngb"</span>, progress <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span>
 
 <span class="co"># Remove Bare Areas (19), Water Bodies (20), Snow and Ice (21), Artificial surfaces and associated areas (22), No data (23).</span>
-<span class="va">codes_to_exclude</span> <span class="op">&lt;-</span> <span class="fl">19</span><span class="op">:</span><span class="fl">23</span>
-<span class="va">fuel</span><span class="op">[</span><span class="va">fuel</span> <span class="op">%in%</span> <span class="va">codes_to_exclude</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/factor.html">levels</a></span><span class="op">(</span><span class="va">fuel</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">18</span>,<span class="op">]</span>
+<span class="va">fwi_masked</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask_with_fuelmodel.html">mask_with_fuelmodel</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fwi</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, fuelmap <span class="op">=</span> <span class="va">fuel</span>, codes <span class="op">=</span> <span class="fl">19</span><span class="op">:</span><span class="fl">23</span><span class="op">)</span>
 
 <span class="co"># Plot</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">fwi_masked</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">terrain.colors</a></span><span class="op">(</span><span class="fl">120</span><span class="op">)</span><span class="op">)</span></code></pre></div>
