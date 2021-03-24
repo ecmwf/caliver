@@ -1,4 +1,4 @@
-test_that("multiplication works", {
+test_that("chiclet_chart works", {
 
   # Use dummy dummy forecasts in helper-dummy_data.R: `fc_list`
   # Use dummy clima generated in helper-dummy_data.R: `clima`
@@ -8,7 +8,7 @@ test_that("multiplication works", {
                             p = dummy_polygon2,
                             obs = dummy_obs,
                             type = "raw")
-  expect_equal(dim(df1), c(36, 6))
+  expect_equal(dim(df1), c(36, 7))
   expect_equal(round(sum(df1$value, na.rm = TRUE), 0), 1642)
 
   df2 <- make_chiclet_chart(forecasts = fc_list,
@@ -16,7 +16,7 @@ test_that("multiplication works", {
                             obs = dummy_obs,
                             type = "percentage exceeding clima",
                             clima = clima)
-  expect_equal(dim(df2), c(36, 6))
+  expect_equal(dim(df2), c(36, 7))
   expect_equal(sum(df2$value, na.rm = TRUE), 1700)
 
   chiclet1 <- plot_chiclet_chart(df1)
