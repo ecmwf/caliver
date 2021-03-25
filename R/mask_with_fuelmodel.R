@@ -27,6 +27,10 @@
 
 mask_with_fuelmodel <- function(x, fuelmap = NULL, codes = NULL, value = NA){
 
+  if (!is.null(fuelmap) & is.null(codes)){
+    stop("Please provide codes to be used with custom fuelmap")
+  }
+
   if (is.null(fuelmap)){
     # Load JRC fuelmodel map (longitudes in range [0, 360])
     fuelmodel_file_path <- system.file(file.path("extdata",
@@ -36,13 +40,6 @@ mask_with_fuelmodel <- function(x, fuelmap = NULL, codes = NULL, value = NA){
     # Deserts, glaciers, urban areas, etc. in the dummy fuelmap have codes 21:26
     codes <- 21:26
   }
-
-  # map_legend <- raster::levels(fuelmap)
-  # if (!is.null(map_legend) & ("data.frame" %in% class(map_legend))) {
-  #   # Save legend in data.frame
-  #   df <- as.data.frame(map_legend)
-  #   levels(fuelmap) <- df[1:18,]
-  # }
 
   # Compare rasters
   if (raster::compareRaster(x, fuelmap)) {
@@ -55,22 +52,6 @@ mask_with_fuelmodel <- function(x, fuelmap = NULL, codes = NULL, value = NA){
     # Mask x using fuelmap
     xmasked <- raster::mask(x, fuelmap, updatevalue = value, progress = "text")
 
-  }else{
-    message("Please ensure x and fuelmap have the same extent, crs, etc.")
-
-    # Get extent of the raster* object
-    # ext <- raster::extent(x)
-
-    # Transform map to raster and rotate longitudes to the range
-    # [-180, +180], if x's extent is in this range
-    # if (round(ext[1], 0) == -180 & round(ext[2], 0) == +180) {
-    #
-    #   fuelmodel <- raster::rotate(fuelmodel)
-    #
-    # }
-
-    # Fuel and x should have same extent and numer of rows/cols
-    # fuel <- raster::resample(fuelmodel, x, method = "ngb")
   }
 
   return(xmasked)
