@@ -1,5 +1,23 @@
 context("get_percentile_map")
 
+test_that("get_percentile_map should not work if probs are > 1", {
+  
+  probs_maps <- try(get_percentile_map(r = b, probs = 1.5), silent = TRUE)
+  
+  # Check output
+  expect_true("try-error" %in% class(probs_maps))
+  
+})
+
+test_that("get_percentile_map works with one date", {
+  
+  probs_maps <- get_percentile_map(r = b[[1]], probs = 0.5)
+  
+  # Check output
+  expect_true(cellStats(b[[1]] - probs_maps, "sum") == 0)
+  
+})
+
 test_that("get_percentile_map works with all non-null inputs", {
 
   probs_maps <- get_percentile_map(r = b, probs = 0.50)

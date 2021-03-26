@@ -36,7 +36,7 @@ get_percentile_map <- function(r, probs){
   if (class(r) == "list"){
 
     # Using climatological maps
-    dates <- names(r)
+    dates <- as.Date(names(r))
     perc_maps <- list()
 
     for (i in seq_along(dates)){
