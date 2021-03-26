@@ -118,8 +118,8 @@ validate_fire_danger_levels <- function(fire_index,
   }
 
   # Select only period in common
-  fwi_index <- which(names(fwi_brick) %in% names(burned_areas_resampled))
-  obs_index <- which(names(burned_areas_resampled) %in% names(fwi_brick))
+  fwi_index <- which(raster::getZ(fwi_brick) %in% raster::getZ(burned_areas_resampled))
+  obs_index <- which(raster::getZ(burned_areas_resampled) %in% raster::getZ(fwi_brick))
   seasonal_fwi <- raster::subset(fwi_brick, fwi_index)
   seasonal_obs <- raster::subset(burned_areas_resampled, obs_index)
 

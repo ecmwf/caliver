@@ -33,9 +33,9 @@ If the \code{from} and \code{to} strings are in the format
   b <- raster::brick(lapply(1:(365 * 3),
                      function(i) raster::setValues(r,
                      unif(n = raster::ncell(r), min = 0, max = 100))))
-  names(b) <- seq.Date(from = as.Date("1993-01-01"),
-                       to = as.Date("1995-12-31"),
-                       by = "day")
+  raster::setZ(b) <- seq.Date(from = as.Date("1993-01-01"),
+                              to = as.Date("1995-12-31"),
+                              by = "day")
   subset_datacube(r = b, from = "1993-01-01", to = "1993-01-01")
 }
 

@@ -15,7 +15,7 @@
 #' https://bit.ly/2Qvekz4. To estimate fire climatology one can use hindcast or
 #' reanalysis data. Examples of the latter are available from Zenodo:
 #' https://zenodo.org/communities/wildfire.
-#' 
+#'
 #' @return The function returns a RasterLayer with extent, resolution and
 #' land-sea mask matching those of \code{r}. Values are the percentiles of
 #' occurrence of the values.
@@ -27,13 +27,13 @@
 #'   # Generate dummy RasterLayer
 #'   r <- raster(nrows = 1, ncols = 1,
 #'               xmn = 0, xmx = 360, ymn = -90, ymx = 90, vals = 0.3)
-#'   names(r) <- as.Date("2018-01-01")
+#'   raster::setZ(r) <- as.Date("2018-01-01")
 #'   # Generate dummy RasterBrick
 #'   b <- raster::brick(lapply(1:(365 * 3),
 #'                   function(i) raster::setValues(r, runif(raster::ncell(r)))))
-#'   names(b) <- seq.Date(from = as.Date("1993-01-01"),
-#'                        to = as.Date("1995-12-31"),
-#'                        by = "day")
+#'   raster::setZ(b) <- seq.Date(from = as.Date("1993-01-01"),
+#'                               to = as.Date("1995-12-31"),
+#'                               by = "day")
 #'   # Compute ranking
 #'   x <- ranking(r, b)
 #'
@@ -51,8 +51,7 @@ ranking <- function(r, b){
   }
 
   # Get date from RasterLayer
-  raster_date <- as.Date(gsub(pattern = "\\.", replacement = "-",
-                              x = substr(x = names(r), start = 2, stop = 11)))
+  raster_date <- raster::getZ(r)
 
   # Extract layers corresponding to a given date
   r_sub <- .get_layers_for_clima(b = b, raster_date = raster_date)
@@ -78,7 +77,7 @@ ranking <- function(r, b){
 
   # Associate a Raster Attribute Table (RAT)
   ranking_map <- raster::ratify(ranking_map)
-  
+
   # Define a Raster Attribute Table (RAT)
   rat <- levels(ranking_map)[[1]]
   ids <- 1:6

@@ -12,9 +12,10 @@
 #' @importFrom graphics plot legend par
 #' @importFrom raster raster stack brick mask crop rotate extent extract t plot
 #' @importFrom raster crs cellFromPolygon cellStats nlayers getData trim overlay
-#' @importFrom raster intersect compareRaster
+#' @importFrom raster intersect compareRaster getZ setZ
 #' @importFrom reshape2 melt
 #' @importFrom rworldmap getMap
+#' @importFrom scales rescale
 #' @importFrom sp SpatialPolygons SpatialPolygonsDataFrame
 #' @importFrom stats median na.omit sd uniroot density quantile
 #' @importFrom utils tail

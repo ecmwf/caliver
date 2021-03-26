@@ -4,7 +4,7 @@
 #' (VeryLow-Low-Moderate-High-VeryHigh-Extreme) for a given country.
 #'
 #' @param fire_index RasterBrick containing the fire index to calculate the
-#' thresholds for. Please note that names(fire_index) should contain dates.
+#' thresholds for. Please note that fire_index@z should contain dates.
 #' @param ndays Number of days per year in which a fire is expected to occur.
 #' By default this is 4 days.
 #'
@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #'   # Generate dummy brick
 #'   set.seed(0)
 #'   r <- raster(nrows = 2, ncols = 2,
@@ -23,9 +23,9 @@
 #'   b <- raster::brick(lapply(1:(365 * 3),
 #'        function(i) raster::setValues(r, runif(n = raster::ncell(r),
 #'                                               min = 0, max = 100))))
-#'   names(b) <- seq.Date(from = as.Date("1993-01-01"),
-#'                        to = as.Date("1995-12-31"),
-#'                        by = "day")
+#'   raster::setZ(b) <- seq.Date(from = as.Date("1993-01-01"),
+#'                               to = as.Date("1995-12-31"),
+#'                               by = "day")
 #'   # Generate danger levels
 #'   get_fire_danger_levels(fire_index = b)
 #'
@@ -43,7 +43,7 @@ get_fire_danger_levels <- function(fire_index, ndays = 4){
 
     message("Calculating thresholds of danger levels")
     # Calculate extreme yearly danger
-    years <- substr(x = names(fire_index), start = 2, stop = 5)
+    years <- format(raster::getZ(fire_index), "%Y")
 
     # Calculate percentile related to the above assumption
     extreme_percentile <- floor(x = (1 - ndays / 365) * 100) / 100

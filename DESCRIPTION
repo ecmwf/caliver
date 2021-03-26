@@ -26,11 +26,12 @@ Imports:
     reshape2,
     ggplot2,
     rworldmap,
+    scales,
     sp,
     graphics,
     stats
 Suggests:
-    testthat,
+    testthat (>= 2.1.0),
     knitr,
     rmarkdown,
     covr,

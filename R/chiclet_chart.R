@@ -4,7 +4,7 @@
 #' with daily climatology. Example here: https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible
 #'
 #' @param forecasts either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.
-#' @param type this can be one of the following: "raw" (default, clima not needed), "percentage exceeding clima".
+#' @param type this can be one of the following: "raw" (default, clima not needed), "clima".
 #' @param p SpatialPolygon* identifying the area affected by fires (optional)
 #' @param obs Raster* object containing 1 layer per day of observation (optional)
 #' @param clima list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used. (optional)
@@ -37,7 +37,7 @@ make_chiclet_chart <- function(forecasts,
                                clima = NULL){
 
   # Index on the diagonal
-  forecast_time <- c()
+  fc_date <- c()
   for (i in seq_along(forecasts)){
 
     # Read forecasts
@@ -45,18 +45,20 @@ make_chiclet_chart <- function(forecasts,
     if (class(fc) == "character"){
       fc <- raster::brick(fc)
     }
-    fc_dates <- as.Date(x = names(fc), format = "X%Y.%m.%d")
-    forecast_time <- c(forecast_time, as.character(fc_dates[1]))
+    fc_dates <- raster::getZ(fc) # This is a RasterBrick
+    fc_date <- c(fc_date, as.character(fc_dates[1]))
 
     message(paste("Processing forecast issued on", fc_dates[1]))
 
-    # Check extent
-    if (is.null(raster::intersect(raster::extent(fc), raster::extent(p)))) {
-      fc = raster::rotate(fc)
-    }
 
-    # Crop forecast to polygon, if needed
-    if (!is.null(p)) {
+    if (!is.null(p)){
+
+      # Check extent and rotate, if necessary
+      if (is.null(raster::intersect(raster::extent(fc), raster::extent(p)))) {
+        fc = raster::rotate(fc)
+      }
+
+      # Crop forecast to polygon, if needed
       fc <- mask_crop_subset(fc, p)
     }
 
@@ -64,17 +66,20 @@ make_chiclet_chart <- function(forecasts,
       fc_df <- data.frame(raster::cellStats(fc, mean))
     }
 
-    if (type == "percentage exceeding clima"){
+    if (type == "clima"){
 
       message("Processing climatology")
 
-      cmean <- raster::stack(lapply(seq_along(fc_dates), function(x){
-        idx <-  which(format(as.Date(names(clima)), "%m-%d") == format(fc_dates[x], "%m-%d"))
+      subset_mean <- function(x){
+        idx <-  which(format(as.Date(names(clima)),
+                             "%m-%d") == format(fc_dates[x], "%m-%d"))
         clima_idx <- clima[[idx]]
-        clima_crop <- mask_crop_subset(clima_idx, p)
-        clima_res <- raster::resample(clima_crop, fc[[1]], method = "ngb")
+        if (!is.null(p)) {clima_idx <- mask_crop_subset(clima_idx, p)}
+        clima_res <- raster::resample(clima_idx, fc[[1]], method = "ngb")
         raster::calc(clima_res, mean)
-      }))
+      }
+
+      cmean <- raster::stack(lapply(seq_along(fc_dates), subset_mean))
 
       # Total number of non-NA cells
       n_total <- sum(as.vector(!is.na(fc[[1]])))
@@ -85,7 +90,7 @@ make_chiclet_chart <- function(forecasts,
     }
 
     # Format table
-    fc_df$valid_time <- fc_dates
+    fc_df$step_date <- fc_dates
     names(fc_df)[1] <- i
     row.names(fc_df) <- NULL
 
@@ -93,18 +98,18 @@ make_chiclet_chart <- function(forecasts,
     if (i == 1) {
       df <- fc_df
     }else{
-      df <- merge(df, fc_df, by = "valid_time", all = TRUE)
+      df <- merge(df, fc_df, by = "step_date", all = TRUE)
     }
 
   }
 
-  df$time_index <- 1:dim(df)[1]
+  df$step_index <- 1:dim(df)[1]
 
   if (!is.null(obs)){
 
     message("Processing observations")
 
-    obs_dates <- as.Date(x = names(obs), format = ("X%Y.%m.%d.00.00.00"))
+    obs_dates <- raster::getZ(obs)
 
     if (is.null(raster::intersect(raster::extent(obs), raster::extent(p)))) {
       obs <- raster::rotate(obs)
@@ -121,27 +126,31 @@ make_chiclet_chart <- function(forecasts,
     # Add observation data to data.frame
     df$obs <- frp_ts
 
-    # reshape the data.frame with forecast values
-    df_reshaped <- reshape2::melt(df, id.vars = c("valid_time", "time_index", "obs"))
-
   }else{
 
-    # reshape the data.frame with only forecast values
-    df_reshaped <- reshape2::melt(df, c("valid_time", "time_index"))
+    # Add observation data to data.frame
+    df$obs <- NA
 
   }
 
+  # reshape the data.frame with forecast values
+  df_reshaped <- reshape2::melt(df,
+                                id.vars = c("step_date", "step_index", "obs"))
+
   df_reshaped$variable <- as.numeric(df_reshaped$variable)
   names(df_reshaped)[names(df_reshaped) == "variable"] <- "fc_index"
-  if (type == "percentage exceeding clima") {
+  if (type == "clima") {
     df_reshaped$clima <- TRUE
   }else{
     df_reshaped$clima <- FALSE
   }
 
-  df_reshaped$forecast_time <- forecast_time[df_reshaped$fc_index]
+  df_reshaped$fc_date <- fc_date[df_reshaped$fc_index]
 
-  return(df_reshaped)
+  # Re-order columns
+  df_ordered <- df_reshaped[, c("fc_date", "fc_index", "step_date", "step_index", "value", "obs", "clima")]
+
+  return(df_ordered)
 
 }
 
@@ -176,13 +185,13 @@ plot_chiclet_chart <- function(df){
   }
 
   chiclet <- ggplot(df) +
-    geom_tile(aes_string(x = "time_index", y = "fc_index", fill = "value"),
+    geom_tile(aes_string(x = "step_index", y = "fc_index", fill = "value"),
               colour = "white") +
     scale_fill_distiller(palette = "Spectral",
                          na.value = NA,
                          limits = limits,
                          name = legend_title) +
-    theme_bw() + labs(x = "Days", y = "Forecast time") +
+    theme_bw() + labs(x = "Days", y = "Forecast date") +
     theme(axis.text.x = element_text(angle = 90),
           panel.grid.major = element_blank(),
           plot.title = element_text(hjust = 0.5))
@@ -200,26 +209,27 @@ plot_chiclet_chart <- function(df){
 
     chiclet <- chiclet +
       geom_line(data = df,
-                aes_string(x = "time_index", y = "obs_rescaled"),
+                aes_string(x = "step_index", y = "obs_rescaled"),
                 linetype = 2, size = 0.75,
                 col = "#47494c") +
-      scale_y_continuous(sec.axis = sec_axis(~ .*obs_factor,
+      scale_y_continuous(sec.axis = sec_axis(~ scales::rescale(., to = range(df$fc_index)),
+      # scale_y_continuous(sec.axis = sec_axis(~ .*obs_factor,
                                              name = "Fire radiative power [Wm-2]"),
                          expand = c(0, 0),
                          breaks = unique(df$fc_index),
-                         labels = unique(df$forecast_time)[unique(df$fc_index)])
+                         labels = unique(df$fc_date)[unique(df$fc_index)])
   }else{
     chiclet <- chiclet +
       scale_y_continuous(expand = c(0, 0),
                          breaks = unique(df$fc_index),
-                         labels = unique(df$forecast_time)[unique(df$fc_index)])
+                         labels = unique(df$fc_date)[unique(df$fc_index)])
   }
 
-  if (length(unique(df$valid_time)) <= 31) {
+  if (length(unique(df$step_date)) <= 31) {
     chiclet <- chiclet +
       scale_x_continuous(expand = c(0, 0),
-                         breaks = unique(df$time_index),
-                         labels = as.character(unique(df$valid_time))) +
+                         breaks = unique(df$step_index),
+                         labels = as.character(unique(df$step_date))) +
       labs(x = "Valid time")
   }
 

@@ -70,7 +70,7 @@ test_that("Testing the file utils.R - .create_rat", {
 
 test_that("Testing the file utils.R - .get_layers_for_clima", {
 
-  x <- .get_layers_for_clima(b = b, raster_date = "2016.01.01",
+  x <- .get_layers_for_clima(b = b, raster_date = as.Date("2016-01-01"),
                              expand = FALSE)
   expect_equal(nlayers(x), 3)
 

@@ -50,7 +50,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
 
 # Transform the raster
 .transform_raster <- function(raster_in, variable_name){
-  
+
   if (variable_name == "BasisRegions"){
     # Transform the rasterBrick, transposing it
     raster_out <- raster::t(raster_in)
@@ -62,62 +62,44 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
   raster::extent(raster_out) <- raster::extent(-180, 180, -90, 90)
   # Assign CRS (WGS84)
   raster::crs(raster_out) <- "+proj=longlat +datum=WGS84 +no_defs"
-  
+
   return(raster_out)
-  
+
 }
 
 .create_rat <- function(ids, classes){
-  
+
   # Define a Raster Attribute Table (RAT)
   rat <- data.frame(id = ids, danger = classes, stringsAsFactors = FALSE)
   rat$id <- factor(x = rat$id, levels = ids)
   rat$danger <- factor(x = rat$danger, levels = classes)
   names(rat) <- c("ID", "Class")
-  
+
   return(rat)
-  
+
 }
 
-.get_layers_for_clima <- function(b, raster_date = NULL, expand = TRUE){
-  
-  # which indices correspond to day j?
-  idx <- which(substr(names(b), 7, 11) ==
-                 gsub("-", ".", substr(as.character(raster_date), 6, 10)))
-  
+.get_layers_for_clima <- function(b, raster_date, expand = TRUE){
+
+  # Dates in brick
+  b_dates <- raster::getZ(b)
+
   if (expand == TRUE){
+
     # Do not take the single day but the period spanning 4 days before and
     # 4 days after the given date
-    idx_vector <- c()
-    for (k in seq_along(idx)){
-      idx_vector <- c(idx_vector, (idx[k] - 4):(idx[k] + 4))
-    }
-    if (any(idx_vector <= 0)){
-      elements2remove <- which(idx_vector <= 0)
-      idx_vector <- idx_vector[-elements2remove]
-    }
-    if (any(idx_vector > raster::nlayers(b))){
-      elements2remove <- which(idx_vector > raster::nlayers(b))
-      idx_vector <- idx_vector[-elements2remove]
-    }
-    
-    idx_vector <- sort(unique(idx_vector))
-    
-    if (length(idx_vector) < length(idx) * 9){
-      message(paste0("Caution: climatology for the ",
-                     format(raster_date, "%B %d"),
-                     " is calculated using ", length(idx_vector),
-                     " days rather then ", length(idx) * 9, "!"))
-    }
-  } else {
-    idx_vector <- idx
+    raster_dates <- raster_date + (-4:4)
+
   }
-  
-  # Collection of layers spanning the date of interest +/- 4 days & all years
-  clima_sub <- b[[idx_vector]]
-  
-  return(clima_sub)
-  
+
+  # Which indices correspond to raster_date?
+  idx <- which(format(raster::getZ(b), "%m%d") %in% format(raster_date, "%m%d"))
+
+  # Subset the original brick
+  b_sub <- b[[idx]]
+
+  return(b_sub)
+
 }
 
 # EXTRA utility functions for multi-hazard assessments
@@ -133,9 +115,9 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
 
 # Styling the UTCI layer
 .utci_classification <- function(rtp){
-  
+
   x <- raster::getValues(rtp)
-  
+
   rtp$colour <- base::cut(x,
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
@@ -149,7 +131,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                      "#FF3300", # original was
                                      "#910000", # original was #CC0000
                                      "#4c0000")) # original was #800000
-  
+
   rtp$label <- base::cut(x,
                          breaks = c(-Inf, -40, -27, -13, 0,
                                     9, 26, 32, 38, 46, +Inf),
@@ -163,7 +145,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                     "32 - 38",
                                     "38 - 46",
                                     "> 46"))
-  
+
   rtp$label2 <- base::cut(x,
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
@@ -177,9 +159,9 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                      "Strong heat stress",
                                      "Very strong heat stress",
                                      "Extreme heat stress"))
-  
+
   return(rtp)
-  
+
 }
 
 # EXTRA utility functions for multi-hazard assessments
@@ -195,9 +177,9 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
 
 # Styling the UTCI layer
 .utci_classification <- function(rtp){
-  
+
   x <- raster::getValues(rtp)
-  
+
   rtp$colour <- base::cut(x,
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
@@ -211,7 +193,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                      "#FF3300", # original was
                                      "#910000", # original was #CC0000
                                      "#4c0000")) # original was #800000
-  
+
   rtp$label <- base::cut(x,
                          breaks = c(-Inf, -40, -27, -13, 0,
                                     9, 26, 32, 38, 46, +Inf),
@@ -225,7 +207,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                     "32 - 38",
                                     "38 - 46",
                                     "> 46"))
-  
+
   rtp$label2 <- base::cut(x,
                           breaks = c(-Inf, -40, -27, -13, 0,
                                      9, 26, 32, 38, 46, +Inf),
@@ -239,7 +221,7 @@ effis_palette <- c("#80FF7F", "#FAFF40", "#F8B002", "#F64F02", "#B40E00", "#2805
                                      "Strong heat stress",
                                      "Very strong heat stress",
                                      "Extreme heat stress"))
-  
+
   return(rtp)
-  
+
 }

@@ -8,7 +8,7 @@ get_fire_danger_levels(fire_index, ndays = 4)
 }
 \arguments{
 \item{fire_index}{RasterBrick containing the fire index to calculate the
-thresholds for. Please note that names(fire_index) should contain dates.}
+thresholds for. Please note that fire_index@z should contain dates.}
 
 \item{ndays}{Number of days per year in which a fire is expected to occur.
 By default this is 4 days.}
@@ -31,9 +31,9 @@ This function calculates the danger levels
   b <- raster::brick(lapply(1:(365 * 3),
        function(i) raster::setValues(r, runif(n = raster::ncell(r),
                                               min = 0, max = 100))))
-  names(b) <- seq.Date(from = as.Date("1993-01-01"),
-                       to = as.Date("1995-12-31"),
-                       by = "day")
+  raster::setZ(b) <- seq.Date(from = as.Date("1993-01-01"),
+                              to = as.Date("1995-12-31"),
+                              by = "day")
   # Generate danger levels
   get_fire_danger_levels(fire_index = b)
 

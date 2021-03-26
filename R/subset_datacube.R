@@ -9,7 +9,7 @@
 #'
 #' @details If the \code{from} and \code{to} strings are in the format
 #' "YYYY-MM-DD", they are automatically converted into a date.
-#' 
+#'
 #' @return The function returns a subset of \code{r}, with layer's date in the
 #' range starting with \code{from} and ending with \code{to}.
 #'
@@ -23,9 +23,9 @@
 #'   b <- raster::brick(lapply(1:(365 * 3),
 #'                      function(i) raster::setValues(r,
 #'                      unif(n = raster::ncell(r), min = 0, max = 100))))
-#'   names(b) <- seq.Date(from = as.Date("1993-01-01"),
-#'                        to = as.Date("1995-12-31"),
-#'                        by = "day")
+#'   raster::setZ(b) <- seq.Date(from = as.Date("1993-01-01"),
+#'                               to = as.Date("1995-12-31"),
+#'                               by = "day")
 #'   subset_datacube(r = b, from = "1993-01-01", to = "1993-01-01")
 #' }
 #'
@@ -33,15 +33,13 @@
 subset_datacube <- function(r, from, to){
 
   # Get the dates of layers in the datacube
-  # This could be done by r_date <- r@z[[1]], but it won't work with random
-  r_date <- substr(x = names(r), start = 2, stop = nchar(names(r)))
-  r_date <- gsub(pattern = "\\.", replacement = "-", x = r_date)
+  r_date <- raster::getZ(r)
 
   # Generate the sequence of dates to keep
   from_to_dates <- seq.Date(from = as.Date(from), to = as.Date(to), by = "day")
 
   # Get the climatology dates
-  dates_to_keep <- which(r_date %in% as.character(from_to_dates))
+  dates_to_keep <- which(r_date %in% from_to_dates)
 
   return(r[[dates_to_keep]])
 

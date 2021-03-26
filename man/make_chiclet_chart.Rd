@@ -4,13 +4,12 @@
 \alias{make_chiclet_chart}
 \title{make_chiclet_chart}
 \usage{
-make_chiclet_chart(forecasts, type = "raw", p = NULL, obs = NULL,
-  clima = NULL)
+make_chiclet_chart(forecasts, type = "raw", p = NULL, obs = NULL, clima = NULL)
 }
 \arguments{
 \item{forecasts}{either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.}
 
-\item{type}{this can be one of the following: "raw" (default, clima not needed), "percentage exceeding clima".}
+\item{type}{this can be one of the following: "raw" (default, clima not needed), "clima".}
 
 \item{p}{SpatialPolygon* identifying the area affected by fires (optional)}
 

@@ -10,8 +10,8 @@ daily_clima(b, dates = NULL)
 \item{b}{RasterBrick/Stack containing the historical observations or a proxy
 (typically a reanalysis) that is used to derive the climatological
 information. This needs to contain daily layers for multiple years.
-\code{names(b)} should contain dates for comparison
-(e.g. X2017.01.01).}
+\code{b@z} should contain dates for comparison
+(e.g. 2017.01.01).}
 
 \item{dates}{Dates for which we need to calculate daily climatology.
 By default, this is a leap year.}
@@ -37,9 +37,9 @@ the climatology is calculated over the period spanning 4 days before and
   b <- raster::brick(lapply(1:(365 * 3),
        function(i) raster::setValues(r, runif(n = raster::ncell(r),
                                               min = 0, max = 100))))
-  names(b) <- seq.Date(from = as.Date("1993-01-01"),
-                       to = as.Date("1995-12-31"),
-                       by = "day")
+  raster::setZ(b) <- seq.Date(from = as.Date("1993-01-01"),
+                              to = as.Date("1995-12-31"),
+                              by = "day")
   daily_clima(b, as.Date("1996-01-01"))
 }
 

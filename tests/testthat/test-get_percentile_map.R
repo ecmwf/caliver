@@ -37,33 +37,33 @@ test_that("get_percentile_map works with clima", {
 
   mean50 <- round(raster::cellStats(probs_maps[[1]], stat = "mean"), 0)[1]
   mean75 <- round(raster::cellStats(probs_maps[[2]], stat = "mean"), 0)[2]
-  expect_equal(as.numeric(mean50), 58)
-  expect_equal(as.numeric(mean75), 77)
+  expect_equal(as.numeric(mean50), 55)
+  expect_equal(as.numeric(mean75), 64)
 
 })
 
 test_that("get_percentile_map works with clima, single date", {
 
-  probs_maps <- get_percentile_map(r = clima[1], probs = c(0.50, 0.75))
+  probs_maps <- get_percentile_map(r = clima[[1]], probs = c(0.50, 0.75))
 
   # Check whether the class is correct
   expect_true("RasterBrick" %in% class(probs_maps))
 
   mean50 <- round(raster::cellStats(probs_maps[[1]], stat = "mean"), 0)
   mean75 <- round(raster::cellStats(probs_maps[[2]], stat = "mean"), 0)
-  expect_equal(as.numeric(mean50), 58)
-  expect_equal(as.numeric(mean75), 78)
+  expect_equal(as.numeric(mean50), 55)
+  expect_equal(as.numeric(mean75), 70)
 
 })
 
 test_that("get_percentile_map works with clima, single date single prob", {
 
-  probs_maps <- get_percentile_map(r = clima[1], probs = 0.50)
+  probs_maps <- get_percentile_map(r = clima[[1]], probs = 0.50)
 
   # Check whether the class is correct
   expect_true("RasterLayer" %in% class(probs_maps))
 
   meanprobs <- round(raster::cellStats(probs_maps, stat = "mean"), 0)
-  expect_equal(as.numeric(meanprobs), 58)
+  expect_equal(as.numeric(meanprobs), 55)
 
 })

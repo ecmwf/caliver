@@ -30,26 +30,26 @@ get_percentile_map <- function(r, probs){
   if (!all(probs < 1)) {
     stop("Please make sure probs are in the range [0, 1]")
   }
-  
+
   quant_fun <- function(x) quantile(x, probs = probs, na.rm = TRUE)
-  
+
   if (class(r) == "list"){
-    
+
     # Using climatological maps
-    dates <- as.Date(names(r))
+    dates <- names(r)
     perc_maps <- list()
-    
+
     for (i in seq_along(dates)){
-      
+
       r_day <- r[[i]]
-      
+
       temp <- raster::calc(r_day, fun = quant_fun, probs = probs, progress = "text")
-      
+
       perc_maps[[i]] <- temp
-      
+
     }
     names(perc_maps) <- dates
-    
+
     if (length(dates) == 1){
       perc_maps <- perc_maps[[1]]
       if (raster::nlayers(perc_maps) == 1){
