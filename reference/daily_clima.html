@@ -129,7 +129,7 @@
     <p>This function generates daily climatological maps.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>daily_clima</span><span class='op'>(</span><span class='va'>b</span>, dates <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>daily_clima</span><span class='op'>(</span><span class='va'>b</span>, dates <span class='op'>=</span> <span class='cn'>NULL</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,6 +146,11 @@ information. This needs to contain daily layers for multiple years.
       <th>dates</th>
       <td><p>Dates for which we need to calculate daily climatology.
 By default, this is a leap year.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>Logical defining whether message should be printed on screen
+(FALSE by default).</p></td>
     </tr>
     </table>
 
