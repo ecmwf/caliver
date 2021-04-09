@@ -40,8 +40,9 @@
 
 
 <meta property="og:title" content="make_chiclet_chart — make_chiclet_chart" />
-<meta property="og:description" content="Generate a summary table of deterministic forecasts compared
-with daily climatology. Example here: https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible" />
+<meta property="og:description" content="Generate a summary table of deterministic forecasts.
+Example here:
+https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible" />
 
 
 
@@ -127,8 +128,9 @@ with daily climatology. Example here: https://news.ucar.edu/9996/long-range-torn
     </div>
 
     <div class="ref-description">
-    <p>Generate a summary table of deterministic forecasts compared
-with daily climatology. Example here: https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible</p>
+    <p>Generate a summary table of deterministic forecasts.
+Example here:
+https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible</p>
     </div>
 
     <pre class="usage"><span class='fu'>make_chiclet_chart</span><span class='op'>(</span><span class='va'>forecasts</span>, type <span class='op'>=</span> <span class='st'>"raw"</span>, p <span class='op'>=</span> <span class='cn'>NULL</span>, obs <span class='op'>=</span> <span class='cn'>NULL</span>, clima <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
@@ -138,23 +140,25 @@ with daily climatology. Example here: https://news.ucar.edu/9996/long-range-torn
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>forecasts</th>
-      <td><p>either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.</p></td>
+      <td><p>either a list of Raster* objects or a string vector
+containing forecast file paths. The order of the list/paths should correspond
+to forecasts issued consecutively.</p></td>
     </tr>
     <tr>
       <th>type</th>
-      <td><p>this can be one of the following: "raw" (default, clima not needed), "clima".</p></td>
+      <td><p>this can be one of the following: "raw" (default), "clima".</p></td>
     </tr>
     <tr>
       <th>p</th>
-      <td><p>SpatialPolygon* identifying the area affected by fires (optional)</p></td>
+      <td><p>(optional) SpatialPolygon* identifying the area affected by fires</p></td>
     </tr>
     <tr>
       <th>obs</th>
-      <td><p>Raster* object containing 1 layer per day of observation (optional)</p></td>
+      <td><p>(optional) Raster* object containing 1 layer per day of observation</p></td>
     </tr>
     <tr>
       <th>clima</th>
-      <td><p>list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used. (optional)</p></td>
+      <td><p>(optional) list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used.</p></td>
     </tr>
     </table>
 
