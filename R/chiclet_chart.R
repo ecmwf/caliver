@@ -40,6 +40,10 @@ make_chiclet_chart <- function(forecasts,
                                clima = NULL){
 
   clima_dates <- as.Date(names(clima))
+  
+  if (type == "clima" & is.null(clima)) {
+    stop("When type = 'clima', please provide non null clima object.")
+  }
 
   # Index on the diagonal
   fc_date <- c()
@@ -162,7 +166,6 @@ make_chiclet_chart <- function(forecasts,
 
 }
 
-
 #' @title plot_chiclet_chart
 #'
 #' @description Generate a plot of deterministic forecasts compared
@@ -204,7 +207,7 @@ plot_chiclet_chart <- function(df){
           panel.grid.major = element_blank(),
           plot.title = element_text(hjust = 0.5))
 
-  if ("obs" %in% names(df)){
+  if (any(!is.na(df$obs))) {
 
     min_new_range <- min(df$fc_index)
     max_new_range <- max(df$fc_index)

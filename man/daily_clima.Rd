@@ -4,7 +4,7 @@
 \alias{daily_clima}
 \title{daily_clima}
 \usage{
-daily_clima(b, dates = NULL)
+daily_clima(b, dates = NULL, verbose = FALSE)
 }
 \arguments{
 \item{b}{RasterBrick/Stack containing the historical observations or a proxy
@@ -15,6 +15,9 @@ information. This needs to contain daily layers for multiple years.
 
 \item{dates}{Dates for which we need to calculate daily climatology.
 By default, this is a leap year.}
+
+\item{verbose}{Logical defining whether message should be printed on screen
+(FALSE by default).}
 }
 \value{
 The function returns a RasterBrick (if \code{dates} contains one date)

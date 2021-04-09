@@ -9,6 +9,8 @@
 #' (e.g. 2017.01.01).
 #' @param dates Dates for which we need to calculate daily climatology.
 #' By default, this is a leap year.
+#' @param verbose Logical defining whether message should be printed on screen
+#' (FALSE by default).
 #'
 #' @details the climatology is calculated over the period spanning 4 days before and
 # 4 days after the given date.
@@ -36,7 +38,7 @@
 #' }
 #'
 
-daily_clima <- function(b, dates = NULL){
+daily_clima <- function(b, dates = NULL, verbose = FALSE){
 
   if (is.null(dates)) {
     # By default DO NOT use a leap year
@@ -53,7 +55,7 @@ daily_clima <- function(b, dates = NULL){
   # Assemble daily climatology over all the years in the brick
   for (i in seq_along(dates)){
 
-    message(paste("Day", i, "=", format(dates[[i]], "%B %d")))
+    if (verbose) message(paste("Day", i, "=", format(dates[[i]], "%B %d")))
 
     # Extract brick of layers corresponding to a given date
     clima_sub <- .get_layers_for_clima(b = b,
