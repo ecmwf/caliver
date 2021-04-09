@@ -39,7 +39,7 @@ make_chiclet_chart <- function(forecasts,
                                obs = NULL,
                                clima = NULL){
 
-  clima_dates <- as.Date(names(clima))
+  clima_dates <- as.Date(names(clima), format = "%Y-%m-%d")
   
   if (type == "clima" & is.null(clima)) {
     stop("When type = 'clima', please provide non null clima object.")
