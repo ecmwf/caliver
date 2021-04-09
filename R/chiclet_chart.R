@@ -1,13 +1,16 @@
 #' @title make_chiclet_chart
 #'
-#' @description Generate a summary table of deterministic forecasts compared
-#' with daily climatology. Example here: https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible
+#' @description Generate a summary table of deterministic forecasts.
+#' Example here:
+#' https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible
 #'
-#' @param forecasts either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.
-#' @param type this can be one of the following: "raw" (default, clima not needed), "clima".
-#' @param p SpatialPolygon* identifying the area affected by fires (optional)
-#' @param obs Raster* object containing 1 layer per day of observation (optional)
-#' @param clima list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used. (optional)
+#' @param forecasts either a list of Raster* objects or a string vector
+#' containing forecast file paths. The order of the list/paths should correspond
+#' to forecasts issued consecutively.
+#' @param type this can be one of the following: "raw" (default), "clima".
+#' @param p (optional) SpatialPolygon* identifying the area affected by fires
+#' @param obs (optional) Raster* object containing 1 layer per day of observation
+#' @param clima (optional) list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used.
 #'
 #' @export
 #'
@@ -35,6 +38,8 @@ make_chiclet_chart <- function(forecasts,
                                p = NULL,
                                obs = NULL,
                                clima = NULL){
+
+  clima_dates <- as.Date(names(clima))
 
   # Index on the diagonal
   fc_date <- c()
@@ -71,22 +76,26 @@ make_chiclet_chart <- function(forecasts,
       message("Processing climatology")
 
       subset_mean <- function(x){
-        idx <-  which(format(as.Date(names(clima)),
-                             "%m-%d") == format(fc_dates[x], "%m-%d"))
+        idx <-  which(format(clima_dates, "%m-%d") == format(fc_dates[x], "%m-%d"))
         clima_idx <- clima[[idx]]
         if (!is.null(p)) {clima_idx <- mask_crop_subset(clima_idx, p)}
         clima_res <- raster::resample(clima_idx, fc[[1]], method = "ngb")
         raster::calc(clima_res, mean)
       }
 
-      cmean <- raster::stack(lapply(seq_along(fc_dates), subset_mean))
+      if (all(fc_dates %in% clima_dates)){
+        cmean <- raster::stack(lapply(seq_along(fc_dates), subset_mean))
 
-      # Total number of non-NA cells
-      n_total <- sum(as.vector(!is.na(fc[[1]])))
+        # Total number of non-NA cells
+        n_total <- sum(as.vector(!is.na(fc[[1]])))
 
-      fc_above <- fc > cmean
-      # Calculate percentages
-      fc_df <- data.frame(raster::cellStats(fc_above, sum) / n_total * 100)
+        fc_above <- fc > cmean
+        # Calculate percentages
+        fc_df <- data.frame(perc = raster::cellStats(fc_above, sum) / n_total * 100)
+      } else {
+        fc_df <- data.frame(perc = rep(NA, length(fc_dates)))
+      }
+
     }
 
     # Format table
@@ -105,6 +114,9 @@ make_chiclet_chart <- function(forecasts,
 
   df$step_index <- 1:dim(df)[1]
 
+  # Add placeholder for observation data to data.frame
+  df$obs <- NA
+
   if (!is.null(obs)){
 
     message("Processing observations")
@@ -121,15 +133,9 @@ make_chiclet_chart <- function(forecasts,
 
     # Extract time series
     frp_ts <- as.numeric(raster::cellStats(obs, sum))
-    obs_factor <- (max(frp_ts) - min(frp_ts))/length(frp_ts)
 
     # Add observation data to data.frame
-    df$obs <- frp_ts
-
-  }else{
-
-    # Add observation data to data.frame
-    df$obs <- NA
+    df$obs[1:length(frp_ts)] <- frp_ts
 
   }
 
@@ -148,7 +154,9 @@ make_chiclet_chart <- function(forecasts,
   df_reshaped$fc_date <- fc_date[df_reshaped$fc_index]
 
   # Re-order columns
-  df_ordered <- df_reshaped[, c("fc_date", "fc_index", "step_date", "step_index", "value", "obs", "clima")]
+  df_ordered <- df_reshaped[, c("fc_date", "fc_index",
+                                "step_date", "step_index",
+                                "value", "obs", "clima")]
 
   return(df_ordered)
 
@@ -200,20 +208,18 @@ plot_chiclet_chart <- function(df){
 
     min_new_range <- min(df$fc_index)
     max_new_range <- max(df$fc_index)
-    min_old_range <- min(df$obs)
-    max_old_range <- max(df$obs)
+    min_old_range <- min(df$obs, na.rm = TRUE)
+    max_old_range <- max(df$obs, na.rm = TRUE)
 
     df$obs_rescaled <- (max_new_range - min_new_range) * (df$obs - min_old_range) / (max_old_range - min_old_range) + min_new_range
-
-    obs_factor <- (max(df$obs) - min(df$obs)) / length(unique(df$fc_index))
 
     chiclet <- chiclet +
       geom_line(data = df,
                 aes_string(x = "step_index", y = "obs_rescaled"),
                 linetype = 2, size = 0.75,
                 col = "#47494c") +
-      scale_y_continuous(sec.axis = sec_axis(~ scales::rescale(., to = range(df$fc_index)),
-      # scale_y_continuous(sec.axis = sec_axis(~ .*obs_factor,
+      scale_y_continuous(sec.axis = sec_axis(~ scales::rescale(.,
+                                                               to = range(df$fc_index)),
                                              name = "Fire radiative power [Wm-2]"),
                          expand = c(0, 0),
                          breaks = unique(df$fc_index),

@@ -7,19 +7,22 @@
 make_chiclet_chart(forecasts, type = "raw", p = NULL, obs = NULL, clima = NULL)
 }
 \arguments{
-\item{forecasts}{either a list of Raster* objects or a string vector containing forecast file paths. The order of the list/paths should correspond to forecasts issued consecutively.}
+\item{forecasts}{either a list of Raster* objects or a string vector
+containing forecast file paths. The order of the list/paths should correspond
+to forecasts issued consecutively.}
 
-\item{type}{this can be one of the following: "raw" (default, clima not needed), "clima".}
+\item{type}{this can be one of the following: "raw" (default), "clima".}
 
-\item{p}{SpatialPolygon* identifying the area affected by fires (optional)}
+\item{p}{(optional) SpatialPolygon* identifying the area affected by fires}
 
-\item{obs}{Raster* object containing 1 layer per day of observation (optional)}
+\item{obs}{(optional) Raster* object containing 1 layer per day of observation}
 
-\item{clima}{list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used. (optional)}
+\item{clima}{(optional) list of Raster* objects containing the climatological information. This is obtained using the function daily_clima() with suitable dates (to cover the full forecasted period) and its extent should contain the polygon `p`, if this is used.}
 }
 \description{
-Generate a summary table of deterministic forecasts compared
-with daily climatology. Example here: https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible
+Generate a summary table of deterministic forecasts.
+Example here:
+https://news.ucar.edu/9996/long-range-tornado-prediction-it-feasible
 }
 \examples{
 \dontrun{
