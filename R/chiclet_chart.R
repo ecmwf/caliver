@@ -39,8 +39,6 @@ make_chiclet_chart <- function(forecasts,
                                obs = NULL,
                                clima = NULL){
 
-  clima_dates <- as.Date(names(clima), format = "%Y-%m-%d")
-  
   if (type == "clima" & is.null(clima)) {
     stop("When type = 'clima', please provide non null clima object.")
   }
@@ -78,6 +76,8 @@ make_chiclet_chart <- function(forecasts,
     if (type == "clima"){
 
       message("Processing climatology")
+
+      clima_dates <- as.Date(names(clima), format = "%Y-%m-%d")
 
       subset_mean <- function(x){
         idx <-  which(format(clima_dates, "%m-%d") == format(fc_dates[x], "%m-%d"))
