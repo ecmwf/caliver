@@ -37,7 +37,13 @@ install.packages("remotes")
 remotes::install_github("ecmwf/caliver")
 ```
 
-Load the caliver package:
+Alternatively, the stable version of this package is available on CRAN and can be installed as shown below.
+
+``` r
+install.packages("caliver")
+```
+
+Load the package:
 
 ``` r
 library("caliver")
