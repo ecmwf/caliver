@@ -58,7 +58,7 @@ Please note that in the code snippets, we mention functions belonging to package
 Our work stands for the highest standards of scientific reproducibility from the computational point of view [@anel2011importance, @anel2017comment]. Hence, caliver’s source code is hosted on a public repository, maintained using the git version control system and distributed under an open license: APACHE-2. Users can suggest changes and report bugs using the dedicated [issue tracking system](https://github.com/ecmwf/caliver/issues).
 
 ## Continuous integration and unit tests
-In order to have a reliable development process, system dependencies, installation and basic functionalities are tested using GitHub Actions for continuous integration on windows and unix-based systems. Unit tests for the main functions are developed using the testthat framework [@wickham2011testthat]. Software metrics, in terms of code coverage status, are tracked using the [codecov platform](https://about.codecov.io/). The current release has a code coverage of 95%.
+In order to have a reliable development process, system dependencies, installation and basic functionalities are tested using GitHub Actions for continuous integration on windows and unix-based systems. Tests for the main functions are developed using the testthat framework [@wickham2011testthat]. Software metrics, in terms of code coverage status, are tracked using the [codecov platform](https://about.codecov.io/). The current release has a code coverage of 93%.
 
 # Datasets for testing
 
