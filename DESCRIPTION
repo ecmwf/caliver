@@ -38,7 +38,7 @@ Suggests:
     lintr
 VignetteBuilder: knitr
 Encoding: UTF-8
-SystemRequirements: GDAL, PROJ, netcdf4, openssl
+SystemRequirements: GDAL, PROJ, netcdf, openssl
 License: Apache License 2.0
 Language: en-GB
 RoxygenNote: 7.1.1
