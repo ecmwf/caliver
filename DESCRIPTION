@@ -4,7 +4,7 @@ Title: Calibration and Verification of Gridded Model Outputs
 Version: 2.0.1
 Authors@R: c(person(given = "Claudia",
                     family = "Vitolo",
-                    email = "claudia.vitolo@ecmwf.int",
+                    email = "cvitolodev@gmail.com",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-4252-1176")),
              person("Francesca", "Di Giuseppe", role = c("ctb")),
