@@ -14,7 +14,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, fig.width = 7)
 ```
 
-**_NOTE: This vignette is an updated and extended version of [@vitolo:2018], since the publication of this PlosONE paper some functionalities have changed or have been deprecated._**
+**_NOTE: This vignette is an updated and extended version of [@vitolo:2018], since the publication of this PlosONE paper some functionalities have changed or have been deprecated (e.g. `get_gfed4()` to get data from the Global Fire Emissions Database)._**
 
 # Abstract
 
@@ -58,30 +58,22 @@ Please note that in the code snippets, we mention functions belonging to package
 Our work stands for the highest standards of scientific reproducibility from the computational point of view [@anel2011importance, @anel2017comment]. Hence, caliver’s source code is hosted on a public repository, maintained using the git version control system and distributed under an open license: APACHE-2. Users can suggest changes and report bugs using the dedicated [issue tracking system](https://github.com/ecmwf/caliver/issues).
 
 ## Continuous integration and unit tests
-In order to have a reliable development process, system dependencies, installation and basic functionalities are tested using GitHub Actions for continuous integration on windows and unix-based systems. Tests for the main functions are developed using the testthat framework [@wickham2011testthat]. Software metrics, in terms of code coverage status, are tracked using the [codecov platform](https://about.codecov.io/). The current release has a code coverage of 93%.
+In order to have a reliable development process, system dependencies, installation and basic functionalities are tested using GitHub Actions for continuous integration on windows and unix-based systems. Tests for the main functions are developed using the testthat framework [@wickham2011testthat]. Software metrics, in terms of code coverage status, are tracked using the [codecov platform](https://about.codecov.io/). The current release has a code coverage above 90%.
 
 # Datasets for testing
 
-In this work, the functionalities implemented in the caliver package are tested using the data products from the Global ECMWF Fire Forecast (GEFF) system as well as external data sources (see below).
+For the purpose of this vignette, we will demostrate the `caliver` functionalities using the data products from the Global ECMWF Fire Forecast (GEFF) system feeding the European Forest Fire Information System (EFFIS) system as well as external data sources.
 
-## Get data from the fourth-generation Global Fire Emissions Database (GFED4)
+- EFFIS/GEFF - example forecast and reanalysis data for various events are available from the Zenodo wildfire community: https://zenodo.org/communities/wildfire.
+- External datasets - The caliver package includes a copy of some external datasets in the `inst/extdata` folder to be used for educational/demostration purpose only:
+    - Global Fire Emissions Database (GFED4) basis regions, a map of 14 spatial polygons used to evaluate regional annual emission estimates. This map can be retrieved as SpatialPolygonsDataFrame (see `sp` package).
+    - Fuel model map, a global map of fuels in NetCDF format.
+    - RISICO map, an example map used by the RISICO model in binary format.
 
-### Burned areas *deprecated*
-Observed burned areas around the world are collected by the 4th generation Global Fire Emissions Database [@giglio2013analysis] in hdf format. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability. In [@vitolo:2018], the function `get_gfed4()` was used to retrieve observed burned areas from GFED4. Over time the service has changed and this function has proven to be difficult to maintain.
-
-**In the current version of `caliver`, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions). Please, download daily burned area maps for 2003-01-01 to 2015-12-31 manually from https://www.globalfiredata.org/data.html.**
-
-## Areas of interest
-
-For the purpose of this vignette, we will demostrate the `caliver` functionalities on specific areas: Europe and Italy. 
-
-### Basis regions
-GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (see `sp` package) as follows.
+Get the GFED4 basis regions and plot them:
 
 ```{r}
 library("sp")
-
-# Get all the GFED4 basis regions
 BasisRegions <- readRDS(system.file("extdata", "GFED4_BasisRegions.rds",
                                     package = "caliver"))
 plot(BasisRegions)
@@ -94,8 +86,6 @@ Europe <- BasisRegions[BasisRegions$Region == "EURO",]
 plot(Europe)
 ```
 
-### Administrative boundaries
-
 Countries administrative boundaries can be obtained from the [GADM](https://gadm.org/) dataset using the function `getdata()` from the `raster` package. As an example, below we show how to obtain Italian administrative boundaries.
 
 ```{r}
@@ -104,13 +94,13 @@ library("raster")
 Italy <- raster::getData(name = "GADM", country = "Italy", level = 0)
 ```
 
-## The EFFIS datasets: GEFF-reanalysis and GEFF-realtime
+## The EFFIS/GEFF datasets: reanalysis and forecasts
 
-In the last three years fire danger forecasts have been developed at ECMWF as a part of the Copernicus Emergency Management Services under the guidance of the Joint Research Centre (JRC). A subset of GEFF data is feeding the [EFFIS](https://effis.jrc.ec.europa.eu/) and [GWIS](https://gwis.jrc.ec.europa.eu/) web portals; operational platforms to access timely information for fire danger at European and Global scale, respectively. 38 local and national authorities across Europe are part of the EFFIS network and have been relying on the GEFF outputs for an early identification of regions which might experience fire events due to the establishment of persistent drought conditions.
+Since 2018, fire danger forecasts have been developed at ECMWF as a part of the Copernicus Emergency Management Services under the guidance of the Joint Research Centre (JRC). A subset of the EFFIS/GEFF data is feeding the [EFFIS](https://effis.jrc.ec.europa.eu/) and [GWIS](https://gwis.jrc.ec.europa.eu/) web portals; operational platforms to access timely information for fire danger at European and Global scale, respectively. 38 local and national authorities across Europe are part of the EFFIS network and have been relying on the GEFF outputs for an early identification of regions which might experience fire events due to the establishment of persistent drought conditions.
 
 Two datasets are available: the GEFF-reanalysis and the GEFF-realtime. GEFF-reanalysis provides historical records of global fire danger conditions from 1980 to date. The historic record is not static but it is updated regularly following the availability of the atmospheric reanalysis datasets. Reanalysis datasets are used to define warning levels on the base of past events, therefore levels derived from them should not be considered static as changes in climatic conditions can alter them. There are currently 2 GEFF-reanalysis datasets, the first one (used mainly for educational purposes) is based on the atmospheric reanalysis dataset ERA-Interim [@dee2011era]. The second dataset is based on the most recent atmospheric reanalysis ERA5 [@hersbach2020era5].
 
-GEFF-realtime provides real time deterministic high resolution and probabilistic fire danger forecasts up to 10 days ahead using weather forcings from the latest model cycle of the ECMWF weather forecast system. The real-time dataset is updated every day with a new set of forecasts. This dataset is used for operational monitoring of danger conditions. Real-time data can be obtain making a data request to the [JRC](https://effis.jrc.ec.europa.eu/apps/data.request.form/).
+GEFF-realtime provides real time deterministic high resolution and probabilistic fire danger forecasts up to 15 days ahead using weather forcings from the latest model cycle of the ECMWF weather forecast system. The real-time dataset is updated every day with a new set of forecasts. This dataset is used for operational monitoring of danger conditions. Real-time data can be obtain making a data request to the [JRC](https://effis.jrc.ec.europa.eu/apps/data.request.form/). For educational purposes only, data for various past events are available on the Zenodo wildfire community (https://zenodo.org/communities/wildfire).
 
 In this vignette, the Fire Weather Index (from the homonymous Canadian system) ERA-Interim based reanalysis dataset is used to asses fire danger. This dataset has daily temporal resolution, global coverage (0.7 degrees, ~80 Km, with longitudes ranging between -180 to +180 in geographic coordinate systems) and spans from 1980-01-01 to 2018-12-31. It was computed by the European Centre for Medium-range Weather Forecast (ECMWF) and made available on [Zenodo](https://doi.org/10.5281/zenodo.1065400), for more details see [@Vitolo2019]. Newer and more detailed fire danger reanalysis data are available from the [Copernicus Climate Data Store (CDS)](https://cds.climate.copernicus.eu/cdsapp#!/dataset/cems-fire-historical?tab=overview), for more details see [@Vitolo2020].
 
@@ -119,26 +109,26 @@ We assume the ERA-Interim based GEFF-reanalysis data have already been downloade
 Data are aggregated into one NetCDF file and can be loaded as RasterBrick.
 
 ```{r}
-# Assuming the FWI reanalysis (GEFF-ERA-Interim reanalysis v3.0, 7.5GB) dataset is downloaded
+# Set working directory, if needed
+setwd("~/repos/caliver_demo")
+
+# Download FWI reanalysis (GEFF-ERA-Interim reanalysis v3.0, 7.5GB, https://doi.org/10.5281/zenodo.1065400) to the working directory
 fwi <- raster::brick("fwi.nc")
 ```
 
 ## Masking data using land cover maps
 
-Vegetation is the fuel for fire. In order to carry out an accurate estimation of fire danger worldwide it is important to use an homogeneous classification of land use and vegetation. The Global Wildfire Information System (GWIS) uses the Global Land Cover 2000 database and regional products for Africa, Asia, and Europe [JRC2003]. This map is publicly available and can be downloaded from [https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php](https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php). Another example of such a map was compiled by the European Space Agency (ESA): the [Climate Change Initiative (CCI) Land Cover Maps](http://www.esa-landcover-cci.org/). Other land cover maps exist and the reader is invited to download and use the one more suitable for the problem at hand.
+Vegetation is the fuel for fire. In order to carry out an accurate estimation of fire danger worldwide it is important to use an homogeneous classification of land use and vegetation. The Global Wildfire Information System (GWIS) uses the Global Land Cover 2000 database and regional products for Africa, Asia, and Europe [JRC2003]. This map is publicly available and can be downloaded from [https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php](https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php). Other land cover maps exist (e.g. [Climate Change Initiative (CCI) Land Cover Maps](http://www.esa-landcover-cci.org/) by the European Space Agency) and the reader is invited to download and use the map more suitable for the problem at hand.
 
 The example below shows how to mask fire danger indices using the Global Land Cover 2000 map.
 
 ```{r}
-# Global Land Cover 2000
-# Documentation
-# https://forobs.jrc.ec.europa.eu/data/products/glc2000/GLC2000_EUR_20849EN.pdf
-# Get map
-# system("wget https://forobs.jrc.ec.europa.eu/data/products/glc2000/glc2000_v1_1_Grid.zip")
-# Unzip the folder in the working directory
+# Global Land Cover 2000 (documentation: https://forobs.jrc.ec.europa.eu/data/products/glc2000/GLC2000_EUR_20849EN.pdf)
+# Get the map: https://forobs.jrc.ec.europa.eu/data/products/glc2000/glc2000_v1_1_Grid.zip
+# then unzip the folder in the working directory
 
 # Load map
-fuel <- raster::raster("./Grid/glc2000_v1_1/w001001.adf")
+fuel <- raster::raster("./glc2000_v1_1_Grid/Grid/glc2000_v1_1/w001001.adf")
 
 # If fuel and fwi have different extent and/or number of rows/cols, you will need to resample
 fuel <- raster::resample(fuel, fwi[[1]], method = "ngb", progress = "text")
