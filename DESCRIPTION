@@ -2,14 +2,16 @@ Package: caliver
 Type: Package
 Title: Calibration and Verification of Gridded Model Outputs
 Version: 2.0.2
-Authors@R: c(person(given = "Claudia",
-                    family = "Vitolo",
-                    email = "cvitolodev@gmail.com",
-                    role = c("aut", "cre"),
-                    comment = c(ORCID = "0000-0002-4252-1176")),
-             person("Francesca", "Di Giuseppe", role = c("ctb")),
+Authors@R: c(person("Francesca", "Di Giuseppe", 
+                    email = "francesca.digiuseppe@ecmwf.int",
+                    role = c("ctb", "cre"),
+                    comment = c(ORCID = "0000-0001-9829-0429")),
+             person("Claudia", "Vitolo",
+                    comment = c(ORCID = "0000-0002-4252-1176",
+                    "Claudia is the original creator of the package"), 
+                    role = c("aut")),
              person("Mirko", "D'Andrea", role = c("aut", "ctb")))
-Maintainer: Claudia Vitolo <claudia.vitolo@ecmwf.int>
+Maintainer: Francesca Di Giuseppe <francesca.digiuseppe@ecmwf.int>
 URL: https://ecmwf.github.io/caliver/, https://github.com/ecmwf/caliver
 BugReports: https://github.com/ecmwf/caliver/issues
 Description: Utility functions for the post-processing, calibration and
