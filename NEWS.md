@@ -1,3 +1,7 @@
+# caliver 2.0.3
+
+* Francesca Di Giuseppe is the new package maintainer
+
 # caliver 2.0
 
 * Version submitted to CRAN.
